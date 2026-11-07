@@ -34,4 +34,4 @@ echo   - Faculty Double-Blind View : http://127.0.0.1:8000/faculty
 echo   - Dean Analytical Overview  : http://127.0.0.1:8000/dean
 echo   - Registrar Admin Console   : http://127.0.0.1:8000/admin
 echo.
-"%PHP_EXE%" -S 127.0.0.1:8000 -t public
+"%PHP_EXE%" -S 127.0.0.1:8000 -t public public\index.php

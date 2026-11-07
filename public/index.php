@@ -2,28 +2,36 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\AdminRosterController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DeanAnalyticsController;
+use App\Http\Controllers\Api\FacultyPortalController;
+use App\Http\Controllers\Api\StudentEvaluationController;
+use App\Services\DecoupledEvaluationService;
+use Database\Seeders\EvaluaTechDemoSeeder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-// Serve static CSS/JS assets directly when running under PHP built-in server (php -S 127.0.0.1:8000 -t public)
-if (PHP_SAPI === 'cli-server') {
-    $uriPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
-    if (preg_match('#^/resources/(css|js)/[A-Za-z0-9_./-]+$#', $uriPath) === 1) {
-        $candidate = realpath(__DIR__ . '/..' . $uriPath);
-        $rootResources = realpath(__DIR__ . '/../resources');
-        if ($candidate !== false && $rootResources !== false && str_starts_with($candidate, $rootResources) && is_file($candidate)) {
-            $ext = strtolower(pathinfo($candidate, PATHINFO_EXTENSION));
-            $mime = match ($ext) {
-                'css' => 'text/css; charset=utf-8',
-                'js', 'mjs' => 'application/javascript; charset=utf-8',
-                'vue' => 'text/plain; charset=utf-8',
-                default => 'application/octet-stream',
-            };
-            header('Content-Type: ' . $mime);
-            readfile($candidate);
-            return;
-        }
+$uriPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+$method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+
+// 1. Serve static CSS/JS assets directly when running under PHP built-in server (php -S 127.0.0.1:8000 -t public)
+if (PHP_SAPI === 'cli-server' && preg_match('#^/resources/(css|js)/[A-Za-z0-9_./-]+$#', $uriPath) === 1) {
+    $candidate = realpath(__DIR__ . '/..' . $uriPath);
+    $rootResources = realpath(__DIR__ . '/../resources');
+    if ($candidate !== false && $rootResources !== false && str_starts_with($candidate, $rootResources) && is_file($candidate)) {
+        $ext = strtolower(pathinfo($candidate, PATHINFO_EXTENSION));
+        $mime = match ($ext) {
+            'css' => 'text/css; charset=utf-8',
+            'js', 'mjs' => 'application/javascript; charset=utf-8',
+            'vue' => 'text/plain; charset=utf-8',
+            default => 'application/octet-stream',
+        };
+        header('Content-Type: ' . $mime);
+        readfile($candidate);
+        return;
     }
 }
 
@@ -37,12 +45,90 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 
 $app = require_once __DIR__ . '/../bootstrap/app.php';
 
-if (is_object($app) && method_exists($app, 'handleRequest') && class_exists(Request::class)) {
+if (is_object($app) && method_exists($app, 'handleRequest')) {
     $app->handleRequest(Request::capture());
     return;
 }
 
-// Standalone fallback when composer vendor directory is not yet installed
+// 2. Standalone JSON API Dispatcher backed by persistent SQLite PDO + EvaluaTechDemoSeeder
+if (str_starts_with($uriPath, '/api/')) {
+    $storageDir = __DIR__ . '/../storage/framework';
+    if (!is_dir($storageDir)) {
+        @mkdir($storageDir, 0775, true);
+    }
+    $sqlitePath = $storageDir . '/evaluatech_plp.sqlite';
+    $pdo = new \PDO('sqlite:' . $sqlitePath);
+    $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
+    $pdo->exec('PRAGMA foreign_keys = ON');
+
+    DecoupledEvaluationService::setSharedPdo($pdo);
+    $service = new DecoupledEvaluationService($pdo);
+
+    $userCount = (int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
+    if ($userCount === 0) {
+        (new EvaluaTechDemoSeeder($pdo))->run();
+    }
+
+    $rawBody = (string) file_get_contents('php://input');
+    $jsonPayload = json_decode($rawBody, true);
+    $input = array_merge($_GET, $_POST, is_array($jsonPayload) ? $jsonPayload : []);
+    $request = new Request($input, $_SERVER);
+
+    $response = null;
+
+    if ($uriPath === '/api/health') {
+        $response = new JsonResponse([
+            'status' => 'ok',
+            'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
+            'reference' => 'https://plpasig.edu.ph/',
+            'platform' => 'EvaluaTech',
+            'nlp_engine' => 'calamanCy+VADER',
+        ], 200);
+    } elseif ($uriPath === '/api/auth/login' && $method === 'POST') {
+        $response = (new AuthController($pdo))->login($request);
+    } elseif ($uriPath === '/api/auth/logout' && $method === 'POST') {
+        $response = (new AuthController($pdo))->logout();
+    } elseif ($uriPath === '/api/student/queue' && $method === 'GET') {
+        if (!isset($input['student_id'])) {
+            $studentId = (int) $pdo->query("SELECT id FROM users WHERE institutional_id = '2024-10892' LIMIT 1")->fetchColumn();
+            $request = new Request(array_merge($input, ['student_id' => $studentId]), $_SERVER);
+        }
+        $response = (new StudentEvaluationController($service))->queue($request);
+    } elseif (($uriPath === '/api/evaluation/submit' || $uriPath === '/api/student/evaluations/submit') && $method === 'POST') {
+        $response = (new StudentEvaluationController($service))->submit($request);
+    } elseif ($uriPath === '/api/student/permit' && $method === 'GET') {
+        $response = (new StudentEvaluationController($service))->permit($request);
+    } elseif (preg_match('#^/api/faculty/sections/(\d+)/report$#', $uriPath, $m) === 1 && $method === 'GET') {
+        $response = (new FacultyPortalController($service))->sectionReport($request, (int) $m[1]);
+    } elseif (preg_match('#^/api/faculty/sections/(\d+)/submit-grades$#', $uriPath, $m) === 1 && $method === 'POST') {
+        $response = (new FacultyPortalController($service))->submitTermGrades($request, (int) $m[1]);
+    } elseif ($uriPath === '/api/dean/overview' && $method === 'GET') {
+        $response = (new DeanAnalyticsController($service))->overview($request);
+    } elseif ($uriPath === '/api/dean/watchlist' && $method === 'GET') {
+        $response = (new DeanAnalyticsController($service))->watchlist($request);
+    } elseif ($uriPath === '/api/dean/quality-metrics' && $method === 'GET') {
+        $response = (new DeanAnalyticsController($service))->qualityMetrics();
+    } elseif ($uriPath === '/api/dean/export-csv' && $method === 'POST') {
+        $response = (new DeanAnalyticsController($service))->exportCsv($request);
+    } elseif ($uriPath === '/api/admin/rosters/import' && $method === 'POST') {
+        $response = (new AdminRosterController(null, $service))->import($request);
+    } elseif (preg_match('#^/api/admin/sections/(\d+)/registrar-lock$#', $uriPath, $m) === 1 && $method === 'POST') {
+        $response = (new AdminRosterController(null, $service))->toggleRegistrarLock($request, (int) $m[1]);
+    } else {
+        $response = new JsonResponse([
+            'error' => 'NOT_FOUND',
+            'path' => $uriPath,
+        ], 404);
+    }
+
+    http_response_code($response->getStatusCode());
+    header('Content-Type: application/json; charset=utf-8');
+    echo $response->getContent();
+    return;
+}
+
+// 3. Render the Pamantasan ng Lungsod ng Pasig (PLP) EvaluaTech SPA shell
 $bladeFile = __DIR__ . '/../resources/views/app.blade.php';
 if (is_file($bladeFile)) {
     $html = (string) file_get_contents($bladeFile);

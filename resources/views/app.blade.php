@@ -12,12 +12,11 @@
     @if (function_exists('vite'))
         @vite(['resources/js/app.js'])
     @else
-        <script type="module" src="/resources/js/app.js"></script>
+        <script type="module" src="/resources/js/plp-live-portal.js"></script>
     @endif
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
     <div id="app" data-platform="EvaluaTech" data-institution="PAMANTASAN NG LUNGSOD NG PASIG" data-reference="https://plpasig.edu.ph/" data-active-term="Fall">
-        <!-- Instant PLP Institutional Shell (Hydrated by Vue 3 SPA or Interactive Browser Runtime) -->
         <header class="navbar-header" role="banner" aria-label="Pamantasan ng Lungsod ng Pasig Institutional Portal Header">
             <div class="plp-top-ribbon">
                 <div class="plp-top-ribbon-inner">

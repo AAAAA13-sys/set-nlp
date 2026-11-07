@@ -13,6 +13,7 @@ __pycache__/
 .pytest_cache/
 .venv/
 /database/database.sqlite
+/storage/framework/*.sqlite
 /storage/logs/*.log
 /storage/framework/cache/data/*
 /storage/framework/sessions/*
