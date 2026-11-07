@@ -1,0 +1,39 @@
+"""EvaluaTech NLP Sentiment Polarity & 5-Cluster Pedagogical Classification Package (calamanCy + VADER)."""
+
+from .engine import (
+    CALAMANCY_DEFAULT_MODEL,
+    CALAMANCY_REPO_URL,
+    FIVE_LIKERT_CLUSTERS,
+    LIKERT_SCALE_POINTS,
+    MAX_PROFESSOR_QUESTIONS,
+    MIN_PROFESSOR_QUESTIONS,
+    PEDAGOGICAL_TAGS,
+    VALENCE_LABELS,
+    analyze_batch,
+    analyze_comment,
+    analyze_professor_questions,
+    classify_pedagogical_domain,
+    classify_valence,
+    extract_calamancy_features,
+    lemmatize_calamancy_token,
+    summarize_comments,
+)
+
+__all__ = [
+    "CALAMANCY_DEFAULT_MODEL",
+    "CALAMANCY_REPO_URL",
+    "FIVE_LIKERT_CLUSTERS",
+    "LIKERT_SCALE_POINTS",
+    "MAX_PROFESSOR_QUESTIONS",
+    "MIN_PROFESSOR_QUESTIONS",
+    "PEDAGOGICAL_TAGS",
+    "VALENCE_LABELS",
+    "analyze_batch",
+    "analyze_comment",
+    "analyze_professor_questions",
+    "classify_pedagogical_domain",
+    "classify_valence",
+    "extract_calamancy_features",
+    "lemmatize_calamancy_token",
+    "summarize_comments",
+]

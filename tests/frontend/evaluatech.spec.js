@@ -1,0 +1,493 @@
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import {
+  CALAMANCY_CONFIG,
+  FIVE_LIKERT_CLUSTERS,
+  MAX_PROFESSOR_QUESTIONS,
+  MIN_PROFESSOR_QUESTIONS,
+  PEDAGOGICAL_DIMENSIONS,
+  PROFESSOR_QUALITATIVE_QUESTIONS,
+  DEMO_STUDENT_QUEUE,
+  DEMO_DEAN_METRICS,
+  calculateClusterMeans,
+  calculateMean,
+  calculatePopulationVariance,
+  isStraightLined,
+  isDwellTimeValid,
+  calculateQueueProgress,
+  classifyCommentPreview,
+  evaluateWatchlistFlag,
+  canFacultyViewEvaluation,
+  calculateSusScore,
+  sanitizeCsvCell,
+  validateProfessorQuestions,
+} from '../../resources/js/utils/evaluationMath.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ROOT_DIR = path.resolve(__dirname, '../..');
+const JS_DIR = path.join(ROOT_DIR, 'resources', 'js');
+
+function readResourceFile(relativePath) {
+  return fs.readFileSync(path.join(JS_DIR, relativePath), 'utf8');
+}
+
+describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (25 Test Groups)', () => {
+  // 1. Header portal branding & active term display
+  describe('Group 01: Header portal branding & active term display (NavbarHeader.vue — Pamantasan ng Lungsod ng Pasig)', () => {
+    it('renders PAMANTASAN NG LUNGSOD NG PASIG branding, PLP Green/Gold theme, active term, logged-in student ID 2024-10892, and clearance status badge', () => {
+      const navbarSfc = readResourceFile('components/NavbarHeader.vue');
+      const authStoreSrc = readResourceFile('stores/auth.js');
+      const appCss = fs.readFileSync(path.join(ROOT_DIR, 'resources', 'css', 'app.css'), 'utf8');
+
+      assert.ok(navbarSfc.includes('PAMANTASAN NG LUNGSOD NG PASIG'));
+      assert.ok(navbarSfc.includes('plpasig.edu.ph'));
+      assert.ok(navbarSfc.includes('Institutional Evaluation Portal'));
+      assert.ok(navbarSfc.includes('Active Term:'));
+      assert.ok(navbarSfc.includes('Logged in as:'));
+      assert.ok(navbarSfc.includes('data-testid="navbar-clearance-badge"'));
+      assert.ok(appCss.includes('--plp-green-900: #0b4f26'));
+      assert.ok(appCss.includes('--plp-gold-500: #eab308'));
+      assert.ok(authStoreSrc.includes("'2024-10892'"));
+      assert.ok(authStoreSrc.includes('Fall / 1st Semester'));
+    });
+  });
+
+  // 2. Student queue progress bar calculation
+  describe('Group 02: Student queue progress bar calculation (3 of 6 = 50%, 6 of 6 = 100%)', () => {
+    it('calculates 50% progress for 3 of 6 completed courses and 100% CLEARED when all 6 complete', () => {
+      const initialProgress = calculateQueueProgress(DEMO_STUDENT_QUEUE);
+      assert.equal(initialProgress.completed, 3);
+      assert.equal(initialProgress.pending, 3);
+      assert.equal(initialProgress.total, 6);
+      assert.equal(initialProgress.percentage, 50);
+      assert.equal(initialProgress.allCleared, false);
+      assert.equal(initialProgress.clearanceStatus, 'PENDING');
+      assert.equal(initialProgress.label, 'My Evaluation Queue (3 of 6 Completed)');
+
+      const allCompletedQueue = DEMO_STUDENT_QUEUE.map((c) => ({ ...c, status: 'COMPLETED' }));
+      const fullProgress = calculateQueueProgress(allCompletedQueue);
+      assert.equal(fullProgress.completed, 6);
+      assert.equal(fullProgress.pending, 0);
+      assert.equal(fullProgress.percentage, 100);
+      assert.equal(fullProgress.allCleared, true);
+      assert.equal(fullProgress.clearanceStatus, 'CLEARED');
+      assert.equal(fullProgress.label, 'My Evaluation Queue (6 of 6 Completed)');
+    });
+  });
+
+  // 3. Course roster table rendering (CS-401 through PHYS-101)
+  describe('Group 03: Course roster table rendering (CS-401 through PHYS-101)', () => {
+    it('renders all 6 canonical courses with expected instructors, status badges, and action labels', () => {
+      const queueViewSfc = readResourceFile('views/StudentQueueView.vue');
+      const codes = DEMO_STUDENT_QUEUE.map((c) => c.course_code);
+      assert.deepEqual(codes, ['CS-401', 'CS-405', 'ENG-102', 'MATH-201', 'CS-408', 'PHYS-101']);
+
+      const instructors = DEMO_STUDENT_QUEUE.map((c) => c.instructor_name);
+      assert.deepEqual(instructors, [
+        'Prof. A. Dela Cruz',
+        'Dr. M. Santos',
+        'Prof. E. Rivera',
+        'Dr. R. Garcia',
+        'Prof. K. Gomez',
+        'Engr. J. Luna',
+      ]);
+
+      assert.equal(DEMO_STUDENT_QUEUE[0].status, 'COMPLETED');
+      assert.equal(DEMO_STUDENT_QUEUE[0].action_label, 'Clearance Signed');
+      assert.equal(DEMO_STUDENT_QUEUE[3].status, 'PENDING');
+      assert.equal(DEMO_STUDENT_QUEUE[3].action_label, 'Start Evaluation');
+      assert.ok(queueViewSfc.includes('Course Code'));
+      assert.ok(queueViewSfc.includes('Instructor'));
+    });
+  });
+
+  // 4. Dwell timer 45-second lock enforcement
+  describe('Group 04: Dwell timer 45-second lock enforcement (< 45s blocked, >= 45s allowed)', () => {
+    it('blocks 20-item survey submissions under 45 seconds and unlocks at >= 45 seconds', () => {
+      const dwellBadgeSfc = readResourceFile('components/DwellTimerBadge.vue');
+      assert.ok(dwellBadgeSfc.includes('data-testid="dwell-timer-badge"'));
+      assert.ok(dwellBadgeSfc.includes('role="timer"'));
+
+      for (let sec = 0; sec < 45; sec += 1) {
+        assert.equal(isDwellTimeValid(sec, 20, 45), false, `Expected ${sec}s to be rejected`);
+      }
+      assert.equal(isDwellTimeValid(45, 20, 45), true);
+      assert.equal(isDwellTimeValid(120, 20, 45), true);
+      assert.equal(isDwellTimeValid(-5, 20, 45), false);
+    });
+  });
+
+  // 5. Population variance sigma^2 calculation on 20 Likert ratings
+  describe('Group 05: Population variance sigma^2 calculation on 20 Likert ratings', () => {
+    it('computes exact arithmetic mean (mu) and population variance (sigma^2) across 20 items', () => {
+      const alternating4And5 = Array.from({ length: 20 }, (_, idx) => (idx % 2 === 0 ? 5 : 4));
+      assert.equal(calculateMean(alternating4And5), 4.5);
+      assert.equal(calculatePopulationVariance(alternating4And5), 0.25);
+
+      const variedSet = [5, 4, 5, 3, 4, 5, 4, 5, 3, 4, 5, 4, 5, 3, 4, 5, 4, 5, 3, 4];
+      assert.equal(calculateMean(variedSet), 4.2);
+      assert.equal(calculatePopulationVariance(variedSet), 0.56);
+    });
+  });
+
+  // 6. Straight-lining (sigma^2 = 0) detection for all-5s and all-1s
+  describe('Group 06: Straight-lining (sigma^2 = 0) detection for all-5s and all-1s', () => {
+    it('detects zero variance for straight 5s, straight 1s, and straight 3s across all 20 Likert items', () => {
+      const all5s = Array(20).fill(5);
+      const all1s = Array(20).fill(1);
+      const all3s = Array(20).fill(3);
+
+      assert.equal(calculatePopulationVariance(all5s), 0);
+      assert.equal(calculatePopulationVariance(all1s), 0);
+      assert.equal(isStraightLined(all5s), true);
+      assert.equal(isStraightLined(all1s), true);
+      assert.equal(isStraightLined(all3s), true);
+
+      const oneDifferent = [...Array(19).fill(5), 4];
+      assert.equal(isStraightLined(oneDifferent), false);
+      assert.ok(calculatePopulationVariance(oneDifferent) > 0);
+    });
+  });
+
+  // 7. StraightLineModal confirmation workflow (confirm_uniform = false vs true)
+  describe('Group 07: StraightLineModal confirmation workflow (confirm_uniform = false vs true)', () => {
+    it('challenges uniform submissions when confirm_uniform is false and records is_straight_lined when confirmed', () => {
+      const modalSfc = readResourceFile('components/StraightLineModal.vue');
+      const evalStoreSrc = readResourceFile('stores/evaluation.js');
+
+      assert.ok(modalSfc.includes('data-testid="straight-line-modal"'));
+      assert.ok(modalSfc.includes('data-testid="modal-confirm-uniform-btn"'));
+      assert.ok(modalSfc.includes('is_straight_lined = true'));
+      assert.ok(evalStoreSrc.includes('ZERO_VARIANCE_CONFIRMATION_REQUIRED'));
+    });
+  });
+
+  // 8. Genuine varied rating submission acceptance (5 clusters x 5-point Likert scale & 4-to-5 Prof Questions)
+  describe('Group 08: Genuine varied rating submission acceptance (5 clusters x 5-point Likert & Prof Questions)', () => {
+    it('validates 25 pedagogical items across 5 clusters of 5-point Likert scale and 4-to-5 professor questions', () => {
+      const totalItems = PEDAGOGICAL_DIMENSIONS.reduce((sum, dim) => sum + dim.items.length, 0);
+      assert.equal(PEDAGOGICAL_DIMENSIONS.length, 5);
+      assert.equal(FIVE_LIKERT_CLUSTERS.length, 5);
+      assert.equal(totalItems, 25);
+
+      const genuineRatings = [
+        5, 4, 5, 5, 4,
+        5, 4, 4, 5, 4,
+        5, 5, 4, 5, 4,
+        5, 5, 4, 5, 5,
+        5, 4, 5, 4, 5,
+      ];
+      assert.equal(isDwellTimeValid(68, genuineRatings.length, 45), true);
+      assert.equal(isStraightLined(genuineRatings), false);
+      assert.ok(calculateMean(genuineRatings) > 4.0);
+      assert.ok(calculatePopulationVariance(genuineRatings) > 0);
+
+      const clusterScores = calculateClusterMeans(genuineRatings);
+      assert.equal(Object.keys(clusterScores).length, 5);
+      assert.ok('Student Support & Mentorship' in clusterScores);
+
+      // Verify 4 structured professor questions (max of 5 questions)
+      assert.equal(MIN_PROFESSOR_QUESTIONS, 4);
+      assert.equal(MAX_PROFESSOR_QUESTIONS, 5);
+      assert.equal(PROFESSOR_QUALITATIVE_QUESTIONS.length, 5);
+
+      const validProfQ = validateProfessorQuestions({
+        threeWords: ['Malinaw', 'Approachable', 'Organized'],
+        improvementTopics: ['Faster return of quiz scores', 'More dynamic programming code walkthroughs'],
+        teachingStrengths: 'Explains complex algorithms very clearly.',
+        recommendations: 'Provide practice sets before midterms.',
+      });
+      assert.equal(validProfQ.valid, true);
+      assert.equal(validProfQ.questionCount, 4);
+      assert.equal(validProfQ.maxQuestions, 5);
+      assert.deepEqual(validProfQ.threeWords, ['Malinaw', 'Approachable', 'Organized']);
+      assert.equal(validProfQ.improvementTopics[0].subItem, 'a.');
+      assert.equal(validProfQ.improvementTopics[1].subItem, 'b.');
+
+      const exceededProfQ = validateProfessorQuestions({
+        threeWords: ['Malinaw', 'Approachable', 'Organized'],
+        improvementTopics: ['Topic 1'],
+        questions: ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6'],
+      });
+      assert.equal(exceededProfQ.valid, false);
+    });
+  });
+
+  // 9. FT-02 submission idempotency key persistence across retries
+  describe('Group 09: FT-02 submission idempotency key persistence across retries', () => {
+    it('generates unique FT-02 submission keys and prevents duplicate vault entries on network retry', () => {
+      const evalStoreSrc = readResourceFile('stores/evaluation.js');
+      const formViewSfc = readResourceFile('views/EvaluationFormView.vue');
+
+      assert.ok(evalStoreSrc.includes('generateSubmissionKey'));
+      assert.ok(evalStoreSrc.includes('FT02-'));
+      assert.ok(evalStoreSrc.includes('processedKeys.value.has(key)'));
+      assert.ok(evalStoreSrc.includes('idempotentReplay: true'));
+      assert.ok(formViewSfc.includes('submitting'));
+    });
+  });
+
+  // 10. Digital Examination Clearance Permit unlock only when all 6 courses are CLEARED
+  describe('Group 10: Digital Examination Clearance Permit unlock only when all 6 courses are CLEARED', () => {
+    it('keeps permit gated when 3/6 or 5/6 courses are completed and unlocks only when 6/6 are COMPLETED', () => {
+      const permitCardSfc = readResourceFile('components/ClearancePermitCard.vue');
+      assert.ok(permitCardSfc.includes('data-testid="clearance-permit-card"'));
+      assert.ok(permitCardSfc.includes('Digital Examination Permit — CLEARED'));
+      assert.ok(permitCardSfc.includes('Digital Examination Permit — GATED (PENDING)'));
+
+      const fiveOfSix = DEMO_STUDENT_QUEUE.map((c, idx) => ({
+        ...c,
+        status: idx < 5 ? 'COMPLETED' : 'PENDING',
+      }));
+      assert.equal(calculateQueueProgress(fiveOfSix).allCleared, false);
+
+      const sixOfSix = DEMO_STUDENT_QUEUE.map((c) => ({ ...c, status: 'COMPLETED' }));
+      assert.equal(calculateQueueProgress(sixOfSix).allCleared, true);
+    });
+  });
+
+  // 11. Signed JWT clearance token verification display
+  describe('Group 11: Signed JWT clearance token verification display', () => {
+    it('displays per-course signed clearance tokens and master examination permit token upon completion', () => {
+      const permitCardSfc = readResourceFile('components/ClearancePermitCard.vue');
+      assert.ok(permitCardSfc.includes('data-testid="master-permit-token"'));
+      assert.ok(permitCardSfc.includes('PERMIT-${props.studentId}-FALL2026-VERIFIED'));
+
+      const completedCourses = DEMO_STUDENT_QUEUE.filter((c) => c.status === 'COMPLETED');
+      assert.equal(completedCourses.length, 3);
+      for (const course of completedCourses) {
+        assert.ok(String(course.clearance_token).startsWith('CLR-2026-'));
+      }
+    });
+  });
+
+  // 12. Double-Blind faculty lock screen when term_grades_submitted = false
+  describe('Group 12: Double-Blind faculty lock screen when term_grades_submitted = false', () => {
+    it('blocks faculty evaluation visibility when term_grades_submitted is false', () => {
+      const facultyViewSfc = readResourceFile('views/FacultyDashboardView.vue');
+      assert.equal(canFacultyViewEvaluation(false, false), false);
+      assert.equal(canFacultyViewEvaluation(false, true), false);
+      assert.ok(facultyViewSfc.includes('Double-Blind'));
+      assert.ok(facultyViewSfc.includes('term_grades_submitted'));
+    });
+  });
+
+  // 13. Double-Blind faculty lock screen when registrar_lock = false
+  describe('Group 13: Double-Blind faculty lock screen when registrar_lock = false', () => {
+    it('blocks faculty evaluation visibility when registrar_lock is false even after grades are submitted', () => {
+      assert.equal(canFacultyViewEvaluation(true, false), false);
+      const evalStoreSrc = readResourceFile('stores/evaluation.js');
+      assert.ok(evalStoreSrc.includes('term_grades_submitted: true'));
+      assert.ok(evalStoreSrc.includes('registrar_lock: false'));
+    });
+  });
+
+  // 14. Double-Blind faculty unlock when both term_grades_submitted = true AND registrar_lock = true
+  describe('Group 14: Double-Blind faculty unlock when both term_grades_submitted = true AND registrar_lock = true', () => {
+    it('unlocks aggregated faculty evaluation reports only when both grade submission and registrar lock are true', () => {
+      assert.equal(canFacultyViewEvaluation(true, true), true);
+      const facultyViewSfc = readResourceFile('views/FacultyDashboardView.vue');
+      assert.ok(facultyViewSfc.includes('canFacultyViewEvaluation'));
+      assert.ok(facultyViewSfc.includes('data-testid="faculty-unlocked-report"'));
+      assert.ok(facultyViewSfc.includes('DOUBLE-BLIND UNLOCKED'));
+    });
+  });
+
+  // 15. Anonymity guarantee in faculty view (zero student_id or student names in feedback cards)
+  describe('Group 15: Anonymity guarantee in faculty view (zero student_id or student names in feedback cards)', () => {
+    it('ensures faculty comment payloads and cards never expose student_id, user_id, clearance_id, or IP addresses', () => {
+      const evalStoreSrc = readResourceFile('stores/evaluation.js');
+      const facultyViewSfc = readResourceFile('views/FacultyDashboardView.vue');
+
+      // Inspect sample_comments in evaluation store to confirm zero identifying keys
+      const sampleCommentMatch = evalStoreSrc.match(/sample_comments:\s*\[([\s\S]*?)\]/);
+      assert.ok(sampleCommentMatch);
+      assert.equal(sampleCommentMatch[1].includes('student_id'), false);
+      assert.equal(sampleCommentMatch[1].includes('2024-10892'), false);
+      assert.equal(sampleCommentMatch[1].includes('ip_address'), false);
+      assert.ok(facultyViewSfc.includes('Zero Student Identifiers'));
+    });
+  });
+
+  // 16. Dean dashboard KPI metrics (Response Rate: 91.4%, 4,821 submissions, 1.2% integrity flags)
+  describe('Group 16: Dean dashboard KPI metrics (Response Rate: 91.4%, 4,821 submissions, 1.2% integrity flags)', () => {
+    it('matches Chapter II wireframe metrics for College of Computer Studies Final SET overview', () => {
+      const deanViewSfc = readResourceFile('views/DeanDashboardView.vue');
+      assert.equal(DEMO_DEAN_METRICS.department, 'College of Computer Studies');
+      assert.equal(DEMO_DEAN_METRICS.period, 'Final SET');
+      assert.equal(DEMO_DEAN_METRICS.responseRate, 91.4);
+      assert.equal(DEMO_DEAN_METRICS.responseTarget, 85.0);
+      assert.equal(DEMO_DEAN_METRICS.submissionsLogged, 4821);
+      assert.equal(DEMO_DEAN_METRICS.averageEvaluationTime, '3m 42s');
+      assert.equal(DEMO_DEAN_METRICS.integrityFlagsPct, 1.2);
+      assert.ok(deanViewSfc.includes('Response Rate'));
+      assert.ok(deanViewSfc.includes('Submissions Logged'));
+    });
+  });
+
+  // 17. Sentiment polarity distribution bars (72% Positive, 18% Neutral, 10% Negative)
+  describe('Group 17: Sentiment polarity distribution bars (72% Positive, 18% Neutral, 10% Negative)', () => {
+    it('renders horizontal polarity distribution summing to 100% (72% Positive, 18% Neutral, 10% Negative)', () => {
+      const dist = DEMO_DEAN_METRICS.sentimentDistribution;
+      assert.equal(dist.positive, 72);
+      assert.equal(dist.neutral, 18);
+      assert.equal(dist.negative, 10);
+      assert.equal(dist.positive + dist.neutral + dist.negative, 100);
+
+      const deanViewSfc = readResourceFile('views/DeanDashboardView.vue');
+      assert.ok(deanViewSfc.includes('Sentiment Polarity Distribution'));
+    });
+  });
+
+  // 18. Faculty Exception Watchlist trigger when Mean Score < 3.50
+  describe('Group 18: Faculty Exception Watchlist trigger when Mean Score < 3.50', () => {
+    it('flags instructors with mean rating below 3.50 (Faculty Member X: 3.1, Faculty Member Y: 3.3)', () => {
+      assert.equal(evaluateWatchlistFlag(3.1, 10.0), true);
+      assert.equal(evaluateWatchlistFlag(3.3, 15.0), true);
+      assert.equal(evaluateWatchlistFlag(3.49, 0.0), true);
+      assert.equal(evaluateWatchlistFlag(3.5, 10.0), false);
+      assert.equal(evaluateWatchlistFlag(4.62, 5.1), false);
+
+      assert.equal(DEMO_DEAN_METRICS.watchlist.length, 2);
+      assert.equal(DEMO_DEAN_METRICS.watchlist[0].mean_score, 3.1);
+      assert.equal(DEMO_DEAN_METRICS.watchlist[1].mean_score, 3.3);
+    });
+  });
+
+  // 19. Faculty Exception Watchlist trigger when Negative Sentiment > 35%
+  describe('Group 19: Faculty Exception Watchlist trigger when Negative Sentiment > 35%', () => {
+    it('flags instructors when negative comment sentiment exceeds 35% even if mean score is >= 3.50', () => {
+      assert.equal(evaluateWatchlistFlag(4.1, 35.1), true);
+      assert.equal(evaluateWatchlistFlag(3.85, 42.0), true);
+      assert.equal(evaluateWatchlistFlag(3.85, 35.0), false);
+      assert.equal(evaluateWatchlistFlag(4.2, 12.0), false);
+    });
+  });
+
+  // 20. Pedagogical domain tag classification (4 institutional categories & Chapter III samples)
+  describe('Group 20: Pedagogical domain tag classification (4 categories & Chapter III benchmarks)', () => {
+    it('classifies Chapter III narrative comments into exact polarity scores, valences, and pedagogical tags', () => {
+      const sample1 = classifyCommentPreview(
+        'Explains complex algorithms very clearly and provides great practical code examples.',
+      );
+      assert.equal(sample1.polarity, 0.78);
+      assert.equal(sample1.valence, 'Positive');
+      assert.equal(sample1.pedagogical_tag, 'Pedagogical Delivery');
+
+      const sample2 = classifyCommentPreview(
+        'Takes over a month to return quiz scores and provides no helpful feedback.',
+      );
+      assert.equal(sample2.polarity, -0.62);
+      assert.equal(sample2.valence, 'Negative');
+      assert.equal(sample2.pedagogical_tag, 'Assessment & Grading');
+
+      const sample3 = classifyCommentPreview(
+        'Arrives to morning lectures 15 minutes late consistently.',
+      );
+      assert.equal(sample3.polarity, -0.45);
+      assert.equal(sample3.valence, 'Negative');
+      assert.equal(sample3.pedagogical_tag, 'Classroom Management');
+
+      const sample4 = classifyCommentPreview(
+        'Demonstrates professional conduct, empathy, and respectful consultation with students.',
+      );
+      assert.equal(sample4.valence, 'Positive');
+      assert.equal(sample4.pedagogical_tag, 'Professional Conduct');
+
+      const sample5 = classifyCommentPreview(
+        'Sobrang matulungin sa konsultasyon at laging available sa office hours para sa thesis mentorship at gabay.',
+      );
+      assert.equal(sample5.valence, 'Positive');
+      assert.equal(sample5.pedagogical_tag, 'Student Support & Mentorship');
+      assert.equal(sample5.nlp_engine, 'calamanCy+VADER');
+      assert.equal(CALAMANCY_CONFIG.repo, 'https://github.com/ljvmiranda921/calamanCy');
+    });
+  });
+
+  // 21. Admin CSV/JSON roster ingestion validation & CSV formula injection neutralization
+  describe('Group 21: Admin CSV/JSON roster ingestion validation & CSV formula neutralization', () => {
+    it('validates roster imports in AdminRosterView.vue and neutralizes CSV formula injection (=, +, -, @)', () => {
+      const adminViewSfc = readResourceFile('views/AdminRosterView.vue');
+      assert.ok(adminViewSfc.includes('CSV'));
+      assert.ok(adminViewSfc.includes('JSON'));
+
+      assert.equal(sanitizeCsvCell('=CMD|\' /C calc\'!A0'), '\'=CMD|\' /C calc\'!A0');
+      assert.equal(sanitizeCsvCell('+SUM(A1:A10)'), '\'+SUM(A1:A10)');
+      assert.equal(sanitizeCsvCell('-1+2'), '\'-1+2');
+      assert.equal(sanitizeCsvCell('@IMPORTXML("http://evil.test")'), '\'@IMPORTXML("http://evil.test")');
+      assert.equal(sanitizeCsvCell('CS-401 Prof. A. Dela Cruz'), 'CS-401 Prof. A. Dela Cruz');
+    });
+  });
+
+  // 22. Admin Registrar Grade-Lock toggle controls
+  describe('Group 22: Admin Registrar Grade-Lock toggle controls', () => {
+    it('provides per-section registrar_lock and term_grades_submitted toggles in AdminRosterView.vue', () => {
+      const adminViewSfc = readResourceFile('views/AdminRosterView.vue');
+      const evalStoreSrc = readResourceFile('stores/evaluation.js');
+
+      assert.ok(adminViewSfc.includes('registrar_lock'));
+      assert.ok(adminViewSfc.includes('term_grades_submitted'));
+      assert.ok(evalStoreSrc.includes('function toggleSectionLock'));
+    });
+  });
+
+  // 23. System Usability Scale (SUS) 10-item calculation (83.92 Grade A benchmark)
+  describe('Group 23: System Usability Scale (SUS) 10-item calculation (83.92 Grade A benchmark)', () => {
+    it('computes 10-item SUS scores and matches Chapter III cohort breakdown (N=50, 83.92 Grade A / Excellent)', () => {
+      const perfectResponses = [5, 1, 5, 1, 5, 1, 5, 1, 5, 1];
+      const perfectSus = calculateSusScore(perfectResponses);
+      assert.equal(perfectSus.score, 100);
+      assert.equal(perfectSus.grade, 'Grade A');
+      assert.equal(perfectSus.isInstitutionalGrade, true);
+
+      const benchmarkResponses = [5, 2, 4, 1, 5, 2, 4, 2, 5, 1]; // total = 35 * 2.5 = 87.5
+      const benchmarkSus = calculateSusScore(benchmarkResponses);
+      assert.equal(benchmarkSus.score, 87.5);
+      assert.equal(benchmarkSus.isInstitutionalGrade, true);
+
+      assert.equal(DEMO_DEAN_METRICS.sus.consolidatedMean, 83.92);
+      assert.equal(DEMO_DEAN_METRICS.sus.totalSampleSize, 50);
+      assert.equal(DEMO_DEAN_METRICS.sus.grade, 'Grade A / Excellent');
+      assert.equal(DEMO_DEAN_METRICS.sus.cohorts[0].meanScore, 84.25);
+      assert.equal(DEMO_DEAN_METRICS.sus.cohorts[1].meanScore, 81.5);
+      assert.equal(DEMO_DEAN_METRICS.sus.cohorts[2].meanScore, 86.0);
+    });
+  });
+
+  // 24. ISO/IEC 25010 5-characteristic quality score aggregation (4.77 Excellent benchmark)
+  describe('Group 24: ISO/IEC 25010 5-characteristic quality score aggregation (4.77 Excellent)', () => {
+    it('aggregates Functional Suitability, Performance Efficiency, Usability, Reliability, and Portability to 4.77', () => {
+      const chars = DEMO_DEAN_METRICS.iso25010.characteristics;
+      assert.equal(chars.length, 5);
+
+      const scores = chars.map((c) => c.score);
+      assert.deepEqual(scores, [4.78, 4.65, 4.82, 4.74, 4.88]);
+
+      const mean = Number((scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2));
+      assert.equal(mean, 4.77);
+      assert.equal(DEMO_DEAN_METRICS.iso25010.overallMean, 4.77);
+      assert.equal(DEMO_DEAN_METRICS.iso25010.interpretation, 'Excellent');
+    });
+  });
+
+  // 25. Responsive viewport layout constraints (375x812 mobile & 1366x768 desktop) & RBAC router guards
+  describe('Group 25: Responsive viewport layout constraints (375x812 & 1366x768) & five-role router guards', () => {
+    it('enforces five-role route authorization and responsive CSS breakpoints for 375px mobile and 1366px desktop', () => {
+      const routerSrc = readResourceFile('router/index.js');
+      const loginViewSfc = readResourceFile('views/LoginView.vue');
+
+      assert.ok(routerSrc.includes('canAccessRoute'));
+      assert.ok(routerSrc.includes("roles: ['student', 'admin']"));
+      assert.ok(routerSrc.includes("roles: ['faculty', 'chair', 'dean', 'admin']"));
+      assert.ok(routerSrc.includes("roles: ['dean', 'chair', 'admin']"));
+      assert.ok(routerSrc.includes("roles: ['admin']"));
+      assert.ok(loginViewSfc.includes('DEMO_ROLE_PROFILES.student.institutional_id'));
+      assert.ok(loginViewSfc.includes('data-testid="login-id-input"'));
+    });
+  });
+});

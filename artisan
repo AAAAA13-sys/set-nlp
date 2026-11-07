@@ -1,0 +1,177 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+define('LARAVEL_START', microtime(true));
+
+$app = require __DIR__ . '/bootstrap/app.php';
+
+if (is_object($app) && method_exists($app, 'handleCommand')) {
+    $status = $app->handleCommand(new \Symfony\Component\Console\Input\ArgvInput());
+    exit($status);
+}
+
+$args = array_slice($argv ?? [], 1);
+$command = $args[0] ?? 'list';
+
+if ($command === 'test') {
+    $filter = null;
+    foreach ($args as $arg) {
+        if (str_starts_with($arg, '--filter=')) {
+            $filter = substr($arg, strlen('--filter='));
+        }
+    }
+
+    $phpunitBin = __DIR__ . '/vendor/bin/phpunit';
+    if (is_file($phpunitBin)) {
+        $cmd = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($phpunitBin);
+        if ($filter !== null) {
+            $cmd .= ' --filter ' . escapeshellarg($filter);
+        }
+        passthru($cmd, $exitCode);
+        exit($exitCode);
+    }
+
+    if (!class_exists(\PHPUnit\Framework\TestCase::class)) {
+        eval('
+            namespace PHPUnit\Framework;
+            class AssertionFailedError extends \RuntimeException {}
+            abstract class TestCase {
+                protected function setUp(): void {}
+                protected function tearDown(): void {}
+                public function runSetUp(): void { $this->setUp(); }
+                public function runTearDown(): void { $this->tearDown(); }
+                public static function assertTrue(mixed $condition, string $message = ""): void {
+                    if ($condition !== true) throw new AssertionFailedError($message ?: "Failed asserting that value is true.");
+                }
+                public static function assertFalse(mixed $condition, string $message = ""): void {
+                    if ($condition !== false) throw new AssertionFailedError($message ?: "Failed asserting that value is false.");
+                }
+                public static function assertSame(mixed $expected, mixed $actual, string $message = ""): void {
+                    if ($expected !== $actual) throw new AssertionFailedError($message ?: sprintf("Failed asserting that %s is identical to %s.", var_export($actual, true), var_export($expected, true)));
+                }
+                public static function assertEquals(mixed $expected, mixed $actual, string $message = ""): void {
+                    if ($expected != $actual) throw new AssertionFailedError($message ?: sprintf("Failed asserting that %s matches expected %s.", var_export($actual, true), var_export($expected, true)));
+                }
+                public static function assertEqualsWithDelta(float $expected, float $actual, float $delta, string $message = ""): void {
+                    if (abs($expected - $actual) > $delta) throw new AssertionFailedError($message ?: sprintf("Failed asserting that %f is within %f of %f.", $actual, $delta, $expected));
+                }
+                public static function assertNotEmpty(mixed $actual, string $message = ""): void {
+                    if (empty($actual)) throw new AssertionFailedError($message ?: "Failed asserting that value is not empty.");
+                }
+                public static function assertEmpty(mixed $actual, string $message = ""): void {
+                    if (!empty($actual)) throw new AssertionFailedError($message ?: "Failed asserting that value is empty.");
+                }
+                public static function assertCount(int $expectedCount, iterable $haystack, string $message = ""): void {
+                    $count = is_countable($haystack) ? count($haystack) : iterator_count($haystack);
+                    if ($count !== $expectedCount) throw new AssertionFailedError($message ?: sprintf("Failed asserting that count %d matches expected %d.", $count, $expectedCount));
+                }
+                public static function assertArrayHasKey(int|string $key, array $array, string $message = ""): void {
+                    if (!array_key_exists($key, $array)) throw new AssertionFailedError($message ?: sprintf("Failed asserting that array has key %s.", (string) $key));
+                }
+                public static function assertArrayNotHasKey(int|string $key, array $array, string $message = ""): void {
+                    if (array_key_exists($key, $array)) throw new AssertionFailedError($message ?: sprintf("Failed asserting that array does not have key %s.", (string) $key));
+                }
+                public static function assertContains(mixed $needle, iterable $haystack, string $message = ""): void {
+                    $arr = is_array($haystack) ? $haystack : iterator_to_array($haystack);
+                    if (!in_array($needle, $arr, true)) throw new AssertionFailedError($message ?: "Failed asserting that haystack contains needle.");
+                }
+                public static function assertNotContains(mixed $needle, iterable $haystack, string $message = ""): void {
+                    $arr = is_array($haystack) ? $haystack : iterator_to_array($haystack);
+                    if (in_array($needle, $arr, true)) throw new AssertionFailedError($message ?: "Failed asserting that haystack does not contain needle.");
+                }
+                public static function assertGreaterThanOrEqual(float|int $expected, float|int $actual, string $message = ""): void {
+                    if ($actual < $expected) throw new AssertionFailedError($message ?: sprintf("Failed asserting that %s is >= %s.", (string) $actual, (string) $expected));
+                }
+                public static function assertLessThanOrEqual(float|int $expected, float|int $actual, string $message = ""): void {
+                    if ($actual > $expected) throw new AssertionFailedError($message ?: sprintf("Failed asserting that %s is <= %s.", (string) $actual, (string) $expected));
+                }
+                public static function assertLessThan(float|int $expected, float|int $actual, string $message = ""): void {
+                    if ($actual >= $expected) throw new AssertionFailedError($message ?: sprintf("Failed asserting that %s is < %s.", (string) $actual, (string) $expected));
+                }
+                public static function assertGreaterThan(float|int $expected, float|int $actual, string $message = ""): void {
+                    if ($actual <= $expected) throw new AssertionFailedError($message ?: sprintf("Failed asserting that %s is > %s.", (string) $actual, (string) $expected));
+                }
+                public static function assertStringContainsString(string $needle, string $haystack, string $message = ""): void {
+                    if (!str_contains($haystack, $needle)) throw new AssertionFailedError($message ?: sprintf("Failed asserting that \"%s\" contains \"%s\".", $haystack, $needle));
+                }
+                public static function assertStringStartsWith(string $prefix, string $string, string $message = ""): void {
+                    if (!str_starts_with($string, $prefix)) throw new AssertionFailedError($message ?: sprintf("Failed asserting that \"%s\" starts with \"%s\".", $string, $prefix));
+                }
+                public static function assertNotNull(mixed $actual, string $message = ""): void {
+                    if ($actual === null) throw new AssertionFailedError($message ?: "Failed asserting that value is not null.");
+                }
+                public static function assertNull(mixed $actual, string $message = ""): void {
+                    if ($actual !== null) throw new AssertionFailedError($message ?: "Failed asserting that value is null.");
+                }
+            }
+        ');
+    }
+
+    $testDir = __DIR__ . '/tests';
+    if (!is_dir($testDir)) {
+        echo "No tests directory found.\n";
+        exit(0);
+    }
+
+    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($testDir));
+    $testFiles = [];
+    foreach ($iterator as $file) {
+        if ($file->isFile() && str_ends_with($file->getFilename(), 'Test.php')) {
+            $testFiles[] = $file->getPathname();
+        }
+    }
+    sort($testFiles);
+
+    $beforeClasses = get_declared_classes();
+    foreach ($testFiles as $testFile) {
+        require_once $testFile;
+    }
+    $afterClasses = get_declared_classes();
+    $newClasses = array_diff($afterClasses, $beforeClasses);
+
+    $passed = 0;
+    $failed = 0;
+    $failures = [];
+
+    foreach ($newClasses as $className) {
+        $ref = new ReflectionClass($className);
+        if ($ref->isAbstract() || !$ref->isSubclassOf(\PHPUnit\Framework\TestCase::class)) {
+            continue;
+        }
+
+        foreach ($ref->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+            $methodName = $method->getName();
+            if (!str_starts_with($methodName, 'test')) {
+                continue;
+            }
+            if ($filter !== null && !str_contains($methodName, $filter) && !str_contains($className, $filter)) {
+                continue;
+            }
+
+            $instance = $ref->newInstance();
+            try {
+                if (method_exists($instance, 'runSetUp')) {
+                    $instance->runSetUp();
+                }
+                $method->invoke($instance);
+                if (method_exists($instance, 'runTearDown')) {
+                    $instance->runTearDown();
+                }
+                echo "  PASS  {$className}::{$methodName}\n";
+                $passed++;
+            } catch (\Throwable $e) {
+                echo "  FAIL  {$className}::{$methodName} - {$e->getMessage()}\n";
+                $failed++;
+                $failures[] = "{$className}::{$methodName}: {$e->getMessage()}";
+            }
+        }
+    }
+
+    echo "\nTests: {$passed} passed, {$failed} failed (" . ($passed + $failed) . " total)\n";
+    exit($failed > 0 ? 1 : 0);
+}
+
+echo "EvaluaTech Artisan CLI (Laravel 12)\n";
+exit(0);
