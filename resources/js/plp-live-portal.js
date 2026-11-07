@@ -317,6 +317,11 @@ function renderQueueView() {
             <span>Completion: <strong>${progress.percentage}%</strong></span>
             <span>|</span>
             <span>Clearance: <strong>${progress.clearanceStatus}</strong></span>
+            ${
+              !progress.allCleared
+                ? `<button type="button" class="btn-secondary btn-xs" data-action="complete-all-courses">Simulate All 6/6 Completed</button>`
+                : ''
+            }
           </div>
         </div>
         <div class="queue-progressbar-outer" role="progressbar" aria-valuenow="${progress.percentage}" aria-valuemin="0" aria-valuemax="100">
@@ -1083,6 +1088,15 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
 
     if (action === 'start-eval') {
       navigate(`/evaluate/${actionEl.getAttribute('data-section-id')}`);
+    } else if (action === 'complete-all-courses') {
+      state.courses.forEach((c) => {
+        if (c.status !== 'COMPLETED') {
+          c.status = 'COMPLETED';
+          c.action_label = 'Clearance Signed';
+          c.clearance_token = `CLR-2026-${c.course_code.replace(/[^A-Z0-9]/g, '')}-PLPVERIFIED`;
+        }
+      });
+      renderApp();
     } else if (action === 'fast-forward-dwell') {
       state.dwellSeconds = Math.max(45, state.dwellSeconds);
       renderApp();

@@ -21,6 +21,16 @@ function startEvaluation(course) {
     router.push(`/evaluate/${course.course_section_id}`).catch(() => {});
   }
 }
+
+function completeAllPendingDemo() {
+  evaluationStore.courses.forEach((course) => {
+    if (course.status !== 'COMPLETED') {
+      course.status = 'COMPLETED';
+      course.action_label = 'Clearance Signed';
+      course.clearance_token = `CLR-2026-${course.course_code.replace(/[^A-Z0-9]/g, '')}-VERIFIED`;
+    }
+  });
+}
 </script>
 
 <template>
@@ -44,6 +54,15 @@ function startEvaluation(course) {
           <span>Completion: <strong>{{ progress.percentage }}%</strong></span>
           <span class="divider">|</span>
           <span>Clearance: <strong>{{ progress.clearanceStatus }}</strong></span>
+          <button
+            v-if="!progress.allCleared"
+            type="button"
+            class="btn-secondary btn-xs"
+            data-testid="complete-all-demo-btn"
+            @click="completeAllPendingDemo"
+          >
+            Simulate All 6/6 Completed
+          </button>
         </div>
       </div>
 

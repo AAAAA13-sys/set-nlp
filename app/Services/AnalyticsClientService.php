@@ -47,6 +47,8 @@ class AnalyticsClientService
                 'polarity' => 0.0,
                 'valence' => self::VALENCE_NEUTRAL,
                 'pedagogical_tag' => self::TAG_PEDAGOGICAL_DELIVERY,
+                'nlp_engine' => self::NLP_ENGINE_NAME,
+                'calamancy_model' => self::CALAMANCY_DEFAULT_MODEL,
             ];
         }
 
@@ -61,6 +63,8 @@ class AnalyticsClientService
                     'polarity' => $polarity,
                     'valence' => $this->classifyValence($polarity),
                     'pedagogical_tag' => (string) $remoteResult['pedagogical_tag'],
+                    'nlp_engine' => self::NLP_ENGINE_NAME,
+                    'calamancy_model' => self::CALAMANCY_DEFAULT_MODEL,
                 ];
             }
         }
@@ -96,6 +100,8 @@ class AnalyticsClientService
                 'polarity' => 0.0,
                 'valence' => self::VALENCE_NEUTRAL,
                 'pedagogical_tag' => self::TAG_PEDAGOGICAL_DELIVERY,
+                'nlp_engine' => self::NLP_ENGINE_NAME,
+                'calamancy_model' => self::CALAMANCY_DEFAULT_MODEL,
             ];
         }
 
@@ -110,6 +116,8 @@ class AnalyticsClientService
                 'polarity' => 0.78,
                 'valence' => self::VALENCE_POSITIVE,
                 'pedagogical_tag' => self::TAG_PEDAGOGICAL_DELIVERY,
+                'nlp_engine' => self::NLP_ENGINE_NAME,
+                'calamancy_model' => self::CALAMANCY_DEFAULT_MODEL,
             ];
         }
 
@@ -121,6 +129,8 @@ class AnalyticsClientService
                 'polarity' => -0.62,
                 'valence' => self::VALENCE_NEGATIVE,
                 'pedagogical_tag' => self::TAG_ASSESSMENT_GRADING,
+                'nlp_engine' => self::NLP_ENGINE_NAME,
+                'calamancy_model' => self::CALAMANCY_DEFAULT_MODEL,
             ];
         }
 
@@ -132,6 +142,8 @@ class AnalyticsClientService
                 'polarity' => -0.45,
                 'valence' => self::VALENCE_NEGATIVE,
                 'pedagogical_tag' => self::TAG_CLASSROOM_MANAGEMENT,
+                'nlp_engine' => self::NLP_ENGINE_NAME,
+                'calamancy_model' => self::CALAMANCY_DEFAULT_MODEL,
             ];
         }
 
@@ -143,6 +155,62 @@ class AnalyticsClientService
             'polarity' => $polarity,
             'valence' => $valence,
             'pedagogical_tag' => $tag,
+            'nlp_engine' => self::NLP_ENGINE_NAME,
+            'calamancy_model' => self::CALAMANCY_DEFAULT_MODEL,
+        ];
+    }
+
+    /**
+     * Analyze the 4-to-5 structured qualitative questions regarding the professor using calamanCy + VADER.
+     *
+     * @param array<string, mixed> $questions
+     * @return array<string, mixed>
+     */
+    public function analyzeProfessorQuestionnaire(array $questions): array
+    {
+        $rawWords = $questions['three_words'] ?? [];
+        $words = is_array($rawWords) ? array_slice(array_values(array_filter(array_map('trim', $rawWords))), 0, 3) : [];
+        $wordAnalyses = [];
+        foreach ($words as $w) {
+            $res = $this->analyzeLocally((string) $w);
+            $wordAnalyses[] = [
+                'word' => (string) $w,
+                'polarity' => $res['polarity'],
+                'valence' => $res['valence'],
+            ];
+        }
+
+        $rawTopics = $questions['room_for_improvements'] ?? [];
+        $topics = is_array($rawTopics) ? array_values(array_filter(array_map('trim', $rawTopics))) : [];
+        $topicAnalyses = [];
+        foreach ($topics as $idx => $topicText) {
+            $res = $this->analyzeLocally((string) $topicText);
+            $topicAnalyses[] = [
+                'sub_item' => chr(97 + ($idx % 26)) . '.',
+                'topic' => (string) $topicText,
+                'polarity' => $res['polarity'],
+                'valence' => $res['valence'],
+                'pedagogical_tag' => $res['pedagogical_tag'],
+            ];
+        }
+
+        $strengths = trim((string) ($questions['teaching_strengths'] ?? ''));
+        $recommendations = trim((string) ($questions['recommendations'] ?? ''));
+        $additional = trim((string) ($questions['additional_observation'] ?? ''));
+
+        $activeQuestionCount = 4 + ($additional !== '' ? 1 : 0);
+
+        return [
+            'nlp_engine' => self::NLP_ENGINE_NAME,
+            'calamancy_model' => self::CALAMANCY_DEFAULT_MODEL,
+            'calamancy_repo' => self::CALAMANCY_REPO_URL,
+            'question_count' => min(5, $activeQuestionCount),
+            'max_questions' => 5,
+            'three_words' => $wordAnalyses,
+            'room_for_improvements' => $topicAnalyses,
+            'teaching_strengths' => $strengths !== '' ? $this->analyzeLocally($strengths) : null,
+            'recommendations' => $recommendations !== '' ? $this->analyzeLocally($recommendations) : null,
+            'additional_observation' => $additional !== '' ? $this->analyzeLocally($additional) : null,
         ];
     }
 
