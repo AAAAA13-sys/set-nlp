@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DeanAnalyticsController;
 use App\Http\Controllers\Api\FacultyPortalController;
 use App\Http\Controllers\Api\StudentEvaluationController;
+use App\Services\AnalyticsClientService;
 use App\Services\DecoupledEvaluationService;
 use Database\Seeders\EvaluaTechDemoSeeder;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +18,7 @@ define('LARAVEL_START', microtime(true));
 $uriPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
 
-// 1. Serve static CSS/JS assets directly when running under PHP built-in server (php -S 127.0.0.1:8000 -t public)
+// 1. Serve static CSS/JS assets directly when running under PHP built-in server (php -S 127.0.0.1:8000 -t public public/index.php)
 if (PHP_SAPI === 'cli-server' && preg_match('#^/resources/(css|js)/[A-Za-z0-9_./-]+$#', $uriPath) === 1) {
     $candidate = realpath(__DIR__ . '/..' . $uriPath);
     $rootResources = realpath(__DIR__ . '/../resources');
@@ -84,6 +85,21 @@ if (str_starts_with($uriPath, '/api/')) {
             'reference' => 'https://plpasig.edu.ph/',
             'platform' => 'EvaluaTech',
             'nlp_engine' => 'calamanCy+VADER',
+            'calamancy_repo' => 'https://github.com/ljvmiranda921/calamanCy',
+        ], 200);
+    } elseif ($uriPath === '/api/nlp/analyze' && $method === 'POST') {
+        $analytics = new AnalyticsClientService();
+        $commentText = (string) ($input['comment_text'] ?? $input['text'] ?? '');
+        $analysis = $analytics->analyzeComment($commentText);
+        if (isset($input['professor_questions']) && is_array($input['professor_questions'])) {
+            $analysis['professor_questionnaire'] = $analytics->analyzeProfessorQuestionnaire($input['professor_questions']);
+        }
+        $response = new JsonResponse($analysis, 200);
+    } elseif ($uriPath === '/api/admin/reset-demo' && $method === 'POST') {
+        (new EvaluaTechDemoSeeder($pdo))->run();
+        $response = new JsonResponse([
+            'ok' => true,
+            'message' => 'Pamantasan ng Lungsod ng Pasig (PLP) canonical evaluation queue and decoupled vault reset to initial state (3 of 6 Completed).',
         ], 200);
     } elseif ($uriPath === '/api/auth/login' && $method === 'POST') {
         $response = (new AuthController($pdo))->login($request);
@@ -96,6 +112,10 @@ if (str_starts_with($uriPath, '/api/')) {
         }
         $response = (new StudentEvaluationController($service))->queue($request);
     } elseif (($uriPath === '/api/evaluation/submit' || $uriPath === '/api/student/evaluations/submit') && $method === 'POST') {
+        if (!isset($input['student_id'])) {
+            $studentId = (int) $pdo->query("SELECT id FROM users WHERE institutional_id = '2024-10892' LIMIT 1")->fetchColumn();
+            $request = new Request(array_merge($input, ['student_id' => $studentId]), $_SERVER);
+        }
         $response = (new StudentEvaluationController($service))->submit($request);
     } elseif ($uriPath === '/api/student/permit' && $method === 'GET') {
         $response = (new StudentEvaluationController($service))->permit($request);

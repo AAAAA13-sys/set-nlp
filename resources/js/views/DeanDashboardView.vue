@@ -264,6 +264,18 @@ function generateAccreditationCsv() {
 
         <div class="sus-calculator-box">
           <h4>Live 10-Item SUS Calculator: {{ liveSusResult.score }} ({{ liveSusResult.label }})</h4>
+          <p class="section-subtitle">
+            Odd items score <code>(Rating - 1)</code>; even items score <code>(5 - Rating)</code>; sum multiplied by <code>2.5</code> (Grade A threshold ≥ 80.3).
+          </p>
+          <div class="preset-rating-buttons" style="margin-top: 0.5rem;">
+            <span
+              v-for="(val, idx) in susResponses"
+              :key="`sus-item-${idx}`"
+              class="token-chip chip-signed"
+            >
+              Q{{ idx + 1 }}: {{ val }}/5
+            </span>
+          </div>
         </div>
       </section>
     </div>

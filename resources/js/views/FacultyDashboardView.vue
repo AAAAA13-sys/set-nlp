@@ -158,6 +158,31 @@ function markInstructorGradesSubmitted() {
         </div>
       </div>
 
+      <div class="prof-qualitative-summary-box" data-testid="faculty-prof-questions-summary">
+        <h4>Structured Professor Questionnaire Synthesis (4-to-5 Questions • calamanCy NLP)</h4>
+        <div class="metric-overview-grid">
+          <div class="metric-card">
+            <span class="metric-label">1. Top 3 Experience Descriptors</span>
+            <strong class="metric-value">Malinaw • Approachable • Organized</strong>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">2. Room for Improvements (a., b.)</span>
+            <span class="section-subtitle">
+              <strong>a.</strong> Faster return of quiz rubrics<br />
+              <strong>b.</strong> More step-by-step live coding walkthroughs
+            </span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">3. Key Teaching Strengths</span>
+            <span class="section-subtitle">Clear algorithm explanations and practical laboratory examples.</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">4. Actionable Recommendations</span>
+            <span class="section-subtitle">Provide practice problem sets with rubric solutions before midterms.</span>
+          </div>
+        </div>
+      </div>
+
       <div class="anonymized-comments-section">
         <h4>calamanCy + VADER NLP-Classified Narrative Insights (Zero Student Identifiers)</h4>
         <div

@@ -222,6 +222,10 @@ function renderNavbar() {
               <span>Clearance:</span>
               <strong>${progress.clearanceStatus}</strong>
             </div>
+
+            <button type="button" class="btn-secondary btn-xs" data-action="reset-plp-demo" title="Reset PLP evaluation queue back to 3 of 6 Completed">
+              Reset Demo
+            </button>
           </div>
         </div>
       </div>
@@ -675,6 +679,25 @@ function renderFacultyView() {
                   )
                   .join('')}
               </div>
+              <h4>Structured Professor Questionnaire Synthesis (4-to-5 Questions • calamanCy NLP)</h4>
+              <div class="metric-overview-grid" style="margin-bottom: 1rem;">
+                <div class="metric-card">
+                  <span class="metric-label">1. Top 3 Experience Descriptors</span>
+                  <strong class="metric-value" style="font-size:1rem;">${escapeHtml(state.threeWords.filter(Boolean).join(' • ') || 'Malinaw • Approachable • Organized')}</strong>
+                </div>
+                <div class="metric-card">
+                  <span class="metric-label">2. Room for Improvements (a., b.)</span>
+                  <span class="section-subtitle">${state.improvementTopics.filter(Boolean).map((t, i) => `<strong>${String.fromCharCode(97 + i)}.</strong> ${escapeHtml(t)}`).join('<br/>')}</span>
+                </div>
+                <div class="metric-card">
+                  <span class="metric-label">3. Key Teaching Strengths</span>
+                  <span class="section-subtitle">${escapeHtml(state.teachingStrengths)}</span>
+                </div>
+                <div class="metric-card">
+                  <span class="metric-label">4. Actionable Recommendations</span>
+                  <span class="section-subtitle">${escapeHtml(state.courseRecommendations)}</span>
+                </div>
+              </div>
               <h4>calamanCy + VADER NLP-Classified Narrative Insights (Zero Student Identifiers)</h4>
               ${(sec.sample_comments || [])
                 .map(
@@ -961,6 +984,27 @@ function submitCurrentEvaluation(confirmUniform = false) {
     message: `Evaluation recorded anonymously in evaluation_vault! Signed PLP Clearance Token Issued: ${token}`,
   };
   renderApp();
+
+  // Persist asynchronously to live SQLite backend API (/api/evaluation/submit)
+  fetch('/api/evaluation/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    body: JSON.stringify({
+      course_section_id: course.course_section_id,
+      submission_key: state.submissionKey,
+      ratings: state.ratings,
+      dwell_time_seconds: state.dwellSeconds,
+      confirm_uniform: confirmUniform,
+      comment_text: state.commentText,
+      professor_questions: {
+        three_words: state.threeWords,
+        room_for_improvements: state.improvementTopics.filter((t) => String(t).trim().length > 0),
+        teaching_strengths: state.teachingStrengths,
+        recommendations: state.courseRecommendations,
+        additional_observation: state.showFifthQuestion ? state.additionalObservation : null,
+      },
+    }),
+  }).catch(() => {});
 }
 
 export function renderApp() {
@@ -1104,6 +1148,13 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       navigate(p.defaultRoute);
     } else if (action === 'print-permit') {
       window.print();
+    } else if (action === 'reset-plp-demo') {
+      state.courses = DEMO_STUDENT_QUEUE.map((c) => ({ ...c }));
+      state.sectionLocks = DEMO_SECTION_LOCKS.map((s) => ({ ...s }));
+      state.dwellSeconds = 0;
+      state.statusBanner = null;
+      fetch('/api/admin/reset-demo', { method: 'POST' }).catch(() => {});
+      renderApp();
     }
   });
 
