@@ -113,15 +113,20 @@ const validatedProfQuestions = computed(() =>
 </script>
 
 <template>
-  <section
+  <div
     v-if="visible"
-    class="plp-nlp-lab-card card"
+    class="modal-backdrop"
     role="dialog"
-    aria-modal="false"
+    aria-modal="true"
     aria-labelledby="plp-nlp-lab-heading"
     data-testid="plp-nlp-lab-modal"
+    @click.self="emit('close')"
   >
-    <div class="plp-seal-watermark" aria-hidden="true">PLP • PASIG • 2000</div>
+    <section
+      class="modal-card plp-nlp-lab-card card"
+      style="max-width: 860px; max-height: 90vh; overflow-y: auto;"
+    >
+      <div class="plp-seal-watermark" aria-hidden="true">PLP • PASIG • 2000</div>
 
     <header class="plp-lab-header">
       <div>
@@ -265,4 +270,5 @@ const validatedProfQuestions = computed(() =>
       </ol>
     </div>
   </section>
+  </div>
 </template>

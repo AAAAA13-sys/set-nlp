@@ -1,11 +1,13 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
+import PlpAnalyticsLabModal from '../components/PlpAnalyticsLabModal.vue';
 import { useAuthStore } from '../stores/auth.js';
 import { useEvaluationStore } from '../stores/evaluation.js';
 import { evaluateWatchlistFlag, sanitizeCsvCell } from '../utils/evaluationMath.js';
 
 const authStore = useAuthStore();
 const evaluationStore = useEvaluationStore();
+const showAnalyticsLab = ref(false);
 
 onMounted(() => {
   evaluationStore.fetchDeanOverview(1); // Scoped to Department 1 (College of Computer Studies)
@@ -108,6 +110,15 @@ function endorseActionPlan(facultyId) {
           <div style="font-size:0.82rem;color:var(--plp-green-900);">
             Strictly scoped to College of Computer Studies faculty sections.
           </div>
+          <button
+            type="button"
+            class="btn-secondary btn-xs"
+            style="margin-top: 0.5rem; display: inline-flex; align-items: center; gap: 0.35rem;"
+            data-testid="chair-open-analytics-lab-btn"
+            @click="showAnalyticsLab = true"
+          >
+            <span>🔬 Department calamanCy NLP Lab</span>
+          </button>
         </div>
       </div>
 
@@ -266,6 +277,12 @@ function endorseActionPlan(facultyId) {
         </div>
       </div>
     </section>
+
+    <!-- PLP calamanCy + VADER Interactive Diagnostics Modal -->
+    <PlpAnalyticsLabModal
+      :visible="showAnalyticsLab"
+      @close="showAnalyticsLab = false"
+    />
   </main>
 </template>
 

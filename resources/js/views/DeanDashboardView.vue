@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
+import PlpAnalyticsLabModal from '../components/PlpAnalyticsLabModal.vue';
 import { useEvaluationStore } from '../stores/evaluation.js';
 import {
   calculateSusScore,
@@ -9,6 +10,7 @@ import {
 
 const evaluationStore = useEvaluationStore();
 const activeTab = ref('overview'); // 'overview' | 'quality' | 'qualitative'
+const showAnalyticsLab = ref(false);
 
 const overview = computed(() => evaluationStore.deanOverview);
 
@@ -274,6 +276,18 @@ async function downloadQualitativeCsv() {
             @click="activeTab = 'qualitative'"
           >
             SOP 4: Qualitative Synthesis (calamanCy)
+          </button>
+        </div>
+
+        <div style="margin-top: 0.75rem; display: flex; justify-content: flex-end;">
+          <button
+            type="button"
+            class="btn-secondary btn-sm"
+            style="display: inline-flex; align-items: center; gap: 0.4rem; background: var(--plp-green-50); border-color: var(--border-strong); color: var(--plp-green-950);"
+            data-testid="open-analytics-lab-btn"
+            @click="showAnalyticsLab = true"
+          >
+            <span>🔬 Launch calamanCy NLP Interactive Diagnostics Lab</span>
           </button>
         </div>
       </div>
@@ -802,5 +816,11 @@ async function downloadQualitativeCsv() {
         </section>
       </div>
     </div>
+
+    <!-- PLP calamanCy + VADER Interactive Diagnostics Modal -->
+    <PlpAnalyticsLabModal
+      :visible="showAnalyticsLab"
+      @close="showAnalyticsLab = false"
+    />
   </main>
 </template>

@@ -854,4 +854,44 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (34 Test Groups)', ()
       assert.ok(navbarSfc.includes("roleNavLinks"));
     });
   });
+
+  // 35. Interactive calamanCy NLP Diagnostics Lab Modal & Accessibility Hardening
+  describe('Group 35: Interactive calamanCy NLP Diagnostics Lab Modal & Accessibility Hardening', () => {
+    it('verifies NLP diagnostics lab modal integration across Dean and Chair dashboards, Escape key listeners, and WCAG focus styling', () => {
+      const deanViewSfc = readResourceFile('views/DeanDashboardView.vue');
+      const chairViewSfc = readResourceFile('views/ChairDashboardView.vue');
+      const modalSfc = readResourceFile('components/PlpAnalyticsLabModal.vue');
+      const straightLineModalSfc = readResourceFile('components/StraightLineModal.vue');
+      const appCss = fs.readFileSync(path.join(ROOT_DIR, 'resources', 'css', 'app.css'), 'utf8');
+
+      // 1. Verify Dean dashboard lab launcher and component mount
+      assert.ok(deanViewSfc.includes('data-testid="open-analytics-lab-btn"'));
+      assert.ok(deanViewSfc.includes('PlpAnalyticsLabModal'));
+      assert.ok(deanViewSfc.includes('showAnalyticsLab'));
+
+      // 2. Verify Chair dashboard lab launcher and component mount
+      assert.ok(chairViewSfc.includes('data-testid="chair-open-analytics-lab-btn"'));
+      assert.ok(chairViewSfc.includes('PlpAnalyticsLabModal'));
+      assert.ok(chairViewSfc.includes('showAnalyticsLab'));
+
+      // 3. Verify PlpAnalyticsLabModal structure and interactive elements
+      assert.ok(modalSfc.includes('data-testid="plp-nlp-lab-modal"'));
+      assert.ok(modalSfc.includes('data-testid="close-plp-nlp-lab-btn"'));
+      assert.ok(modalSfc.includes('data-testid="plp-lab-textarea"'));
+      assert.ok(modalSfc.includes('data-testid="plp-lab-polarity-strip"'));
+      assert.ok(modalSfc.includes('data-testid="plp-five-cluster-distribution"'));
+      assert.ok(modalSfc.includes('data-testid="plp-prof-questions-breakdown"'));
+      assert.ok(modalSfc.includes('handleKeyDown'));
+      assert.ok(modalSfc.includes("event.key === 'Escape'"));
+
+      // 4. Verify StraightLineModal Escape key listener
+      assert.ok(straightLineModalSfc.includes('handleKeyDown'));
+      assert.ok(straightLineModalSfc.includes("event.key === 'Escape'"));
+
+      // 5. Verify WCAG 2.2 focus-visible ring styles in app.css
+      assert.ok(appCss.includes(':focus-visible'));
+      assert.ok(appCss.includes('outline: 2.5px solid var(--plp-green-800)'));
+      assert.ok(appCss.includes('outline-offset: 2px'));
+    });
+  });
 });
