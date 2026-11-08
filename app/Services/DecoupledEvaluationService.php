@@ -689,6 +689,7 @@ class DecoupledEvaluationService
             'exam_permit_unlocked' => $allCleared,
             'exam_permit_token' => $examPermitToken,
             'queue' => $queueItems,
+            'courses' => $queueItems,
         ];
     }
 
@@ -1349,6 +1350,17 @@ class DecoupledEvaluationService
             'qualitative_synthesis' => $qualitativeSynthesis,
             'action_plans_summary' => $this->getActionPlansSummary($departmentId),
         ];
+    }
+
+    /**
+     * Export qualitative synthesis as sanitized CSV using RosterImportService.
+     *
+     * @param array<string, mixed> $synthesis
+     */
+    public function exportQualitativeSynthesisCsv(array $synthesis): string
+    {
+        $rosterService = new RosterImportService($this->pdo, $this->validator);
+        return $rosterService->exportQualitativeSynthesisCsv($synthesis);
     }
 
     /**

@@ -24,15 +24,30 @@ export function bootstrapEvaluaTechApp(mountSelector = '#app') {
   app.use(router);
 
   if (typeof document !== 'undefined') {
-    const el = document.querySelector(mountSelector);
+    const el = typeof mountSelector === 'string' ? document.querySelector(mountSelector) : mountSelector;
     if (el) {
-      app.mount(el);
+      router.isReady().then(() => {
+        app.mount(el);
+      }).catch(() => {
+        app.mount(el);
+      });
     }
   }
 
   return { app, pinia, router };
 }
 
-if (typeof document !== 'undefined' && document.querySelector('#app')) {
-  bootstrapEvaluaTechApp('#app');
+function initApp() {
+  const el = document.querySelector('#app');
+  if (el) {
+    bootstrapEvaluaTechApp(el);
+  }
+}
+
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    initApp();
+  }
 }

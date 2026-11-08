@@ -355,4 +355,62 @@ class RosterImportService
         $slug = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '.', trim($name)) ?? $prefix);
         return trim($slug, '.') . "@{$prefix}.evaluatech.edu";
     }
+
+    /**
+     * Export calamanCy qualitative synthesis as a sanitized CSV string.
+     * Neutralizes formula injection on all descriptors, topics, strengths, and recommendations.
+     *
+     * @param array<string, mixed> $synthesis
+     */
+    public function exportQualitativeSynthesisCsv(array $synthesis): string
+    {
+        $lines = [];
+        $lines[] = 'sep=,';
+        $lines[] = '# PAMANTASAN NG LUNGSOD NG PASIG • calamanCy + VADER Qualitative SET Synthesis Export';
+        $lines[] = '# Reference: https://plpasig.edu.ph/ • NLP Engine: tl_calamancy_md';
+        $lines[] = '';
+
+        // Section 1: Top Descriptors
+        $lines[] = '--- SECTION 1: TOP 3 WORDS DESCRIPTORS ---';
+        $lines[] = 'DescriptorWord,FrequencyCount,PolarityScore,Valence';
+        $descriptors = is_array($synthesis['top_descriptors'] ?? null) ? $synthesis['top_descriptors'] : [];
+        foreach ($descriptors as $d) {
+            $word = $this->validator->sanitizeCsvCell((string) ($d['word'] ?? ''));
+            $count = (int) ($d['count'] ?? 0);
+            $polarity = number_format((float) ($d['polarity'] ?? 0.0), 2);
+            $valence = $this->validator->sanitizeCsvCell((string) ($d['valence'] ?? 'Neutral'));
+            $lines[] = "\"{$word}\",{$count},{$polarity},\"{$valence}\"";
+        }
+        $lines[] = '';
+
+        // Section 2: Room for Improvement Topics
+        $lines[] = '--- SECTION 2: ROOM FOR IMPROVEMENT PEDAGOGICAL TOPICS ---';
+        $lines[] = 'SubItem,PedagogicalCluster,TopicObservation,PolarityScore,Valence';
+        $topics = is_array($synthesis['improvement_topics'] ?? null) ? $synthesis['improvement_topics'] : [];
+        foreach ($topics as $t) {
+            $subItem = $this->validator->sanitizeCsvCell((string) ($t['sub_item'] ?? 'a.'));
+            $cluster = $this->validator->sanitizeCsvCell((string) ($t['pedagogical_tag'] ?? 'Pedagogical Delivery'));
+            $topic = $this->validator->sanitizeCsvCell((string) ($t['topic'] ?? ''));
+            $polarity = number_format((float) ($t['polarity'] ?? 0.0), 2);
+            $valence = $this->validator->sanitizeCsvCell((string) ($t['valence'] ?? 'Negative'));
+            $lines[] = "\"{$subItem}\",\"{$cluster}\",\"{$topic}\",{$polarity},\"{$valence}\"";
+        }
+        $lines[] = '';
+
+        // Section 3: Teaching Strengths & Actionable Recommendations
+        $lines[] = '--- SECTION 3: TEACHING STRENGTHS & ACTIONABLE RECOMMENDATIONS ---';
+        $lines[] = 'Category,Content';
+        $strengths = is_array($synthesis['key_strengths'] ?? null) ? $synthesis['key_strengths'] : [];
+        foreach ($strengths as $s) {
+            $sText = $this->validator->sanitizeCsvCell((string) $s);
+            $lines[] = "\"Teaching Strength\",\"{$sText}\"";
+        }
+        $recommendations = is_array($synthesis['key_recommendations'] ?? null) ? $synthesis['key_recommendations'] : [];
+        foreach ($recommendations as $r) {
+            $rText = $this->validator->sanitizeCsvCell((string) $r);
+            $lines[] = "\"Actionable Recommendation\",\"{$rText}\"";
+        }
+
+        return implode("\n", $lines) . "\n";
+    }
 }

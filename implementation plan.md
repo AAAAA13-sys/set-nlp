@@ -187,8 +187,8 @@ Acceptance: all 85+ automated test units pass across Frontend, Backend, and Pyth
 
 ## Focused multi-tier verification matrix
 
-- [x] **Frontend DOM Suite (29 Vitest groups)**: verify queue progress bar math, 45s dwell timer state transitions, straight-line $\sigma^2 = 0$ modal interception, double-blind lock screen rendering, Dean watchlist filtering, mobile/desktop viewport responsiveness, AACCUP/CHED/ISO accreditation compliance, Dean action plan resolution tracking, registrar exam permit signature verification, the calamanCy qualitative synthesis tab, Faculty Portal pedagogical action plan implementation workflows, and the Admin Evaluation Window & Parameter Tuning Console.
-- [x] **Backend PHPUnit Suite (24 tests, 434 assertions)**: verify five-role RBAC isolation, CSV/JSON roster import atomicity, `FT-02` submission idempotency, $<45\text{ s}$ speed-run rejection, $\sigma^2 = 0$ confirmation flagging, complete structural separation between `evaluation_clearances` and `evaluation_vault`, double-blind lock invariant, Dean watchlist calculations, action plan status tracking (`PENDING_REVIEW`, `APPROVED`, `IN_PROGRESS`, `RESOLVED`), digital examination permit registrar verification, college-wide qualitative narrative synthesis, faculty double-blind report action plan attachment, and admin evaluation window period controls with parameter tuning.
+- [x] **Frontend DOM Suite (31 Vitest groups)**: verify queue progress bar math, 45s dwell timer state transitions, straight-line $\sigma^2 = 0$ modal interception, double-blind lock screen rendering, Dean watchlist filtering, mobile/desktop viewport responsiveness, AACCUP/CHED/ISO accreditation compliance, Dean action plan resolution tracking, registrar exam permit signature verification, the calamanCy qualitative synthesis tab, Faculty Portal pedagogical action plan implementation workflows, Admin Evaluation Window & Parameter Tuning Console, end-to-end student evaluation submission queue transition flow, and Dean department filtering with calamanCy qualitative JSON/CSV exports.
+- [x] **Backend PHPUnit Suite (25 tests, 484 assertions)**: verify five-role RBAC isolation, CSV/JSON roster import atomicity, `FT-02` submission idempotency, $<45\text{ s}$ speed-run rejection, $\sigma^2 = 0$ confirmation flagging, complete structural separation between `evaluation_clearances` and `evaluation_vault`, double-blind lock invariant, Dean watchlist calculations, action plan status tracking (`PENDING_REVIEW`, `APPROVED`, `IN_PROGRESS`, `RESOLVED`), digital examination permit registrar verification, college-wide qualitative narrative synthesis, faculty double-blind report action plan attachment, admin evaluation window period controls with parameter tuning, and end-to-end student evaluation queue clearance progression with automatic permit unlocking.
 - [x] **Python Analytics Suite (44 Pytest tests)**: verify VADER polarity bounds $[-1.0, +1.0]$, valence band cutoffs, accurate classification of all four pedagogical dimensions, Chapter III benchmark comment assertions, batch endpoint throughput, multi-student professor qualitative questionnaire synthesis, and automated pedagogical action plan generation.
 - [x] **Concurrency & Quality Suite**: verify 1,000-thread concurrent submission resilience without deadlocks or double-clearances, UTF-8 no-BOM file encoding, and clean `git diff --check` output.
 
@@ -202,12 +202,13 @@ Acceptance: all 85+ automated test units pass across Frontend, Backend, and Pyth
 | Authenticity Guards | Speed-runs ($<45\text{ s}$) rejected and straight-lining ($\sigma^2 = 0$) flagged |
 | Double-Blind Lock | Faculty reports stay inaccessible until both grades and registrar lock are set |
 | Python NLP Pipeline | Polarity scores and 4 pedagogical tags classify accurately with fallback resilience |
-| Vue.js 3 Portals | Student, Faculty, Chair, Dean, and Admin SPA views pass all 29 DOM test groups |
-| Verification & Load | All 97+ automated tests (Vitest, PHPUnit, Pytest) and concurrency checks pass |
+| Vue.js 3 Portals | Student, Faculty, Chair, Dean, and Admin SPA views pass all 31 DOM test groups |
+| Verification & Load | All 100 automated test units (Vitest, PHPUnit, Pytest) and concurrency checks pass |
 | Accreditation & Action Plans | AACCUP Level III, CHED CMO 46, ISO 25010 (4.77), and Dean action plan resolution tracking live |
 | Permit Verification & Synthesis | Digital exam permit registrar verification and college-wide calamanCy narrative synthesis live |
 | Faculty Action Plan Resolution | Faculty portal pedagogical action plan acknowledgment, rubric interventions, and milestone resolution tracking live |
 | Evaluation Window & Parameter Tuning | Admin evaluation period control (OPEN, SUSPENDED, CLOSED) and dynamic threshold tuning live |
+| Submission Flow & Qualitative Export | End-to-end queue clearance to permit issuance and Dean department filtering with calamanCy JSON/CSV export live |
 
 - [x] Implement one phase at a time and update only its affected callers, Vue stores, and tests.
 - [x] Exclude live third-party enterprise Active Directory/Shibboleth servers, multilingual slang translation models, longitudinal multi-year data warehouse migrations, and automated faculty payroll/tenure decision execution.

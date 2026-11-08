@@ -19,6 +19,7 @@ Route::middleware(['role:student'])->group(function (): void {
     Route::post('/student/evaluations/{courseSectionId}/start', [StudentEvaluationController::class, 'startSession']);
     Route::post('/evaluation/submit', [StudentEvaluationController::class, 'submit']);
     Route::post('/student/evaluations/submit', [StudentEvaluationController::class, 'submit']);
+    Route::post('/student/evaluations', [StudentEvaluationController::class, 'submit']);
     Route::get('/student/permit', [StudentEvaluationController::class, 'permit']);
     Route::match(['GET', 'POST'], '/student/permit/verify', [StudentEvaluationController::class, 'verifyPermit']);
 });
@@ -37,6 +38,8 @@ Route::middleware(['role:dean,chair,admin'])->group(function (): void {
     Route::get('/dean/watchlist', [DeanAnalyticsController::class, 'watchlist']);
     Route::get('/dean/quality-metrics', [DeanAnalyticsController::class, 'qualityMetrics']);
     Route::get('/dean/accreditation', [DeanAnalyticsController::class, 'accreditationSummary']);
+    Route::get('/dean/qualitative-synthesis', [DeanAnalyticsController::class, 'qualitativeSynthesis']);
+    Route::post('/dean/export-qualitative-csv', [DeanAnalyticsController::class, 'exportQualitativeCsv']);
     Route::post('/dean/action-plan/status', [DeanAnalyticsController::class, 'updateActionPlanStatus']);
     Route::post('/dean/sus/evaluate', [DeanAnalyticsController::class, 'evaluateLiveSus']);
     Route::post('/dean/export-csv', [DeanAnalyticsController::class, 'exportCsv']);

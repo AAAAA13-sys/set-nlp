@@ -140,6 +140,71 @@ function generateAccreditationCsv() {
   ]);
   exportedCsvPreview.value = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
 }
+
+const selectedDepartment = ref('ALL');
+
+const departmentsList = [
+  { id: 'ALL', name: 'All Colleges & Departments (University-Wide)' },
+  { id: '1', name: 'College of Computer Studies (CCS)' },
+  { id: '2', name: 'College of Arts and Sciences (CAS)' },
+];
+
+async function onDepartmentChange() {
+  const deptId = selectedDepartment.value === 'ALL' ? null : Number(selectedDepartment.value);
+  await evaluationStore.fetchDeanOverview(deptId);
+}
+
+function triggerDownload(filename, content, mimeType) {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function downloadQualitativeJson() {
+  const content = JSON.stringify(qualitativeSynthesis.value, null, 2);
+  triggerDownload('plp-calamancy-qualitative-synthesis.json', content, 'application/json;charset=utf-8');
+}
+
+async function downloadQualitativeCsv() {
+  try {
+    const deptId = selectedDepartment.value === 'ALL' ? null : Number(selectedDepartment.value);
+    const res = await fetch('/api/dean/export-qualitative-csv', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ department_id: deptId }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.csv_content) {
+        triggerDownload('plp-calamancy-qualitative-synthesis.csv', data.csv_content, 'text/csv;charset=utf-8');
+        return;
+      }
+    }
+  } catch (_) {}
+
+  const lines = [
+    '# PAMANTASAN NG LUNGSOD NG PASIG • calamanCy + VADER Qualitative SET Synthesis Export',
+    'DescriptorWord,FrequencyCount,PolarityScore,Valence',
+  ];
+  (qualitativeSynthesis.value.top_descriptors || []).forEach((d) => {
+    lines.push(`"${sanitizeCsvCell(d.word)}",${d.count},${d.polarity},"${sanitizeCsvCell(d.valence)}"`);
+  });
+  lines.push('');
+  lines.push('SubItem,PedagogicalCluster,TopicObservation,PolarityScore,Valence');
+  (qualitativeSynthesis.value.improvement_topics || []).forEach((t) => {
+    lines.push(
+      `"${sanitizeCsvCell(t.sub_item || 'a.')}","${sanitizeCsvCell(t.pedagogical_tag || '')}","${sanitizeCsvCell(t.topic || '')}",${t.polarity},"${sanitizeCsvCell(t.valence)}"`,
+    );
+  });
+  triggerDownload('plp-calamancy-qualitative-synthesis.csv', lines.join('\n'), 'text/csv;charset=utf-8');
+}
 </script>
 
 <template>
@@ -158,6 +223,22 @@ function generateAccreditationCsv() {
             Institution: <strong>Pamantasan ng Lungsod ng Pasig (PLP)</strong> •
             Period: <strong>{{ overview.period }}</strong> ({{ overview.activeTerm }})
           </p>
+          <div class="department-filter-box" style="margin-top: 0.5rem;">
+            <label for="dean-dept-filter" style="font-size: 0.8rem; font-weight: 600; color: #374151; display: inline-flex; align-items: center; gap: 0.5rem;">
+              <span>Academic Department Filter:</span>
+              <select
+                id="dean-dept-filter"
+                v-model="selectedDepartment"
+                class="role-switcher-select"
+                data-testid="dean-dept-filter-select"
+                @change="onDepartmentChange"
+              >
+                <option v-for="d in departmentsList" :key="d.id" :value="d.id">
+                  {{ d.name }}
+                </option>
+              </select>
+            </label>
+          </div>
         </div>
 
         <div class="tab-switcher" role="tablist" aria-label="Dean Analytical Views">
@@ -556,6 +637,22 @@ function generateAccreditationCsv() {
             </p>
           </div>
           <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+            <button
+              type="button"
+              class="btn-secondary btn-xs"
+              data-testid="export-qualitative-json-btn"
+              @click="downloadQualitativeJson"
+            >
+              Export calamanCy JSON
+            </button>
+            <button
+              type="button"
+              class="btn-primary btn-xs"
+              data-testid="export-qualitative-csv-btn"
+              @click="downloadQualitativeCsv"
+            >
+              Export calamanCy CSV
+            </button>
             <span class="badge-unlocked" style="background:var(--plp-green-800);color:#fff;" data-testid="calamancy-engine-badge">
               Engine: {{ qualitativeSynthesis.nlp_engine }} (tl_calamancy_md)
             </span>

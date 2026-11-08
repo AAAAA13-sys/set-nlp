@@ -144,7 +144,13 @@ if (str_starts_with($uriPath, '/api/')) {
             $request = new Request(array_merge($input, ['student_id' => $studentId]), $_SERVER);
         }
         $response = (new StudentEvaluationController($service))->queue($request);
-    } elseif (($uriPath === '/api/evaluation/submit' || $uriPath === '/api/student/evaluations/submit') && $method === 'POST') {
+    } elseif (preg_match('#^/api/student/evaluations/(\d+)/start$#', $uriPath, $m) === 1 && $method === 'POST') {
+        if (!isset($input['student_id'])) {
+            $studentId = (int) $pdo->query("SELECT id FROM users WHERE institutional_id = '2024-10892' LIMIT 1")->fetchColumn();
+            $request = new Request(array_merge($input, ['student_id' => $studentId]), $_SERVER);
+        }
+        $response = (new StudentEvaluationController($service))->startSession($request, (int) $m[1]);
+    } elseif (($uriPath === '/api/evaluation/submit' || $uriPath === '/api/student/evaluations/submit' || $uriPath === '/api/student/evaluations') && $method === 'POST') {
         if (!isset($input['student_id'])) {
             $studentId = (int) $pdo->query("SELECT id FROM users WHERE institutional_id = '2024-10892' LIMIT 1")->fetchColumn();
             $request = new Request(array_merge($input, ['student_id' => $studentId]), $_SERVER);
@@ -164,6 +170,10 @@ if (str_starts_with($uriPath, '/api/')) {
         $response = (new DeanAnalyticsController($service))->overview($request);
     } elseif ($uriPath === '/api/dean/watchlist' && $method === 'GET') {
         $response = (new DeanAnalyticsController($service))->watchlist($request);
+    } elseif ($uriPath === '/api/dean/qualitative-synthesis' && $method === 'GET') {
+        $response = (new DeanAnalyticsController($service))->qualitativeSynthesis($request);
+    } elseif ($uriPath === '/api/dean/export-qualitative-csv' && $method === 'POST') {
+        $response = (new DeanAnalyticsController($service))->exportQualitativeCsv($request);
     } elseif ($uriPath === '/api/dean/quality-metrics' && $method === 'GET') {
         $response = (new DeanAnalyticsController($service))->qualityMetrics();
     } elseif ($uriPath === '/api/dean/accreditation' && $method === 'GET') {

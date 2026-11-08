@@ -176,12 +176,29 @@ export const useEvaluationStore = defineStore('evaluation', () => {
       courses.value[0],
   );
 
-  function selectCourseForEvaluation(courseSectionId) {
+  async function selectCourseForEvaluation(courseSectionId) {
     activeCourseId.value = Number(courseSectionId);
     dwellSeconds.value = 0;
     startToken.value = `SRV-START-${courseSectionId}-${Date.now()}`;
     submissionKey.value = generateSubmissionKey(courseSectionId);
     submissionError.value = null;
+
+    try {
+      const res = await fetch(`/api/student/evaluations/${courseSectionId}/start`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({}),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.start_token) {
+          startToken.value = data.start_token;
+        }
+      }
+    } catch (_) {}
   }
 
   function incrementDwellTime(seconds = 1) {
@@ -195,8 +212,11 @@ export const useEvaluationStore = defineStore('evaluation', () => {
       });
       if (response.ok) {
         const data = await response.json();
-        if (Array.isArray(data.courses) && data.courses.length > 0) {
-          courses.value = data.courses;
+        const items = Array.isArray(data.courses)
+          ? data.courses
+          : (Array.isArray(data.queue) ? data.queue : []);
+        if (items.length > 0) {
+          courses.value = items;
         }
       }
     } catch (_) {
@@ -279,7 +299,7 @@ export const useEvaluationStore = defineStore('evaluation', () => {
     submissionError.value = null;
 
     try {
-      const response = await fetch('/api/student/evaluations', {
+      const response = await fetch('/api/student/evaluations/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -301,7 +321,18 @@ export const useEvaluationStore = defineStore('evaluation', () => {
         const apiResult = await response.json();
         markCourseClearedLocal(targetSectionId, apiResult.clearance_token);
         processedKeys.value.set(key, apiResult);
+        await fetchQueue();
         return { ok: true, ...apiResult };
+      } else {
+        const errResult = await response.json().catch(() => ({}));
+        submissionError.value = errResult.message || 'Submission rejected by server.';
+        return {
+          ok: false,
+          status: response.status,
+          code: errResult.error || errResult.code || 'SERVER_VALIDATION_ERROR',
+          message: errResult.message || submissionError.value,
+          ...errResult,
+        };
       }
     } catch (_) {
       // Deterministic local atomic fallback when offline or in pure frontend unit tests
@@ -456,6 +487,25 @@ export const useEvaluationStore = defineStore('evaluation', () => {
     return updateEvaluationWindowConfig({ status });
   }
 
+  async function fetchDeanOverview(departmentId = null) {
+    try {
+      const q = departmentId !== null && departmentId !== undefined && departmentId !== 'ALL'
+        ? `?department_id=${encodeURIComponent(departmentId)}`
+        : '';
+      const response = await fetch(`/api/dean/overview${q}`, {
+        headers: { Accept: 'application/json' },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        deanOverview.value = { ...deanOverview.value, ...data };
+        return { ok: true, data: deanOverview.value };
+      }
+    } catch (_) {
+      // Retain seeded mock overview if offline
+    }
+    return { ok: false, data: deanOverview.value };
+  }
+
   return {
     courses,
     activeCourseId,
@@ -482,5 +532,6 @@ export const useEvaluationStore = defineStore('evaluation', () => {
     fetchEvaluationWindow,
     updateEvaluationWindowConfig,
     setEvaluationWindowStatus,
+    fetchDeanOverview,
   };
 });

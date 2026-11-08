@@ -304,14 +304,20 @@ function returnToQueue() {
       <div>
         <strong>[{{ statusBanner.code }}]</strong> {{ statusBanner.message }}
       </div>
-      <button
-        v-if="statusBanner.type === 'success'"
-        type="button"
-        class="btn-secondary btn-xs"
-        @click="returnToQueue"
-      >
-        Return to Evaluation Queue
-      </button>
+      <div v-if="statusBanner.token" style="margin-top: 0.5rem;">
+        <span>Signed Clearance Token: </span>
+        <code class="clearance-token-code" data-testid="issued-clearance-token">{{ statusBanner.token }}</code>
+      </div>
+      <div v-if="statusBanner.type === 'success'" style="margin-top: 0.75rem;">
+        <button
+          type="button"
+          class="btn-primary btn-sm"
+          data-testid="return-queue-success-btn"
+          @click="returnToQueue"
+        >
+          [Return to Evaluation Queue &amp; View Updated Clearance]
+        </button>
+      </div>
     </div>
 
     <form class="evaluation-survey-form" @submit.prevent="handleInitialSubmit">

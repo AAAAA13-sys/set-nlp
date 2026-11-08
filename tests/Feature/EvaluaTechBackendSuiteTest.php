@@ -1530,4 +1530,135 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertFalse($unauthorizedData['authorized']);
         $this->assertSame('FORBIDDEN_ROLE', $unauthorizedData['code']);
     }
+
+    /**
+     * Test 25: End-to-end student evaluation queue progression, atomic clearance signing, and permit unlocking.
+     */
+    public function test_25_end_to_end_student_evaluation_queue_clearance_and_permit_generation(): void
+    {
+        $service = new \App\Services\DecoupledEvaluationService($this->pdo);
+        $controller = new \App\Http\Controllers\Api\StudentEvaluationController($service);
+
+        // Seed initial 3 clearances (50% progress matching canonical institutional demonstration)
+        $stmtClear = $this->pdo->prepare("
+            INSERT INTO evaluation_clearances (student_id, course_section_id, academic_term_id, submission_key, status, clearance_token, cleared_at)
+            VALUES (11, :sec_id, 1, :sub_key, 'CLEARED', :token, datetime('now'))
+        ");
+        $stmtClear->execute([':sec_id' => 1, ':sub_key' => 'SEED-CS401', ':token' => 'CLR-SEED-CS401-01']);
+        $stmtClear->execute([':sec_id' => 2, ':sub_key' => 'SEED-CS405', ':token' => 'CLR-SEED-CS405-02']);
+        $stmtClear->execute([':sec_id' => 3, ':sub_key' => 'SEED-ENG102', ':token' => 'CLR-SEED-ENG102-03']);
+
+        // 1. Initial State: Student 11 has 3 of 6 completed (50%), permit locked
+        $initQueueReq = new \Illuminate\Http\Request(['student_id' => 11, 'academic_term_id' => 1]);
+        $initQueueRes = $controller->queue($initQueueReq);
+        $this->assertSame(200, $initQueueRes->getStatusCode());
+        $initData = $initQueueRes->getData(true);
+
+        $this->assertSame(3, $initData['completed_count']);
+        $this->assertSame(6, $initData['total_count']);
+        $this->assertEqualsWithDelta(50.0, $initData['completion_percentage'], 0.1);
+        $this->assertFalse($initData['exam_permit_unlocked']);
+        $this->assertNull($initData['exam_permit_token']);
+        $this->assertSame('PENDING', $initData['overall_clearance_status']);
+
+        // 2. Start session for Section 4 (MATH-201)
+        $startReq = new \Illuminate\Http\Request(['student_id' => 11]);
+        $startRes = $controller->startSession($startReq, 4);
+        $this->assertSame(200, $startRes->getStatusCode());
+        $startData = $startRes->getData(true);
+        $this->assertNotEmpty($startData['start_token']);
+        $startToken = $startData['start_token'];
+
+        // 3. Submitting speed run (<45s) is rejected with HTTP 422
+        $speedRunPayload = [
+            'student_id' => 11,
+            'course_section_id' => 4,
+            'submission_key' => 'FT02-SPEEDRUN-SEC4-' . time(),
+            'start_token' => $startToken,
+            'dwell_time_seconds' => 15,
+            'ratings' => [5, 4, 5, 5, 4, 4, 5, 4, 4, 5, 5, 5, 4, 5, 4, 5, 4, 5, 5, 5, 5, 4, 5, 4, 5],
+            'comment_text' => 'Good instructor',
+        ];
+        $speedRunRes = $controller->submit(new \Illuminate\Http\Request($speedRunPayload));
+        $this->assertSame(422, $speedRunRes->getStatusCode());
+        $speedRunData = $speedRunRes->getData(true);
+        $this->assertFalse($speedRunData['accepted']);
+        $this->assertSame('SPEED_RUN_DETECTED', $speedRunData['code']);
+
+        // 4. Genuine submission for Section 4 (MATH-201) with >= 45s dwell
+        $genuineSec4Payload = [
+            'student_id' => 11,
+            'course_section_id' => 4,
+            'submission_key' => 'FT02-GENUINE-SEC4-' . time(),
+            'dwell_time_seconds' => 55,
+            'ratings' => [5, 4, 5, 5, 4, 4, 5, 4, 4, 5, 5, 5, 4, 5, 4, 5, 4, 5, 5, 5, 5, 4, 5, 4, 5],
+            'comment_text' => 'Explains linear algebra and matrix computations very clearly with rigorous proofs.',
+            'professor_questions' => [
+                'three_words' => ['Malinaw', 'Matiyaga', 'Organized'],
+                'room_for_improvements' => ['Provide practice problem sets before midterms'],
+                'teaching_strengths' => 'Clear blackboard derivations and thorough answers during consultation',
+                'recommendations' => 'Conduct weekly problem-solving recitations',
+            ],
+            'confirm_uniform' => false,
+        ];
+        $sec4SubmitRes = $controller->submit(new \Illuminate\Http\Request($genuineSec4Payload));
+        $this->assertSame(201, $sec4SubmitRes->getStatusCode());
+        $sec4Data = $sec4SubmitRes->getData(true);
+        $this->assertTrue($sec4Data['accepted']);
+        $this->assertSame('CLEARED', $sec4Data['status']);
+        $this->assertStringStartsWith('CLR-', $sec4Data['clearance_token']);
+
+        // 5. Verify intermediate queue: now 4 of 6 completed
+        $midQueue = $controller->queue(new \Illuminate\Http\Request(['student_id' => 11]))->getData(true);
+        $this->assertSame(4, $midQueue['completed_count']);
+        $this->assertFalse($midQueue['exam_permit_unlocked']);
+
+        // 6. Complete remaining sections (Section 5 CS-408, Section 6 PHYS-101)
+        foreach ([5 => 'CS-408', 6 => 'PHYS-101'] as $secId => $code) {
+            $subRes = $controller->submit(new \Illuminate\Http\Request([
+                'student_id' => 11,
+                'course_section_id' => $secId,
+                'submission_key' => "FT02-GENUINE-SEC{$secId}-" . time(),
+                'dwell_time_seconds' => 52,
+                'ratings' => [5, 5, 4, 4, 5, 5, 4, 5, 4, 4, 5, 4, 5, 5, 4, 5, 4, 5, 4, 5, 5, 4, 5, 4, 5],
+                'comment_text' => "Excellent instructional delivery in {$code} with practical lab activities.",
+                'confirm_uniform' => false,
+            ]));
+            $this->assertSame(201, $subRes->getStatusCode());
+        }
+
+        // 7. Verify Final Queue State: 6 of 6 completed (100%), permit UNLOCKED
+        $finalQueue = $controller->queue(new \Illuminate\Http\Request(['student_id' => 11]))->getData(true);
+        $this->assertSame(6, $finalQueue['completed_count']);
+        $this->assertSame(6, $finalQueue['total_count']);
+        $this->assertEqualsWithDelta(100.0, $finalQueue['completion_percentage'], 0.1);
+        $this->assertTrue($finalQueue['exam_permit_unlocked']);
+        $this->assertNotEmpty($finalQueue['exam_permit_token']);
+        $this->assertSame('CLEARED', $finalQueue['overall_clearance_status']);
+
+        // 8. Verify Examination Permit via Registrar Verification API
+        $verifyRes = $controller->verifyPermit(new \Illuminate\Http\Request([
+            'token' => $finalQueue['exam_permit_token'],
+            'institutional_id' => '2024-10892',
+        ]));
+        $this->assertSame(200, $verifyRes->getStatusCode());
+        $verifyData = $verifyRes->getData(true);
+        $this->assertTrue($verifyData['verified']);
+        $this->assertSame('VALID_FOR_FINAL_EXAMINATIONS', $verifyData['permit_status']);
+        $this->assertSame('PLP-REGISTRAR-AUTHENTICATED', $verifyData['registrar_seal']);
+        $this->assertSame('PAMANTASAN NG LUNGSOD NG PASIG', $verifyData['institution']);
+
+        // 9. Strict Cryptographic Anonymity Verification: Check evaluation_vault has zero student IDs
+        $vaultStmt = $this->pdo->query('SELECT * FROM evaluation_vault');
+        $vaultRows = $vaultStmt->fetchAll(PDO::FETCH_ASSOC);
+        $this->assertGreaterThanOrEqual(3, count($vaultRows));
+        foreach ($vaultRows as $vRow) {
+            $this->assertArrayNotHasKey('student_id', $vRow);
+            $this->assertArrayNotHasKey('user_id', $vRow);
+            $this->assertArrayNotHasKey('clearance_id', $vRow);
+            $this->assertArrayNotHasKey('ip_address', $vRow);
+            $this->assertNotEmpty($vRow['comment_hash']);
+            $this->assertGreaterThan(0.0, (float) $vRow['mean_score']);
+        }
+    }
 }

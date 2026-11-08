@@ -88,6 +88,29 @@ class DeanAnalyticsController extends Controller
         ], 200);
     }
 
+    public function qualitativeSynthesis(Request $request): JsonResponse
+    {
+        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
+        $overview = $this->evaluationService->getDeanDashboardMetrics($requestedDeptId);
+        $synthesis = $overview['qualitative_synthesis'] ?? [];
+
+        return new JsonResponse($synthesis, 200);
+    }
+
+    public function exportQualitativeCsv(Request $request): JsonResponse
+    {
+        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
+        $overview = $this->evaluationService->getDeanDashboardMetrics($requestedDeptId);
+        $synthesis = $overview['qualitative_synthesis'] ?? [];
+        $csv = $this->rosterService->exportQualitativeSynthesisCsv($synthesis);
+
+        return new JsonResponse([
+            'format' => 'csv',
+            'department_id' => $requestedDeptId,
+            'csv_content' => $csv,
+        ], 200);
+    }
+
     public function accreditationSummary(): JsonResponse
     {
         $actionPlanSummary = $this->evaluationService->getActionPlansSummary();

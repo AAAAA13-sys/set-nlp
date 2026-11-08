@@ -36,7 +36,7 @@ function readResourceFile(relativePath) {
   return fs.readFileSync(path.join(JS_DIR, relativePath), 'utf8');
 }
 
-describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (29 Test Groups)', () => {
+describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (31 Test Groups)', () => {
   // 1. Header portal branding & active term display
   describe('Group 01: Header portal branding & active term display (NavbarHeader.vue — Pamantasan ng Lungsod ng Pasig)', () => {
     it('renders PAMANTASAN NG LUNGSOD NG PASIG branding, PLP Green/Gold theme, active term, logged-in student ID 2024-10892, and clearance status badge', () => {
@@ -639,6 +639,96 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (29 Test Groups)', ()
       assert.equal(evaluateWatchlistFlag(3.55, 20.0, 3.6, 35.0), true); // Triggered under tightened 3.60 threshold
       assert.equal(evaluateWatchlistFlag(4.1, 32.0, 3.5, 35.0), false);
       assert.equal(evaluateWatchlistFlag(4.1, 32.0, 3.5, 30.0), true); // Triggered under tightened 30% negative threshold
+    });
+  });
+
+  // 30. Student evaluation submission & queue clearance transition flow
+  describe('Group 30: Student Evaluation Submission & Queue Transition Flow', () => {
+    it('verifies submission confirmation banner, issued clearance token, return to queue button, and queue progression math', () => {
+      const evalFormSfc = readResourceFile('views/EvaluationFormView.vue');
+      const evalStoreCode = readResourceFile('stores/evaluation.js');
+      const permitCardSfc = readResourceFile('components/ClearancePermitCard.vue');
+
+      // 1. Verify EvaluationFormView submission success elements
+      assert.ok(evalFormSfc.includes('data-testid="submission-status-banner"'));
+      assert.ok(evalFormSfc.includes('data-testid="issued-clearance-token"'));
+      assert.ok(evalFormSfc.includes('data-testid="return-queue-success-btn"'));
+
+      // 2. Verify Evaluation store submission API contracts
+      assert.ok(evalStoreCode.includes('/api/student/evaluations/submit'));
+      assert.ok(evalStoreCode.includes('/api/student/evaluations/'));
+      assert.ok(evalStoreCode.includes('/start'));
+      assert.ok(evalStoreCode.includes('markCourseClearedLocal'));
+
+      // 3. Verify Queue Progression Math: 3/6 -> 4/6 -> 6/6 (100% CLEARED)
+      const mockQueue = [
+        { course_section_id: 1, course_code: 'CS-401', status: 'COMPLETED' },
+        { course_section_id: 2, course_code: 'CS-405', status: 'COMPLETED' },
+        { course_section_id: 3, course_code: 'ENG-102', status: 'COMPLETED' },
+        { course_section_id: 4, course_code: 'MATH-201', status: 'PENDING' },
+        { course_section_id: 5, course_code: 'CS-408', status: 'PENDING' },
+        { course_section_id: 6, course_code: 'PHYS-101', status: 'PENDING' },
+      ];
+
+      const p3 = calculateQueueProgress(mockQueue);
+      assert.equal(p3.completed, 3);
+      assert.equal(p3.total, 6);
+      assert.equal(p3.percentage, 50);
+      assert.equal(p3.allCleared, false);
+      assert.equal(p3.clearanceStatus, 'PENDING');
+
+      // Advance 1 course: 4 of 6 = 67%
+      mockQueue[3].status = 'COMPLETED';
+      const p4 = calculateQueueProgress(mockQueue);
+      assert.equal(p4.completed, 4);
+      assert.equal(p4.total, 6);
+      assert.equal(p4.percentage, 67);
+      assert.equal(p4.allCleared, false);
+
+      // Advance all courses: 6 of 6 = 100% (CLEARED)
+      mockQueue[4].status = 'COMPLETED';
+      mockQueue[5].status = 'COMPLETED';
+      const p6 = calculateQueueProgress(mockQueue);
+      assert.equal(p6.completed, 6);
+      assert.equal(p6.total, 6);
+      assert.equal(p6.percentage, 100);
+      assert.equal(p6.allCleared, true);
+      assert.equal(p6.clearanceStatus, 'CLEARED');
+
+      // 4. Verify Digital Exam Permit unlocks when allCleared is true
+      assert.ok(permitCardSfc.includes('data-testid="clearance-permit-card"'));
+      assert.ok(permitCardSfc.includes('Digital Examination Permit — CLEARED'));
+      assert.ok(permitCardSfc.includes('PLP-REGISTRAR-AUTHENTICATED'));
+    });
+  });
+
+  // 31. Dean Department Filtering & calamanCy Qualitative Export
+  describe('Group 31: Dean Department Filtering & calamanCy Qualitative Export', () => {
+    it('verifies academic department filter selector and calamanCy qualitative JSON and CSV export actions', () => {
+      const deanViewSfc = readResourceFile('views/DeanDashboardView.vue');
+      const evalStoreCode = readResourceFile('stores/evaluation.js');
+
+      // 1. Verify Department Filter selector in Dean overview
+      assert.ok(deanViewSfc.includes('data-testid="dean-dept-filter-select"'));
+      assert.ok(deanViewSfc.includes('selectedDepartment'));
+      assert.ok(deanViewSfc.includes('onDepartmentChange'));
+
+      // 2. Verify calamanCy qualitative export buttons
+      assert.ok(deanViewSfc.includes('data-testid="export-qualitative-json-btn"'));
+      assert.ok(deanViewSfc.includes('data-testid="export-qualitative-csv-btn"'));
+      assert.ok(deanViewSfc.includes('downloadQualitativeJson'));
+      assert.ok(deanViewSfc.includes('downloadQualitativeCsv'));
+
+      // 3. Verify fetchDeanOverview store action
+      assert.ok(evalStoreCode.includes('fetchDeanOverview'));
+      assert.ok(evalStoreCode.includes('/api/dean/overview'));
+
+      // 4. Verify CSV formula injection neutralization on qualitative descriptors
+      assert.equal(sanitizeCsvCell('=cmd|"/C calc"!A0'), "'=cmd|\"/C calc\"!A0");
+      assert.equal(sanitizeCsvCell('+12345'), "'+12345");
+      assert.equal(sanitizeCsvCell('-5.00'), "'-5.00");
+      assert.equal(sanitizeCsvCell('@SUM(A1:A10)'), "'@SUM(A1:A10)");
+      assert.equal(sanitizeCsvCell('Malinaw at organisado'), 'Malinaw at organisado');
     });
   });
 });
