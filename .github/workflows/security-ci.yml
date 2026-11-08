@@ -1,0 +1,60 @@
+name: EvaluaTech Multi-Tier Security & Quality Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: PHPUnit + Frontend Vitest/Node + Python NLP Pytest
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository (least-privilege pinned action)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@9e72090525849c5e82e596468b86eb55e9cc5401 # v2.32.0
+        with:
+          php-version: '8.2'
+          extensions: pdo, pdo_sqlite, mbstring, json
+          coverage: none
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Install Frontend Dependencies (deterministic lockfile)
+        run: npm ci --ignore-scripts=false
+
+      - name: Build Production Bundle (Zero Source Maps)
+        run: |
+          npm run build
+          if find public/build -name "*.map" | grep -q .; then
+            echo "Exposed source map detected in public/build!"
+            exit 1
+          fi
+
+      - name: Run Frontend Verification Suite
+        run: npm test
+
+      - name: Run Python NLP Microservice Test Suite
+        run: python -m unittest discover -s analytics/tests -p "test_*.py"
+
+      - name: Run Backend PHPUnit Verification Suite
+        run: php vendor/bin/phpunit
+

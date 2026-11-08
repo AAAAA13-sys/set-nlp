@@ -1,15 +1,24 @@
 <script setup>
 import { computed, ref } from 'vue';
+import { useAuthStore } from '../stores/auth.js';
 import { calculateQueueProgress } from '../utils/evaluationMath.js';
 
 const props = defineProps({
   studentId: {
     type: String,
-    default: '2024-10892',
+    default: '',
+  },
+  studentName: {
+    type: String,
+    default: '',
   },
   activeTerm: {
     type: String,
-    default: 'Fall / 1st Semester',
+    default: '1st Semester AY 2026-2027',
+  },
+  examPermitToken: {
+    type: String,
+    default: null,
   },
   courses: {
     type: Array,
@@ -17,33 +26,41 @@ const props = defineProps({
   },
 });
 
+const authStore = useAuthStore();
 const progress = computed(() => calculateQueueProgress(props.courses));
 
 const masterPermitToken = computed(() => {
   if (!progress.value.allCleared) {
     return null;
   }
-  return `PERMIT-${props.studentId}-FALL2026-VERIFIED`;
+  return props.examPermitToken || `PERMIT-${props.studentId}-FALL2026-VERIFIED`;
 });
 
 const verificationResult = ref(null);
+const verificationError = ref(null);
 const isVerifying = ref(false);
 
 async function verifyPermitOnServer() {
   if (!masterPermitToken.value) return;
   isVerifying.value = true;
+  verificationError.value = null;
+
   try {
-    const res = await fetch(`/api/student/permit/verify?token=${encodeURIComponent(masterPermitToken.value)}`);
-    const data = await res.json();
-    verificationResult.value = data;
+    const params = new URLSearchParams({
+      token: masterPermitToken.value,
+      ...(props.studentId ? { institutional_id: props.studentId } : {}),
+    });
+    const res = await fetch(`/api/student/permit/verify?${params.toString()}`, {
+      headers: authStore.authHeaders(),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) {
+      verificationResult.value = data;
+    } else {
+      verificationError.value = data.message || 'Registrar signature verification failed.';
+    }
   } catch (_) {
-    verificationResult.value = {
-      verified: true,
-      status: 'CLEARED',
-      permit_status: 'VALID_FOR_FINAL_EXAMINATIONS',
-      institution: 'PAMANTASAN NG LUNGSOD NG PASIG',
-      registrar_seal: 'PLP-REGISTRAR-AUTHENTICATED',
-    };
+    verificationError.value = 'Unable to connect to the Office of the University Registrar verification service.';
   } finally {
     isVerifying.value = false;
   }
@@ -66,7 +83,7 @@ function printPermit() {
     <div class="permit-header">
       <div>
         <span class="permit-eyebrow">
-          PAMANTASAN NG LUNGSOD NG PASIG • Office of the University Registrar • Dual-Token Clearance
+          PAMANTASAN NG LUNGSOD NG PASIG • Office of the University Registrar • Examination Clearance
         </span>
         <h3 class="permit-title">
           {{ progress.allCleared ? 'Digital Examination Permit — CLEARED' : 'Digital Examination Permit — GATED (PENDING)' }}
@@ -85,8 +102,7 @@ function printPermit() {
       <p v-if="!progress.allCleared" class="permit-description">
         Complete the remaining <strong>{{ progress.pending }}</strong> pending faculty evaluation(s) in your
         Pamantasan ng Lungsod ng Pasig enrollment queue ({{ progress.completed }} of {{ progress.total }} completed)
-        to automatically issue your signed Digital Examination Permit. Your ratings and comments are stored in the
-        decoupled <code>evaluation_vault</code> with zero link to your student ID.
+        to unlock your signed Digital Examination Permit. Your ratings and comments are cryptographically decoupled from your student ID.
       </p>
 
       <div v-else class="permit-verified-box">
@@ -101,8 +117,8 @@ function printPermit() {
             <strong>Pamantasan ng Lungsod ng Pasig (PLP)</strong>
           </div>
           <div>
-            <span class="token-label">Student ID:</span>
-            <strong>{{ studentId }}</strong>
+            <span class="token-label">Student:</span>
+            <strong>{{ studentId }}{{ studentName ? ` • ${studentName}` : '' }}</strong>
           </div>
           <div>
             <span class="token-label">Academic Term:</span>
@@ -110,7 +126,7 @@ function printPermit() {
           </div>
           <div>
             <span class="token-label">Master Clearance Token:</span>
-            <code data-testid="master-permit-token">{{ masterPermitToken }}</code>
+            <code data-testid="master-permit-token" style="word-break: break-all;">{{ masterPermitToken }}</code>
           </div>
         </div>
 
@@ -140,7 +156,7 @@ function printPermit() {
       <div class="signed-tokens-list" aria-label="Course Clearance Signatures">
         <span
           v-for="course in courses"
-          :key="course.course_code"
+          :key="course.course_section_id || course.course_code"
           class="token-chip"
           :class="course.status === 'COMPLETED' ? 'chip-signed' : 'chip-unsigned'"
         >
@@ -153,25 +169,17 @@ function printPermit() {
         <button
           type="button"
           class="btn-secondary btn-sm"
+          :disabled="isVerifying"
           data-testid="verify-permit-btn"
           @click="verifyPermitOnServer"
         >
-          {{ isVerifying ? 'Verifying with Registrar...' : 'Verify Registrar Signature' }}
-        </button>
-
-        <button
-          type="button"
-          class="btn-secondary btn-sm"
-          data-testid="simulate-proctor-scan-btn"
-          @click="verifyPermitOnServer"
-        >
-          Run Proctor Permit Verification
+          {{ isVerifying ? 'Verifying with Registrar…' : 'Verify Registrar Signature' }}
         </button>
 
         <span
           v-if="verificationResult"
           class="token-chip"
-          :class="verificationResult.verified ? 'chip-signed' : 'chip-warn'"
+          :class="verificationResult.verified ? 'chip-signed' : 'chip-unsigned'"
           data-testid="permit-verification-badge"
         >
           {{ verificationResult.verified ? 'SEAL: PLP-REGISTRAR-AUTHENTICATED' : 'CLEARANCE PENDING' }}
@@ -188,6 +196,15 @@ function printPermit() {
       </div>
 
       <div
+        v-if="verificationError"
+        class="alert-banner alert-error"
+        style="margin-top: 0.75rem; width: 100%;"
+        role="alert"
+      >
+        {{ verificationError }}
+      </div>
+
+      <div
         v-if="verificationResult && verificationResult.verified"
         class="proctor-verification-details"
         style="margin-top: 0.75rem; padding: 0.75rem 1rem; background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; font-size: 0.82rem; width: 100%;"
@@ -198,7 +215,7 @@ function printPermit() {
           <span class="token-chip chip-signed" style="font-size: 0.7rem;">OFFICIAL REGISTRAR RECORD</span>
         </div>
         <div style="color: #15803d; line-height: 1.45;">
-          Student <strong>{{ studentId }}</strong> has completed all 6 course evaluations with zero integrity violations.
+          Student <strong>{{ studentId }}</strong> has completed all {{ progress.total }} enrolled course evaluations.
           Status: <strong>{{ verificationResult.permit_status || 'VALID_FOR_FINAL_EXAMINATIONS' }}</strong> •
           Seal: <strong>{{ verificationResult.registrar_seal || 'PLP-REGISTRAR-AUTHENTICATED' }}</strong> •
           Portal: <a href="https://plpasig.edu.ph/" target="_blank" rel="noopener" style="color: #166534; text-decoration: underline;">https://plpasig.edu.ph/</a>

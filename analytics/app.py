@@ -23,6 +23,8 @@ from .engine import (
     CALAMANCY_DEFAULT_MODEL,
     CALAMANCY_REPO_URL,
     FIVE_LIKERT_CLUSTERS,
+    MAX_BATCH_SIZE,
+    MAX_COMMENT_LENGTH,
     MAX_PROFESSOR_QUESTIONS,
     PEDAGOGICAL_TAGS,
     analyze_batch,
@@ -30,9 +32,12 @@ from .engine import (
     analyze_plp_section_dossier,
     analyze_professor_questions,
     generate_pedagogical_action_plan,
+    scrub_pii,
     summarize_comments,
     synthesize_professor_questionnaires,
 )
+
+MAX_HTTP_BODY_BYTES: int = 2_097_152
 
 try:
     from flask import Flask, jsonify, request  # type: ignore[import-not-found,import-untyped]
@@ -88,13 +93,23 @@ def handle_request(method: str, path: str, body: Any = None) -> tuple[int, dict[
     if clean_path == "/analyze":
         if http_method != "POST":
             return 405, {"error": "Method not allowed."}
+        if isinstance(body, (bytes, str)) and len(body) > MAX_HTTP_BODY_BYTES:
+            return 413, {"error": "Payload exceeds maximum allowed size.", "code": "PAYLOAD_TOO_LARGE"}
         ok, payload = _parse_body(body)
         if not ok or not isinstance(payload, dict):
             return 400, {"error": "Invalid JSON object payload."}
         if "comment" not in payload and "text" not in payload:
             return 422, {"error": "Field 'comment' or 'text' is required."}
         raw_text = payload.get("comment") if "comment" in payload else payload.get("text")
+        if isinstance(raw_text, (dict, list)):
+            return 422, {"error": "Field 'comment' must be a scalar string.", "code": "INVALID_COMMENT_TYPE"}
+        if isinstance(raw_text, str) and len(raw_text) > MAX_COMMENT_LENGTH:
+            return 422, {
+                "error": f"Comment exceeds maximum length of {MAX_COMMENT_LENGTH} characters.",
+                "code": "COMMENT_TOO_LONG",
+            }
         result = analyze_comment(raw_text)
+        result["scrubbed_preview"] = scrub_pii(raw_text) if isinstance(raw_text, str) else ""
         if "professor_questions" in payload and isinstance(payload["professor_questions"], dict):
             result["professor_questions"] = analyze_professor_questions(payload["professor_questions"])
         return 200, result
@@ -148,6 +163,11 @@ def handle_request(method: str, path: str, body: Any = None) -> tuple[int, dict[
 
         if not isinstance(comments, list):
             return 422, {"error": "Field 'comments' must be a list."}
+        if len(comments) > MAX_BATCH_SIZE:
+            return 422, {
+                "error": f"Batch size exceeds maximum of {MAX_BATCH_SIZE} comments.",
+                "code": "BATCH_LIMIT_EXCEEDED",
+            }
 
         results = analyze_batch(comments)
         summary = summarize_comments(results)

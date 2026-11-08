@@ -44,6 +44,8 @@ PLP_INSTITUTION_NAME: str = "PAMANTASAN NG LUNGSOD NG PASIG"
 PLP_REFERENCE_URL: str = "https://plpasig.edu.ph/"
 MAX_PROFESSOR_QUESTIONS: int = 5
 MIN_PROFESSOR_QUESTIONS: int = 4
+MAX_COMMENT_LENGTH: int = 2000
+MAX_BATCH_SIZE: int = 250
 LIKERT_SCALE_POINTS: tuple[int, ...] = (1, 2, 3, 4, 5)
 
 PEDAGOGICAL_TAGS: tuple[str, ...] = (
@@ -1200,6 +1202,20 @@ def classify_pedagogical_domain(text: str) -> tuple[str, float, list[str], dict[
     return best_tag, confidence, matched_by_tag[best_tag], tag_scores
 
 
+def scrub_pii(text: str) -> str:
+    """Redact accidental PII, control characters, and prompt-delimiter tokens from narrative comments."""
+    if not isinstance(text, str) or not text:
+        return ""
+    cleaned = re.sub(r"[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]", "", text)
+    for token in ("<|system|>", "<|user|>", "<|assistant|>", "<|im_start|>", "<|im_end|>", "[INST]", "[/INST]"):
+        cleaned = re.sub(re.escape(token), "", cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}", "[REDACTED-EMAIL]", cleaned)
+    cleaned = re.sub(r"(?:\+63|0)9\d{2}[\s\-]?\d{3}[\s\-]?\d{4}\b", "[REDACTED-PHONE]", cleaned)
+    cleaned = re.sub(r"\b20\d{2}[-\s]\d{4,6}\b", "[REDACTED-ID]", cleaned)
+    cleaned = cleaned.strip()
+    return cleaned[:MAX_COMMENT_LENGTH]
+
+
 def analyze_comment(text: Any) -> dict[str, Any]:
     """Analyze a single evaluation comment using calamanCy + VADER.
 
@@ -1224,6 +1240,8 @@ def analyze_comment(text: Any) -> dict[str, Any]:
         comment_str = text
     else:
         comment_str = ""
+
+    comment_str = scrub_pii(comment_str)
 
     polarity = _compute_rule_based_polarity(comment_str)
     valence = classify_valence(polarity)

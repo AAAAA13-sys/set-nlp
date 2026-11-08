@@ -15,6 +15,7 @@ class IntegrityValidatorService
     public const LIKERT_SCALE_POINTS = 5;
     public const MIN_PROFESSOR_QUESTIONS = 4;
     public const MAX_PROFESSOR_QUESTIONS = 5;
+    public const MAX_COMMENT_LENGTH = 2000;
 
     public const CLUSTER_NAMES = [
         'Pedagogical Delivery',
@@ -372,5 +373,38 @@ class IntegrityValidatorService
         }
 
         return $payload;
+    }
+
+    /**
+     * Scrub accidental PII (emails, phone numbers, institutional IDs), control characters,
+     * and prompt-injection delimiter tokens from free-text narrative feedback before vault or NLP storage.
+     */
+    public function scrubPiiFromNarrative(string $text): string
+    {
+        if ($text === '') {
+            return '';
+        }
+
+        // 1. Strip ASCII control characters (preserving tabs/newlines)
+        $clean = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $text) ?? $text;
+
+        // 2. Neutralize LLM/prompt delimiter injection sequences (#33)
+        $clean = str_ireplace(
+            ['<|system|>', '<|user|>', '<|assistant|>', '<|im_start|>', '<|im_end|>', '[INST]', '[/INST]'],
+            '',
+            $clean
+        );
+
+        // 3. Scrub accidental email addresses, PH phone numbers, and PLP student IDs (#34)
+        $clean = preg_replace('/[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}/', '[REDACTED-EMAIL]', $clean) ?? $clean;
+        $clean = preg_replace('/(?:\+63|0)9\d{2}[\s\-]?\d{3}[\s\-]?\d{4}\b/', '[REDACTED-PHONE]', $clean) ?? $clean;
+        $clean = preg_replace('/\b20\d{2}[-\s]\d{4,6}\b/', '[REDACTED-ID]', $clean) ?? $clean;
+
+        $clean = trim($clean);
+        if (mb_strlen($clean, 'UTF-8') > self::MAX_COMMENT_LENGTH) {
+            $clean = mb_substr($clean, 0, self::MAX_COMMENT_LENGTH, 'UTF-8');
+        }
+
+        return $clean;
     }
 }

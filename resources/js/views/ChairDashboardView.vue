@@ -1,111 +1,209 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import PlpAnalyticsLabModal from '../components/PlpAnalyticsLabModal.vue';
+import QuivrNlpBrainDrawer from '../components/QuivrNlpBrainDrawer.vue';
 import { useAuthStore } from '../stores/auth.js';
-import { useEvaluationStore } from '../stores/evaluation.js';
-import { evaluateWatchlistFlag, sanitizeCsvCell } from '../utils/evaluationMath.js';
+import { evaluateWatchlistFlag } from '../utils/evaluationMath.js';
 
 const authStore = useAuthStore();
-const evaluationStore = useEvaluationStore();
 const showAnalyticsLab = ref(false);
+const showQuivrBrain = ref(false);
 
-onMounted(() => {
-  evaluationStore.fetchDeanOverview(1); // Scoped to Department 1 (College of Computer Studies)
+const overviewData = ref(null);
+const longitudinalData = ref(null);
+const chairHeatmapData = ref({
+  overall_completion_rate_pct: 0,
+  institutional_target_pct: 85.0,
+  sections: [],
 });
+const quartilesData = ref(null);
+const dossierData = ref(null);
+const chairNotes = ref({});
+const planEndorsed = ref({});
+const endorsementStatusMsg = ref(null);
 
-const departmentName = computed(() => 'College of Computer Studies • Department of Computer Science');
-const chairIdentifier = computed(() => 'Dr. M. Santos (CHR-2017-011)');
-
-// Department Chair Faculty Roster
-const departmentFaculty = ref([
-  {
-    id: 1,
-    course_code: 'CS-401',
-    course_title: 'Algorithms and Complexity',
-    faculty_name: 'Prof. A. Dela Cruz',
-    enrolled_count: 42,
-    evaluated_count: 39,
-    mean_score: 4.62,
-    negative_sentiment_pct: 5.1,
-    primary_tag: 'Pedagogical Delivery',
-    status: 'NORMAL',
-  },
-  {
-    id: 2,
-    course_code: 'CS-405',
-    course_title: 'Artificial Intelligence & NLP',
-    faculty_name: 'Dr. M. Santos',
-    enrolled_count: 38,
-    evaluated_count: 36,
-    mean_score: 4.71,
-    negative_sentiment_pct: 4.0,
-    primary_tag: 'Pedagogical Delivery',
-    status: 'NORMAL',
-  },
-  {
-    id: 5,
-    course_code: 'CS-408',
-    course_title: 'Software Engineering & Quality Assurance',
-    faculty_name: 'Prof. K. Gomez',
-    enrolled_count: 40,
-    evaluated_count: 38,
-    mean_score: 4.48,
-    negative_sentiment_pct: 6.2,
-    primary_tag: 'Pedagogical Delivery',
-    status: 'NORMAL',
-  },
-  {
-    id: 4,
-    course_code: 'CS-302',
-    course_title: 'Data Structures and Algorithms Lab',
-    faculty_name: 'Prof. T. Reyes',
-    enrolled_count: 35,
-    evaluated_count: 32,
-    mean_score: 3.35,
-    negative_sentiment_pct: 38.5,
-    primary_tag: 'Assessment & Grading',
-    status: 'WATCHLIST_TRIGGERED',
-  },
-]);
-
-const departmentWatchlist = computed(() =>
-  departmentFaculty.value.filter((f) => evaluateWatchlistFlag(f.mean_score, f.negative_sentiment_pct)),
+const departmentName = computed(
+  () =>
+    authStore.user?.department_name ||
+    dossierData.value?.department_name ||
+    'College of Computer Studies',
 );
 
-const chairNotes = ref({
-  4: 'Chair Recommendation: Instructor recommended for department grading rubric standardization and mid-term turnaround SLA.',
+const chairIdentifier = computed(() => {
+  if (authStore.user?.name && authStore.user?.institutional_id) {
+    return `${authStore.user.name} (${authStore.user.institutional_id})`;
+  }
+  return authStore.displayIdentifier || 'Department Chair';
 });
 
-const planEndorsed = ref({
-  4: true,
+const departmentFaculty = computed(() => {
+  const summaries = overviewData.value?.instructor_summaries || [];
+  const heatmapSections = chairHeatmapData.value?.sections || [];
+
+  return summaries.map((inst) => {
+    const matchedSection = heatmapSections.find(
+      (s) => s.course_code === inst.course_code || Number(s.faculty_id) === Number(inst.faculty_id),
+    );
+    const enrolled = Number(matchedSection?.enrolled_count ?? matchedSection?.enrolled ?? Math.max(inst.evaluated_count, 1));
+    const evaluated = Number(matchedSection?.evaluated_count ?? matchedSection?.evaluated ?? inst.evaluated_count ?? 0);
+    const flagged = evaluateWatchlistFlag(inst.mean_score, inst.negative_sentiment_pct);
+    return {
+      id: inst.faculty_id,
+      faculty_id: inst.faculty_id,
+      course_code: inst.course_code,
+      course_title: inst.course_title,
+      section_code: inst.section_code || matchedSection?.section_code || 'SEC-A',
+      faculty_name: inst.faculty_name,
+      enrolled_count: enrolled,
+      evaluated_count: evaluated,
+      mean_score: Number(inst.mean_score || 0),
+      negative_sentiment_pct: Number(inst.negative_sentiment_pct || 0),
+      primary_tag: inst.primary_tag || 'Pedagogical Delivery',
+      status: flagged ? 'WATCHLIST_TRIGGERED' : 'NORMAL',
+    };
+  });
 });
 
-function endorseActionPlan(facultyId) {
-  planEndorsed.value[facultyId] = true;
+const departmentWatchlist = computed(() => {
+  const serverWatchlist = overviewData.value?.watchlist;
+  if (Array.isArray(serverWatchlist)) {
+    return serverWatchlist.map((w) => ({
+      id: w.faculty_id,
+      faculty_id: w.faculty_id,
+      plan_id: w.action_plan?.plan_id || `PLP-ACT-${w.faculty_id}`,
+      faculty_name: w.faculty_name,
+      course_code: w.course_code,
+      mean_score: Number(w.mean_score || 0),
+      negative_sentiment_pct: Number(w.negative_sentiment_pct || 0),
+      primary_tag: w.primary_tag || 'Pedagogical Delivery',
+      sample_comment: w.sample_comment || '',
+      action_plan_status: w.action_plan?.status || 'PENDING_REVIEW',
+    }));
+  }
+  return departmentFaculty.value.filter((f) =>
+    evaluateWatchlistFlag(f.mean_score, f.negative_sentiment_pct),
+  );
+});
+
+const departmentMeanScore = computed(() => {
+  if (!departmentFaculty.value.length) {
+    return Number(longitudinalData.value?.active_term?.mean_score || 0);
+  }
+  const sum = departmentFaculty.value.reduce((acc, f) => acc + f.mean_score, 0);
+  return sum / departmentFaculty.value.length;
+});
+
+const responseRateDisplay = computed(() => {
+  return Number(
+    overviewData.value?.response_rate_pct ??
+      chairHeatmapData.value?.overall_completion_rate_pct ??
+      0,
+  ).toFixed(1);
+});
+
+const submissionsLoggedDisplay = computed(() => {
+  return Number(overviewData.value?.submissions_logged ?? 0);
+});
+
+const departmentLongitudinal = computed(() => {
+  if (!longitudinalData.value) {
+    return {
+      active_term: { mean_score: 0, negative_pct: 0, response_rate: 0 },
+      prior_term: { mean_score: 0, negative_pct: 0, response_rate: 0 },
+      deltas: { mean_delta: 0, neg_shift: 0, plan_resolution: 100 },
+      cluster_shifts: [],
+    };
+  }
+  return {
+    active_term: {
+      mean_score: Number(longitudinalData.value.active_term?.mean_score || 0),
+      negative_pct: Number(longitudinalData.value.active_term?.negative_sentiment_pct || 0),
+      response_rate: Number(longitudinalData.value.active_term?.response_rate_pct || 0),
+    },
+    prior_term: {
+      mean_score: Number(longitudinalData.value.prior_term?.mean_score || 0),
+      negative_pct: Number(longitudinalData.value.prior_term?.negative_sentiment_pct || 0),
+      response_rate: Number(longitudinalData.value.prior_term?.response_rate_pct || 0),
+    },
+    deltas: {
+      mean_delta: Number(longitudinalData.value.deltas?.mean_score_delta || 0),
+      neg_shift: Number(longitudinalData.value.deltas?.negative_sentiment_shift_pct || 0),
+      plan_resolution: Number(longitudinalData.value.deltas?.action_plan_resolution_rate_pct || 100),
+    },
+    cluster_shifts: (longitudinalData.value.cluster_comparisons || []).map((c) => ({
+      cluster: c.cluster,
+      active: Number(c.active_score || 0),
+      prior: Number(c.prior_score || 0),
+      delta: Number(c.delta || 0),
+      status: c.status || 'IMPROVED',
+    })),
+  };
+});
+
+async function loadChairAnalytics() {
+  const headers = authStore.authHeaders();
+  const [overviewRes, heatmapRes, longRes, quartRes, dossierRes] = await Promise.all([
+    fetch('/api/chair/overview', { headers }).catch(() => null),
+    fetch('/api/chair/completion-heatmap', { headers }).catch(() => null),
+    fetch('/api/chair/longitudinal-trends', { headers }).catch(() => null),
+    fetch('/api/chair/performance-quartiles', { headers }).catch(() => null),
+    fetch('/api/chair/evidence-dossier', { headers }).catch(() => null),
+  ]);
+
+  if (overviewRes?.ok) {
+    overviewData.value = await overviewRes.json();
+    for (const w of overviewData.value.watchlist || []) {
+      const fid = w.faculty_id;
+      if (w.action_plan?.dean_notes && !chairNotes.value[fid]) {
+        chairNotes.value[fid] = w.action_plan.dean_notes;
+      }
+      if (w.action_plan?.status && w.action_plan.status !== 'PENDING_REVIEW') {
+        planEndorsed.value[fid] = true;
+      }
+    }
+  }
+  if (heatmapRes?.ok) {
+    chairHeatmapData.value = await heatmapRes.json();
+  }
+  if (longRes?.ok) {
+    longitudinalData.value = await longRes.json();
+  }
+  if (quartRes?.ok) {
+    quartilesData.value = await quartRes.json();
+  }
+  if (dossierRes?.ok) {
+    dossierData.value = await dossierRes.json();
+  }
 }
 
-const departmentLongitudinal = ref({
-  active_term: { mean_score: 4.48, negative_pct: 8.6, response_rate: 92.5 },
-  prior_term: { mean_score: 4.20, negative_pct: 14.2, response_rate: 88.0 },
-  deltas: { mean_delta: 0.28, neg_shift: -5.6, plan_resolution: 95.0 },
-  cluster_shifts: [
-    { cluster: 'Pedagogical Delivery', active: 4.52, prior: 4.18, delta: 0.34 },
-    { cluster: 'Assessment & Grading', active: 4.38, prior: 4.02, delta: 0.36 },
-    { cluster: 'Classroom Management', active: 4.50, prior: 4.25, delta: 0.25 },
-    { cluster: 'Professional Conduct', active: 4.60, prior: 4.35, delta: 0.25 },
-    { cluster: 'Student Support & Mentorship', active: 4.42, prior: 4.10, delta: 0.32 },
-  ],
+onMounted(() => {
+  loadChairAnalytics();
 });
 
-const chairHeatmapData = ref({
-  overall_completion_rate: 93.8,
-  target_pct: 85.0,
-  sections: [
-    { section_id: 1, section_code: 'CS401-A', course_code: 'CS-401', course_title: 'Algorithms & Complexity', faculty_name: 'Prof. A. Dela Cruz', enrolled: 42, evaluated: 39, rate: 92.9, target_met: true, color_hex: '#0b4f26' },
-    { section_id: 2, section_code: 'CS405-A', course_code: 'CS-405', course_title: 'Software Engineering II', faculty_name: 'Dr. M. Santos', enrolled: 38, evaluated: 36, rate: 94.7, target_met: true, color_hex: '#0b4f26' },
-    { section_id: 5, section_code: 'CS408-A', course_code: 'CS-408', course_title: 'Natural Language Processing', faculty_name: 'Prof. K. Gomez', enrolled: 36, evaluated: 34, rate: 94.4, target_met: true, color_hex: '#0b4f26' },
-  ],
-});
+async function endorseActionPlan(item) {
+  const fid = Number(item.faculty_id || item.id);
+  const notes =
+    chairNotes.value[fid] ||
+    'Chair Endorsement: Recommended for departmental rubric standardization and structured feedback turnaround.';
+  endorsementStatusMsg.value = null;
+
+  try {
+    const res = await fetch('/api/chair/action-plan/status', {
+      method: 'POST',
+      headers: authStore.authHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({
+        plan_id: item.plan_id || `PLP-ACT-${fid}`,
+        faculty_id: fid,
+        status: 'IN_PROGRESS',
+        dean_notes: notes,
+      }),
+    });
+    if (res.ok) {
+      planEndorsed.value[fid] = true;
+      endorsementStatusMsg.value = `Endorsement saved to database for ${item.faculty_name} (${item.course_code}).`;
+    }
+  } catch (_) {}
+}
 </script>
 
 <template>
@@ -115,14 +213,14 @@ const chairHeatmapData = ref({
       <div class="chair-banner-top">
         <div>
           <span class="eyebrow-badge">
-            PAMANTASAN NG LUNGSOD NG PASIG • [EduMetrics Department] Department Chair Workspace
+            PAMANTASAN NG LUNGSOD NG PASIG • Department Chair Diagnostic Workspace
           </span>
           <h2 id="chair-heading" class="section-title">
             {{ departmentName }}
           </h2>
           <p class="section-subtitle">
             Department Chair: <strong data-testid="chair-department-badge">{{ chairIdentifier }}</strong> •
-            Active Term: <strong>Fall / 1st Semester</strong> (AY 2026-2027)
+            Active Term: <strong>{{ authStore.activeTerm || '1st Semester AY 2026-2027' }}</strong>
           </p>
         </div>
 
@@ -131,67 +229,85 @@ const chairHeatmapData = ref({
             Departmental RBAC Scope:
           </span>
           <div style="font-size:0.82rem;color:var(--plp-green-900);">
-            Strictly scoped to College of Computer Studies faculty sections.
+            Scoped strictly to {{ departmentName }} faculty sections.
           </div>
-          <button
-            type="button"
-            class="btn-secondary btn-xs"
-            style="margin-top: 0.5rem; display: inline-flex; align-items: center; gap: 0.35rem;"
-            data-testid="chair-open-analytics-lab-btn"
-            @click="showAnalyticsLab = true"
-          >
-            <span>🔬 Department calamanCy NLP Lab</span>
-          </button>
+          <div style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.4rem;">
+            <button
+              type="button"
+              class="btn-secondary btn-xs"
+              style="display: inline-flex; align-items: center; gap: 0.35rem;"
+              data-testid="chair-open-analytics-lab-btn"
+              @click="showAnalyticsLab = true"
+            >
+              <span>Department calamanCy NLP Lab</span>
+            </button>
+            <button
+              type="button"
+              class="btn-primary btn-xs"
+              style="display: inline-flex; align-items: center; gap: 0.35rem;"
+              data-testid="chair-open-quivr-brain-btn"
+              @click="showQuivrBrain = true"
+            >
+              <span>Query Quivr NLP Brain</span>
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Department KPIs -->
-      <div class="kpi-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:1rem;margin-top:1.25rem;">
-        <div class="kpi-card" style="padding:1rem;background:#fafafa;border:1px solid #e5e7eb;border-radius:8px;">
-          <span class="kpi-label" style="font-size:0.75rem;color:#6b7280;text-transform:uppercase;">Response Rate</span>
-          <div class="kpi-value" style="font-size:1.5rem;font-weight:800;color:var(--plp-green-900);">93.8%</div>
-          <small style="color:#059669;font-weight:600;">Above 85.0% Institutional Target</small>
+      <div class="metric-overview-grid tabular-nums" style="margin-top:1.25rem;">
+        <div class="metric-card">
+          <span class="metric-label">Response Rate</span>
+          <strong class="metric-value">{{ responseRateDisplay }}%</strong>
+          <small style="color:#059669;font-weight:600;">Target: ≥ 85.0%</small>
         </div>
 
-        <div class="kpi-card" style="padding:1rem;background:#fafafa;border:1px solid #e5e7eb;border-radius:8px;">
-          <span class="kpi-label" style="font-size:0.75rem;color:#6b7280;text-transform:uppercase;">Submissions Logged</span>
-          <div class="kpi-value" style="font-size:1.5rem;font-weight:800;color:#1f2937;">1,420</div>
-          <small style="color:#6b7280;">Across 4 Computer Science Sections</small>
+        <div class="metric-card">
+          <span class="metric-label">Vault Evaluations Logged</span>
+          <strong class="metric-value">{{ submissionsLoggedDisplay }}</strong>
+          <small style="color:var(--text-secondary);">Across {{ chairHeatmapData.sections?.length || departmentFaculty.length }} Department Sections</small>
         </div>
 
-        <div class="kpi-card" style="padding:1rem;background:#fafafa;border:1px solid #e5e7eb;border-radius:8px;">
-          <span class="kpi-label" style="font-size:0.75rem;color:#6b7280;text-transform:uppercase;">Department Mean Rating</span>
-          <div class="kpi-value" style="font-size:1.5rem;font-weight:800;color:var(--plp-green-900);">4.52 / 5.00</div>
-          <small style="color:#059669;font-weight:600;">Very Satisfactory (AACCUP Level III)</small>
+        <div class="metric-card">
+          <span class="metric-label">Department Mean Rating</span>
+          <strong class="metric-value">{{ departmentMeanScore.toFixed(2) }} / 5.00</strong>
+          <small style="color:#059669;font-weight:600;">AACCUP Area III Tracked</small>
         </div>
 
-        <div class="kpi-card" style="padding:1rem;background:#fafafa;border:1px solid #e5e7eb;border-radius:8px;">
-          <span class="kpi-label" style="font-size:0.75rem;color:#6b7280;text-transform:uppercase;">Watchlist Inquiries</span>
-          <div class="kpi-value" style="font-size:1.5rem;font-weight:800;color:#dc2626;">{{ departmentWatchlist.length }}</div>
-          <small style="color:#dc2626;font-weight:600;">Requires Chair Pedagogical Endorsement</small>
+        <div class="metric-card">
+          <span class="metric-label">Watchlist Alerts</span>
+          <strong class="metric-value" :style="{ color: departmentWatchlist.length > 0 ? '#dc2626' : 'var(--plp-green-900)' }">
+            {{ departmentWatchlist.length }}
+          </strong>
+          <small style="color:var(--text-secondary);">Mean &lt; 3.50 or Neg &gt; 35%</small>
         </div>
       </div>
     </section>
 
     <!-- Department Faculty Roster Table -->
-    <section class="card department-roster-card" style="margin-top:1.25rem;" aria-label="Department Faculty Performance">
+    <section class="card department-roster-card" aria-label="Department Faculty Performance">
       <div class="watchlist-header">
         <div>
           <span class="eyebrow-badge">Department Faculty Performance Overview</span>
-          <h3 class="section-title">Computer Science Department Faculty Roster</h3>
+          <h3 class="section-title">{{ departmentName }} Faculty Roster</h3>
           <p class="section-subtitle">
-            Continuous monitoring of teaching evaluations across all department instructional blocks for AY 2026-2027.
+            Live database aggregation of anonymized teaching evaluations across departmental instructional sections.
           </p>
+        </div>
+        <div v-if="quartilesData?.tier_counts" style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+          <span class="token-chip chip-signed">High Distinction: {{ quartilesData.tier_counts.high_distinction }}</span>
+          <span class="token-chip chip-signed">Proficient: {{ quartilesData.tier_counts.proficient }}</span>
+          <span class="token-chip chip-unsigned">Priority: {{ quartilesData.tier_counts.priority_intervention }}</span>
         </div>
       </div>
 
       <div class="table-responsive" style="margin-top:0.75rem;">
-        <table class="institutional-table" data-testid="chair-faculty-table">
+        <table class="institutional-table tabular-nums" data-testid="chair-faculty-table">
           <thead>
             <tr>
               <th scope="col">Course Code</th>
               <th scope="col">Faculty Member</th>
-              <th scope="col">Evaluated / Enrolled</th>
+              <th scope="col">Vault Responses</th>
               <th scope="col">Mean Rating (μ)</th>
               <th scope="col">Negative Sentiment %</th>
               <th scope="col">Primary Domain</th>
@@ -205,14 +321,14 @@ const chairHeatmapData = ref({
                 <div class="course-title-sub">{{ f.course_title }}</div>
               </td>
               <td><strong>{{ f.faculty_name }}</strong></td>
-              <td>{{ f.evaluated_count }} / {{ f.enrolled_count }} ({{ Math.round((f.evaluated_count / f.enrolled_count) * 100) }}%)</td>
+              <td>{{ f.evaluated_count }}</td>
               <td>
-                <span :style="{ color: f.mean_score < 3.5 ? '#dc2626' : 'var(--plp-green-900)', fontWeight: 'bold' }">
+                <span :style="{ color: f.mean_score < 3.5 ? '#dc2626' : 'var(--plp-green-900)', fontWeight: '700' }">
                   {{ f.mean_score.toFixed(2) }}
                 </span>
               </td>
               <td>
-                <span :style="{ color: f.negative_sentiment_pct > 35.0 ? '#dc2626' : '#1f2937', fontWeight: 'bold' }">
+                <span :style="{ color: f.negative_sentiment_pct > 35.0 ? '#dc2626' : '#1f2937', fontWeight: '700' }">
                   {{ f.negative_sentiment_pct.toFixed(1) }}%
                 </span>
               </td>
@@ -228,13 +344,18 @@ const chairHeatmapData = ref({
                 </span>
               </td>
             </tr>
+            <tr v-if="departmentFaculty.length === 0">
+              <td colspan="7" style="text-align:center;padding:1.5rem;color:var(--text-muted);">
+                No departmental evaluation records available yet for the active term.
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
     </section>
 
     <!-- Department Watchlist Pedagogical Intervention & Chair Review -->
-    <section class="card chair-watchlist-card" style="margin-top:1.25rem;" data-testid="chair-watchlist-card">
+    <section class="card chair-watchlist-card" data-testid="chair-watchlist-card">
       <div class="watchlist-header">
         <div>
           <span class="eyebrow-badge" style="background:#fee2e2;color:#991b1b;border-color:#fca5a5;">
@@ -247,17 +368,34 @@ const chairHeatmapData = ref({
         </div>
       </div>
 
-      <div v-if="departmentWatchlist.length === 0" style="padding: 1.25rem; text-align: center; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; margin-top: 1rem;" data-testid="chair-watchlist-empty">
+      <div
+        v-if="endorsementStatusMsg"
+        class="alert-banner alert-success"
+        style="margin-top: 0.85rem;"
+        role="status"
+      >
+        {{ endorsementStatusMsg }}
+      </div>
+
+      <div
+        v-if="departmentWatchlist.length === 0"
+        style="padding: 1.25rem; text-align: center; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; margin-top: 1rem;"
+        data-testid="chair-watchlist-empty"
+      >
         <div style="font-weight: 700; color: #166534; font-size: 0.95rem;">
-          ✓ Department Quality Benchmark Met
+          Department Quality Benchmark Met
         </div>
         <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #15803d;">
-          All Computer Science department faculty members currently meet or exceed institutional accreditation standards (Mean ≥ 3.50, Negative Sentiment ≤ 35%). No diagnostic interventions required.
+          All department faculty members currently meet or exceed institutional accreditation standards (Mean ≥ 3.50, Negative Sentiment ≤ 35%).
         </p>
       </div>
 
       <div v-else>
-        <div v-for="item in departmentWatchlist" :key="item.id" style="margin-top:1rem;padding:1rem;background:#fffaf0;border:1px solid #feebc8;border-radius:8px;">
+        <div
+          v-for="item in departmentWatchlist"
+          :key="item.id"
+          style="margin-top:1rem;padding:1rem;background:#fffaf0;border:1px solid #feebc8;border-radius:8px;"
+        >
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
             <div>
               <h4 style="margin:0;font-size:1.05rem;color:#744210;">
@@ -265,44 +403,46 @@ const chairHeatmapData = ref({
               </h4>
               <p style="margin:0.25rem 0 0;font-size:0.85rem;color:#975a16;">
                 Primary Pedagogical Focus: <strong>{{ item.primary_tag }}</strong>
+                <span v-if="item.sample_comment"> • Representative Comment: “{{ item.sample_comment }}”</span>
               </p>
             </div>
-            <span class="token-chip chip-warn" style="font-size:0.8rem;">
-              {{ planEndorsed[item.id] ? 'CHAIR ENDORSED' : 'PENDING CHAIR REVIEW' }}
+            <span class="token-chip chip-unsigned" style="font-size:0.8rem;">
+              {{ planEndorsed[item.id] ? 'CHAIR ENDORSED' : item.action_plan_status || 'PENDING CHAIR REVIEW' }}
             </span>
           </div>
 
           <div style="margin-top:0.75rem;">
-            <label style="display:block;font-size:0.82rem;font-weight:600;color:#744210;margin-bottom:0.35rem;">
+            <label
+              :for="`chair-notes-${item.id}`"
+              style="display:block;font-size:0.82rem;font-weight:600;color:#744210;margin-bottom:0.35rem;"
+            >
               Department Chair Intervention Notes &amp; Recommendation to Dean:
             </label>
             <textarea
+              :id="`chair-notes-${item.id}`"
               v-model="chairNotes[item.id]"
               rows="2"
               style="width:100%;padding:0.5rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.85rem;"
-              placeholder="Add chair notes regarding assessment rubrics, lecture punctuality, or syllabus pacing..."
+              placeholder="Add chair notes regarding assessment rubrics, lecture punctuality, or syllabus pacing…"
             ></textarea>
           </div>
 
-          <div style="margin-top:0.5rem;display:flex;gap:0.5rem;align-items:center;">
+          <div style="margin-top:0.5rem;display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
             <button
               type="button"
               class="btn-primary btn-xs"
               data-testid="chair-endorse-plan-btn"
-              @click="endorseActionPlan(item.id)"
+              @click="endorseActionPlan(item)"
             >
               {{ planEndorsed[item.id] ? 'Update Chair Endorsement' : 'Endorse Action Plan to Dean' }}
             </button>
-            <small v-if="planEndorsed[item.id]" style="color:#059669;font-weight:600;">
-              ✓ Endorsement logged and transmitted to Dean V. Mendoza.
-            </small>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Department Longitudinal Trends (AACCUP Area III) -->
-    <section class="card chair-longitudinal-card" style="margin-top:1.25rem;" data-testid="chair-longitudinal-trends-card">
+    <section class="card chair-longitudinal-card" data-testid="chair-longitudinal-trends-card">
       <div class="iso-header">
         <div>
           <span class="eyebrow-badge">
@@ -310,35 +450,37 @@ const chairHeatmapData = ref({
           </span>
           <h3 class="section-title">Department Longitudinal Quality Trends</h3>
           <p class="section-subtitle">
-            Curriculum &amp; instructional competence progression comparing Computer Science metrics against historical term baselines.
+            Curriculum &amp; instructional competence progression comparing active department metrics against prior semester baselines.
           </p>
         </div>
-        <span class="token-chip chip-signed" style="font-size:0.8rem;">
-          Δμ: +{{ departmentLongitudinal.deltas.mean_delta.toFixed(2) }} Improvement
+        <span class="token-chip chip-signed tabular-nums" style="font-size:0.8rem;">
+          Δμ: {{ departmentLongitudinal.deltas.mean_delta >= 0 ? '+' : '' }}{{ departmentLongitudinal.deltas.mean_delta.toFixed(2) }}
         </span>
       </div>
 
-      <div class="metric-overview-grid" style="margin-top:1rem;" data-testid="chair-longitudinal-grid">
+      <div class="metric-overview-grid tabular-nums" style="margin-top:1rem;" data-testid="chair-longitudinal-grid">
         <div class="metric-card">
-          <span class="metric-label">CS Department Mean</span>
+          <span class="metric-label">Department Mean</span>
           <strong class="metric-value" style="color:var(--plp-green-800);">
             {{ departmentLongitudinal.active_term.mean_score.toFixed(2) }} / 5.00
           </strong>
-          <small style="color:var(--text-muted);font-size:0.75rem;">+{{ departmentLongitudinal.deltas.mean_delta.toFixed(2) }} vs Spring 2026 Baseline</small>
+          <small style="color:var(--text-muted);font-size:0.75rem;">
+            {{ departmentLongitudinal.deltas.mean_delta >= 0 ? '+' : '' }}{{ departmentLongitudinal.deltas.mean_delta.toFixed(2) }} vs Baseline
+          </small>
         </div>
         <div class="metric-card">
           <span class="metric-label">Negative Sentiment</span>
           <strong class="metric-value" style="color:#16a34a;">
             {{ departmentLongitudinal.active_term.negative_pct }}%
           </strong>
-          <small style="color:var(--text-muted);font-size:0.75rem;">{{ departmentLongitudinal.deltas.neg_shift }}% Shift (Favorable)</small>
+          <small style="color:var(--text-muted);font-size:0.75rem;">{{ departmentLongitudinal.deltas.neg_shift }}% Shift</small>
         </div>
         <div class="metric-card">
           <span class="metric-label">Response Velocity</span>
           <strong class="metric-value" style="color:var(--plp-green-800);">
             {{ departmentLongitudinal.active_term.response_rate }}%
           </strong>
-          <small style="color:var(--text-muted);font-size:0.75rem;">Target: &gt;85% (Compliant)</small>
+          <small style="color:var(--text-muted);font-size:0.75rem;">Target: ≥ 85%</small>
         </div>
         <div class="metric-card">
           <span class="metric-label">Action Plan Resolution</span>
@@ -349,12 +491,12 @@ const chairHeatmapData = ref({
         </div>
       </div>
 
-      <table class="institutional-table" style="margin-top:1rem;" data-testid="chair-cluster-shifts-table">
+      <table class="institutional-table tabular-nums" style="margin-top:1rem;" data-testid="chair-cluster-shifts-table">
         <thead>
           <tr>
             <th scope="col">Pedagogical Dimension</th>
-            <th scope="col">Fall 2026 Active</th>
-            <th scope="col">Spring 2026 Baseline</th>
+            <th scope="col">Active Term</th>
+            <th scope="col">Prior Baseline</th>
             <th scope="col">Delta (Δ)</th>
             <th scope="col">Instructional Quality Status</th>
           </tr>
@@ -365,11 +507,11 @@ const chairHeatmapData = ref({
             <td>{{ cs.active.toFixed(2) }}</td>
             <td>{{ cs.prior.toFixed(2) }}</td>
             <td style="font-weight:700;color:var(--plp-green-800);">
-              +{{ cs.delta.toFixed(2) }}
+              {{ cs.delta >= 0 ? '+' : '' }}{{ cs.delta.toFixed(2) }}
             </td>
             <td>
               <span class="token-chip chip-signed" style="font-size:0.75rem;">
-                IMPROVED
+                {{ cs.status }}
               </span>
             </td>
           </tr>
@@ -378,23 +520,23 @@ const chairHeatmapData = ref({
     </section>
 
     <!-- Department Completion Heatmap Matrix -->
-    <section class="card chair-heatmap-card" style="margin-top:1.25rem;" data-testid="chair-completion-heatmap-card">
+    <section class="card chair-heatmap-card" data-testid="chair-completion-heatmap-card">
       <div class="iso-header">
         <div>
           <span class="eyebrow-badge">
-            PAMANTASAN NG LUNGSOD NG PASIG • Chapter II Operational Wireframe
+            PAMANTASAN NG LUNGSOD NG PASIG • Departmental Participation Matrix
           </span>
-          <h3 class="section-title">Computer Science Section Completion Heatmap</h3>
+          <h3 class="section-title">{{ departmentName }} Section Completion Heatmap</h3>
           <p class="section-subtitle">
-            Course-by-course response density monitoring against the institutional &gt; 85% participation threshold.
+            Course-by-course response density monitoring against the institutional ≥ 85% participation threshold.
           </p>
         </div>
-        <span class="token-chip chip-signed" style="font-size:0.8rem;">
-          CS Completion Velocity: {{ chairHeatmapData.overall_completion_rate }}%
+        <span class="token-chip chip-signed tabular-nums" style="font-size:0.8rem;">
+          Completion Velocity: {{ chairHeatmapData.overall_completion_rate_pct ?? chairHeatmapData.overall_completion_rate ?? 0 }}%
         </span>
       </div>
 
-      <table class="institutional-table" style="margin-top:1rem;" data-testid="chair-heatmap-table">
+      <table class="institutional-table tabular-nums" style="margin-top:1rem;" data-testid="chair-heatmap-table">
         <thead>
           <tr>
             <th scope="col">Course Code &amp; Title</th>
@@ -411,21 +553,25 @@ const chairHeatmapData = ref({
             <td><strong>{{ sec.course_code }}</strong> — {{ sec.course_title }}</td>
             <td><code>{{ sec.section_code }}</code></td>
             <td>{{ sec.faculty_name }}</td>
-            <td>{{ sec.enrolled }}</td>
-            <td>{{ sec.evaluated }}</td>
+            <td>{{ sec.enrolled_count ?? sec.enrolled }}</td>
+            <td>{{ sec.evaluated_count ?? sec.evaluated }}</td>
             <td>
               <div style="display:flex;align-items:center;gap:0.5rem;">
                 <div style="flex:1;height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden;min-width:60px;">
-                  <div :style="{ width: `${sec.rate}%`, background: sec.color_hex, height: '100%' }"></div>
+                  <div :style="{ width: `${sec.completion_rate_pct ?? sec.rate}%`, background: sec.color_hex, height: '100%' }"></div>
                 </div>
                 <strong :style="{ color: sec.color_hex, fontSize: '0.85rem' }">
-                  {{ sec.rate }}%
+                  {{ sec.completion_rate_pct ?? sec.rate }}%
                 </strong>
               </div>
             </td>
             <td>
-              <span class="token-chip chip-signed" style="font-size:0.72rem;">
-                ✓ TARGET MET (&gt;85%)
+              <span
+                class="token-chip"
+                :class="sec.target_met ? 'chip-signed' : 'chip-unsigned'"
+                style="font-size:0.72rem;"
+              >
+                {{ sec.target_met ? 'TARGET MET (≥85%)' : 'IN PROGRESS' }}
               </span>
             </td>
           </tr>
@@ -437,6 +583,11 @@ const chairHeatmapData = ref({
     <PlpAnalyticsLabModal
       :visible="showAnalyticsLab"
       @close="showAnalyticsLab = false"
+    />
+
+    <QuivrNlpBrainDrawer
+      :visible="showQuivrBrain"
+      @close="showQuivrBrain = false"
     />
   </main>
 </template>

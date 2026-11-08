@@ -19,6 +19,19 @@ class AnalyticsClientService
     public const VALENCE_POSITIVE = 'Positive';
     public const VALENCE_NEUTRAL = 'Neutral';
     public const VALENCE_NEGATIVE = 'Negative';
+    public const MAX_COMMENT_LENGTH = 2000;
+
+    /**
+     * Strict loopback/internal host allowlist to prevent SSRF (#7, #29).
+     *
+     * @var list<string>
+     */
+    public const ALLOWED_NLP_HOSTS = [
+        '127.0.0.1',
+        'localhost',
+        '::1',
+        'nlp-analytics',
+    ];
 
     private static bool $circuitOpen = false;
 
@@ -27,7 +40,36 @@ class AnalyticsClientService
         private float $timeoutSeconds = 1.5,
         private bool $preferLocalFallback = false
     ) {
-        $this->serviceUrl = $this->serviceUrl ?? (getenv('NLP_SERVICE_URL') ?: 'http://127.0.0.1:5001');
+        $candidateUrl = $this->serviceUrl ?? (getenv('NLP_SERVICE_URL') ?: 'http://127.0.0.1:5001');
+        $this->serviceUrl = $this->isAllowedServiceHost($candidateUrl)
+            ? rtrim($candidateUrl, '/')
+            : 'http://127.0.0.1:5001';
+        $this->timeoutSeconds = min(2.0, max(0.1, $this->timeoutSeconds));
+    }
+
+    public function getBaseUrl(): string
+    {
+        return (string) ($this->serviceUrl ?? 'http://127.0.0.1:5001');
+    }
+
+    public function getTimeoutSeconds(): float
+    {
+        return $this->timeoutSeconds;
+    }
+
+    public function isAllowedServiceHost(?string $url = null): bool
+    {
+        $target = $url ?? $this->serviceUrl ?? '';
+        $parsed = parse_url($target);
+        if (!is_array($parsed)) {
+            return false;
+        }
+        $scheme = strtolower((string) ($parsed['scheme'] ?? ''));
+        $host = strtolower(trim((string) ($parsed['host'] ?? ''), '[]'));
+        if (!in_array($scheme, ['http', 'https'], true) || $host === '') {
+            return false;
+        }
+        return in_array($host, self::ALLOWED_NLP_HOSTS, true);
     }
 
     public static function resetCircuitBreaker(): void
@@ -42,7 +84,8 @@ class AnalyticsClientService
      */
     public function analyzeComment(string $comment): array
     {
-        $trimmed = trim($comment);
+        $validator = new IntegrityValidatorService();
+        $trimmed = $validator->scrubPiiFromNarrative($comment);
         if ($trimmed === '') {
             return [
                 'polarity' => 0.0,
@@ -690,6 +733,11 @@ class AnalyticsClientService
      */
     private function callFlaskEndpoint(string $path, array $payload): ?array
     {
+        if (!$this->isAllowedServiceHost($this->serviceUrl)) {
+            self::$circuitOpen = true;
+            return null;
+        }
+
         $parsed = parse_url($this->serviceUrl);
         $host = $parsed['host'] ?? '127.0.0.1';
         $port = (int) ($parsed['port'] ?? 5001);

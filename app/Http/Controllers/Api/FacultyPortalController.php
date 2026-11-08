@@ -21,6 +21,27 @@ class FacultyPortalController extends Controller
         $this->pdo = $this->evaluationService->getPdo();
     }
 
+    public function sections(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $facultyId = ($user !== null && ($user->role ?? '') === 'faculty')
+            ? (int) ($user->id ?? 0)
+            : (int) ($request->input('faculty_id') ?? ($user->id ?? 0));
+
+        if ($facultyId <= 0) {
+            return new JsonResponse([
+                'authenticated' => false,
+                'code' => 'UNAUTHENTICATED',
+                'message' => 'Faculty authentication required.',
+            ], 401);
+        }
+
+        $termId = $request->input('academic_term_id') !== null ? (int) $request->input('academic_term_id') : null;
+        $data = $this->evaluationService->getFacultySections($facultyId, $termId);
+
+        return new JsonResponse($data, 200);
+    }
+
     public function sectionReport(Request $request, int $sectionId = 0): JsonResponse
     {
         $resolvedSectionId = $sectionId > 0

@@ -36,10 +36,10 @@ function readResourceFile(relativePath) {
   return fs.readFileSync(path.join(JS_DIR, relativePath), 'utf8');
 }
 
-describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (34 Test Groups)', () => {
+describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', () => {
   // 1. Header portal branding & active term display
   describe('Group 01: Header portal branding & active term display (NavbarHeader.vue — Pamantasan ng Lungsod ng Pasig)', () => {
-    it('renders PAMANTASAN NG LUNGSOD NG PASIG branding, PLP Green/Gold theme, active term, logged-in student ID 2024-10892, and clearance status badge', () => {
+    it('renders PAMANTASAN NG LUNGSOD NG PASIG branding, PLP Green/Gold theme, active term, Bearer auth session bar, and clearance status badge', () => {
       const navbarSfc = readResourceFile('components/NavbarHeader.vue');
       const authStoreSrc = readResourceFile('stores/auth.js');
       const appCss = fs.readFileSync(path.join(ROOT_DIR, 'resources', 'css', 'app.css'), 'utf8');
@@ -48,12 +48,13 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (34 Test Groups)', ()
       assert.ok(navbarSfc.includes('plpasig.edu.ph'));
       assert.ok(navbarSfc.includes('Institutional Evaluation Portal'));
       assert.ok(navbarSfc.includes('Active Term:'));
-      assert.ok(navbarSfc.includes('Logged in as:'));
+      assert.ok(navbarSfc.includes('Signed in as:'));
       assert.ok(navbarSfc.includes('data-testid="navbar-clearance-badge"'));
       assert.ok(appCss.includes('--plp-green-900: #0b4f26'));
       assert.ok(appCss.includes('--plp-gold-500: #eab308'));
-      assert.ok(authStoreSrc.includes("'2024-10892'"));
-      assert.ok(authStoreSrc.includes('Fall / 1st Semester'));
+      assert.ok(authStoreSrc.includes('evaluatech_auth_token'));
+      assert.ok(authStoreSrc.includes('1st Semester AY 2026-2027'));
+      assert.ok(authStoreSrc.includes('Bearer '));
     });
   });
 
@@ -281,9 +282,11 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (34 Test Groups)', ()
   describe('Group 13: Double-Blind faculty lock screen when registrar_lock = false', () => {
     it('blocks faculty evaluation visibility when registrar_lock is false even after grades are submitted', () => {
       assert.equal(canFacultyViewEvaluation(true, false), false);
+      const facultyViewSfc = readResourceFile('views/FacultyDashboardView.vue');
       const evalStoreSrc = readResourceFile('stores/evaluation.js');
-      assert.ok(evalStoreSrc.includes('term_grades_submitted: true'));
-      assert.ok(evalStoreSrc.includes('registrar_lock: false'));
+      assert.ok(facultyViewSfc.includes('data-testid="double-blind-lock-screen"'));
+      assert.ok(facultyViewSfc.includes('DOUBLE_BLIND_LOCKED'));
+      assert.ok(evalStoreSrc.includes('/api/faculty/sections'));
     });
   });
 
@@ -304,12 +307,10 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (34 Test Groups)', ()
       const evalStoreSrc = readResourceFile('stores/evaluation.js');
       const facultyViewSfc = readResourceFile('views/FacultyDashboardView.vue');
 
-      // Inspect sample_comments in evaluation store to confirm zero identifying keys
-      const sampleCommentMatch = evalStoreSrc.match(/sample_comments:\s*\[([\s\S]*?)\]/);
-      assert.ok(sampleCommentMatch);
-      assert.equal(sampleCommentMatch[1].includes('student_id'), false);
-      assert.equal(sampleCommentMatch[1].includes('2024-10892'), false);
-      assert.equal(sampleCommentMatch[1].includes('ip_address'), false);
+      assert.equal(facultyViewSfc.includes('student_id'), false);
+      assert.equal(facultyViewSfc.includes('clearance_id'), false);
+      assert.equal(facultyViewSfc.includes('ip_address'), false);
+      assert.ok(evalStoreSrc.includes('fetchFacultySectionReport'));
       assert.ok(facultyViewSfc.includes('Zero Student Identifiers'));
     });
   });
@@ -483,7 +484,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (34 Test Groups)', ()
 
   // 25. Responsive viewport layout constraints (375x812 mobile & 1366x768 desktop) & RBAC router guards
   describe('Group 25: Responsive viewport layout constraints (375x812 & 1366x768) & five-role router guards', () => {
-    it('enforces five-role route authorization and responsive CSS breakpoints for 375px mobile and 1366px desktop', () => {
+    it('enforces five-role route authorization, unauthenticated /login redirect, and responsive CSS breakpoints', () => {
       const routerSrc = readResourceFile('router/index.js');
       const loginViewSfc = readResourceFile('views/LoginView.vue');
 
@@ -494,7 +495,8 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (34 Test Groups)', ()
       assert.ok(routerSrc.includes("roles: ['dean']"));
       assert.ok(routerSrc.includes("roles: ['admin']"));
       assert.ok(routerSrc.includes('/access-denied'));
-      assert.ok(loginViewSfc.includes('DEMO_ROLE_PROFILES.student.institutional_id'));
+      assert.ok(routerSrc.includes("path: '/login'"));
+      assert.ok(loginViewSfc.includes("institutionalId = ref('')"));
       assert.ok(loginViewSfc.includes('data-testid="login-id-input"'));
     });
   });
@@ -587,9 +589,9 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (34 Test Groups)', ()
       assert.ok(facultyViewSfc.includes('updateFacultyPlanStatus'));
       assert.ok(facultyViewSfc.includes('/api/faculty/action-plan/status'));
 
-      // 3. Verify preview action plan button for demonstration
-      assert.ok(facultyViewSfc.includes('data-testid="preview-watchlist-plan-btn"'));
-      assert.ok(facultyViewSfc.includes('previewWatchlistSection'));
+      // 3. Verify database-backed faculty section selector
+      assert.ok(facultyViewSfc.includes('data-testid="faculty-section-select"'));
+      assert.ok(facultyViewSfc.includes('fetchFacultySections'));
 
       // 4. Verify institutional excellence metadata
       assert.ok(facultyViewSfc.includes('PAMANTASAN NG LUNGSOD NG PASIG • Continuous Pedagogical Improvement'));
@@ -822,7 +824,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (34 Test Groups)', ()
 
   // 34. Institutional Login Portal, RA 10173 Privacy Notice & Header Sign Out Workflow
   describe('Group 34: Institutional Login Portal, RA 10173 Privacy Notice & Header Sign Out Workflow', () => {
-    it('verifies login form controls, show/hide password toggle, RA 10173 privacy banner, role preset chips, and navbar sign out', () => {
+    it('verifies clean production login form controls, show/hide password toggle, RA 10173 privacy banner, and navbar sign out', () => {
       const loginViewSfc = readResourceFile('views/LoginView.vue');
       const navbarSfc = readResourceFile('components/NavbarHeader.vue');
 
@@ -831,27 +833,24 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (34 Test Groups)', ()
       assert.ok(loginViewSfc.includes('data-testid="login-privacy-banner"'));
       assert.ok(loginViewSfc.includes('RA 10173 Data Privacy'));
       assert.ok(loginViewSfc.includes('Cryptographic Decoupling'));
-      assert.ok(loginViewSfc.includes('PAMANTASAN NG LUNGSOD NG PASIG'));
+      assert.ok(loginViewSfc.includes('Pamantasan ng Lungsod ng Pasig'));
 
-      // 2. Verify all five seeded role preset buttons for rapid institutional demonstration
-      assert.ok(loginViewSfc.includes('data-testid="`preset-role-${roleKey}`"') || loginViewSfc.includes('preset-role-'));
-      assert.ok(loginViewSfc.includes('selectPresetRole'));
-      assert.ok(loginViewSfc.includes('quickSignIn'));
-
-      // 3. Verify interactive input fields, show/hide password toggle, and remember session
+      // 2. Verify interactive input fields, autocomplete ergonomics, show/hide password toggle, and remember session
       assert.ok(loginViewSfc.includes('data-testid="login-id-input"'));
+      assert.ok(loginViewSfc.includes('autocomplete="username"'));
+      assert.ok(loginViewSfc.includes('spellcheck="false"'));
       assert.ok(loginViewSfc.includes('data-testid="login-password-input"'));
+      assert.ok(loginViewSfc.includes('autocomplete="current-password"'));
       assert.ok(loginViewSfc.includes('data-testid="toggle-password-btn"'));
       assert.ok(loginViewSfc.includes('togglePasswordVisibility'));
       assert.ok(loginViewSfc.includes('data-testid="remember-session-input"'));
       assert.ok(loginViewSfc.includes('data-testid="login-submit-btn"'));
-      assert.ok(loginViewSfc.includes('data-testid="one-click-login-btn"'));
 
-      // 4. Verify NavbarHeader Sign Out / Sign In workflow
+      // 3. Verify NavbarHeader Sign Out workflow and authenticated bar visibility guard
       assert.ok(navbarSfc.includes('data-testid="navbar-logout-btn"'));
-      assert.ok(navbarSfc.includes('data-testid="navbar-login-btn"'));
+      assert.ok(navbarSfc.includes('showAuthenticatedBar'));
       assert.ok(navbarSfc.includes('handleLogout'));
-      assert.ok(navbarSfc.includes("roleNavLinks"));
+      assert.ok(navbarSfc.includes('roleNavLinks'));
     });
   });
 
@@ -919,8 +918,8 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (34 Test Groups)', ()
       assert.ok(chairViewSfc.includes('data-testid="chair-cluster-shifts-table"'));
       assert.ok(chairViewSfc.includes('departmentLongitudinal'));
 
-      // 3. Verify ClearancePermitCard proctor verification simulator and official badge
-      assert.ok(permitCardSfc.includes('data-testid="simulate-proctor-scan-btn"'));
+      // 3. Verify ClearancePermitCard live Registrar signature verification and official badge
+      assert.ok(permitCardSfc.includes('data-testid="verify-permit-btn"'));
       assert.ok(permitCardSfc.includes('data-testid="proctor-verification-details"'));
       assert.ok(permitCardSfc.includes('SEAL: PLP-REGISTRAR-AUTHENTICATED'));
       assert.ok(permitCardSfc.includes('https://plpasig.edu.ph/'));
@@ -974,6 +973,177 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (34 Test Groups)', ()
       assert.ok(apiRoutes.includes('/dean/completion-heatmap'));
       assert.ok(apiRoutes.includes('/chair/completion-heatmap'));
       assert.ok(apiRoutes.includes('/dean/compliance-audit'));
+    });
+  });
+
+  // 38. Production Anti-Demo Regression Gate, Seeder Bearer Auth & Accreditation Dossier/Quartiles
+  describe('Group 38: Production Anti-Demo Regression Gate, Seeder Bearer Auth & Accreditation Dossier/Quartiles', () => {
+    it('enforces zero demo/cheat buttons across all Vue/JS sources and verifies DB-backed quartiles, dossier seal, and CSS ergonomics', () => {
+      const forbiddenPatterns = [
+        'demo-role-switcher',
+        'switchDemoRole',
+        'DEMO_ROLE_PROFILES',
+        'one-click-login-btn',
+        'preset-role-',
+        'complete-all-demo-btn',
+        'simulate-45s-btn',
+        'fill-straight-5s-btn',
+        'fill-varied-btn',
+        'switch-unlocked-section-btn',
+        'preview-watchlist-plan-btn',
+        'simulate-proctor-scan-btn',
+        'reset-demo',
+      ];
+
+      function collectSourceFiles(dir) {
+        const entries = fs.readdirSync(dir, { withFileTypes: true });
+        const files = [];
+        for (const entry of entries) {
+          const fullPath = path.join(dir, entry.name);
+          if (entry.isDirectory()) {
+            files.push(...collectSourceFiles(fullPath));
+          } else if (entry.name.endsWith('.vue') || entry.name.endsWith('.js')) {
+            files.push(fullPath);
+          }
+        }
+        return files;
+      }
+
+      const jsVueFiles = collectSourceFiles(JS_DIR);
+      assert.ok(jsVueFiles.length >= 15);
+
+      for (const filePath of jsVueFiles) {
+        const content = fs.readFileSync(filePath, 'utf8');
+        const rel = path.relative(ROOT_DIR, filePath);
+        for (const forbidden of forbiddenPatterns) {
+          assert.equal(
+            content.includes(forbidden),
+            false,
+            `Forbidden demo artifact "${forbidden}" found in ${rel}`,
+          );
+        }
+      }
+
+      const deanViewSfc = readResourceFile('views/DeanDashboardView.vue');
+      const appCss = fs.readFileSync(path.join(ROOT_DIR, 'resources', 'css', 'app.css'), 'utf8');
+
+      assert.ok(deanViewSfc.includes('data-testid="dean-performance-quartiles-card"'));
+      assert.ok(deanViewSfc.includes('data-testid="dean-evidence-dossier-card"'));
+      assert.ok(deanViewSfc.includes('data-testid="dossier-digital-seal"'));
+      assert.ok(deanViewSfc.includes('data-testid="dossier-sha256-digest"'));
+      assert.ok(appCss.includes('font-variant-numeric: tabular-nums'));
+      assert.ok(appCss.includes('@media (prefers-reduced-motion: reduce)'));
+      assert.equal(/transition:\s*all\b/.test(appCss), false, 'app.css must not use transition: all');
+    });
+  });
+
+  // 39. PLP Split-Screen Login, Collapsible Emerald Sidebar Shell, Quivr Second Brain & All 20 SaaS UX Patterns
+  describe('Group 39: PLP Split-Screen Login, Collapsible Emerald Sidebar Shell, Quivr Second Brain & All 20 SaaS UX Patterns', () => {
+    it('verifies sch-inspired split login, collapsible sidebar rail, Command Palette, Quivr NLP Brain, ReusableDataTable, autosave, and graceful error recovery', async () => {
+      const uxHelpers = await import('../../resources/js/utils/uxHelpers.js');
+      const loginViewSfc = readResourceFile('views/LoginView.vue');
+      const sidebarSfc = readResourceFile('components/WorkspaceSidebar.vue');
+      const cmdkSfc = readResourceFile('components/CommandPaletteModal.vue');
+      const quivrSfc = readResourceFile('components/QuivrNlpBrainDrawer.vue');
+      const tableSfc = readResourceFile('components/ReusableDataTable.vue');
+      const skeletonSfc = readResourceFile('components/SkeletonLoader.vue');
+      const errorRecoverySfc = readResourceFile('components/ErrorRecoveryBanner.vue');
+      const destructiveSfc = readResourceFile('components/DestructiveConfirmModal.vue');
+      const cheatsheetSfc = readResourceFile('components/ShortcutsCheatsheetModal.vue');
+      const onboardingSfc = readResourceFile('components/WorkspaceOnboardingBanner.vue');
+      const notFoundSfc = readResourceFile('views/NotFoundView.vue');
+      const advocacySfc = readResourceFile('views/EvaluationAdvocacyView.vue');
+      const evalFormSfc = readResourceFile('views/EvaluationFormView.vue');
+      const adminViewSfc = readResourceFile('views/AdminRosterView.vue');
+
+      // 1. Academic Tech 50/50 Split-Screen Login (PLP EvaluTech, floating card, floating labels, shield/eye/brain tags) & collapsible emerald sidebar shell
+      assert.ok(loginViewSfc.includes('data-testid="login-split-screen"'));
+      assert.ok(loginViewSfc.includes('PLP EvaluTech'));
+      assert.ok(loginViewSfc.includes('Candid student feedback,'));
+      assert.ok(loginViewSfc.includes('decoupled by design.'));
+      assert.ok(loginViewSfc.includes('floating-auth-card'));
+      assert.ok(loginViewSfc.includes('floating-label'));
+      assert.ok(loginViewSfc.includes('feature-tag-item'));
+      assert.ok(sidebarSfc.includes('data-testid="workspace-sidebar"'));
+      assert.ok(sidebarSfc.includes('data-testid="sidebar-collapse-btn"'));
+      assert.ok(sidebarSfc.includes('data-testid="sidebar-tier-badge"'));
+
+      // 2. Command Palette (Ctrl+K), Quivr NLP Brain, Cheatsheet (?), Onboarding, 404, Advocacy
+      assert.ok(cmdkSfc.includes('data-testid="command-palette-modal"'));
+      assert.ok(quivrSfc.includes('data-testid="quivr-nlp-brain-drawer"'));
+      assert.ok(cheatsheetSfc.includes('data-testid="shortcuts-cheatsheet-modal"'));
+      assert.ok(onboardingSfc.includes('data-testid="workspace-onboarding-banner"'));
+      assert.ok(notFoundSfc.includes('data-testid="custom-404-view"'));
+      assert.ok(advocacySfc.includes('data-testid="campus-advocacy-view"'));
+
+      // 3. ReusableDataTable, SkeletonLoader, Autosave, Bulk Actions, Destructive Modal & Graceful Error Recovery
+      assert.ok(tableSfc.includes('data-testid="reusable-data-table"'));
+      assert.ok(tableSfc.includes('data-testid="table-bulk-action-bar"'));
+      assert.ok(skeletonSfc.includes('data-testid="skeleton-loader"'));
+      assert.ok(evalFormSfc.includes('data-testid="draft-autosave-badge"'));
+      assert.ok(adminViewSfc.includes('data-testid="admin-bulk-lock-bar"'));
+      assert.ok(destructiveSfc.includes('data-testid="destructive-confirm-modal"'));
+      assert.ok(errorRecoverySfc.includes("Couldn't save changes"));
+      assert.ok(errorRecoverySfc.includes('Your work is safe. Check your connection.'));
+
+      // 4. Verify getRoleTierBadge & throttle behavior
+      assert.equal(uxHelpers.getRoleTierBadge('dean').tierCode, 'TIER 1');
+      assert.equal(uxHelpers.getRoleTierBadge('chair').tierCode, 'TIER 2');
+      assert.equal(uxHelpers.getRoleTierBadge('student').tierCode, 'SET PASS');
+
+      let callCount = 0;
+      const throttledFn = uxHelpers.throttle(() => {
+        callCount += 1;
+      }, 500);
+      throttledFn();
+      throttledFn();
+      assert.equal(callCount, 1);
+    });
+  });
+
+  // 40. 63-Control Security Maxxxxxing Frontend Guards, Open-Redirect Sanitizer, Ephemeral Session Default & Front-End Checklist
+  describe('Group 40: 63-Control Security Maxxxxxing Frontend Guards, Open-Redirect Sanitizer, Ephemeral Session Default & Front-End Checklist', () => {
+    it('blocks external/protocol-relative open redirects, defaults tokens to sessionStorage, enforces zero .map files, and verifies Front-End Checklist head tags', async () => {
+      const { sanitizeRedirectPath } = await import('../../resources/js/utils/uxHelpers.js');
+      const authStoreSrc = readResourceFile('stores/auth.js');
+      const loginViewSfc = readResourceFile('views/LoginView.vue');
+      const adminViewSfc = readResourceFile('views/AdminRosterView.vue');
+      const bladeHtml = fs.readFileSync(path.join(ROOT_DIR, 'resources', 'views', 'app.blade.php'), 'utf8');
+      const viteConfig = fs.readFileSync(path.join(ROOT_DIR, 'vite.config.js'), 'utf8');
+
+      // 1. Open redirect sanitizer (Security #18)
+      assert.equal(sanitizeRedirectPath('https://evil.example/phish', '/queue'), '/queue');
+      assert.equal(sanitizeRedirectPath('//evil.example/phish', '/queue'), '/queue');
+      assert.equal(sanitizeRedirectPath('/\\evil.example', '/queue'), '/queue');
+      assert.equal(sanitizeRedirectPath('javascript:alert(1)', '/queue'), '/queue');
+      assert.equal(sanitizeRedirectPath('/login?redirect=/dean', '/dean'), '/dean');
+      assert.equal(sanitizeRedirectPath('/evaluate/3', '/queue'), '/evaluate/3');
+
+      // 2. Ephemeral sessionStorage default (Security #38) & 63-control Admin console
+      assert.ok(authStoreSrc.includes('remember = false'));
+      assert.ok(loginViewSfc.includes('const rememberSession = ref(false)'));
+      assert.ok(adminViewSfc.includes('data-testid="security-maxxing-posture-card"'));
+      assert.ok(adminViewSfc.includes('/api/admin/security-posture'));
+
+      // 3. Zero production source maps (Security #61)
+      assert.ok(viteConfig.includes('sourcemap: false'));
+      const buildDir = path.join(ROOT_DIR, 'public', 'build');
+      if (fs.existsSync(buildDir)) {
+        const checkNoMaps = (dir) => {
+          for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+            const p = path.join(dir, entry.name);
+            if (entry.isDirectory()) checkNoMaps(p);
+            else assert.equal(entry.name.endsWith('.map'), false, `Unexpected source map ${p}`);
+          }
+        };
+        checkNoMaps(buildDir);
+      }
+
+      // 4. Front-End Checklist <head> & skip-link hygiene
+      assert.ok(bladeHtml.includes('name="theme-color" content="#103c2e"'));
+      assert.ok(bladeHtml.includes('property="og:title"'));
+      assert.ok(bladeHtml.includes('rel="icon" type="image/svg+xml"'));
+      assert.ok(bladeHtml.includes('class="skip-link" href="#main-workspace"'));
     });
   });
 });

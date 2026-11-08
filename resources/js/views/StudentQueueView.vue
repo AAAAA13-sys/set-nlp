@@ -1,18 +1,55 @@
 <script setup>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import ClearancePermitCard from '../components/ClearancePermitCard.vue';
+import ErrorRecoveryBanner from '../components/ErrorRecoveryBanner.vue';
+import SkeletonLoader from '../components/SkeletonLoader.vue';
 import { useAuthStore } from '../stores/auth.js';
 import { useEvaluationStore } from '../stores/evaluation.js';
+import { debounce } from '../utils/uxHelpers.js';
 
 const router = useRouter();
 const authStore = useAuthStore();
 const evaluationStore = useEvaluationStore();
 
+const searchInput = ref('');
+const debouncedSearch = ref('');
+const statusFilter = ref('ALL');
+
 const progress = computed(() => evaluationStore.queueProgress);
 
+const updateDebouncedSearch = debounce((val) => {
+  debouncedSearch.value = String(val || '').trim().toLowerCase();
+}, 250);
+
+function onSearchInput(event) {
+  searchInput.value = event.target.value;
+  updateDebouncedSearch(searchInput.value);
+}
+
+const filteredCourses = computed(() => {
+  const list = Array.isArray(evaluationStore.courses) ? evaluationStore.courses : [];
+  return list.filter((course) => {
+    if (statusFilter.value !== 'ALL' && course.status !== statusFilter.value) {
+      return false;
+    }
+    if (!debouncedSearch.value) {
+      return true;
+    }
+    const haystack = `${course.course_code || ''} ${course.course_title || ''} ${course.instructor_name || ''}`.toLowerCase();
+    return haystack.includes(debouncedSearch.value);
+  });
+});
+
+async function refreshQueueData() {
+  await Promise.all([
+    evaluationStore.fetchQueue(),
+    evaluationStore.fetchEvaluationWindow(),
+  ]);
+}
+
 onMounted(() => {
-  evaluationStore.fetchQueue();
+  refreshQueueData();
 });
 
 function startEvaluation(course) {
@@ -21,25 +58,25 @@ function startEvaluation(course) {
     router.push(`/evaluate/${course.course_section_id}`).catch(() => {});
   }
 }
-
-function completeAllPendingDemo() {
-  evaluationStore.courses.forEach((course) => {
-    if (course.status !== 'COMPLETED') {
-      course.status = 'COMPLETED';
-      course.action_label = 'Clearance Signed';
-      course.clearance_token = `CLR-2026-${course.course_code.replace(/[^A-Z0-9]/g, '')}-VERIFIED`;
-    }
-  });
-}
 </script>
 
 <template>
   <main class="workspace-main student-queue-workspace" aria-labelledby="queue-heading">
+    <ErrorRecoveryBanner
+      :visible="Boolean(evaluationStore.queueError)"
+      title="Couldn't load evaluation queue"
+      message="Your clearance progress is safe. Check your connection."
+      :detail="evaluationStore.queueError || ''"
+      :retrying="evaluationStore.queueLoading"
+      @retry="refreshQueueData"
+      @dismiss="evaluationStore.queueError = null"
+    />
+
     <section class="card queue-progress-card" data-testid="student-queue-progress">
       <div class="queue-header-row">
         <div>
           <span class="eyebrow-badge">
-            PAMANTASAN NG LUNGSOD NG PASIG • SOP 1 • Dynamic Enrollment Queue &amp; Atomic Clearance
+            PAMANTASAN NG LUNGSOD NG PASIG • Student Evaluation Queue
           </span>
           <h2 id="queue-heading" class="section-title">
             My Evaluation Queue ({{ progress.completed }} of {{ progress.total }} Completed)
@@ -50,19 +87,10 @@ function completeAllPendingDemo() {
           </p>
         </div>
 
-        <div class="queue-stats-pill">
+        <div class="queue-stats-pill tabular-nums">
           <span>Completion: <strong>{{ progress.percentage }}%</strong></span>
-          <span class="divider">|</span>
+          <span class="divider" aria-hidden="true">|</span>
           <span>Clearance: <strong>{{ progress.clearanceStatus }}</strong></span>
-          <button
-            v-if="!progress.allCleared"
-            type="button"
-            class="btn-secondary btn-xs"
-            data-testid="complete-all-demo-btn"
-            @click="completeAllPendingDemo"
-          >
-            Simulate All 6/6 Completed
-          </button>
         </div>
       </div>
 
@@ -86,22 +114,82 @@ function completeAllPendingDemo() {
         style="margin-top: 1rem;"
         data-testid="student-window-announcement"
       >
-        <strong>Notice from the Office of the University Registrar:</strong> {{ evaluationStore.evaluationWindow.announcement_message }}
+        <div>
+          <strong>Office of the University Registrar:</strong>
+          {{ evaluationStore.evaluationWindow.announcement_message }}
+        </div>
       </div>
 
       <div
-        v-if="evaluationStore.evaluationWindow?.status !== 'OPEN'"
+        v-if="evaluationStore.evaluationWindow?.status && evaluationStore.evaluationWindow?.status !== 'OPEN'"
         class="alert-banner alert-error"
         style="margin-top: 0.5rem;"
         data-testid="student-window-status-alert"
       >
-        <strong>Evaluation Window Status ({{ evaluationStore.evaluationWindow?.status }}):</strong>
-        Evaluation submissions are currently paused or concluded for this academic term.
+        <div>
+          <strong>Evaluation Window ({{ evaluationStore.evaluationWindow?.status }}):</strong>
+          Evaluation submissions are currently paused or concluded for this academic term.
+        </div>
       </div>
     </section>
 
     <section class="card queue-table-card" aria-label="Enrolled Course Evaluations">
-      <div class="table-responsive">
+      <div class="queue-filter-toolbar">
+        <input
+          :value="searchInput"
+          type="search"
+          class="form-input queue-search-input"
+          placeholder="Filter enrolled courses or instructors…"
+          aria-label="Filter enrolled courses or instructors"
+          data-testid="queue-search-input"
+          @input="onSearchInput"
+        />
+
+        <div class="queue-filter-pills" role="group" aria-label="Filter queue status">
+          <button
+            type="button"
+            class="queue-pill-btn"
+            :class="{ 'is-active': statusFilter === 'ALL' }"
+            data-testid="queue-filter-all"
+            @click="statusFilter = 'ALL'"
+          >
+            All ({{ evaluationStore.courses.length }})
+          </button>
+          <button
+            type="button"
+            class="queue-pill-btn"
+            :class="{ 'is-active': statusFilter === 'PENDING' }"
+            data-testid="queue-filter-pending"
+            @click="statusFilter = 'PENDING'"
+          >
+            Pending ({{ progress.pending }})
+          </button>
+          <button
+            type="button"
+            class="queue-pill-btn"
+            :class="{ 'is-active': statusFilter === 'COMPLETED' }"
+            data-testid="queue-filter-completed"
+            @click="statusFilter = 'COMPLETED'"
+          >
+            Completed ({{ progress.completed }})
+          </button>
+          <router-link
+            to="/advocacy"
+            class="btn-secondary btn-xs"
+            data-testid="queue-advocacy-link"
+          >
+            Share Class Link
+          </router-link>
+        </div>
+      </div>
+
+      <SkeletonLoader
+        v-if="evaluationStore.queueLoading"
+        :rows="4"
+        label="Loading enrolled PLP course sections…"
+      />
+
+      <div v-else class="table-responsive">
         <table class="institutional-table" data-testid="student-queue-table">
           <thead>
             <tr>
@@ -113,8 +201,8 @@ function completeAllPendingDemo() {
           </thead>
           <tbody>
             <tr
-              v-for="course in evaluationStore.courses"
-              :key="course.course_code"
+              v-for="course in filteredCourses"
+              :key="course.course_section_id || course.course_code"
               :data-testid="`queue-row-${course.course_code}`"
             >
               <td>
@@ -136,26 +224,34 @@ function completeAllPendingDemo() {
                   class="btn-signed-badge"
                   :title="course.clearance_token || 'Cryptographic clearance token issued'"
                 >
-                  [Clearance Signed]
+                  Clearance Signed
                 </span>
                 <button
                   v-else
                   type="button"
                   class="btn-primary btn-sm"
+                  :disabled="evaluationStore.evaluationWindow?.status !== 'OPEN'"
                   :data-testid="`start-eval-${course.course_code}`"
                   @click="startEvaluation(course)"
                 >
-                  [Start Evaluation]
+                  Start Evaluation
                 </button>
               </td>
             </tr>
-            <tr v-if="!evaluationStore.courses || evaluationStore.courses.length === 0" data-testid="queue-empty-state">
+            <tr
+              v-if="!evaluationStore.queueLoading && filteredCourses.length === 0"
+              data-testid="queue-empty-state"
+            >
               <td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">
                 <div style="font-weight: 600; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.25rem;">
-                  No Course Sections Found for Evaluation
+                  {{ evaluationStore.courses.length === 0 ? 'No Enrolled Course Sections Found' : 'No Matching Course Sections' }}
                 </div>
                 <p style="margin: 0; font-size: 0.85rem;">
-                  You have no pending faculty evaluations for the active term. Please contact the Office of the University Registrar if you believe this is an error.
+                  {{
+                    evaluationStore.courses.length === 0
+                      ? 'No course enrollments are assigned to your student record for the active term. Contact the Office of the University Registrar if you need roster assistance.'
+                      : 'Reset your search or status filter above to view all enrolled courses.'
+                  }}
                 </p>
               </td>
             </tr>
@@ -165,9 +261,52 @@ function completeAllPendingDemo() {
     </section>
 
     <ClearancePermitCard
-      :student-id="authStore.user?.institutional_id || '2024-10892'"
-      :active-term="authStore.activeTerm || 'Fall / 1st Semester'"
+      :student-id="authStore.user?.institutional_id || ''"
+      :student-name="authStore.user?.name || ''"
+      :active-term="authStore.activeTerm || '1st Semester AY 2026-2027'"
+      :exam-permit-token="evaluationStore.examPermitToken"
       :courses="evaluationStore.courses"
     />
   </main>
 </template>
+
+<style scoped>
+.queue-filter-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin-bottom: 0.9rem;
+}
+
+.queue-search-input {
+  max-width: 340px;
+  flex: 1;
+  min-width: min(240px, 100%);
+}
+
+.queue-filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.queue-pill-btn {
+  padding: 0.32rem 0.68rem;
+  border-radius: 999px;
+  border: 1px solid #cfd9d0;
+  background: #f6f8f4;
+  color: #3f5247;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.queue-pill-btn.is-active {
+  background: #103c2e;
+  border-color: #103c2e;
+  color: #f4cd42;
+}
+</style>

@@ -1,23 +1,29 @@
 import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router';
 import { getDefaultRouteForRole, useAuthStore } from '../stores/auth.js';
+import { sanitizeRedirectPath } from '../utils/uxHelpers.js';
 import AccessDeniedView from '../views/AccessDeniedView.vue';
 import AdminRosterView from '../views/AdminRosterView.vue';
 import ChairDashboardView from '../views/ChairDashboardView.vue';
 import DeanDashboardView from '../views/DeanDashboardView.vue';
+import EvaluationAdvocacyView from '../views/EvaluationAdvocacyView.vue';
 import EvaluationFormView from '../views/EvaluationFormView.vue';
 import FacultyDashboardView from '../views/FacultyDashboardView.vue';
 import LoginView from '../views/LoginView.vue';
+import NotFoundView from '../views/NotFoundView.vue';
 import StudentQueueView from '../views/StudentQueueView.vue';
 
 export const routes = [
   {
     path: '/',
-    redirect: (to) => {
+    redirect: () => {
       try {
         const authStore = useAuthStore();
+        if (!authStore.isAuthenticated) {
+          return '/login';
+        }
         return getDefaultRouteForRole(authStore.currentRole);
       } catch (_) {
-        return '/queue';
+        return '/login';
       }
     },
   },
@@ -25,7 +31,7 @@ export const routes = [
     path: '/login',
     name: 'login',
     component: LoginView,
-    meta: { public: true, title: 'Institutional Sign In' },
+    meta: { public: true, guestOnly: true, title: 'Institutional Sign In — Pamantasan ng Lungsod ng Pasig' },
   },
   {
     path: '/queue',
@@ -33,7 +39,7 @@ export const routes = [
     component: StudentQueueView,
     meta: {
       roles: ['student'],
-      title: 'My Evaluation Queue (Student Workspace)',
+      title: 'My Evaluation Queue — PLP Student Portal',
     },
   },
   {
@@ -42,7 +48,7 @@ export const routes = [
     component: EvaluationFormView,
     meta: {
       roles: ['student'],
-      title: 'Anonymized Faculty Evaluation Form (Student Workspace)',
+      title: 'Anonymized Faculty Evaluation — PLP Student Portal',
     },
   },
   {
@@ -51,7 +57,7 @@ export const routes = [
     component: FacultyDashboardView,
     meta: {
       roles: ['faculty'],
-      title: 'Faculty Double-Blind Feedback Portal (Faculty Workspace)',
+      title: 'Faculty Double-Blind Feedback Portal — PLP',
     },
   },
   {
@@ -60,7 +66,7 @@ export const routes = [
     component: ChairDashboardView,
     meta: {
       roles: ['chair'],
-      title: 'Department Chair Diagnostic Workspace (Chair Workspace)',
+      title: 'Department Chair Diagnostic Workspace — PLP',
     },
   },
   {
@@ -69,7 +75,7 @@ export const routes = [
     component: DeanDashboardView,
     meta: {
       roles: ['dean'],
-      title: "Dean's Analytical Overview (Dean Workspace)",
+      title: "Dean's Analytical Overview — PLP",
     },
   },
   {
@@ -78,7 +84,16 @@ export const routes = [
     component: AdminRosterView,
     meta: {
       roles: ['admin'],
-      title: 'System Administrator Roster & Grade-Lock Console (Admin Workspace)',
+      title: 'University Registrar & System Administration Console — PLP',
+    },
+  },
+  {
+    path: '/advocacy',
+    name: 'campus-advocacy',
+    component: EvaluationAdvocacyView,
+    meta: {
+      roles: ['student', 'faculty', 'chair', 'dean', 'admin'],
+      title: 'Campus SET Advocacy & Permit Verification Hub — PLP',
     },
   },
   {
@@ -88,6 +103,15 @@ export const routes = [
     meta: {
       public: true,
       title: '403 Forbidden — Institutional Role Access Restricted',
+    },
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: NotFoundView,
+    meta: {
+      public: true,
+      title: '404 Page Not Found — Pamantasan ng Lungsod ng Pasig',
     },
   },
 ];
@@ -115,30 +139,50 @@ export function createEvaluaTechRouter(history) {
     routes,
   });
 
-  routerInstance.beforeEach((to) => {
-    if (to.meta?.public) {
-      return true;
-    }
+  routerInstance.beforeEach(async (to) => {
     try {
       const authStore = useAuthStore();
-      if (!authStore.isAuthenticated) {
-        return { path: '/login' };
+      if (authStore.token && !authStore.sessionChecked) {
+        await authStore.hydrateSession();
       }
+
+      if (to.meta?.guestOnly && authStore.isAuthenticated) {
+        return { path: getDefaultRouteForRole(authStore.currentRole) };
+      }
+
+      if (to.meta?.public) {
+        return true;
+      }
+
+      if (!authStore.isAuthenticated) {
+        const safeRedirect = sanitizeRedirectPath(to.fullPath, '');
+        return {
+          path: '/login',
+          query: safeRedirect && safeRedirect !== '/' ? { redirect: safeRedirect } : {},
+        };
+      }
+
       const allowedRoles = to.meta?.roles || [];
       if (allowedRoles.length > 0 && !canAccessRoute(authStore.currentRole, allowedRoles)) {
         return {
           path: '/access-denied',
           query: {
-            attempted: to.path,
+            attempted: sanitizeRedirectPath(to.path, '/'),
             required_roles: allowedRoles.join(', '),
             current_role: authStore.currentRole,
           },
         };
       }
     } catch (_) {
-      // Allow navigation if Pinia is not yet initialized in isolated route inspection
+      // Allow isolated route table inspection when Pinia is not mounted
     }
     return true;
+  });
+
+  routerInstance.afterEach((to) => {
+    if (typeof document !== 'undefined' && to.meta?.title) {
+      document.title = `${to.meta.title} | EvaluaTech`;
+    }
   });
 
   return routerInstance;

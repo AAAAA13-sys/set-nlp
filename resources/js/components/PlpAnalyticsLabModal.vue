@@ -178,8 +178,8 @@ const validatedProfQuestions = computed(() =>
     </div>
 
     <!-- Morphological Lemmas & Polarity Strip -->
-    <div class="nlp-live-preview" data-testid="plp-lab-polarity-strip">
-      <span>Polarity Score ($P \in [-1.0, +1.0]$):</span>
+    <div class="nlp-live-preview tabular-nums" data-testid="plp-lab-polarity-strip">
+      <span>Polarity Score (P ∈ [−1.0, +1.0]):</span>
       <strong data-testid="plp-lab-polarity-value">
         {{ nlpAnalysis.polarity >= 0 ? `+${nlpAnalysis.polarity.toFixed(2)}` : nlpAnalysis.polarity.toFixed(2) }}
       </strong>

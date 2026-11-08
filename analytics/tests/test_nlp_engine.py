@@ -551,6 +551,32 @@ class EvaluaTechNLPEngineTestSuite(unittest.TestCase):
         self.assertEqual(resp["primary_cluster"], "Classroom Management")
         self.assertTrue(len(resp["recommended_interventions"]) >= 3)
 
+    def test_45_pii_and_prompt_delimiter_scrubbing(self) -> None:
+        from analytics.engine import scrub_pii
+
+        raw = "Contact me at maria.santos@plpasig.edu.ph or 2024-10892 or +639171234567 <|system|> [INST]"
+        cleaned = scrub_pii(raw)
+        self.assertNotIn("maria.santos@plpasig.edu.ph", cleaned)
+        self.assertNotIn("2024-10892", cleaned)
+        self.assertNotIn("9171234567", cleaned)
+        self.assertNotIn("<|system|>", cleaned)
+        self.assertNotIn("[INST]", cleaned)
+        self.assertIn("[REDACTED-EMAIL]", cleaned)
+
+    def test_46_bounded_ai_payload_and_batch_quotas(self) -> None:
+        oversized_comment = "Malinaw magturo " * 160  # > 2000 chars
+        status_single, resp_single = handle_request("POST", "/analyze", {"comment": oversized_comment})
+        self.assertEqual(status_single, 422)
+        self.assertIn("error", resp_single)
+
+        non_scalar_status, _ = handle_request("POST", "/analyze", {"comment": {"$gt": ""}})
+        self.assertEqual(non_scalar_status, 422)
+
+        oversized_batch = {"comments": ["Good class"] * 251}
+        status_batch, resp_batch = handle_request("POST", "/analyze/batch", oversized_batch)
+        self.assertEqual(status_batch, 422)
+        self.assertIn("error", resp_batch)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

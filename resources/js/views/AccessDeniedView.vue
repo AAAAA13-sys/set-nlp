@@ -2,10 +2,12 @@
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getDefaultRouteForRole, useAuthStore } from '../stores/auth.js';
+import { useEvaluationStore } from '../stores/evaluation.js';
 
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
+const evaluationStore = useEvaluationStore();
 
 const attemptedPath = computed(() => route.query?.attempted || (route.path !== '/access-denied' ? route.path : '/'));
 const requiredRoles = computed(() => route.query?.required_roles || 'Authorized Personnel');
@@ -15,6 +17,14 @@ const authorizedRoute = computed(() => getDefaultRouteForRole(authStore.currentR
 function returnToAuthorizedWorkspace() {
   if (router) {
     router.push(authorizedRoute.value).catch(() => {});
+  }
+}
+
+async function switchAccount() {
+  evaluationStore.resetState();
+  await authStore.logout();
+  if (router) {
+    router.push('/login').catch(() => {});
   }
 }
 </script>
@@ -31,13 +41,13 @@ function returnToAuthorizedWorkspace() {
         </div>
         <div>
           <span class="eyebrow-badge" style="background:#fee2e2;color:#991b1b;border-color:#fca5a5;">
-            PAMANTASAN NG LUNGSOD NG PASIG • Role-Based Access Control (RBAC) Guard Active
+            PAMANTASAN NG LUNGSOD NG PASIG • Role-Based Access Control (RBAC)
           </span>
           <h2 id="access-denied-heading" class="section-title" style="color:#991b1b;">
             403 Forbidden — Institutional Role Access Restricted
           </h2>
           <p class="section-subtitle">
-            Every institutional role operates exclusively in its dedicated workspace to maintain cryptographic student anonymity,
+            Every institutional role operates exclusively within its authorized workspace to uphold cryptographic student anonymity,
             double-blind grading integrity, and departmental security boundaries.
           </p>
         </div>
@@ -51,12 +61,12 @@ function returnToAuthorizedWorkspace() {
           </code>
         </div>
         <div style="margin-bottom: 0.5rem;">
-          <span style="font-weight: 600; color: #7f1d1d;">Your Logged-in Role:</span>
-          <span class="token-chip chip-warn" style="margin-left: 0.5rem;" data-testid="denied-current-role">
+          <span style="font-weight: 600; color: #7f1d1d;">Signed-in Account:</span>
+          <span class="token-chip chip-unsigned" style="margin-left: 0.5rem;" data-testid="denied-current-role">
             {{ authStore.displayIdentifier || currentRole }}
           </span>
         </div>
-        <div style="margin-bottom: 0.5rem;">
+        <div>
           <span style="font-weight: 600; color: #7f1d1d;">Authorized Role(s) for this Workspace:</span>
           <code style="margin-left: 0.5rem; color: #991b1b; font-weight: bold;" data-testid="denied-required-roles">
             {{ requiredRoles }}
@@ -71,12 +81,17 @@ function returnToAuthorizedWorkspace() {
           data-testid="return-authorized-workspace-btn"
           @click="returnToAuthorizedWorkspace"
         >
-          [Go to My Authorized Workspace: {{ authorizedRoute }}]
+          Return to My Workspace ({{ authorizedRoute }})
         </button>
 
-        <router-link to="/login" class="btn-secondary btn-sm" data-testid="switch-account-btn">
-          Sign in with Another Account
-        </router-link>
+        <button
+          type="button"
+          class="btn-secondary btn-sm"
+          data-testid="switch-account-btn"
+          @click="switchAccount"
+        >
+          Sign Out &amp; Switch Account
+        </button>
       </div>
     </section>
   </main>

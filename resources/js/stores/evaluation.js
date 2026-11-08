@@ -1,150 +1,47 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
+import { useAuthStore } from './auth.js';
 import {
   DEMO_DEAN_METRICS,
-  DEMO_STUDENT_QUEUE,
   PEDAGOGICAL_DIMENSIONS,
-  calculateClusterMeans,
-  calculateMean,
   calculatePopulationVariance,
   calculateQueueProgress,
   canFacultyViewEvaluation,
-  classifyCommentPreview,
   evaluateWatchlistFlag,
   isDwellTimeValid,
   isStraightLined,
 } from '../utils/evaluationMath.js';
 
-export function generateSubmissionKey(courseSectionId, studentId = '2024-10892') {
+export function generateSubmissionKey(courseSectionId, studentId = 'STU') {
   const randomSuffix = Math.random().toString(36).substring(2, 10).toUpperCase();
-  return `FT02-${studentId}-SEC${courseSectionId}-${Date.now()}-${randomSuffix}`;
+  const cleanId = String(studentId || 'STU').replace(/[^A-Za-z0-9-]/g, '');
+  return `FT02-${cleanId}-SEC${courseSectionId}-${Date.now()}-${randomSuffix}`;
 }
 
 export const useEvaluationStore = defineStore('evaluation', () => {
-  const courses = ref(DEMO_STUDENT_QUEUE.map((c) => ({ ...c })));
-  const activeCourseId = ref(104); // MATH-201 by default (first PENDING course in queue)
+  const courses = ref([]);
+  const examPermitToken = ref(null);
+  const queueLoading = ref(false);
+  const activeCourseId = ref(null);
   const dwellSeconds = ref(0);
-  const startToken = ref(`SRV-START-${Date.now()}`);
-  const submissionKey = ref(generateSubmissionKey(104));
+  const startToken = ref('');
+  const submissionKey = ref('');
   const submitting = ref(false);
   const submissionError = ref(null);
   const processedKeys = ref(new Map());
 
-  // Double-blind faculty and registrar section lock states
-  const sectionLocks = ref([
-    {
-      course_section_id: 101,
-      course_code: 'CS-401',
-      course_title: 'Algorithms and Complexity',
-      instructor_name: 'Prof. A. Dela Cruz',
-      department_name: 'College of Computer Studies',
-      term_grades_submitted: true,
-      registrar_lock: false,
-      enrolled_count: 42,
-      evaluated_count: 39,
-      mean_score: 4.62,
-      negative_sentiment_pct: 5.1,
-      dimension_scores: {
-        'Pedagogical Delivery': 4.78,
-        'Assessment & Grading': 4.52,
-        'Classroom Management': 4.6,
-        'Professional Conduct': 4.58,
-        'Student Support & Mentorship': 4.64,
-      },
-      sample_comments: [
-        {
-          excerpt: 'Explains complex algorithms very clearly and provides great practical code examples.',
-          polarity: 0.78,
-          valence: 'Positive',
-          tag: 'Pedagogical Delivery',
-        },
-      ],
-    },
-    {
-      course_section_id: 102,
-      course_code: 'CS-405',
-      course_title: 'Artificial Intelligence & NLP',
-      instructor_name: 'Dr. M. Santos',
-      department_name: 'College of Computer Studies',
-      term_grades_submitted: true,
-      registrar_lock: true,
-      enrolled_count: 38,
-      evaluated_count: 36,
-      mean_score: 4.71,
-      negative_sentiment_pct: 4.0,
-      dimension_scores: {
-        'Pedagogical Delivery': 4.82,
-        'Assessment & Grading': 4.65,
-        'Classroom Management': 4.68,
-        'Professional Conduct': 4.7,
-        'Student Support & Mentorship': 4.72,
-      },
-      sample_comments: [
-        {
-          excerpt: 'NLP lab sessions and VADER sentiment walkthroughs were well structured and practical.',
-          polarity: 0.71,
-          valence: 'Positive',
-          tag: 'Pedagogical Delivery',
-        },
-      ],
-    },
-    {
-      course_section_id: 104,
-      course_code: 'MATH-201',
-      course_title: 'Linear Algebra and Matrix Computation',
-      instructor_name: 'Dr. R. Garcia',
-      department_name: 'College of Computer Studies',
-      term_grades_submitted: false,
-      registrar_lock: false,
-      enrolled_count: 45,
-      evaluated_count: 40,
-      mean_score: 3.1,
-      negative_sentiment_pct: 41.0,
-      dimension_scores: {
-        'Pedagogical Delivery': 3.35,
-        'Assessment & Grading': 2.65,
-        'Classroom Management': 3.15,
-        'Professional Conduct': 3.25,
-        'Student Support & Mentorship': 3.1,
-      },
-      sample_comments: [
-        {
-          excerpt: 'Takes over a month to return quiz scores and provides no helpful feedback.',
-          polarity: -0.62,
-          valence: 'Negative',
-          tag: 'Assessment & Grading',
-        },
-      ],
-    },
-    {
-      course_section_id: 106,
-      course_code: 'PHYS-101',
-      course_title: 'University Physics for Computing',
-      instructor_name: 'Engr. J. Luna',
-      department_name: 'College of Computer Studies',
-      term_grades_submitted: true,
-      registrar_lock: false,
-      enrolled_count: 40,
-      evaluated_count: 35,
-      mean_score: 3.3,
-      negative_sentiment_pct: 38.5,
-      dimension_scores: {
-        'Pedagogical Delivery': 3.45,
-        'Assessment & Grading': 3.4,
-        'Classroom Management': 2.85,
-        'Professional Conduct': 3.5,
-        'Student Support & Mentorship': 3.3,
-      },
-      sample_comments: [
-        {
-          excerpt: 'Arrives to morning lectures 15 minutes late consistently.',
-          polarity: -0.45,
-          valence: 'Negative',
-          tag: 'Classroom Management',
-        },
-      ],
-    },
-  ]);
+  // Faculty and Registrar database-backed section states
+  const facultySections = ref([]);
+  const facultyReports = ref({});
+  const sectionLocks = ref([]);
+  const adminSummary = ref({
+    total_sections: 0,
+    total_students: 0,
+    total_faculty: 0,
+    total_enrollments: 0,
+    total_clearances: 0,
+    total_vault_records: 0,
+  });
 
   const deanOverview = ref({ ...DEMO_DEAN_METRICS });
 
@@ -161,35 +58,107 @@ export const useEvaluationStore = defineStore('evaluation', () => {
     straight_line_variance_threshold: 0.0,
     watchlist_mean_threshold: 3.5,
     watchlist_negative_sentiment_pct: 35.0,
-    announcement_message:
-      'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active. All students must complete evaluations before securing the Digital Exam Permit.',
+    announcement_message: '',
     starts_at: null,
     ends_at: null,
-    updated_at: new Date().toISOString(),
+    updated_at: null,
   });
+
+  function getApiHeaders(jsonBody = false) {
+    try {
+      const authStore = useAuthStore();
+      return authStore.authHeaders(jsonBody ? { 'Content-Type': 'application/json' } : {});
+    } catch (_) {
+      return jsonBody
+        ? { 'Content-Type': 'application/json', Accept: 'application/json' }
+        : { Accept: 'application/json' };
+    }
+  }
 
   const queueProgress = computed(() => calculateQueueProgress(courses.value));
   const activeCourse = computed(
     () =>
       courses.value.find((c) => Number(c.course_section_id) === Number(activeCourseId.value)) ||
       courses.value.find((c) => c.status === 'PENDING') ||
-      courses.value[0],
+      courses.value[0] ||
+      null,
   );
 
-  async function selectCourseForEvaluation(courseSectionId) {
-    activeCourseId.value = Number(courseSectionId);
+  function resetState() {
+    courses.value = [];
+    examPermitToken.value = null;
+    activeCourseId.value = null;
     dwellSeconds.value = 0;
-    startToken.value = `SRV-START-${courseSectionId}-${Date.now()}`;
-    submissionKey.value = generateSubmissionKey(courseSectionId);
+    startToken.value = '';
+    submissionKey.value = '';
+    submitting.value = false;
+    submissionError.value = null;
+    processedKeys.value = new Map();
+    facultySections.value = [];
+    facultyReports.value = {};
+    sectionLocks.value = [];
+  }
+
+  async function fetchQueue() {
+    queueLoading.value = true;
+    try {
+      const response = await fetch('/api/student/queue', {
+        headers: getApiHeaders(),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const items = Array.isArray(data.courses)
+          ? data.courses
+          : Array.isArray(data.queue)
+            ? data.queue
+            : [];
+        courses.value = items;
+        examPermitToken.value = data.exam_permit_token || null;
+
+        if (!activeCourseId.value || !items.some((c) => Number(c.course_section_id) === Number(activeCourseId.value))) {
+          const nextPending = items.find((c) => c.status === 'PENDING') || items[0];
+          if (nextPending) {
+            activeCourseId.value = Number(nextPending.course_section_id);
+          }
+        }
+      }
+    } catch (_) {
+      // Network failure handled gracefully by empty state UI
+    } finally {
+      queueLoading.value = false;
+    }
+    return courses.value;
+  }
+
+  async function selectCourseForEvaluation(courseSectionId) {
+    if (courses.value.length === 0) {
+      await fetchQueue();
+    }
+    const resolvedId = Number(
+      courseSectionId ||
+        courses.value.find((c) => c.status === 'PENDING')?.course_section_id ||
+        courses.value[0]?.course_section_id ||
+        0,
+    );
+    if (!resolvedId) {
+      return;
+    }
+
+    let studentId = 'STU';
+    try {
+      studentId = useAuthStore().user?.institutional_id || 'STU';
+    } catch (_) {}
+
+    activeCourseId.value = resolvedId;
+    dwellSeconds.value = 0;
+    startToken.value = '';
+    submissionKey.value = generateSubmissionKey(resolvedId, studentId);
     submissionError.value = null;
 
     try {
-      const res = await fetch(`/api/student/evaluations/${courseSectionId}/start`, {
+      const res = await fetch(`/api/student/evaluations/${resolvedId}/start`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
+        headers: getApiHeaders(true),
         body: JSON.stringify({}),
       });
       if (res.ok) {
@@ -203,26 +172,6 @@ export const useEvaluationStore = defineStore('evaluation', () => {
 
   function incrementDwellTime(seconds = 1) {
     dwellSeconds.value = Math.max(0, Number(dwellSeconds.value) + Number(seconds));
-  }
-
-  async function fetchQueue() {
-    try {
-      const response = await fetch('/api/student/queue', {
-        headers: { Accept: 'application/json' },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        const items = Array.isArray(data.courses)
-          ? data.courses
-          : (Array.isArray(data.queue) ? data.queue : []);
-        if (items.length > 0) {
-          courses.value = items;
-        }
-      }
-    } catch (_) {
-      // Retain seeded demonstration queue if offline
-    }
-    return courses.value;
   }
 
   /**
@@ -264,17 +213,34 @@ export const useEvaluationStore = defineStore('evaluation', () => {
       return errPayload;
     }
 
+    // Validate all Likert items are answered (integers 1..5)
+    if (
+      !Array.isArray(ratings) ||
+      ratings.length < 20 ||
+      ratings.some((val) => !Number.isInteger(Number(val)) || Number(val) < 1 || Number(val) > 5)
+    ) {
+      const errPayload = {
+        ok: false,
+        status: 422,
+        code: 'INCOMPLETE_RATINGS',
+        message: 'Please select a rating from 1 to 5 for every item across all five pedagogical clusters before submitting.',
+      };
+      submissionError.value = errPayload.message;
+      return errPayload;
+    }
+
+    const numericRatings = ratings.map((r) => Number(r));
+
     // 1. Speed-run guard (< min_dwell_seconds, default 45 seconds for >= 20 items)
     const minDwellRequired = Number(evaluationWindow.value.min_dwell_seconds || 45);
-    if (!isDwellTimeValid(elapsed, Array.isArray(ratings) ? ratings.length : 25, minDwellRequired)) {
+    if (!isDwellTimeValid(elapsed, numericRatings.length, minDwellRequired)) {
       const errPayload = {
         ok: false,
         status: 422,
         code: 'SPEED_RUN_DETECTED',
         dwell_time_seconds: elapsed,
         minimum_required_seconds: minDwellRequired,
-        message:
-          `Minimum reading dwell time not met (${minDwellRequired} seconds required for 5-cluster SET instrument). Please review your responses carefully.`,
+        message: `Minimum reading dwell time not met (${minDwellRequired} seconds required for the 25-item SET instrument). Please review your responses carefully.`,
       };
       submissionError.value = errPayload.message;
       return errPayload;
@@ -282,8 +248,8 @@ export const useEvaluationStore = defineStore('evaluation', () => {
 
     // 2. Straight-line / zero-variance guard (sigma^2 <= straight_line_variance_threshold)
     const varianceThreshold = Number(evaluationWindow.value.straight_line_variance_threshold ?? 0.0);
-    const variance = calculatePopulationVariance(ratings);
-    const uniform = variance <= varianceThreshold || isStraightLined(ratings);
+    const variance = calculatePopulationVariance(numericRatings);
+    const uniform = variance <= varianceThreshold || isStraightLined(numericRatings);
     if (uniform && !confirmUniform) {
       return {
         ok: false,
@@ -301,185 +267,337 @@ export const useEvaluationStore = defineStore('evaluation', () => {
     try {
       const response = await fetch('/api/student/evaluations/submit', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
+        headers: getApiHeaders(true),
         body: JSON.stringify({
           course_section_id: targetSectionId,
           submission_key: key,
           start_token: startToken.value,
           dwell_time_seconds: elapsed,
-          ratings,
+          ratings: numericRatings,
           comment_text: commentText,
           professor_questions: professorQuestions,
           confirm_uniform: Boolean(confirmUniform),
         }),
       });
 
+      const payload = await response.json().catch(() => ({}));
+
       if (response.ok) {
-        const apiResult = await response.json();
-        markCourseClearedLocal(targetSectionId, apiResult.clearance_token);
-        processedKeys.value.set(key, apiResult);
+        markCourseClearedLocal(targetSectionId, payload.clearance_token);
+        processedKeys.value.set(key, payload);
         await fetchQueue();
-        return { ok: true, ...apiResult };
-      } else {
-        const errResult = await response.json().catch(() => ({}));
-        submissionError.value = errResult.message || 'Submission rejected by server.';
-        return {
-          ok: false,
-          status: response.status,
-          code: errResult.error || errResult.code || 'SERVER_VALIDATION_ERROR',
-          message: errResult.message || submissionError.value,
-          ...errResult,
-        };
+        return { ok: true, ...payload };
       }
+
+      submissionError.value = payload.message || 'Submission rejected by server.';
+      return {
+        ok: false,
+        status: response.status,
+        code: payload.error || payload.code || 'SERVER_VALIDATION_ERROR',
+        message: submissionError.value,
+        ...payload,
+      };
     } catch (_) {
-      // Deterministic local atomic fallback when offline or in pure frontend unit tests
+      submissionError.value =
+        'Unable to reach the institutional database to record your evaluation. Your submission key is preserved—please retry.';
+      return {
+        ok: false,
+        status: 503,
+        code: 'NETWORK_ERROR',
+        message: submissionError.value,
+      };
     } finally {
       submitting.value = false;
     }
-
-    const mean = calculateMean(ratings);
-    const clusterScores = calculateClusterMeans(ratings);
-    const nlp = classifyCommentPreview(commentText);
-    const token = `CLR-2026-SEC${targetSectionId}-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
-
-    markCourseClearedLocal(targetSectionId, token);
-
-    const resultPayload = {
-      clearance_token: token,
-      status: 'CLEARED',
-      submission_key: key,
-      mean_score: mean,
-      rating_variance: variance,
-      is_straight_lined: uniform,
-      cluster_scores: clusterScores,
-      professor_questions: professorQuestions,
-      sentiment: nlp,
-    };
-
-    processedKeys.value.set(key, resultPayload);
-    return {
-      ok: true,
-      ...resultPayload,
-    };
   }
 
   function markCourseClearedLocal(courseSectionId, token) {
     const idx = courses.value.findIndex(
-      (c) => Number(c.course_section_id) === Number(courseSectionId) || Number(c.id) === Number(courseSectionId),
+      (c) =>
+        Number(c.course_section_id) === Number(courseSectionId) ||
+        Number(c.id) === Number(courseSectionId),
     );
     if (idx !== -1) {
       courses.value[idx] = {
         ...courses.value[idx],
         status: 'COMPLETED',
         action_label: 'Clearance Signed',
-        clearance_token: token || courses.value[idx].clearance_token || `CLR-2026-${courses.value[idx].course_code}`,
+        clearance_token: token || courses.value[idx].clearance_token,
         cleared_at: new Date().toISOString(),
       };
     }
   }
 
-  function toggleSectionLock(courseSectionId, field, value) {
-    const section = sectionLocks.value.find(
-      (s) => Number(s.course_section_id) === Number(courseSectionId),
-    );
-    if (!section) return null;
-    if (field === 'term_grades_submitted' || field === 'registrar_lock') {
-      section[field] = typeof value === 'boolean' ? value : !section[field];
-    }
-    return {
-      ...section,
-      can_view_evaluation: canFacultyViewEvaluation(
-        section.term_grades_submitted,
-        section.registrar_lock,
-      ),
-    };
+  async function fetchFacultySections(termId = 1) {
+    try {
+      const res = await fetch(`/api/faculty/sections?academic_term_id=${encodeURIComponent(termId)}`, {
+        headers: getApiHeaders(),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        facultySections.value = Array.isArray(data.sections) ? data.sections : [];
+      }
+    } catch (_) {}
+    return facultySections.value;
   }
 
-  function ingestRosterRows(rows = []) {
-    if (!Array.isArray(rows) || rows.length === 0) {
-      return { ok: false, imported: 0, message: 'No valid roster rows provided.' };
+  async function fetchFacultySectionReport(courseSectionId) {
+    try {
+      const res = await fetch(`/api/faculty/sections/${encodeURIComponent(courseSectionId)}/report`, {
+        headers: getApiHeaders(),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        facultyReports.value = {
+          ...facultyReports.value,
+          [Number(courseSectionId)]: data,
+        };
+        return { ok: true, data };
+      }
+      return { ok: false, status: res.status, data };
+    } catch (_) {
+      return { ok: false, status: 503, data: {} };
     }
-    for (const row of rows) {
-      if (!row.course_code || !row.instructor_name) {
+  }
+
+  async function submitFacultyTermGrades(courseSectionId) {
+    try {
+      const res = await fetch(`/api/faculty/sections/${encodeURIComponent(courseSectionId)}/submit-grades`, {
+        method: 'POST',
+        headers: getApiHeaders(true),
+        body: JSON.stringify({ course_section_id: Number(courseSectionId) }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        await fetchFacultySections();
+        if (data.double_blind_unlocked) {
+          await fetchFacultySectionReport(courseSectionId);
+        }
+        return { ok: true, ...data };
+      }
+      return { ok: false, status: res.status, ...data };
+    } catch (_) {
+      return { ok: false, status: 503 };
+    }
+  }
+
+  async function fetchAdminSections(termId = 1) {
+    try {
+      const res = await fetch(`/api/admin/sections?academic_term_id=${encodeURIComponent(termId)}`, {
+        headers: getApiHeaders(),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        sectionLocks.value = Array.isArray(data.sections) ? data.sections : [];
+        if (data.summary) {
+          adminSummary.value = { ...adminSummary.value, ...data.summary };
+        }
+      }
+    } catch (_) {}
+    return sectionLocks.value;
+  }
+
+  async function toggleSectionLock(courseSectionId, field, value) {
+    const idx = sectionLocks.value.findIndex(
+      (s) => Number(s.course_section_id) === Number(courseSectionId),
+    );
+    const currentVal = idx !== -1 ? Boolean(sectionLocks.value[idx][field]) : false;
+    const nextValue = typeof value === 'boolean' ? value : !currentVal;
+
+    if (field !== 'term_grades_submitted' && field !== 'registrar_lock') {
+      return null;
+    }
+
+    // Optimistic UI update (#1) with snapshot rollback if API fails
+    const previousSnapshot = idx !== -1 ? { ...sectionLocks.value[idx] } : null;
+    if (idx !== -1) {
+      const nextGrades =
+        field === 'term_grades_submitted' ? nextValue : Boolean(sectionLocks.value[idx].term_grades_submitted);
+      const nextLock =
+        field === 'registrar_lock' ? nextValue : Boolean(sectionLocks.value[idx].registrar_lock);
+      sectionLocks.value[idx] = {
+        ...sectionLocks.value[idx],
+        [field]: nextValue,
+        double_blind_unlocked: canFacultyViewEvaluation(nextGrades, nextLock),
+      };
+    }
+
+    try {
+      const res = await fetch(
+        `/api/admin/sections/${encodeURIComponent(courseSectionId)}/registrar-lock`,
+        {
+          method: 'POST',
+          headers: getApiHeaders(true),
+          body: JSON.stringify({
+            course_section_id: Number(courseSectionId),
+            [field]: nextValue,
+          }),
+        },
+      );
+      if (res.ok) {
+        const updated = await res.json();
+        if (idx !== -1) {
+          sectionLocks.value[idx] = {
+            ...sectionLocks.value[idx],
+            term_grades_submitted: Boolean(updated.term_grades_submitted),
+            registrar_lock: Boolean(updated.registrar_lock),
+            double_blind_unlocked: Boolean(updated.double_blind_unlocked),
+          };
+        }
+        await fetchAdminSections();
         return {
-          ok: false,
-          imported: 0,
-          message: 'Atomic import aborted: every row must contain course_code and instructor_name.',
+          ...(sectionLocks.value[idx] || updated),
+          can_view_evaluation: canFacultyViewEvaluation(
+            updated.term_grades_submitted,
+            updated.registrar_lock,
+          ),
         };
       }
-    }
-    let added = 0;
-    for (const row of rows) {
-      const exists = courses.value.some((c) => c.course_code === row.course_code);
-      if (!exists) {
-        const nextId = 100 + courses.value.length + 1;
-        courses.value.push({
-          id: nextId,
-          course_section_id: nextId,
-          course_code: row.course_code,
-          course_title: row.course_title || `${row.course_code} Course Section`,
-          instructor_name: row.instructor_name,
-          department_name: row.department_name || 'College of Computer Studies',
-          status: 'PENDING',
-          action_label: 'Start Evaluation',
-          clearance_token: null,
-          cleared_at: null,
-        });
-        added += 1;
+      if (idx !== -1 && previousSnapshot) {
+        sectionLocks.value[idx] = previousSnapshot;
+      }
+    } catch (_) {
+      if (idx !== -1 && previousSnapshot) {
+        sectionLocks.value[idx] = previousSnapshot;
       }
     }
-    return {
-      ok: true,
-      imported: rows.length,
-      added,
-      message: `Successfully processed ${rows.length} roster enrollment record(s).`,
-    };
+    return null;
+  }
+
+  async function bulkToggleSectionLocks(sectionIds = [], patch = {}) {
+    const cleanIds = sectionIds.map((id) => Number(id)).filter((id) => Number.isFinite(id) && id > 0);
+    if (cleanIds.length === 0) {
+      return { ok: false, updated_count: 0, message: 'No course sections selected.' };
+    }
+
+    // Optimistic UI update (#1, #10 Bulk Actions) with snapshot rollback
+    const snapshot = sectionLocks.value.map((s) => ({ ...s }));
+    sectionLocks.value = sectionLocks.value.map((sec) => {
+      if (!cleanIds.includes(Number(sec.course_section_id))) {
+        return sec;
+      }
+      const nextGrades =
+        typeof patch.term_grades_submitted === 'boolean'
+          ? patch.term_grades_submitted
+          : Boolean(sec.term_grades_submitted);
+      const nextLock =
+        typeof patch.registrar_lock === 'boolean' ? patch.registrar_lock : Boolean(sec.registrar_lock);
+      return {
+        ...sec,
+        term_grades_submitted: nextGrades,
+        registrar_lock: nextLock,
+        double_blind_unlocked: canFacultyViewEvaluation(nextGrades, nextLock),
+      };
+    });
+
+    try {
+      const res = await fetch('/api/admin/sections/bulk-lock', {
+        method: 'POST',
+        headers: getApiHeaders(true),
+        body: JSON.stringify({
+          section_ids: cleanIds,
+          ...patch,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        await fetchAdminSections();
+        return { ok: true, ...data };
+      }
+      sectionLocks.value = snapshot;
+      return { ok: false, message: data.message || 'Bulk section update failed.' };
+    } catch (_) {
+      sectionLocks.value = snapshot;
+      return { ok: false, message: 'Network error during bulk section update. Rolled back safely.' };
+    }
+  }
+
+  async function ingestRosterRows(rows = [], format = 'rows', rawContent = '') {
+    if (format === 'rows' || format === 'json') {
+      if (!Array.isArray(rows) || rows.length === 0) {
+        return { ok: false, imported: 0, message: 'No valid roster rows provided.' };
+      }
+      for (const row of rows) {
+        if (!row.course_code || !(row.instructor_name || row.faculty_name)) {
+          return {
+            ok: false,
+            imported: 0,
+            message: 'Atomic import aborted: every row must contain course_code and instructor_name.',
+          };
+        }
+      }
+    }
+
+    try {
+      const res = await fetch('/api/admin/rosters/import', {
+        method: 'POST',
+        headers: getApiHeaders(true),
+        body: JSON.stringify({
+          format: format === 'csv' ? 'csv' : format === 'json' ? 'json' : 'rows',
+          rows,
+          content: rawContent,
+          academic_term_id: evaluationWindow.value.academic_term_id || 1,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.imported !== false && !data.aborted) {
+        await fetchAdminSections();
+        const importedCount = Number(data.imported_rows ?? data.imported ?? rows.length);
+        return {
+          ok: true,
+          imported: importedCount,
+          message:
+            data.message ||
+            `Successfully committed ${importedCount} academic enrollment record(s) to the institutional database.`,
+          ...data,
+        };
+      }
+      return {
+        ok: false,
+        imported: 0,
+        message: data.message || 'Atomic roster import rejected by server validation.',
+      };
+    } catch (_) {
+      return {
+        ok: false,
+        imported: 0,
+        message: 'Unable to connect to the Registrar database service during roster import.',
+      };
+    }
   }
 
   async function fetchEvaluationWindow(termId = 1) {
     try {
-      const res = await fetch(`/api/admin/evaluation-window?academic_term_id=${termId}`, {
-        headers: { Accept: 'application/json' },
+      const res = await fetch(`/api/evaluation-window?academic_term_id=${encodeURIComponent(termId)}`, {
+        headers: getApiHeaders(),
       });
       if (res.ok) {
         const data = await res.json();
         evaluationWindow.value = { ...evaluationWindow.value, ...data };
       }
-    } catch (_) {
-      // offline fallback
-    }
+    } catch (_) {}
     return evaluationWindow.value;
   }
 
   async function updateEvaluationWindowConfig(patch = {}) {
-    const updated = {
+    const payload = {
       ...evaluationWindow.value,
       ...patch,
       evaluation_open: (patch.status ?? evaluationWindow.value.status) === 'OPEN',
-      updated_at: new Date().toISOString(),
     };
-    evaluationWindow.value = updated;
 
-    try {
-      const res = await fetch('/api/admin/evaluation-window', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify(updated),
-      });
-      if (res.ok) {
-        const serverData = await res.json();
-        evaluationWindow.value = { ...evaluationWindow.value, ...serverData };
-        return { ok: true, config: evaluationWindow.value };
-      }
-    } catch (_) {
-      // offline mock update
+    const res = await fetch('/api/admin/evaluation-window', {
+      method: 'POST',
+      headers: getApiHeaders(true),
+      body: JSON.stringify(payload),
+    });
+
+    const serverData = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(serverData.message || 'Unable to save evaluation window configuration.');
     }
+
+    evaluationWindow.value = { ...evaluationWindow.value, ...serverData };
     return { ok: true, config: evaluationWindow.value };
   }
 
@@ -487,27 +605,29 @@ export const useEvaluationStore = defineStore('evaluation', () => {
     return updateEvaluationWindowConfig({ status });
   }
 
-  async function fetchDeanOverview(departmentId = null) {
+  async function fetchDeanOverview(departmentId = null, basePath = '/api/dean') {
     try {
-      const q = departmentId !== null && departmentId !== undefined && departmentId !== 'ALL'
-        ? `?department_id=${encodeURIComponent(departmentId)}`
-        : '';
-      const response = await fetch(`/api/dean/overview${q}`, {
-        headers: { Accept: 'application/json' },
+      const q =
+        departmentId !== null && departmentId !== undefined && departmentId !== 'ALL'
+          ? `?department_id=${encodeURIComponent(departmentId)}`
+          : '';
+      const endpoint = basePath === '/api/dean' ? '/api/dean/overview' : `${basePath}/overview`;
+      const response = await fetch(`${endpoint}${q}`, {
+        headers: getApiHeaders(),
       });
       if (response.ok) {
         const data = await response.json();
         deanOverview.value = { ...deanOverview.value, ...data };
         return { ok: true, data: deanOverview.value };
       }
-    } catch (_) {
-      // Retain seeded mock overview if offline
-    }
+    } catch (_) {}
     return { ok: false, data: deanOverview.value };
   }
 
   return {
     courses,
+    examPermitToken,
+    queueLoading,
     activeCourseId,
     activeCourse,
     dwellSeconds,
@@ -515,17 +635,26 @@ export const useEvaluationStore = defineStore('evaluation', () => {
     submissionKey,
     submitting,
     submissionError,
+    facultySections,
+    facultyReports,
     sectionLocks,
+    adminSummary,
     deanOverview,
     evaluationWindow,
     queueProgress,
     dimensions: PEDAGOGICAL_DIMENSIONS,
+    resetState,
     selectCourseForEvaluation,
     incrementDwellTime,
     fetchQueue,
     submitEvaluation,
     markCourseClearedLocal,
+    fetchFacultySections,
+    fetchFacultySectionReport,
+    submitFacultyTermGrades,
+    fetchAdminSections,
     toggleSectionLock,
+    bulkToggleSectionLocks,
     ingestRosterRows,
     evaluateWatchlistFlag,
     canFacultyViewEvaluation,

@@ -1,8 +1,14 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import DestructiveConfirmModal from '../components/DestructiveConfirmModal.vue';
+import ErrorRecoveryBanner from '../components/ErrorRecoveryBanner.vue';
+import SkeletonLoader from '../components/SkeletonLoader.vue';
+import { useAuthStore } from '../stores/auth.js';
 import { useEvaluationStore } from '../stores/evaluation.js';
 import { canFacultyViewEvaluation } from '../utils/evaluationMath.js';
+import { debounce } from '../utils/uxHelpers.js';
 
+const authStore = useAuthStore();
 const evaluationStore = useEvaluationStore();
 
 const rosterFormat = ref('json');
@@ -11,9 +17,12 @@ const rosterInput = ref(
     [
       {
         student_id: '2024-10892',
+        student_name: 'Juan Dela Cruz',
         course_code: 'CS-410',
         course_title: 'Cloud Security & Distributed Systems',
+        section_code: 'SEC-A',
         instructor_name: 'Dr. H. Villanueva',
+        faculty_email: 'hvillanueva@plpasig.edu.ph',
         department_name: 'College of Computer Studies',
       },
     ],
@@ -24,28 +33,110 @@ const rosterInput = ref(
 
 const importStatus = ref(null);
 const vaultAuditData = ref(null);
+const vaultAuditError = ref(null);
+const windowSaveStatus = ref(null);
 
-const windowForm = ref({
-  status: evaluationStore.evaluationWindow?.status || 'OPEN',
-  min_dwell_seconds: evaluationStore.evaluationWindow?.min_dwell_seconds || 45,
-  straight_line_variance_threshold: evaluationStore.evaluationWindow?.straight_line_variance_threshold || 0.0,
-  watchlist_mean_threshold: evaluationStore.evaluationWindow?.watchlist_mean_threshold || 3.5,
-  watchlist_negative_sentiment_pct: evaluationStore.evaluationWindow?.watchlist_negative_sentiment_pct || 35.0,
-  announcement_message: evaluationStore.evaluationWindow?.announcement_message || '',
+// Bulk Section Selection (#10 Bulk Actions On List)
+const selectedSectionIds = ref([]);
+const bulkActionBusy = ref(false);
+const bulkStatusMessage = ref('');
+
+// Destructive Action Protection (#19)
+const pendingDangerousStatus = ref(null);
+const destructiveBusy = ref(false);
+
+// 63-Control Security Maxxxxxing Posture & Live Audit Console
+const securityPosture = ref(null);
+const loadingPosture = ref(false);
+const posturePartFilter = ref('ALL');
+const rawPostureSearch = ref('');
+const debouncedPostureSearch = ref('');
+
+const updatePostureSearch = debounce((val) => {
+  debouncedPostureSearch.value = String(val || '').trim().toLowerCase();
+}, 250);
+
+function onPostureSearchInput(event) {
+  rawPostureSearch.value = event.target.value;
+  updatePostureSearch(rawPostureSearch.value);
+}
+
+const filteredSecurityControls = computed(() => {
+  const controls = securityPosture.value?.controls || [];
+  return controls.filter((ctrl) => {
+    if (posturePartFilter.value !== 'ALL' && Number(ctrl.part) !== Number(posturePartFilter.value)) {
+      return false;
+    }
+    if (!debouncedPostureSearch.value) {
+      return true;
+    }
+    const haystack = `#${ctrl.id} ${ctrl.name || ctrl.title || ''} ${ctrl.mechanism || ctrl.enforcement || ''} ${ctrl.status || ''}`.toLowerCase();
+    return haystack.includes(debouncedPostureSearch.value);
+  });
 });
 
-const windowSaveStatus = ref(null);
+const windowForm = ref({
+  status: 'OPEN',
+  min_dwell_seconds: 45,
+  straight_line_variance_threshold: 0.0,
+  watchlist_mean_threshold: 3.5,
+  watchlist_negative_sentiment_pct: 35.0,
+  announcement_message: '',
+});
+
+function syncWindowFormFromStore() {
+  windowForm.value = {
+    status: evaluationStore.evaluationWindow?.status || 'OPEN',
+    min_dwell_seconds: Number(evaluationStore.evaluationWindow?.min_dwell_seconds ?? 45),
+    straight_line_variance_threshold: Number(
+      evaluationStore.evaluationWindow?.straight_line_variance_threshold ?? 0.0,
+    ),
+    watchlist_mean_threshold: Number(
+      evaluationStore.evaluationWindow?.watchlist_mean_threshold ?? 3.5,
+    ),
+    watchlist_negative_sentiment_pct: Number(
+      evaluationStore.evaluationWindow?.watchlist_negative_sentiment_pct ?? 35.0,
+    ),
+    announcement_message: evaluationStore.evaluationWindow?.announcement_message || '',
+  };
+}
+
+async function fetchSecurityPosture() {
+  loadingPosture.value = true;
+  try {
+    const res = await fetch('/api/admin/security-posture', {
+      headers: authStore.authHeaders(),
+    });
+    if (res.ok) {
+      securityPosture.value = await res.json();
+    }
+  } catch (_) {
+    // Keep last posture snapshot if network hiccups
+  } finally {
+    loadingPosture.value = false;
+  }
+}
+
+onMounted(async () => {
+  await Promise.all([
+    evaluationStore.fetchAdminSections(),
+    evaluationStore.fetchEvaluationWindow(),
+    fetchSecurityPosture(),
+  ]);
+  syncWindowFormFromStore();
+});
 
 async function handleSaveEvaluationWindow() {
   windowSaveStatus.value = null;
   try {
-    const res = await evaluationStore.updateEvaluationWindowConfig({
+    await evaluationStore.updateEvaluationWindowConfig({
       academic_term_id: evaluationStore.evaluationWindow?.academic_term_id || 1,
       ...windowForm.value,
     });
+    syncWindowFormFromStore();
     windowSaveStatus.value = {
       ok: true,
-      message: `Evaluation window parameters successfully updated. Current Status: ${evaluationStore.evaluationWindow.status}.`,
+      message: `Evaluation window parameters saved to the database. Active Status: ${evaluationStore.evaluationWindow.status}.`,
     };
   } catch (err) {
     windowSaveStatus.value = {
@@ -55,50 +146,99 @@ async function handleSaveEvaluationWindow() {
   }
 }
 
-function setWindowStatusQuick(newStatus) {
+function requestWindowStatusTransition(newStatus) {
+  if (newStatus === 'SUSPENDED' || newStatus === 'CLOSED') {
+    pendingDangerousStatus.value = newStatus;
+    return;
+  }
+  setWindowStatusQuick(newStatus);
+}
+
+async function confirmDangerousWindowStatus() {
+  if (!pendingDangerousStatus.value) return;
+  destructiveBusy.value = true;
+  try {
+    await setWindowStatusQuick(pendingDangerousStatus.value);
+  } finally {
+    destructiveBusy.value = false;
+    pendingDangerousStatus.value = null;
+  }
+}
+
+async function setWindowStatusQuick(newStatus) {
   windowForm.value.status = newStatus;
-  evaluationStore.setEvaluationWindowStatus(newStatus);
-  windowSaveStatus.value = {
-    ok: true,
-    message: `Evaluation window status changed to ${newStatus}.`,
-  };
+  windowSaveStatus.value = null;
+  try {
+    await evaluationStore.setEvaluationWindowStatus(newStatus);
+    syncWindowFormFromStore();
+    windowSaveStatus.value = {
+      ok: true,
+      message: `Evaluation window status updated to ${newStatus} in the institutional database.`,
+    };
+  } catch (err) {
+    windowSaveStatus.value = {
+      ok: false,
+      message: `Failed to change window status: ${err.message}`,
+    };
+  }
+}
+
+const allSectionsSelected = computed(() => {
+  const locks = evaluationStore.sectionLocks || [];
+  if (locks.length === 0) return false;
+  return locks.every((s) => selectedSectionIds.value.includes(s.course_section_id));
+});
+
+function toggleSelectAllSections() {
+  const locks = evaluationStore.sectionLocks || [];
+  if (allSectionsSelected.value) {
+    selectedSectionIds.value = [];
+  } else {
+    selectedSectionIds.value = locks.map((s) => s.course_section_id);
+  }
+}
+
+function toggleSelectSection(sectionId) {
+  if (selectedSectionIds.value.includes(sectionId)) {
+    selectedSectionIds.value = selectedSectionIds.value.filter((id) => id !== sectionId);
+  } else {
+    selectedSectionIds.value = [...selectedSectionIds.value, sectionId];
+  }
+}
+
+async function applyBulkLock(field, value) {
+  if (selectedSectionIds.value.length === 0) return;
+  bulkActionBusy.value = true;
+  bulkStatusMessage.value = '';
+  try {
+    const res = await evaluationStore.bulkToggleSectionLocks(selectedSectionIds.value, field, value);
+    if (res.ok) {
+      bulkStatusMessage.value = `Updated ${selectedSectionIds.value.length} section(s): ${field} = ${value ? 'TRUE' : 'FALSE'}.`;
+      selectedSectionIds.value = [];
+    }
+  } finally {
+    bulkActionBusy.value = false;
+  }
 }
 
 async function runVaultAudit() {
+  vaultAuditError.value = null;
   try {
-    const res = await fetch('/api/security/vault-audit');
+    const res = await fetch('/api/security/vault-audit', {
+      headers: authStore.authHeaders(),
+    });
     if (res.ok) {
       vaultAuditData.value = await res.json();
       return;
     }
-  } catch {
-    // fallback simulation
+    const errPayload = await res.json().catch(() => ({}));
+    vaultAuditError.value = errPayload.message || 'Vault schema audit rejected by server.';
+  } catch (_) {
+    vaultAuditError.value = 'Unable to connect to the database security audit endpoint.';
   }
-  vaultAuditData.value = {
-    decoupled: true,
-    institution: 'PAMANTASAN NG LUNGSOD NG PASIG',
-    vault_columns: [
-      'id',
-      'course_section_id',
-      'faculty_id',
-      'academic_term_id',
-      'ratings_json',
-      'mean_score',
-      'rating_variance',
-      'is_straight_lined',
-      'dwell_time_seconds',
-      'comment_text',
-      'comment_hash',
-      'sentiment_polarity',
-      'sentiment_valence',
-      'pedagogical_tag',
-      'recorded_date',
-    ],
-    forbidden_found: [],
-  };
 }
 
-function handleRosterImport() {
+async function handleRosterImport() {
   importStatus.value = null;
   try {
     let parsedRows = [];
@@ -118,7 +258,11 @@ function handleRosterImport() {
       });
     }
 
-    const result = evaluationStore.ingestRosterRows(parsedRows);
+    const result = await evaluationStore.ingestRosterRows(
+      parsedRows,
+      rosterFormat.value,
+      rosterInput.value,
+    );
     importStatus.value = result;
   } catch (err) {
     importStatus.value = {
@@ -129,24 +273,37 @@ function handleRosterImport() {
   }
 }
 
-function toggleLock(sectionId, field) {
-  evaluationStore.toggleSectionLock(sectionId, field);
+async function toggleLock(sectionId, field) {
+  await evaluationStore.toggleSectionLock(sectionId, field);
 }
 </script>
 
 <template>
   <main class="workspace-main admin-roster-workspace" aria-labelledby="admin-heading">
+    <ErrorRecoveryBanner
+      :visible="Boolean(evaluationStore.adminLockError)"
+      title="Couldn't save changes"
+      message="Your work is safe. Optimistic lock update was rolled back — check your connection."
+      :detail="evaluationStore.adminLockError || ''"
+      @retry="evaluationStore.fetchAdminSections()"
+      @dismiss="evaluationStore.adminLockError = null"
+    />
+
     <section class="card admin-header-card">
-      <span class="eyebrow-badge">
-        PAMANTASAN NG LUNGSOD NG PASIG • Office of the University Registrar • RBAC &amp; Grade-Lock Control
-      </span>
-      <h2 id="admin-heading" class="section-title">
-        PLP Academic Catalog Ingestion &amp; Double-Blind Registrar Lock Console
-      </h2>
-      <p class="section-subtitle">
-        Manage atomic CSV/JSON course enrollments for <strong>Pamantasan ng Lungsod ng Pasig</strong> and synchronize
-        Registrar Grade Locks (`registrar_lock`) to release aggregated faculty evaluation reports safely.
-      </p>
+      <div class="header-split">
+        <div>
+          <span class="eyebrow-badge">
+            PAMANTASAN NG LUNGSOD NG PASIG • Office of the University Registrar • RBAC &amp; Grade-Lock Control
+          </span>
+          <h2 id="admin-heading" class="section-title">
+            PLP Academic Catalog Ingestion &amp; Double-Blind Registrar Lock Console
+          </h2>
+          <p class="section-subtitle">
+            Administrator: <strong>{{ authStore.user?.name || 'University Registrar Admin' }}</strong><span v-if="authStore.user?.institutional_id"> ({{ authStore.user.institutional_id }})</span> •
+            Manage atomic CSV/JSON course enrollments, bulk synchronize Registrar Grade Locks, and audit all 63 Security Maxxxxxing controls.
+          </p>
+        </div>
+      </div>
     </section>
 
     <section class="card evaluation-window-card" aria-labelledby="window-heading" data-testid="admin-evaluation-window-card">
@@ -179,33 +336,33 @@ function toggleLock(sectionId, field) {
       </div>
 
       <div class="window-status-quick-actions">
-        <label class="param-label" style="margin-right: 0.5rem; font-weight: 600;">Window Status Transition:</label>
+        <span class="param-label" style="margin-right: 0.5rem; font-weight: 600;">Window Status Transition:</span>
         <button
           type="button"
           class="btn-toggle"
           :class="evaluationStore.evaluationWindow.status === 'OPEN' ? 'toggle-on' : 'toggle-off'"
           data-testid="btn-set-window-open"
-          @click="setWindowStatusQuick('OPEN')"
+          @click="requestWindowStatusTransition('OPEN')"
         >
-          ● OPEN (Evaluations Active)
+          OPEN (Evaluations Active)
         </button>
         <button
           type="button"
           class="btn-toggle"
           :class="evaluationStore.evaluationWindow.status === 'SUSPENDED' ? 'toggle-on' : 'toggle-off'"
           data-testid="btn-set-window-suspended"
-          @click="setWindowStatusQuick('SUSPENDED')"
+          @click="requestWindowStatusTransition('SUSPENDED')"
         >
-          ⏸ SUSPENDED (Temporary Hold)
+          SUSPENDED (Temporary Hold)
         </button>
         <button
           type="button"
           class="btn-toggle"
           :class="evaluationStore.evaluationWindow.status === 'CLOSED' ? 'toggle-on' : 'toggle-off'"
           data-testid="btn-set-window-closed"
-          @click="setWindowStatusQuick('CLOSED')"
+          @click="requestWindowStatusTransition('CLOSED')"
         >
-          ✕ CLOSED (Term Concluded)
+          CLOSED (Term Concluded)
         </button>
       </div>
 
@@ -221,7 +378,7 @@ function toggleLock(sectionId, field) {
             type="number"
             min="10"
             max="300"
-            class="param-input"
+            class="param-input tabular-nums"
             data-testid="admin-dwell-input"
           />
         </div>
@@ -238,7 +395,7 @@ function toggleLock(sectionId, field) {
             step="0.001"
             min="0.0"
             max="1.0"
-            class="param-input"
+            class="param-input tabular-nums"
             data-testid="admin-variance-input"
           />
         </div>
@@ -255,7 +412,7 @@ function toggleLock(sectionId, field) {
             step="0.05"
             min="1.0"
             max="5.0"
-            class="param-input"
+            class="param-input tabular-nums"
             data-testid="admin-watchlist-mean-input"
           />
         </div>
@@ -272,7 +429,7 @@ function toggleLock(sectionId, field) {
             step="0.5"
             min="0.0"
             max="100.0"
-            class="param-input"
+            class="param-input tabular-nums"
             data-testid="admin-watchlist-neg-input"
           />
         </div>
@@ -314,18 +471,78 @@ function toggleLock(sectionId, field) {
     </section>
 
     <section class="card registrar-locks-card" aria-labelledby="locks-heading">
-      <h3 id="locks-heading" class="section-title">
-        Course Section Double-Blind Lock Synchronization
-      </h3>
+      <div class="locks-header-row">
+        <div>
+          <h3 id="locks-heading" class="section-title">
+            Course Section Double-Blind Lock Synchronization
+          </h3>
+          <p class="section-subtitle">
+            Toggle individual section flags with optimistic UI updates or select multiple rows for atomic bulk synchronization.
+          </p>
+        </div>
+      </div>
+
+      <div
+        v-if="selectedSectionIds.length > 0"
+        class="bulk-lock-bar tabular-nums"
+        data-testid="admin-bulk-lock-bar"
+      >
+        <div class="bulk-lock-count">
+          <strong>{{ selectedSectionIds.length }}</strong> section(s) selected
+          <button type="button" class="bulk-clear-btn" @click="selectedSectionIds = []">Clear</button>
+        </div>
+        <div class="bulk-lock-buttons">
+          <button
+            type="button"
+            class="btn-secondary btn-xs"
+            :disabled="bulkActionBusy"
+            data-testid="bulk-enable-registrar-lock-btn"
+            @click="applyBulkLock('registrar_lock', true)"
+          >
+            Lock Selected (registrar_lock = TRUE)
+          </button>
+          <button
+            type="button"
+            class="btn-secondary btn-xs"
+            :disabled="bulkActionBusy"
+            data-testid="bulk-disable-registrar-lock-btn"
+            @click="applyBulkLock('registrar_lock', false)"
+          >
+            Unlock Selected (registrar_lock = FALSE)
+          </button>
+          <button
+            type="button"
+            class="btn-secondary btn-xs"
+            :disabled="bulkActionBusy"
+            data-testid="bulk-mark-grades-btn"
+            @click="applyBulkLock('term_grades_submitted', true)"
+          >
+            Mark Grades Submitted
+          </button>
+        </div>
+      </div>
+
+      <div v-if="bulkStatusMessage" class="alert-banner alert-success" style="margin-bottom: 0.75rem;" role="status">
+        {{ bulkStatusMessage }}
+      </div>
 
       <div class="table-responsive">
-        <table class="institutional-table" data-testid="registrar-locks-table">
+        <table class="institutional-table tabular-nums" data-testid="registrar-locks-table">
           <thead>
             <tr>
-              <th scope="col">Course Code</th>
+              <th scope="col" style="width: 38px;">
+                <input
+                  type="checkbox"
+                  :checked="allSectionsSelected"
+                  aria-label="Select all course sections"
+                  data-testid="select-all-sections-checkbox"
+                  @change="toggleSelectAllSections"
+                />
+              </th>
+              <th scope="col">Course &amp; Section</th>
               <th scope="col">Instructor</th>
-              <th scope="col">Grades Submitted (`term_grades_submitted`)</th>
-              <th scope="col">Registrar Lock (`registrar_lock`)</th>
+              <th scope="col">Grades Submitted (<code>term_grades_submitted</code>)</th>
+              <th scope="col">Registrar Lock (<code>registrar_lock</code>)</th>
               <th scope="col">Faculty Report Visibility</th>
             </tr>
           </thead>
@@ -333,10 +550,20 @@ function toggleLock(sectionId, field) {
             <tr
               v-for="sec in evaluationStore.sectionLocks"
               :key="sec.course_section_id"
-              :data-testid="`admin-lock-row-${sec.course_code}`"
+              :data-testid="`admin-lock-row-${sec.course_code}-${sec.section_code || sec.course_section_id}`"
             >
               <td>
-                <strong>{{ sec.course_code }}</strong>
+                <input
+                  type="checkbox"
+                  :checked="selectedSectionIds.includes(sec.course_section_id)"
+                  :aria-label="`Select ${sec.course_code}`"
+                  :data-testid="`select-section-${sec.course_section_id}`"
+                  @change="toggleSelectSection(sec.course_section_id)"
+                />
+              </td>
+              <td>
+                <strong class="course-code-cell">{{ sec.course_code }}</strong>
+                <span v-if="sec.section_code" style="margin-left: 0.35rem; font-size: 0.78rem; color: var(--text-secondary);">({{ sec.section_code }})</span>
                 <div class="course-title-sub">{{ sec.course_title }}</div>
               </td>
               <td>{{ sec.instructor_name }}</td>
@@ -380,12 +607,12 @@ function toggleLock(sectionId, field) {
               </td>
             </tr>
             <tr v-if="!evaluationStore.sectionLocks || evaluationStore.sectionLocks.length === 0" data-testid="admin-locks-empty">
-              <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+              <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">
                 <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem;">
                   No Course Sections Configured
                 </div>
                 <p style="margin: 0; font-size: 0.85rem;">
-                  Import academic rosters above to populate course section double-blind lock controls.
+                  Import academic rosters below to populate course section double-blind lock controls.
                 </p>
               </td>
             </tr>
@@ -400,7 +627,7 @@ function toggleLock(sectionId, field) {
       </h3>
 
       <form class="roster-import-form" @submit.prevent="handleRosterImport">
-        <div class="format-radio-row">
+        <div class="format-radio-row" style="display: flex; gap: 1rem; margin-bottom: 0.75rem;">
           <label>
             <input v-model="rosterFormat" type="radio" value="json" />
             JSON Roster Payload
@@ -416,6 +643,7 @@ function toggleLock(sectionId, field) {
           id="roster-payload-textarea"
           v-model="rosterInput"
           rows="7"
+          spellcheck="false"
           class="narrative-textarea code-textarea"
           data-testid="roster-import-textarea"
         ></textarea>
@@ -424,6 +652,7 @@ function toggleLock(sectionId, field) {
           v-if="importStatus"
           class="alert-banner"
           :class="importStatus.ok ? 'alert-success' : 'alert-error'"
+          style="margin-bottom: 0.85rem;"
           role="status"
           data-testid="roster-import-status"
         >
@@ -442,6 +671,123 @@ function toggleLock(sectionId, field) {
       </form>
     </section>
 
+    <!-- 63-Control Security Maxxxxxing Posture & Live Audit Log Console -->
+    <section
+      class="card security-posture-card"
+      aria-labelledby="security-posture-heading"
+      data-testid="security-maxxing-posture-card"
+    >
+      <div class="watchlist-header">
+        <div>
+          <span class="eyebrow-badge">SECURITY MAXXXXXING · 63 HARDENED CONTROLS · ZERO-PII MONITORING</span>
+          <h3 id="security-posture-heading" class="section-title">
+            63-Point Security Posture &amp; Sanitized Security Audit Feed
+          </h3>
+          <p class="section-subtitle">
+            Live verification across Web/API (#1–#19), AI/Concurrency/Session (#20–#39), and Secrets/Infrastructure/Monitoring (#40–#63).
+          </p>
+        </div>
+
+        <div class="posture-summary-actions tabular-nums">
+          <span class="status-badge status-completed" data-testid="security-posture-count-badge">
+            {{ securityPosture?.enforced_controls ?? 63 }} / {{ securityPosture?.total_controls ?? 63 }} ENFORCED
+          </span>
+          <button
+            type="button"
+            class="btn-secondary btn-xs"
+            :disabled="loadingPosture"
+            data-testid="refresh-security-posture-btn"
+            @click="fetchSecurityPosture"
+          >
+            {{ loadingPosture ? 'Refreshing…' : 'Refresh Posture' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="posture-filter-bar">
+        <input
+          :value="rawPostureSearch"
+          type="search"
+          class="form-input posture-search-input"
+          placeholder="Search 63 controls (e.g., SSRF, JWT, localStorage, source maps)…"
+          aria-label="Filter 63 security controls"
+          data-testid="security-posture-search-input"
+          @input="onPostureSearchInput"
+        />
+
+        <div class="posture-part-pills" role="group" aria-label="Filter security checklist parts">
+          <button
+            type="button"
+            class="posture-pill"
+            :class="{ 'is-active': posturePartFilter === 'ALL' }"
+            data-testid="security-part-all"
+            @click="posturePartFilter = 'ALL'"
+          >
+            All (63)
+          </button>
+          <button
+            type="button"
+            class="posture-pill"
+            :class="{ 'is-active': posturePartFilter === '1' }"
+            data-testid="security-part-1"
+            @click="posturePartFilter = '1'"
+          >
+            Part 1: Web &amp; API (#1–#19)
+          </button>
+          <button
+            type="button"
+            class="posture-pill"
+            :class="{ 'is-active': posturePartFilter === '2' }"
+            data-testid="security-part-2"
+            @click="posturePartFilter = '2'"
+          >
+            Part 2: AI &amp; Logic (#20–#39)
+          </button>
+          <button
+            type="button"
+            class="posture-pill"
+            :class="{ 'is-active': posturePartFilter === '3' }"
+            data-testid="security-part-3"
+            @click="posturePartFilter = '3'"
+          >
+            Part 3: Infra &amp; Logs (#40–#63)
+          </button>
+        </div>
+      </div>
+
+      <SkeletonLoader v-if="loadingPosture && !securityPosture" :rows="3" label="Auditing 63 security controls…" />
+
+      <div v-else-if="securityPosture" class="posture-grid-scroll">
+        <div class="posture-controls-grid tabular-nums" data-testid="security-controls-grid">
+          <article
+            v-for="ctrl in filteredSecurityControls"
+            :key="ctrl.id"
+            class="posture-control-item"
+          >
+            <div class="posture-item-head">
+              <span class="posture-id">#{{ ctrl.id }}</span>
+              <strong class="posture-title">{{ ctrl.name || ctrl.title }}</strong>
+              <span class="posture-status">{{ ctrl.status }}</span>
+            </div>
+            <p class="posture-desc">{{ ctrl.mechanism || ctrl.enforcement }}</p>
+          </article>
+        </div>
+
+        <div v-if="securityPosture.recent_security_events?.length" class="audit-events-box" data-testid="security-audit-events-box">
+          <h4>Recent Sanitized Security Audit Events (Zero Student PII)</h4>
+          <ul class="audit-event-list tabular-nums">
+            <li v-for="ev in securityPosture.recent_security_events.slice(0, 6)" :key="ev.id">
+              <span class="audit-sev">{{ ev.severity }}</span>
+              <code>{{ ev.event_type }}</code>
+              <span>Role: {{ ev.actor_role || 'guest' }}</span>
+              <span v-if="ev.resource_path">{{ ev.resource_path }}</span>
+              <span class="audit-time">{{ ev.created_at }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <section
       class="card vault-audit-card"
       aria-labelledby="vault-audit-heading"
@@ -454,7 +800,7 @@ function toggleLock(sectionId, field) {
             Live evaluation_vault Schema &amp; Anonymity Auditor
           </h3>
           <p class="section-subtitle">
-            Verify that <code>evaluation_vault</code> contains zero student-identifying columns (no <code>student_id</code>, <code>user_id</code>, <code>clearance_id</code>, or <code>ip_address</code>).
+            Query the live database schema to verify that <code>evaluation_vault</code> contains zero student-identifying columns (no <code>student_id</code>, <code>user_id</code>, <code>clearance_id</code>, or <code>ip_address</code>).
           </p>
         </div>
         <button
@@ -466,6 +812,14 @@ function toggleLock(sectionId, field) {
           Run Live evaluation_vault Schema Audit
         </button>
       </div>
+      <div
+        v-if="vaultAuditError"
+        class="alert-banner alert-error"
+        style="margin-top: 0.85rem;"
+        role="alert"
+      >
+        {{ vaultAuditError }}
+      </div>
       <pre
         v-if="vaultAuditData"
         class="card"
@@ -473,6 +827,21 @@ function toggleLock(sectionId, field) {
         data-testid="admin-vault-audit-output"
       >{{ JSON.stringify(vaultAuditData, null, 2) }}</pre>
     </section>
+
+    <DestructiveConfirmModal
+      :visible="Boolean(pendingDangerousStatus)"
+      :title="`Transition Evaluation Window to ${pendingDangerousStatus}?`"
+      :description="
+        pendingDangerousStatus === 'CLOSED'
+          ? 'Closing the academic evaluation window immediately halts new student SET submissions across all colleges.'
+          : 'Suspending the evaluation window temporarily pauses student SET submissions until re-opened by the Registrar.'
+      "
+      impact-note="Already-issued clearance tokens and anonymized vault entries remain preserved."
+      :confirm-label="`Confirm ${pendingDangerousStatus}`"
+      :busy="destructiveBusy"
+      @cancel="pendingDangerousStatus = null"
+      @confirm="confirmDangerousWindowStatus"
+    />
   </main>
 </template>
 
@@ -488,9 +857,9 @@ function toggleLock(sectionId, field) {
   gap: 0.65rem;
   margin: 1rem 0;
   padding: 0.85rem 1rem;
-  background: #f8fafc;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  background: #f6f8f4;
+  border-radius: 10px;
+  border: 1px solid #dbe3da;
 }
 .window-params-grid {
   display: grid;
@@ -507,34 +876,227 @@ function toggleLock(sectionId, field) {
   grid-column: 1 / -1;
 }
 .param-label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #1e293b;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #1f3028;
 }
 .param-subtext {
   display: block;
   font-size: 0.75rem;
   font-weight: 400;
-  color: #64748b;
+  color: #4b5e53;
   margin-top: 0.15rem;
 }
 .param-input {
   padding: 0.6rem 0.85rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 0.925rem;
-  color: #0f172a;
+  border: 1px solid #c8d6ca;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #1f3028;
   background-color: #ffffff;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .param-input:focus {
   border-color: #0b4f26;
-  box-shadow: 0 0 0 3px rgba(11, 79, 38, 0.15);
+  box-shadow: 0 0 0 3px rgba(11, 79, 38, 0.14);
 }
 .status-danger {
   background-color: #fee2e2;
   color: #991b1b;
   border: 1px solid #f87171;
+}
+
+.locks-header-row {
+  margin-bottom: 0.85rem;
+}
+
+.bulk-lock-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.7rem 0.95rem;
+  margin-bottom: 0.8rem;
+  border-radius: 10px;
+  background: #103c2e;
+  color: #ffffff;
+}
+
+.bulk-lock-count {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.83rem;
+}
+
+.bulk-clear-btn {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: #f4cd42;
+  border-radius: 6px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.bulk-lock-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.posture-summary-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.posture-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin: 0.95rem 0;
+}
+
+.posture-search-input {
+  max-width: 360px;
+  flex: 1;
+  min-width: min(240px, 100%);
+}
+
+.posture-part-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.38rem;
+}
+
+.posture-pill {
+  padding: 0.3rem 0.68rem;
+  border-radius: 999px;
+  border: 1px solid #cfd9d0;
+  background: #f6f8f4;
+  color: #3f5247;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.posture-pill.is-active {
+  background: #103c2e;
+  border-color: #103c2e;
+  color: #f4cd42;
+}
+
+.posture-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 0.65rem;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.posture-control-item {
+  padding: 0.72rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid #dbe3da;
+  background: #fafcf9;
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.posture-item-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.posture-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #103c2e;
+  background: #e7f1eb;
+  padding: 0.1rem 0.38rem;
+  border-radius: 5px;
+}
+
+.posture-title {
+  flex: 1;
+  font-size: 0.8rem;
+  color: #1f3028;
+}
+
+.posture-status {
+  font-size: 0.66rem;
+  font-weight: 800;
+  padding: 0.1rem 0.42rem;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #14532d;
+}
+
+.posture-desc {
+  margin: 0;
+  font-size: 0.74rem;
+  line-height: 1.42;
+  color: #4b5e53;
+}
+
+.audit-events-box {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #dbe3da;
+  background: #f6f8f4;
+}
+
+.audit-events-box h4 {
+  margin: 0 0 0.55rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #103c2e;
+}
+
+.audit-event-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.76rem;
+  color: #3f5247;
+}
+
+.audit-event-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 7px;
+  background: #ffffff;
+  border: 1px solid #e4ece6;
+}
+
+.audit-sev {
+  font-size: 0.66rem;
+  font-weight: 800;
+  padding: 0.08rem 0.38rem;
+  border-radius: 5px;
+  background: #103c2e;
+  color: #f4cd42;
+}
+
+.audit-time {
+  margin-left: auto;
+  color: #5a6d62;
 }
 </style>

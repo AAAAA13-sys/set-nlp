@@ -272,4 +272,91 @@ class DeanAnalyticsController extends Controller
         $audit = $this->evaluationService->getAccreditationComplianceAudit($requestedDeptId);
         return new JsonResponse($audit, 200);
     }
+
+    public function evidenceDossier(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
+
+        if ($user !== null) {
+            $role = is_string($user->role ?? null)
+                ? $user->role
+                : ($user->role instanceof UserRole ? $user->role->value : '');
+
+            if ($role === UserRole::CHAIR->value) {
+                $chairDeptId = isset($user->department_id) ? (int) $user->department_id : null;
+                if ($requestedDeptId !== null && $requestedDeptId !== $chairDeptId) {
+                    return new JsonResponse([
+                        'authorized' => false,
+                        'code' => 'FORBIDDEN_DEPARTMENT_SCOPE',
+                        'message' => 'Department Chairs are strictly scoped to their assigned department.',
+                    ], 403);
+                }
+                $requestedDeptId = $chairDeptId;
+            }
+        }
+
+        $dossier = $this->evaluationService->getAccreditationEvidenceDossier($requestedDeptId);
+        return new JsonResponse($dossier, 200);
+    }
+
+    public function performanceQuartiles(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
+
+        if ($user !== null) {
+            $role = is_string($user->role ?? null)
+                ? $user->role
+                : ($user->role instanceof UserRole ? $user->role->value : '');
+
+            if ($role === UserRole::CHAIR->value) {
+                $chairDeptId = isset($user->department_id) ? (int) $user->department_id : null;
+                if ($requestedDeptId !== null && $requestedDeptId !== $chairDeptId) {
+                    return new JsonResponse([
+                        'authorized' => false,
+                        'code' => 'FORBIDDEN_DEPARTMENT_SCOPE',
+                        'message' => 'Department Chairs are strictly scoped to their assigned department.',
+                    ], 403);
+                }
+                $requestedDeptId = $chairDeptId;
+            }
+        }
+
+        $quartiles = $this->evaluationService->getFacultyPerformanceQuartiles($requestedDeptId);
+        return new JsonResponse($quartiles, 200);
+    }
+
+    public function insightsSearch(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $requestedDeptId = $request->input('department_id') !== null && $request->input('department_id') !== ''
+            ? (int) $request->input('department_id')
+            : null;
+
+        if ($user !== null) {
+            $role = is_string($user->role ?? null)
+                ? $user->role
+                : ($user->role instanceof UserRole ? $user->role->value : '');
+
+            if ($role === UserRole::CHAIR->value) {
+                $chairDeptId = isset($user->department_id) ? (int) $user->department_id : null;
+                if ($requestedDeptId !== null && $requestedDeptId !== $chairDeptId) {
+                    return new JsonResponse([
+                        'authorized' => false,
+                        'code' => 'FORBIDDEN_DEPARTMENT_SCOPE',
+                        'message' => 'Department Chairs are strictly scoped to their assigned department for AI insight queries.',
+                    ], 403);
+                }
+                $requestedDeptId = $chairDeptId;
+            }
+        }
+
+        $query = (string) ($request->input('q') ?? $request->input('query') ?? '');
+        $valence = $request->input('valence') !== null ? (string) $request->input('valence') : null;
+        $cluster = $request->input('cluster') !== null ? (string) $request->input('cluster') : null;
+
+        $results = $this->evaluationService->searchAnonymizedInsights($query, $requestedDeptId, $valence, $cluster);
+        return new JsonResponse($results, 200);
+    }
 }

@@ -13,11 +13,9 @@ const props = defineProps({
   },
   questionCount: {
     type: Number,
-    default: 20,
+    default: 25,
   },
 });
-
-const emit = defineEmits(['fast-forward']);
 
 const isSatisfied = computed(() =>
   isDwellTimeValid(props.dwellSeconds, props.questionCount, props.minSeconds),
@@ -28,7 +26,7 @@ const remainingSeconds = computed(() =>
 );
 
 const progressPercent = computed(() =>
-  Math.min(100, Math.round((Number(props.dwellSeconds) / Number(props.minSeconds)) * 100)),
+  Math.min(100, Math.round((Number(props.dwellSeconds) / Math.max(1, Number(props.minSeconds))) * 100)),
 );
 
 const formattedTime = computed(() => {
@@ -52,12 +50,16 @@ const formattedTime = computed(() => {
       <span class="dwell-status-dot" aria-hidden="true"></span>
       <div>
         <strong class="dwell-title">
-          {{ isSatisfied ? 'Authenticity Guard Satisfied (≥ 45s)' : 'Speed-Run Guard Active (45s Minimum Reading Duration)' }}
+          {{
+            isSatisfied
+              ? `Reading Duration Verified (≥ ${minSeconds}s)`
+              : `Minimum Reading Duration (${minSeconds}s Required)`
+          }}
         </strong>
         <p class="dwell-subtitle">
-          Elapsed Time: <strong>{{ formattedTime }} ({{ dwellSeconds }}s / {{ minSeconds }}s)</strong>
-          <span v-if="!isSatisfied"> — {{ remainingSeconds }}s remaining before submission unlocks</span>
-          <span v-else> — Verified for 20-item SET instrument</span>
+          Elapsed: <strong class="tabular-nums">{{ formattedTime }} ({{ dwellSeconds }}s / {{ minSeconds }}s)</strong>
+          <span v-if="!isSatisfied" class="tabular-nums"> — {{ remainingSeconds }}s remaining before submission unlocks</span>
+          <span v-else> — Verified for {{ questionCount }}-item SET instrument</span>
         </p>
       </div>
     </div>
@@ -72,16 +74,6 @@ const formattedTime = computed(() => {
       >
         <div class="dwell-progress-fill" :style="{ width: `${progressPercent}%` }"></div>
       </div>
-
-      <button
-        v-if="!isSatisfied"
-        type="button"
-        class="btn-secondary btn-xs"
-        data-testid="simulate-45s-btn"
-        @click="emit('fast-forward', minSeconds)"
-      >
-        Simulate 45s Reading Time
-      </button>
     </div>
   </div>
 </template>

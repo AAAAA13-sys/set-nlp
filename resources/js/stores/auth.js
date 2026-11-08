@@ -1,63 +1,66 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
+import { clearAllSurveyDrafts, readUiPreferences, saveUiPreferences } from '../utils/uxHelpers.js';
 
-export const DEMO_ROLE_PROFILES = {
-  student: {
-    id: 1,
-    institutional_id: '2024-10892',
-    name: 'Student 2024-10892',
-    email: '2024-10892@evaluatech.edu.ph',
-    role: 'student',
-    role_label: 'Student',
-    department_id: 1,
-    department_name: 'College of Computer Studies',
-    active_term: 'Fall / 1st Semester',
-  },
-  faculty: {
-    id: 2,
-    institutional_id: 'FAC-2019-042',
-    name: 'Prof. A. Dela Cruz',
-    email: 'adelacruz@evaluatech.edu.ph',
-    role: 'faculty',
-    role_label: 'Faculty',
-    department_id: 1,
-    department_name: 'College of Computer Studies',
-    active_term: 'Fall / 1st Semester',
-  },
-  chair: {
-    id: 3,
-    institutional_id: 'CHR-2017-011',
-    name: 'Dr. M. Santos',
-    email: 'msantos.chair@evaluatech.edu.ph',
-    role: 'chair',
-    role_label: 'Department Chair',
-    department_id: 1,
-    department_name: 'College of Computer Studies',
-    active_term: 'Fall / 1st Semester',
-  },
-  dean: {
-    id: 4,
-    institutional_id: 'DEAN-2015-001',
-    name: 'Dr. V. Mendoza',
-    email: 'dean.ccs@evaluatech.edu.ph',
-    role: 'dean',
-    role_label: 'Dean',
-    department_id: 1,
-    department_name: 'College of Computer Studies',
-    active_term: 'Fall / 1st Semester',
-  },
-  admin: {
-    id: 5,
-    institutional_id: 'REG-2012-001',
-    name: 'University Registrar',
-    email: 'registrar@evaluatech.edu.ph',
-    role: 'admin',
-    role_label: 'System Administrator',
-    department_id: null,
-    department_name: 'Office of the University Registrar',
-    active_term: 'Fall / 1st Semester',
-  },
-};
+const AUTH_TOKEN_KEY = 'evaluatech_auth_token';
+const AUTH_USER_KEY = 'evaluatech_auth_user';
+
+function readStoredSession() {
+  if (typeof window === 'undefined') {
+    return { token: null, user: null };
+  }
+  try {
+    const sessionToken = window.sessionStorage?.getItem(AUTH_TOKEN_KEY);
+    const sessionUserRaw = window.sessionStorage?.getItem(AUTH_USER_KEY);
+    if (sessionToken && sessionUserRaw) {
+      return { token: sessionToken, user: JSON.parse(sessionUserRaw) };
+    }
+
+    const localToken = window.localStorage?.getItem(AUTH_TOKEN_KEY);
+    const localUserRaw = window.localStorage?.getItem(AUTH_USER_KEY);
+    if (localToken && localUserRaw) {
+      return { token: localToken, user: JSON.parse(localUserRaw) };
+    }
+  } catch (_) {
+    // Ignore corrupted storage entries
+  }
+  return { token: null, user: null };
+}
+
+function persistStoredSession(tokenValue, userValue, remember = false) {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  try {
+    const targetStorage = remember ? window.localStorage : window.sessionStorage;
+    const otherStorage = remember ? window.sessionStorage : window.localStorage;
+    otherStorage?.removeItem(AUTH_TOKEN_KEY);
+    otherStorage?.removeItem(AUTH_USER_KEY);
+    if (tokenValue && userValue) {
+      targetStorage?.setItem(AUTH_TOKEN_KEY, tokenValue);
+      targetStorage?.setItem(AUTH_USER_KEY, JSON.stringify(userValue));
+    } else {
+      targetStorage?.removeItem(AUTH_TOKEN_KEY);
+      targetStorage?.removeItem(AUTH_USER_KEY);
+    }
+  } catch (_) {
+    // Ignore storage quota errors
+  }
+}
+
+function clearStoredSession() {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  try {
+    window.localStorage?.removeItem(AUTH_TOKEN_KEY);
+    window.localStorage?.removeItem(AUTH_USER_KEY);
+    window.sessionStorage?.removeItem(AUTH_TOKEN_KEY);
+    window.sessionStorage?.removeItem(AUTH_USER_KEY);
+  } catch (_) {
+    // Ignore storage access errors
+  }
+}
 
 export function getDefaultRouteForRole(role) {
   switch (String(role || '').toLowerCase()) {
@@ -77,23 +80,104 @@ export function getDefaultRouteForRole(role) {
 }
 
 export const useAuthStore = defineStore('auth', () => {
-  const user = ref({ ...DEMO_ROLE_PROFILES.student });
-  const token = ref('demo-session-token');
-  const activeTerm = ref('Fall / 1st Semester');
+  const stored = readStoredSession();
+  const user = ref(stored.user);
+  const token = ref(stored.token);
+  const activeTerm = ref(stored.user?.active_term || '1st Semester AY 2026-2027');
   const loading = ref(false);
+  const sessionChecked = ref(false);
   const error = ref(null);
+  const uiPreferences = ref(readUiPreferences());
 
-  const isAuthenticated = computed(() => Boolean(user.value && user.value.role));
-  const currentRole = computed(() => user.value?.role ?? 'student');
+  function updateUiPreferences(patch = {}) {
+    uiPreferences.value = saveUiPreferences(patch);
+    return uiPreferences.value;
+  }
+
+  const isAuthenticated = computed(() => Boolean(user.value && user.value.role && token.value));
+  const currentRole = computed(() => user.value?.role ?? null);
   const displayIdentifier = computed(() => {
-    if (!user.value) return 'Guest';
+    if (!user.value) return '';
     const roleTitle = user.value.role_label || user.value.role;
-    return `${user.value.institutional_id} (${roleTitle})`;
+    const displayName = user.value.name ? ` • ${user.value.name}` : '';
+    return `${user.value.institutional_id}${displayName} (${roleTitle})`;
   });
+
+  function authHeaders(extraHeaders = {}) {
+    const headers = {
+      Accept: 'application/json',
+      ...extraHeaders,
+    };
+    if (token.value) {
+      headers.Authorization = `Bearer ${token.value}`;
+    }
+    return headers;
+  }
+
+  function clearSession() {
+    user.value = null;
+    token.value = null;
+    error.value = null;
+    clearStoredSession();
+    clearAllSurveyDrafts();
+  }
+
+  async function hydrateSession() {
+    if (!token.value) {
+      user.value = null;
+      sessionChecked.value = true;
+      return null;
+    }
+
+    try {
+      const response = await fetch('/api/auth/me', {
+        method: 'GET',
+        headers: authHeaders(),
+      });
+
+      if (response.ok) {
+        const payload = await response.json();
+        if (payload?.authenticated && payload?.user) {
+          user.value = payload.user;
+          if (payload.user.active_term) {
+            activeTerm.value = payload.user.active_term;
+          }
+          const inLocal =
+            typeof window !== 'undefined' && Boolean(window.localStorage?.getItem(AUTH_TOKEN_KEY));
+          persistStoredSession(token.value, user.value, inLocal);
+          sessionChecked.value = true;
+          return user.value;
+        }
+      }
+
+      if (response.status === 401 || response.status === 403) {
+        clearSession();
+      }
+    } catch (_) {
+      // Preserve existing token if network is momentarily unreachable during hydration
+    }
+
+    sessionChecked.value = true;
+    return user.value;
+  }
 
   async function login(credentials = {}) {
     loading.value = true;
     error.value = null;
+
+    const identifier = String(
+      credentials.identifier || credentials.institutional_id || credentials.email || '',
+    ).trim();
+    const password = String(credentials.password || '');
+    // Security #38: Default to ephemeral sessionStorage unless user explicitly opts into persistent storage
+    const remember = credentials.remember === true;
+
+    if (!identifier || !password) {
+      loading.value = false;
+      error.value = 'Please enter both your PLP Institutional ID (or email) and passphrase.';
+      throw new Error(error.value);
+    }
+
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -101,58 +185,57 @@ export const useAuthStore = defineStore('auth', () => {
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
-        body: JSON.stringify(credentials),
+        body: JSON.stringify({
+          identifier,
+          institutional_id: identifier,
+          password,
+        }),
       });
 
-      if (response.ok) {
-        const payload = await response.json();
-        const resolvedUser = payload.user || payload.data?.user;
-        if (resolvedUser) {
-          user.value = {
-            ...DEMO_ROLE_PROFILES[resolvedUser.role || 'student'],
-            ...resolvedUser,
-          };
-          token.value = payload.token || 'session-authenticated';
-          return user.value;
-        }
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok || !payload?.authenticated || !payload?.token || !payload?.user) {
+        clearSession();
+        const msg =
+          payload?.message ||
+          'Invalid institutional credentials. Verify your PLP ID / university email and passphrase.';
+        error.value = msg;
+        throw new Error(msg);
       }
-    } catch (_) {
-      // Fallback to deterministic demo role session when offline or in local UI test mode
+
+      user.value = payload.user;
+      token.value = payload.token;
+      sessionChecked.value = true;
+      if (payload.user.active_term) {
+        activeTerm.value = payload.user.active_term;
+      }
+      persistStoredSession(payload.token, payload.user, remember);
+      return user.value;
+    } catch (err) {
+      if (!error.value) {
+        error.value =
+          err?.message ||
+          'Unable to reach the PLP institutional authentication service. Please check your connection.';
+      }
+      throw new Error(error.value);
     } finally {
       loading.value = false;
     }
-
-    const requestedRole = String(credentials.role || 'student').toLowerCase();
-    const profile = DEMO_ROLE_PROFILES[requestedRole] || DEMO_ROLE_PROFILES.student;
-    user.value = {
-      ...profile,
-      institutional_id: credentials.institutional_id || credentials.email || profile.institutional_id,
-    };
-    token.value = `session-${user.value.role}`;
-    return user.value;
-  }
-
-  function switchDemoRole(role) {
-    const normalized = String(role || 'student').toLowerCase();
-    if (DEMO_ROLE_PROFILES[normalized]) {
-      user.value = { ...DEMO_ROLE_PROFILES[normalized] };
-      token.value = `session-${normalized}`;
-      error.value = null;
-    }
-    return user.value;
   }
 
   async function logout() {
+    const activeHeaders = authHeaders();
+    clearSession();
+    sessionChecked.value = true;
+
     try {
       await fetch('/api/auth/logout', {
         method: 'POST',
-        headers: { Accept: 'application/json' },
+        headers: activeHeaders,
       });
     } catch (_) {
-      // Ignore network errors on logout
+      // Ignore network errors after local revocation
     }
-    user.value = null;
-    token.value = null;
   }
 
   return {
@@ -160,12 +243,17 @@ export const useAuthStore = defineStore('auth', () => {
     token,
     activeTerm,
     loading,
+    sessionChecked,
     error,
+    uiPreferences,
     isAuthenticated,
     currentRole,
     displayIdentifier,
+    authHeaders,
+    updateUiPreferences,
+    hydrateSession,
+    clearSession,
     login,
-    switchDemoRole,
     logout,
     getDefaultRouteForRole,
   };

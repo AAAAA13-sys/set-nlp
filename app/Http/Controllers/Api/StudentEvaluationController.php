@@ -82,7 +82,10 @@ class StudentEvaluationController extends Controller
     public function verifyPermit(Request $request): JsonResponse
     {
         $token = trim((string) ($request->input('token') ?? $request->input('exam_permit_token', '')));
-        $instId = $request->input('institutional_id') !== null ? (string) $request->input('institutional_id') : null;
+        $rawInst = $request->input('institutional_id')
+            ?? $request->input('student_id')
+            ?? ($request->user()->institutional_id ?? null);
+        $instId = $rawInst !== null && trim((string) $rawInst) !== '' ? trim((string) $rawInst) : null;
 
         $result = $this->evaluationService->verifyExaminationPermit($token, $instId);
         $status = $result['verified'] ? 200 : 422;

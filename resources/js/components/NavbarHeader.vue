@@ -1,28 +1,39 @@
 <script setup>
 import { computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuthStore, getDefaultRouteForRole } from '../stores/auth.js';
+import { useRoute, useRouter } from 'vue-router';
+import { useAuthStore } from '../stores/auth.js';
 import { useEvaluationStore } from '../stores/evaluation.js';
 
+defineEmits(['open-mobile-sidebar', 'open-command-palette']);
+
+const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 const evaluationStore = useEvaluationStore();
 
 const clearanceStatus = computed(() => evaluationStore.queueProgress.clearanceStatus);
 const isCleared = computed(() => evaluationStore.queueProgress.allCleared);
+const showAuthenticatedBar = computed(
+  () => authStore.isAuthenticated && route?.path !== '/login',
+);
 
-const availableRoles = [
-  { value: 'student', label: 'Student (2024-10892)' },
-  { value: 'faculty', label: 'Faculty (Prof. A. Dela Cruz)' },
-  { value: 'chair', label: 'Department Chair (Dr. M. Santos)' },
-  { value: 'dean', label: 'Dean (Dr. V. Mendoza)' },
-  { value: 'admin', label: 'System Admin / PLP Registrar' },
-];
+const firstPendingSectionId = computed(() => {
+  const pending = evaluationStore.courses.find((c) => c.status === 'PENDING');
+  return pending?.course_section_id || evaluationStore.activeCourse?.course_section_id || null;
+});
 
-const roleNavLinks = {
+const roleNavLinks = computed(() => ({
   student: [
-    { to: '/queue', label: 'Student Queue', testId: 'nav-link-student-queue' },
-    { to: '/evaluate/104', label: 'SET Survey', testId: 'nav-link-student-survey' },
+    { to: '/queue', label: 'Evaluation Queue', testId: 'nav-link-student-queue' },
+    ...(firstPendingSectionId.value
+      ? [
+          {
+            to: `/evaluate/${firstPendingSectionId.value}`,
+            label: 'Active SET Form',
+            testId: 'nav-link-student-survey',
+          },
+        ]
+      : []),
   ],
   faculty: [
     { to: '/faculty', label: 'Faculty Portal', testId: 'nav-link-faculty-portal' },
@@ -34,28 +45,17 @@ const roleNavLinks = {
     { to: '/dean', label: 'Dean Analytics', testId: 'nav-link-dean-analytics' },
   ],
   admin: [
-    { to: '/admin', label: 'Admin & Locks', testId: 'nav-link-admin-console' },
+    { to: '/admin', label: 'Registrar & System Admin', testId: 'nav-link-admin-console' },
   ],
-  guest: [
-    { to: '/login', label: 'Sign In', testId: 'nav-link-login' },
-  ],
-};
+}));
 
 const authorizedNavLinks = computed(() => {
-  const role = String(authStore.currentRole || 'student').toLowerCase();
-  return roleNavLinks[role] || roleNavLinks.student;
+  const role = String(authStore.currentRole || '').toLowerCase();
+  return roleNavLinks.value[role] || [];
 });
 
-function onRoleChange(event) {
-  const nextRole = event.target.value;
-  authStore.switchDemoRole(nextRole);
-  const targetRoute = getDefaultRouteForRole(nextRole);
-  if (router) {
-    router.push(targetRoute).catch(() => {});
-  }
-}
-
 async function handleLogout() {
+  evaluationStore.resetState();
   await authStore.logout();
   if (router) {
     router.push('/login').catch(() => {});
@@ -64,69 +64,67 @@ async function handleLogout() {
 </script>
 
 <template>
-  <header class="navbar-header" role="banner" aria-label="Pamantasan ng Lungsod ng Pasig Institutional Portal Header">
-    <div class="plp-top-ribbon">
-      <div class="plp-top-ribbon-inner">
-        <span>Republic of the Philippines • City Government of Pasig • Alkalde Joseco St., Kapasigan, Pasig City</span>
-        <span class="plp-ribbon-motto">Official Reference: plpasig.edu.ph • Academic Excellence &amp; Pasigueño Integrity</span>
-      </div>
-    </div>
+  <header
+    class="navbar-header sch-topbar"
+    role="banner"
+    aria-label="Pamantasan ng Lungsod ng Pasig Institutional Portal Header"
+  >
+    <div class="sch-topbar-inner">
+      <div class="sch-topbar-left">
+        <button
+          v-if="showAuthenticatedBar"
+          type="button"
+          class="mobile-menu-trigger"
+          aria-label="Open workspace navigation drawer"
+          data-testid="mobile-sidebar-toggle"
+          @click="$emit('open-mobile-sidebar')"
+        >
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
 
-    <div class="navbar-container">
-      <div class="navbar-brand-row">
-        <div class="brand-identity">
-          <div class="plp-crest-seal" aria-hidden="true" title="Pamantasan ng Lungsod ng Pasig Official Seal">
-            <svg width="34" height="34" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="32" cy="32" r="29" stroke="#FACC15" stroke-width="2.5" stroke-dasharray="3 2" />
-              <circle cx="32" cy="32" r="23" fill="#0B4F26" stroke="#EAB308" stroke-width="1.8" />
-              <path d="M32 14L44 20V31C44 40 38.8 46.8 32 50C25.2 46.8 20 40 20 31V20L32 14Z" fill="#14532D" stroke="#FACC15" stroke-width="1.8" />
-              <path d="M32 20L35.5 27.5L43 28.5L37.5 33.8L39 41.5L32 37.8L25 41.5L26.5 33.8L21 28.5L28.5 27.5L32 20Z" fill="#FACC15" />
-            </svg>
+        <div class="sch-brand-stack">
+          <div class="sch-kicker-row">
+            <span class="sch-uni-kicker">PAMANTASAN NG LUNGSOD NG PASIG</span>
+            <span class="sch-domain-dot" aria-hidden="true">·</span>
+            <span class="sch-domain-kicker">plpasig.edu.ph</span>
           </div>
-
-          <div class="brand-text-stack">
-            <span class="plp-university-title">PAMANTASAN NG LUNGSOD NG PASIG</span>
-            <div class="brand-sub-row">
-              <span class="brand-badge">[PLP • EduMetrics / EvaluaTech]</span>
-              <h1 class="brand-title">Institutional Evaluation Portal</h1>
-            </div>
-          </div>
-        </div>
-
-        <div class="term-pill" aria-label="Active Academic Term">
-          <span class="term-label">Active Term:</span>
-          <strong class="term-value">{{ authStore.activeTerm || 'Fall / 1st Semester' }}</strong>
+          <h1 class="sch-portal-heading">Institutional Evaluation Portal</h1>
         </div>
       </div>
 
-      <div class="navbar-meta-row">
-        <div class="user-identity" data-testid="logged-in-user">
-          <span class="meta-caption">Logged in as:</span>
-          <strong class="user-code">{{ authStore.displayIdentifier || '2024-10892 (Student)' }}</strong>
+      <div class="sch-topbar-right">
+        <button
+          v-if="showAuthenticatedBar"
+          type="button"
+          class="sch-cmdk-trigger"
+          data-testid="navbar-cmdk-btn"
+          title="Open Command Palette (Ctrl+K)"
+          @click="$emit('open-command-palette')"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span>Search or jump…</span>
+          <kbd>Ctrl K</kbd>
+        </button>
+
+        <div class="sch-term-chip" aria-label="Active Academic Term">
+          <span>Active Term:</span>
+          <strong>{{ authStore.activeTerm || '1st Semester AY 2026-2027' }}</strong>
         </div>
 
-        <div class="navbar-controls">
-          <label class="role-switcher-label" for="demo-role-switcher">
-            <span>Workspace Role:</span>
-            <select
-              id="demo-role-switcher"
-              class="role-switcher-select"
-              :value="authStore.currentRole"
-              aria-label="Switch institutional role workspace"
-              @change="onRoleChange"
-            >
-              <option v-for="role in availableRoles" :key="role.value" :value="role.value">
-                {{ role.label }}
-              </option>
-            </select>
-          </label>
-
-          <nav class="quick-nav" aria-label="Primary Workspace Navigation" data-testid="navbar-quick-nav">
+        <template v-if="showAuthenticatedBar">
+          <nav class="sch-inline-nav" aria-label="Primary Workspace Navigation" data-testid="navbar-quick-nav">
             <router-link
               v-for="link in authorizedNavLinks"
               :key="link.to"
               :to="link.to"
-              class="nav-link"
+              class="sch-nav-pill"
               :data-testid="link.testId"
             >
               {{ link.label }}
@@ -134,37 +132,253 @@ async function handleLogout() {
           </nav>
 
           <div
-            class="clearance-badge"
-            :class="isCleared ? 'clearance-cleared' : 'clearance-pending'"
+            class="sch-status-pill"
+            :class="authStore.currentRole === 'student' && !isCleared ? 'is-pending' : 'is-cleared'"
             data-testid="navbar-clearance-badge"
             role="status"
           >
-            <span>Clearance:</span>
-            <strong>{{ authStore.currentRole === 'student' ? clearanceStatus : (authStore.user?.role_label || authStore.currentRole.toUpperCase()) }}</strong>
+            <span>{{ authStore.currentRole === 'student' ? 'Clearance:' : 'Role:' }}</span>
+            <strong>
+              {{
+                authStore.currentRole === 'student'
+                  ? clearanceStatus
+                  : authStore.user?.role_label || String(authStore.currentRole || '').toUpperCase()
+              }}
+            </strong>
           </div>
 
-          <div class="navbar-auth-actions" style="display:flex;align-items:center;">
-            <button
-              v-if="authStore.isAuthenticated"
-              type="button"
-              class="btn-secondary btn-xs navbar-logout-btn"
-              data-testid="navbar-logout-btn"
-              title="Sign out of current institutional workspace"
-              @click="handleLogout"
-            >
-              Sign Out
-            </button>
-            <router-link
-              v-else
-              to="/login"
-              class="btn-primary btn-xs navbar-login-link"
-              data-testid="navbar-login-btn"
-            >
-              Sign In
-            </router-link>
+          <div class="sch-signed-in" data-testid="logged-in-user">
+            <span class="sr-only">Signed in as:</span>
+            <span class="sch-signed-caption" aria-hidden="true">Signed in as:</span>
+            <strong class="sch-user-id">{{ authStore.displayIdentifier }}</strong>
           </div>
-        </div>
+
+          <button
+            type="button"
+            class="sch-logout-btn"
+            data-testid="navbar-logout-btn"
+            title="Sign out of current institutional workspace"
+            @click="handleLogout"
+          >
+            Sign Out
+          </button>
+        </template>
       </div>
     </div>
   </header>
 </template>
+
+<style scoped>
+.sch-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: #ffffff;
+  border-bottom: 1px solid #dbe3da;
+  color: #1f3028;
+  box-shadow: none;
+}
+
+.sch-topbar-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  min-height: 64px;
+  padding: 0.65rem 1.35rem;
+}
+
+.sch-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.mobile-menu-trigger {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  border: 1px solid #cfd9d0;
+  background: #f6f8f4;
+  color: #103c2e;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.sch-brand-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+  min-width: 0;
+}
+
+.sch-kicker-row {
+  display: flex;
+  align-items: center;
+  gap: 0.38rem;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #176347;
+}
+
+.sch-domain-kicker {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #4b5e53;
+}
+
+.sch-portal-heading {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  color: #1f3028;
+}
+
+.sch-topbar-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sch-cmdk-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  height: 34px;
+  padding: 0 0.65rem;
+  border-radius: 9px;
+  border: 1px solid #cfd9d0;
+  background: #f6f8f4;
+  color: #4b5e53;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.14s ease, background-color 0.14s ease;
+}
+
+.sch-cmdk-trigger:hover {
+  background: #edf3ee;
+  border-color: #176347;
+  color: #103c2e;
+}
+
+.sch-cmdk-trigger kbd {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.08rem 0.35rem;
+  border-radius: 5px;
+  background: #ffffff;
+  border: 1px solid #cfd9d0;
+  color: #103c2e;
+}
+
+.sch-term-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  height: 32px;
+  padding: 0 0.68rem;
+  border-radius: 999px;
+  background: #f6f8f4;
+  border: 1px solid #dbe3da;
+  font-size: 0.74rem;
+  color: #3f5247;
+}
+
+.sch-term-chip strong {
+  color: #103c2e;
+}
+
+.sch-inline-nav {
+  display: none;
+}
+
+.sch-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  height: 32px;
+  padding: 0 0.68rem;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+  color: #14532d;
+}
+
+.sch-status-pill.is-pending {
+  border-color: #fde68a;
+  background: #fffbeb;
+  color: #854d0e;
+}
+
+.sch-signed-in {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: #4b5e53;
+}
+
+.sch-user-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #1f3028;
+}
+
+.sch-logout-btn {
+  height: 32px;
+  padding: 0 0.72rem;
+  border-radius: 8px;
+  border: 1px solid #cfd9d0;
+  background: #ffffff;
+  color: #1f3028;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.14s ease, border-color 0.14s ease;
+}
+
+.sch-logout-btn:hover {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #991b1b;
+}
+
+@media (max-width: 1120px) {
+  .sch-signed-in,
+  .sch-term-chip {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .mobile-menu-trigger {
+    display: inline-flex;
+  }
+
+  .sch-topbar-inner {
+    padding: 0.55rem 0.9rem;
+  }
+
+  .sch-cmdk-trigger span,
+  .sch-cmdk-trigger kbd {
+    display: none;
+  }
+}
+
+@media print {
+  .sch-topbar {
+    display: none !important;
+  }
+}
+</style>
