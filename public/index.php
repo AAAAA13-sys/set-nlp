@@ -19,20 +19,38 @@ $uriPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
 
 // 1. Serve static CSS/JS assets directly when running under PHP built-in server (php -S 127.0.0.1:8000 -t public public/index.php)
-if (PHP_SAPI === 'cli-server' && preg_match('#^/resources/(css|js)/[A-Za-z0-9_./-]+$#', $uriPath) === 1) {
-    $candidate = realpath(__DIR__ . '/..' . $uriPath);
-    $rootResources = realpath(__DIR__ . '/../resources');
-    if ($candidate !== false && $rootResources !== false && str_starts_with($candidate, $rootResources) && is_file($candidate)) {
-        $ext = strtolower(pathinfo($candidate, PATHINFO_EXTENSION));
-        $mime = match ($ext) {
-            'css' => 'text/css; charset=utf-8',
-            'js', 'mjs' => 'application/javascript; charset=utf-8',
-            'vue' => 'text/plain; charset=utf-8',
-            default => 'application/octet-stream',
-        };
-        header('Content-Type: ' . $mime);
-        readfile($candidate);
-        return;
+if (PHP_SAPI === 'cli-server') {
+    if (preg_match('#^/build/[A-Za-z0-9_./-]+$#', $uriPath) === 1) {
+        $candidate = realpath(__DIR__ . $uriPath);
+        $buildDir = realpath(__DIR__ . '/build');
+        if ($candidate !== false && $buildDir !== false && str_starts_with($candidate, $buildDir) && is_file($candidate)) {
+            $ext = strtolower(pathinfo($candidate, PATHINFO_EXTENSION));
+            $mime = match ($ext) {
+                'css' => 'text/css; charset=utf-8',
+                'js', 'mjs' => 'application/javascript; charset=utf-8',
+                'json' => 'application/json; charset=utf-8',
+                default => 'application/octet-stream',
+            };
+            header('Content-Type: ' . $mime);
+            readfile($candidate);
+            return;
+        }
+    }
+    if (preg_match('#^/resources/(css|js)/[A-Za-z0-9_./-]+$#', $uriPath) === 1) {
+        $candidate = realpath(__DIR__ . '/..' . $uriPath);
+        $rootResources = realpath(__DIR__ . '/../resources');
+        if ($candidate !== false && $rootResources !== false && str_starts_with($candidate, $rootResources) && is_file($candidate)) {
+            $ext = strtolower(pathinfo($candidate, PATHINFO_EXTENSION));
+            $mime = match ($ext) {
+                'css' => 'text/css; charset=utf-8',
+                'js', 'mjs' => 'application/javascript; charset=utf-8',
+                'vue' => 'text/plain; charset=utf-8',
+                default => 'application/octet-stream',
+            };
+            header('Content-Type: ' . $mime);
+            readfile($candidate);
+            return;
+        }
     }
 }
 
@@ -189,7 +207,27 @@ if (str_starts_with($uriPath, '/api/')) {
 $bladeFile = __DIR__ . '/../resources/views/app.blade.php';
 if (is_file($bladeFile)) {
     $html = (string) file_get_contents($bladeFile);
-    $html = preg_replace('/@if\s*\([^\)]*\).*?@else(.*?)@endif/s', '$1', $html) ?? $html;
+    $manifestPath = __DIR__ . '/build/manifest.json';
+    if (is_file($manifestPath)) {
+        $manifest = json_decode((string) file_get_contents($manifestPath), true);
+        $tags = '';
+        if (is_array($manifest)) {
+            if (isset($manifest['resources/css/app.css']['file'])) {
+                $tags .= '<link rel="stylesheet" href="/build/' . $manifest['resources/css/app.css']['file'] . "\">\n";
+            }
+            if (isset($manifest['resources/js/app.js']['css'])) {
+                foreach ($manifest['resources/js/app.js']['css'] as $c) {
+                    $tags .= '<link rel="stylesheet" href="/build/' . $c . "\">\n";
+                }
+            }
+            if (isset($manifest['resources/js/app.js']['file'])) {
+                $tags .= '<script type="module" src="/build/' . $manifest['resources/js/app.js']['file'] . "\"></script>\n";
+            }
+        }
+        $html = preg_replace('/@if\s*\(function_exists\(\'vite\'\)\).*?@endif/s', $tags, $html) ?? $html;
+    } else {
+        $html = preg_replace('/@if\s*\([^\)]*\).*?@else(.*?)@endif/s', '$1', $html) ?? $html;
+    }
     header('Content-Type: text/html; charset=utf-8');
     echo $html;
 }

@@ -310,7 +310,6 @@ export const useEvaluationStore = defineStore('evaluation', () => {
     }
 
     const mean = calculateMean(ratings);
-    const variance = calculatePopulationVariance(ratings);
     const clusterScores = calculateClusterMeans(ratings);
     const nlp = classifyCommentPreview(commentText);
     const token = `CLR-2026-SEC${targetSectionId}-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;

@@ -1,5 +1,6 @@
 import { createPinia } from 'pinia';
 import { createApp, defineComponent, h } from 'vue';
+import { RouterView } from 'vue-router';
 import '../css/app.css';
 import NavbarHeader from './components/NavbarHeader.vue';
 import router from './router/index.js';
@@ -10,7 +11,7 @@ export const EvaluaTechAppShell = defineComponent({
     return () =>
       h('div', { class: 'evaluatech-app-shell' }, [
         h(NavbarHeader),
-        h('div', { class: 'evaluatech-view-container' }, [h('router-view')]),
+        h('div', { class: 'evaluatech-view-container' }, [h(RouterView)]),
       ]);
   },
 });
