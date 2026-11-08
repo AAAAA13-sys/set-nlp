@@ -36,7 +36,7 @@ function readResourceFile(relativePath) {
   return fs.readFileSync(path.join(JS_DIR, relativePath), 'utf8');
 }
 
-describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (31 Test Groups)', () => {
+describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (32 Test Groups)', () => {
   // 1. Header portal branding & active term display
   describe('Group 01: Header portal branding & active term display (NavbarHeader.vue — Pamantasan ng Lungsod ng Pasig)', () => {
     it('renders PAMANTASAN NG LUNGSOD NG PASIG branding, PLP Green/Gold theme, active term, logged-in student ID 2024-10892, and clearance status badge', () => {
@@ -488,10 +488,12 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (31 Test Groups)', ()
       const loginViewSfc = readResourceFile('views/LoginView.vue');
 
       assert.ok(routerSrc.includes('canAccessRoute'));
-      assert.ok(routerSrc.includes("roles: ['student', 'admin']"));
-      assert.ok(routerSrc.includes("roles: ['faculty', 'chair', 'dean', 'admin']"));
-      assert.ok(routerSrc.includes("roles: ['dean', 'chair', 'admin']"));
+      assert.ok(routerSrc.includes("roles: ['student']"));
+      assert.ok(routerSrc.includes("roles: ['faculty']"));
+      assert.ok(routerSrc.includes("roles: ['chair']"));
+      assert.ok(routerSrc.includes("roles: ['dean']"));
       assert.ok(routerSrc.includes("roles: ['admin']"));
+      assert.ok(routerSrc.includes('/access-denied'));
       assert.ok(loginViewSfc.includes('DEMO_ROLE_PROFILES.student.institutional_id'));
       assert.ok(loginViewSfc.includes('data-testid="login-id-input"'));
     });
@@ -729,6 +731,62 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (31 Test Groups)', ()
       assert.equal(sanitizeCsvCell('-5.00'), "'-5.00");
       assert.equal(sanitizeCsvCell('@SUM(A1:A10)'), "'@SUM(A1:A10)");
       assert.equal(sanitizeCsvCell('Malinaw at organisado'), 'Malinaw at organisado');
+    });
+  });
+
+  // 32. Strict Five-Role Dedicated Webpages & RBAC Dynamic Navigation & Access Denied Guards
+  describe('Group 32: Strict Five-Role Dedicated Webpages & RBAC Dynamic Navigation & Access Denied Guards', () => {
+    it('verifies dedicated routes for all five roles, dynamic role navigation links, and access-denied guards', () => {
+      const routerSrc = readResourceFile('router/index.js');
+      const authStoreSrc = readResourceFile('stores/auth.js');
+      const navbarSfc = readResourceFile('components/NavbarHeader.vue');
+      const chairViewSfc = readResourceFile('views/ChairDashboardView.vue');
+      const accessDeniedSfc = readResourceFile('views/AccessDeniedView.vue');
+
+      // 1. Verify strict role mapping to dedicated home pages
+      assert.ok(authStoreSrc.includes("case 'student':\n      return '/queue';") || authStoreSrc.includes("return '/queue'"));
+      assert.ok(authStoreSrc.includes("return '/faculty'"));
+      assert.ok(authStoreSrc.includes("return '/chair'"));
+      assert.ok(authStoreSrc.includes("return '/dean'"));
+      assert.ok(authStoreSrc.includes("return '/admin'"));
+
+      // 2. Verify router role configurations
+      assert.ok(routerSrc.includes("path: '/queue'"));
+      assert.ok(routerSrc.includes("roles: ['student']"));
+      assert.ok(routerSrc.includes("path: '/faculty'"));
+      assert.ok(routerSrc.includes("roles: ['faculty']"));
+      assert.ok(routerSrc.includes("path: '/chair'"));
+      assert.ok(routerSrc.includes("roles: ['chair']"));
+      assert.ok(routerSrc.includes("path: '/dean'"));
+      assert.ok(routerSrc.includes("roles: ['dean']"));
+      assert.ok(routerSrc.includes("path: '/admin'"));
+      assert.ok(routerSrc.includes("roles: ['admin']"));
+      assert.ok(routerSrc.includes("path: '/access-denied'"));
+
+      // 3. Verify NavbarHeader dynamic navigation and role switcher
+      assert.ok(navbarSfc.includes('roleNavLinks'));
+      assert.ok(navbarSfc.includes('authorizedNavLinks'));
+      assert.ok(navbarSfc.includes('data-testid="navbar-quick-nav"'));
+      assert.ok(navbarSfc.includes('nav-link-student-queue'));
+      assert.ok(navbarSfc.includes('nav-link-faculty-portal'));
+      assert.ok(navbarSfc.includes('nav-link-chair-portal'));
+      assert.ok(navbarSfc.includes('nav-link-dean-analytics'));
+      assert.ok(navbarSfc.includes('nav-link-admin-console'));
+
+      // 4. Verify Department Chair dedicated diagnostic workspace
+      assert.ok(chairViewSfc.includes('data-testid="chair-diagnostic-workspace"'));
+      assert.ok(chairViewSfc.includes('data-testid="chair-department-badge"'));
+      assert.ok(chairViewSfc.includes('data-testid="chair-faculty-table"'));
+      assert.ok(chairViewSfc.includes('data-testid="chair-watchlist-card"'));
+      assert.ok(chairViewSfc.includes('data-testid="chair-endorse-plan-btn"'));
+
+      // 5. Verify AccessDeniedView 403 Forbidden screen
+      assert.ok(accessDeniedSfc.includes('data-testid="access-denied-card"'));
+      assert.ok(accessDeniedSfc.includes('data-testid="denied-attempted-route"'));
+      assert.ok(accessDeniedSfc.includes('data-testid="denied-current-role"'));
+      assert.ok(accessDeniedSfc.includes('data-testid="denied-required-roles"'));
+      assert.ok(accessDeniedSfc.includes('data-testid="return-authorized-workspace-btn"'));
+      assert.ok(accessDeniedSfc.includes('data-testid="switch-account-btn"'));
     });
   });
 });

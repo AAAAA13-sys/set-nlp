@@ -166,9 +166,9 @@ if (str_starts_with($uriPath, '/api/')) {
         $response = (new FacultyPortalController($service))->submitTermGrades($request, (int) $m[1]);
     } elseif ($uriPath === '/api/faculty/action-plan/status' && $method === 'POST') {
         $response = (new FacultyPortalController($service))->updateActionPlanStatus($request);
-    } elseif ($uriPath === '/api/dean/overview' && $method === 'GET') {
+    } elseif (($uriPath === '/api/dean/overview' || $uriPath === '/api/chair/overview') && $method === 'GET') {
         $response = (new DeanAnalyticsController($service))->overview($request);
-    } elseif ($uriPath === '/api/dean/watchlist' && $method === 'GET') {
+    } elseif (($uriPath === '/api/dean/watchlist' || $uriPath === '/api/chair/watchlist') && $method === 'GET') {
         $response = (new DeanAnalyticsController($service))->watchlist($request);
     } elseif ($uriPath === '/api/dean/qualitative-synthesis' && $method === 'GET') {
         $response = (new DeanAnalyticsController($service))->qualitativeSynthesis($request);
@@ -178,7 +178,7 @@ if (str_starts_with($uriPath, '/api/')) {
         $response = (new DeanAnalyticsController($service))->qualityMetrics();
     } elseif ($uriPath === '/api/dean/accreditation' && $method === 'GET') {
         $response = (new DeanAnalyticsController($service))->accreditationSummary();
-    } elseif ($uriPath === '/api/dean/action-plan/status' && $method === 'POST') {
+    } elseif (($uriPath === '/api/dean/action-plan/status' || $uriPath === '/api/chair/action-plan/status') && $method === 'POST') {
         $response = (new DeanAnalyticsController($service))->updateActionPlanStatus($request);
     } elseif ($uriPath === '/api/dean/sus/evaluate' && $method === 'POST') {
         $response = (new DeanAnalyticsController($service))->evaluateLiveSus($request);

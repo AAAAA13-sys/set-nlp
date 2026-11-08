@@ -43,6 +43,11 @@ Route::middleware(['role:dean,chair,admin'])->group(function (): void {
     Route::post('/dean/action-plan/status', [DeanAnalyticsController::class, 'updateActionPlanStatus']);
     Route::post('/dean/sus/evaluate', [DeanAnalyticsController::class, 'evaluateLiveSus']);
     Route::post('/dean/export-csv', [DeanAnalyticsController::class, 'exportCsv']);
+
+    // Dedicated Chair Workspace Endpoints (SOP 2)
+    Route::get('/chair/overview', [DeanAnalyticsController::class, 'overview']);
+    Route::get('/chair/watchlist', [DeanAnalyticsController::class, 'watchlist']);
+    Route::post('/chair/action-plan/status', [DeanAnalyticsController::class, 'updateActionPlanStatus']);
 });
 
 // System Administrator / Registrar Roster & Grade-Lock Management

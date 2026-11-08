@@ -19,6 +19,30 @@ const availableRoles = [
   { value: 'admin', label: 'System Admin / PLP Registrar' },
 ];
 
+const roleNavLinks = {
+  student: [
+    { to: '/queue', label: 'Student Queue', testId: 'nav-link-student-queue' },
+    { to: '/evaluate/104', label: 'SET Survey', testId: 'nav-link-student-survey' },
+  ],
+  faculty: [
+    { to: '/faculty', label: 'Faculty Portal', testId: 'nav-link-faculty-portal' },
+  ],
+  chair: [
+    { to: '/chair', label: 'Department Chair Portal', testId: 'nav-link-chair-portal' },
+  ],
+  dean: [
+    { to: '/dean', label: 'Dean Analytics', testId: 'nav-link-dean-analytics' },
+  ],
+  admin: [
+    { to: '/admin', label: 'Admin & Locks', testId: 'nav-link-admin-console' },
+  ],
+};
+
+const authorizedNavLinks = computed(() => {
+  const role = String(authStore.currentRole || 'student').toLowerCase();
+  return roleNavLinks[role] || roleNavLinks.student;
+});
+
 function onRoleChange(event) {
   const nextRole = event.target.value;
   authStore.switchDemoRole(nextRole);
@@ -87,12 +111,16 @@ function onRoleChange(event) {
             </select>
           </label>
 
-          <nav class="quick-nav" aria-label="Primary Workspace Navigation">
-            <router-link to="/queue" class="nav-link">Student Queue</router-link>
-            <router-link to="/evaluate/104" class="nav-link">SET Survey</router-link>
-            <router-link to="/faculty" class="nav-link">Faculty Portal</router-link>
-            <router-link to="/dean" class="nav-link">Dean Analytics</router-link>
-            <router-link to="/admin" class="nav-link">Admin &amp; Locks</router-link>
+          <nav class="quick-nav" aria-label="Primary Workspace Navigation" data-testid="navbar-quick-nav">
+            <router-link
+              v-for="link in authorizedNavLinks"
+              :key="link.to"
+              :to="link.to"
+              class="nav-link"
+              :data-testid="link.testId"
+            >
+              {{ link.label }}
+            </router-link>
           </nav>
 
           <div
@@ -102,7 +130,7 @@ function onRoleChange(event) {
             role="status"
           >
             <span>Clearance:</span>
-            <strong>{{ clearanceStatus }}</strong>
+            <strong>{{ authStore.currentRole === 'student' ? clearanceStatus : (authStore.user?.role_label || authStore.currentRole.toUpperCase()) }}</strong>
           </div>
         </div>
       </div>

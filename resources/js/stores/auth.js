@@ -66,6 +66,7 @@ export function getDefaultRouteForRole(role) {
     case 'faculty':
       return '/faculty';
     case 'chair':
+      return '/chair';
     case 'dean':
       return '/dean';
     case 'admin':

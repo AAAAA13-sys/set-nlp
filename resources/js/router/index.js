@@ -1,6 +1,8 @@
 import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router';
 import { getDefaultRouteForRole, useAuthStore } from '../stores/auth.js';
+import AccessDeniedView from '../views/AccessDeniedView.vue';
 import AdminRosterView from '../views/AdminRosterView.vue';
+import ChairDashboardView from '../views/ChairDashboardView.vue';
 import DeanDashboardView from '../views/DeanDashboardView.vue';
 import EvaluationFormView from '../views/EvaluationFormView.vue';
 import FacultyDashboardView from '../views/FacultyDashboardView.vue';
@@ -10,7 +12,14 @@ import StudentQueueView from '../views/StudentQueueView.vue';
 export const routes = [
   {
     path: '/',
-    redirect: '/queue',
+    redirect: (to) => {
+      try {
+        const authStore = useAuthStore();
+        return getDefaultRouteForRole(authStore.currentRole);
+      } catch (_) {
+        return '/queue';
+      }
+    },
   },
   {
     path: '/login',
@@ -23,8 +32,8 @@ export const routes = [
     name: 'student-queue',
     component: StudentQueueView,
     meta: {
-      roles: ['student', 'admin'],
-      title: 'My Evaluation Queue',
+      roles: ['student'],
+      title: 'My Evaluation Queue (Student Workspace)',
     },
   },
   {
@@ -32,8 +41,8 @@ export const routes = [
     name: 'evaluation-form',
     component: EvaluationFormView,
     meta: {
-      roles: ['student', 'admin'],
-      title: 'Anonymized Faculty Evaluation Form',
+      roles: ['student'],
+      title: 'Anonymized Faculty Evaluation Form (Student Workspace)',
     },
   },
   {
@@ -41,8 +50,17 @@ export const routes = [
     name: 'faculty-dashboard',
     component: FacultyDashboardView,
     meta: {
-      roles: ['faculty', 'chair', 'dean', 'admin'],
-      title: 'Faculty Double-Blind Feedback Portal',
+      roles: ['faculty'],
+      title: 'Faculty Double-Blind Feedback Portal (Faculty Workspace)',
+    },
+  },
+  {
+    path: '/chair',
+    name: 'chair-dashboard',
+    component: ChairDashboardView,
+    meta: {
+      roles: ['chair'],
+      title: 'Department Chair Diagnostic Workspace (Chair Workspace)',
     },
   },
   {
@@ -50,8 +68,8 @@ export const routes = [
     name: 'dean-dashboard',
     component: DeanDashboardView,
     meta: {
-      roles: ['dean', 'chair', 'admin'],
-      title: "Dean's Analytical Overview",
+      roles: ['dean'],
+      title: "Dean's Analytical Overview (Dean Workspace)",
     },
   },
   {
@@ -60,7 +78,16 @@ export const routes = [
     component: AdminRosterView,
     meta: {
       roles: ['admin'],
-      title: 'System Administrator Roster & Grade-Lock Console',
+      title: 'System Administrator Roster & Grade-Lock Console (Admin Workspace)',
+    },
+  },
+  {
+    path: '/access-denied',
+    name: 'access-denied',
+    component: AccessDeniedView,
+    meta: {
+      public: true,
+      title: '403 Forbidden — Institutional Role Access Restricted',
     },
   },
 ];
@@ -99,9 +126,14 @@ export function createEvaluaTechRouter(history) {
       }
       const allowedRoles = to.meta?.roles || [];
       if (allowedRoles.length > 0 && !canAccessRoute(authStore.currentRole, allowedRoles)) {
-        // Switch demo role automatically when navigating via quick-nav in demonstration mode,
-        // or redirect to the role's default home if strict mode is active
-        return getDefaultRouteForRole(authStore.currentRole);
+        return {
+          path: '/access-denied',
+          query: {
+            attempted: to.path,
+            required_roles: allowedRoles.join(', '),
+            current_role: authStore.currentRole,
+          },
+        };
       }
     } catch (_) {
       // Allow navigation if Pinia is not yet initialized in isolated route inspection
