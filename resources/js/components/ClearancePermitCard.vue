@@ -113,6 +113,26 @@ function printPermit() {
             <code data-testid="master-permit-token">{{ masterPermitToken }}</code>
           </div>
         </div>
+
+        <!-- Official Registrar Signature & Authentication Block for Print & Export -->
+        <div class="print-permit-auth-block" data-testid="print-permit-signature-block">
+          <div class="auth-seal-watermark">
+            <span class="seal-badge">SEAL: PLP-REGISTRAR-AUTHENTICATED</span>
+            <small class="seal-sub">Valid for Final Examination Admission • AY 2026-2027</small>
+          </div>
+          <div class="auth-signatures-row">
+            <div class="sig-column">
+              <div class="sig-line"></div>
+              <strong class="sig-title">ATTY. UNIVERSITY REGISTRAR</strong>
+              <span class="sig-caption">Pamantasan ng Lungsod ng Pasig</span>
+            </div>
+            <div class="sig-column">
+              <div class="sig-line"></div>
+              <strong class="sig-title">DR. V. MENDOZA</strong>
+              <span class="sig-caption">Dean, College of Computer Studies</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

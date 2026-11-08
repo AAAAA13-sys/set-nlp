@@ -1661,4 +1661,67 @@ class EvaluaTechBackendSuiteTest extends TestCase
             $this->assertGreaterThan(0.0, (float) $vRow['mean_score']);
         }
     }
+
+    /**
+     * Test 26: Department Chair diagnostic workspace endpoints and departmental RBAC scoping (SOP 2).
+     */
+    public function test_26_department_chair_diagnostic_workspace_endpoints_and_rbac_scoping(): void
+    {
+        $service = new \App\Services\DecoupledEvaluationService($this->pdo);
+        $controller = new \App\Http\Controllers\Api\DeanAnalyticsController($service);
+
+        // 1. Mock Department Chair user strictly assigned to Department 1 (College of Computer Studies)
+        $chairUser = new class {
+            public int $id = 3;
+            public string $name = 'Dr. M. Santos';
+            public string $role = 'chair';
+            public int $department_id = 1;
+        };
+
+        // 2. Chair requests metrics for their assigned department (Dept 1) -> 200 OK
+        $authorizedReq = new \Illuminate\Http\Request(['department_id' => 1]);
+        $authorizedReq->setUserResolver(fn () => $chairUser);
+        $overviewRes = $controller->overview($authorizedReq);
+        $this->assertSame(200, $overviewRes->getStatusCode());
+        $overviewData = $overviewRes->getData(true);
+        $this->assertSame(1, $overviewData['department_id']);
+        $this->assertArrayHasKey('response_rate_pct', $overviewData);
+        $this->assertArrayHasKey('watchlist', $overviewData);
+        $this->assertArrayHasKey('submissions_logged', $overviewData);
+        $this->assertArrayHasKey('qualitative_synthesis', $overviewData);
+        $this->assertArrayHasKey('action_plans_summary', $overviewData);
+
+        // 3. Chair attempts to access another department's metrics (Dept 2) -> 403 FORBIDDEN_DEPARTMENT_SCOPE
+        $unauthorizedReq = new \Illuminate\Http\Request(['department_id' => 2]);
+        $unauthorizedReq->setUserResolver(fn () => $chairUser);
+        $deniedRes = $controller->overview($unauthorizedReq);
+        $this->assertSame(403, $deniedRes->getStatusCode());
+        $deniedData = $deniedRes->getData(true);
+        $this->assertFalse($deniedData['authorized']);
+        $this->assertSame('FORBIDDEN_DEPARTMENT_SCOPE', $deniedData['code']);
+
+        // 4. Chair accesses department watchlist for assigned department -> 200 OK
+        $watchlistReq = new \Illuminate\Http\Request(['department_id' => 1]);
+        $watchlistReq->setUserResolver(fn () => $chairUser);
+        $watchlistRes = $controller->watchlist($watchlistReq);
+        $this->assertSame(200, $watchlistRes->getStatusCode());
+        $watchlistData = $watchlistRes->getData(true);
+        $this->assertSame(1, $watchlistData['department_id']);
+        $this->assertIsArray($watchlistData['watchlist']);
+
+        // 5. Chair endorses an action plan for a department faculty member -> 200 OK
+        $endorseReq = new \Illuminate\Http\Request([
+            'plan_id' => 'PLP-ACT-CHAIR-TEST',
+            'faculty_id' => 4,
+            'status' => 'IN_PROGRESS',
+            'dean_notes' => 'Chair Dr. M. Santos recommendation: standardized assessment rubrics and weekly recitations.',
+        ]);
+        $endorseReq->setUserResolver(fn () => $chairUser);
+        $endorseRes = $controller->updateActionPlanStatus($endorseReq);
+        $this->assertSame(200, $endorseRes->getStatusCode());
+        $endorseData = $endorseRes->getData(true);
+        $this->assertTrue($endorseData['updated']);
+        $this->assertSame('IN_PROGRESS', $endorseData['status']);
+        $this->assertNotNull($endorseData['signed_off_at']);
+    }
 }

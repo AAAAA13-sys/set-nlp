@@ -1380,13 +1380,136 @@ pre {
   }
 }
 
+@page {
+  size: A4 portrait;
+  margin: 15mm 12mm 15mm 12mm;
+}
+
 @media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
   .plp-top-ribbon,
   .navbar-header,
   .quick-nav,
-  .btn-secondary {
+  .role-switcher-label,
+  .role-switcher-select,
+  .tab-switcher,
+  .btn-primary,
+  .btn-secondary,
+  .login-actions,
+  .role-preset-grid {
     display: none !important;
   }
+
+  .workspace-main {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .card,
+  .clearance-permit-card {
+    border: 2px solid #0b4f26 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .permit-token-grid {
+    background: #f8faf8 !important;
+    border: 1px solid #14532d !important;
+  }
+
+  .institutional-table {
+    page-break-inside: auto;
+  }
+
+  .institutional-table tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .institutional-table th {
+    background: #0b4f26 !important;
+    color: #ffffff !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .print-permit-auth-block {
+    display: block !important;
+    margin-top: 1.5rem !important;
+  }
+}
+
+/* Permit Print Authentication & Signature Block */
+.print-permit-auth-block {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--border-subtle);
+}
+
+.auth-seal-watermark {
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.auth-seal-watermark .seal-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--plp-green-950);
+  background: var(--plp-green-50);
+  border: 1px solid var(--plp-green-700);
+  border-radius: var(--radius-sm);
+  padding: 0.3rem 0.75rem;
+}
+
+.auth-seal-watermark .seal-sub {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.auth-signatures-row {
+  display: flex;
+  justify-content: space-around;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.sig-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 200px;
+}
+
+.sig-line {
+  width: 100%;
+  height: 1px;
+  background: #4b5563;
+  margin-bottom: 0.5rem;
+}
+
+.sig-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.sig-caption {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 /* ==========================================================================

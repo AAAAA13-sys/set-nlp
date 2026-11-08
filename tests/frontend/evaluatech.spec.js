@@ -36,7 +36,7 @@ function readResourceFile(relativePath) {
   return fs.readFileSync(path.join(JS_DIR, relativePath), 'utf8');
 }
 
-describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (32 Test Groups)', () => {
+describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (33 Test Groups)', () => {
   // 1. Header portal branding & active term display
   describe('Group 01: Header portal branding & active term display (NavbarHeader.vue — Pamantasan ng Lungsod ng Pasig)', () => {
     it('renders PAMANTASAN NG LUNGSOD NG PASIG branding, PLP Green/Gold theme, active term, logged-in student ID 2024-10892, and clearance status badge', () => {
@@ -787,6 +787,36 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (32 Test Groups)', ()
       assert.ok(accessDeniedSfc.includes('data-testid="denied-required-roles"'));
       assert.ok(accessDeniedSfc.includes('data-testid="return-authorized-workspace-btn"'));
       assert.ok(accessDeniedSfc.includes('data-testid="switch-account-btn"'));
+    });
+  });
+
+  // 33. Document Generator Print & PDF Export Styling & WCAG 2.2 AA Accessibility
+  describe('Group 33: Document Generator Print & PDF Export Styling & WCAG 2.2 AA Accessibility', () => {
+    it('verifies print styling, official registrar authentication blocks, and WCAG accessibility standards', () => {
+      const permitCardSfc = readResourceFile('components/ClearancePermitCard.vue');
+      const navbarSfc = readResourceFile('components/NavbarHeader.vue');
+      const appCss = fs.readFileSync(path.join(ROOT_DIR, 'resources', 'css', 'app.css'), 'utf8');
+
+      // 1. Verify ClearancePermitCard official print signature & registrar block
+      assert.ok(permitCardSfc.includes('data-testid="print-permit-signature-block"'));
+      assert.ok(permitCardSfc.includes('data-testid="print-permit-btn"'));
+      assert.ok(permitCardSfc.includes('ATTY. UNIVERSITY REGISTRAR'));
+      assert.ok(permitCardSfc.includes('DR. V. MENDOZA'));
+      assert.ok(permitCardSfc.includes('printPermit'));
+
+      // 2. Verify master print CSS rules
+      assert.ok(appCss.includes('@page {'));
+      assert.ok(appCss.includes('size: A4 portrait;'));
+      assert.ok(appCss.includes('@media print {'));
+      assert.ok(appCss.includes('page-break-inside: avoid'));
+      assert.ok(appCss.includes('.print-permit-auth-block'));
+      assert.ok(appCss.includes('.auth-signatures-row'));
+
+      // 3. Verify WCAG 2.2 AA accessibility semantics and color contrast
+      assert.ok(navbarSfc.includes('role="banner"'));
+      assert.ok(navbarSfc.includes('aria-label="Pamantasan ng Lungsod ng Pasig Institutional Portal Header"'));
+      assert.ok(appCss.includes('--plp-green-900: #0b4f26'));
+      assert.ok(appCss.includes('--plp-gold-500: #eab308'));
     });
   });
 });
