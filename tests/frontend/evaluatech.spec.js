@@ -894,4 +894,43 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (34 Test Groups)', ()
       assert.ok(appCss.includes('outline-offset: 2px'));
     });
   });
+
+  // 36. Longitudinal Semester Trend Analytics (AACCUP Area III) & Public Proctor Examination Permit Verification
+  describe('Group 36: Longitudinal Semester Trend Analytics (AACCUP Area III) & Public Proctor Examination Permit Verification', () => {
+    it('verifies longitudinal semester trends, delta indicator pills, semester comparison table, dossier export, and proctor verification simulator', () => {
+      const deanViewSfc = readResourceFile('views/DeanDashboardView.vue');
+      const chairViewSfc = readResourceFile('views/ChairDashboardView.vue');
+      const permitCardSfc = readResourceFile('components/ClearancePermitCard.vue');
+      const apiRoutes = fs.readFileSync(path.join(ROOT_DIR, 'routes', 'api.php'), 'utf8');
+
+      // 1. Verify Dean dashboard longitudinal tab and metrics card
+      assert.ok(deanViewSfc.includes('data-testid="tab-longitudinal-trends"'));
+      assert.ok(deanViewSfc.includes('data-testid="longitudinal-trends-card"'));
+      assert.ok(deanViewSfc.includes('data-testid="longitudinal-kpi-grid"'));
+      assert.ok(deanViewSfc.includes('data-testid="semester-comparison-table"'));
+      assert.ok(deanViewSfc.includes('data-testid="cluster-shift-table"'));
+      assert.ok(deanViewSfc.includes('data-testid="export-dossier-bundle-btn"'));
+      assert.ok(deanViewSfc.includes('exportAccreditationDossier'));
+      assert.ok(deanViewSfc.includes('PLP-AACCUP-Area-III-Dossier-AY2026-2027.csv'));
+
+      // 2. Verify Chair dashboard department longitudinal card and cluster shifts
+      assert.ok(chairViewSfc.includes('data-testid="chair-longitudinal-trends-card"'));
+      assert.ok(chairViewSfc.includes('data-testid="chair-longitudinal-grid"'));
+      assert.ok(chairViewSfc.includes('data-testid="chair-cluster-shifts-table"'));
+      assert.ok(chairViewSfc.includes('departmentLongitudinal'));
+
+      // 3. Verify ClearancePermitCard proctor verification simulator and official badge
+      assert.ok(permitCardSfc.includes('data-testid="simulate-proctor-scan-btn"'));
+      assert.ok(permitCardSfc.includes('data-testid="proctor-verification-details"'));
+      assert.ok(permitCardSfc.includes('SEAL: PLP-REGISTRAR-AUTHENTICATED'));
+      assert.ok(permitCardSfc.includes('https://plpasig.edu.ph/'));
+      assert.ok(permitCardSfc.includes('PROCTOR VERIFICATION PROTOCOL: ADMISSION AUTHORIZED'));
+
+      // 4. Verify public un-gated proctor permit verification route in api.php
+      assert.ok(apiRoutes.includes("Route::match(['GET', 'POST'], '/permit/verify'"));
+      assert.ok(apiRoutes.includes("Route::match(['GET', 'POST'], '/student/permit/verify'"));
+      assert.ok(apiRoutes.includes('/dean/longitudinal-trends'));
+      assert.ok(apiRoutes.includes('/chair/longitudinal-trends'));
+    });
+  });
 });

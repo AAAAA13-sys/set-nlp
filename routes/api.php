@@ -13,6 +13,10 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 Route::get('/auth/me', [AuthController::class, 'me']);
 Route::post('/auth/logout', [AuthController::class, 'logout']);
 
+// Public / Proctor Examination Permit Verification (cryptographic seal verification, no student login required)
+Route::match(['GET', 'POST'], '/permit/verify', [StudentEvaluationController::class, 'verifyPermit']);
+Route::match(['GET', 'POST'], '/student/permit/verify', [StudentEvaluationController::class, 'verifyPermit']);
+
 // Student Evaluation & Clearance Queue (SOP 1 & SOP 2)
 Route::middleware(['role:student'])->group(function (): void {
     Route::get('/student/queue', [StudentEvaluationController::class, 'queue']);
@@ -21,7 +25,6 @@ Route::middleware(['role:student'])->group(function (): void {
     Route::post('/student/evaluations/submit', [StudentEvaluationController::class, 'submit']);
     Route::post('/student/evaluations', [StudentEvaluationController::class, 'submit']);
     Route::get('/student/permit', [StudentEvaluationController::class, 'permit']);
-    Route::match(['GET', 'POST'], '/student/permit/verify', [StudentEvaluationController::class, 'verifyPermit']);
 });
 
 // Faculty Double-Blind Portal
@@ -38,6 +41,8 @@ Route::middleware(['role:dean,chair,admin'])->group(function (): void {
     Route::get('/dean/watchlist', [DeanAnalyticsController::class, 'watchlist']);
     Route::get('/dean/quality-metrics', [DeanAnalyticsController::class, 'qualityMetrics']);
     Route::get('/dean/accreditation', [DeanAnalyticsController::class, 'accreditationSummary']);
+    Route::get('/dean/longitudinal-trends', [DeanAnalyticsController::class, 'longitudinalTrends']);
+    Route::post('/dean/export-dossier-bundle', [DeanAnalyticsController::class, 'exportAccreditationDossier']);
     Route::get('/dean/qualitative-synthesis', [DeanAnalyticsController::class, 'qualitativeSynthesis']);
     Route::post('/dean/export-qualitative-csv', [DeanAnalyticsController::class, 'exportQualitativeCsv']);
     Route::post('/dean/action-plan/status', [DeanAnalyticsController::class, 'updateActionPlanStatus']);
@@ -47,6 +52,7 @@ Route::middleware(['role:dean,chair,admin'])->group(function (): void {
     // Dedicated Chair Workspace Endpoints (SOP 2)
     Route::get('/chair/overview', [DeanAnalyticsController::class, 'overview']);
     Route::get('/chair/watchlist', [DeanAnalyticsController::class, 'watchlist']);
+    Route::get('/chair/longitudinal-trends', [DeanAnalyticsController::class, 'longitudinalTrends']);
     Route::post('/chair/action-plan/status', [DeanAnalyticsController::class, 'updateActionPlanStatus']);
 });
 

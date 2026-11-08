@@ -162,4 +162,80 @@ class DeanAnalyticsController extends Controller
             ], 422);
         }
     }
+
+    public function longitudinalTrends(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
+
+        if ($user !== null) {
+            $role = is_string($user->role ?? null)
+                ? $user->role
+                : ($user->role instanceof UserRole ? $user->role->value : '');
+
+            if ($role === UserRole::CHAIR->value) {
+                $chairDeptId = isset($user->department_id) ? (int) $user->department_id : null;
+                if ($requestedDeptId !== null && $requestedDeptId !== $chairDeptId) {
+                    return new JsonResponse([
+                        'authorized' => false,
+                        'code' => 'FORBIDDEN_DEPARTMENT_SCOPE',
+                        'message' => 'Department Chairs are strictly scoped to their assigned department.',
+                    ], 403);
+                }
+                $requestedDeptId = $chairDeptId;
+            }
+        }
+
+        $trends = $this->evaluationService->getLongitudinalSemesterTrends($requestedDeptId);
+        return new JsonResponse($trends, 200);
+    }
+
+    public function exportAccreditationDossier(Request $request): JsonResponse
+    {
+        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
+        $trends = $this->evaluationService->getLongitudinalSemesterTrends($requestedDeptId);
+
+        $csvRows = [];
+        $csvRows[] = ['ACCREDITATION MATRIX', 'AACCUP Area III: Faculty Development & Instructional Competence'];
+        $csvRows[] = ['Institution', 'PAMANTASAN NG LUNGSOD NG PASIG (PLP)'];
+        $csvRows[] = ['Reference', 'https://plpasig.edu.ph/'];
+        $csvRows[] = ['Active Term', $trends['active_term']['term_name'] ?? 'Fall 2026'];
+        $csvRows[] = ['Baseline Term', $trends['prior_term']['term_name'] ?? 'Spring 2026'];
+        $csvRows[] = ['Mean Score Delta', ($trends['deltas']['mean_score_delta'] ?? 0) >= 0 ? '+' . ($trends['deltas']['mean_score_delta'] ?? 0) : (string) ($trends['deltas']['mean_score_delta'] ?? 0)];
+        $csvRows[] = ['Negative Sentiment Shift', ($trends['deltas']['negative_sentiment_shift_pct'] ?? 0) . '%'];
+        $csvRows[] = ['Action Plan Resolution Rate', ($trends['deltas']['action_plan_resolution_rate_pct'] ?? 100) . '%'];
+        $csvRows[] = [''];
+        $csvRows[] = ['PEDAGOGICAL CLUSTER', 'ACTIVE SCORE', 'PRIOR BASELINE', 'DELTA', 'STATUS'];
+
+        foreach ($trends['cluster_comparisons'] ?? [] as $cc) {
+            $csvRows[] = [
+                $cc['cluster'],
+                $cc['active_score'],
+                $cc['prior_score'],
+                $cc['delta'],
+                $cc['status'],
+            ];
+        }
+
+        $csvRows[] = [''];
+        $csvRows[] = ['HISTORICAL SEMESTER', 'MEAN RATING', 'NEGATIVE SENTIMENT %', 'ACTION PLAN RESOLUTION %'];
+        foreach ($trends['historical_semesters'] ?? [] as $hs) {
+            $csvRows[] = [
+                $hs['term_name'] ?? $hs['term_code'],
+                $hs['mean_score'],
+                $hs['negative_pct'] . '%',
+                $hs['action_plan_resolution_pct'] . '%',
+            ];
+        }
+
+        $csvContent = $this->rosterService->exportAccreditationCsv($csvRows);
+
+        return new JsonResponse([
+            'format' => 'aaccup_dossier_bundle',
+            'department_id' => $requestedDeptId,
+            'summary' => $trends,
+            'csv_content' => $csvContent,
+            'filename' => 'PLP-AACCUP-Area-III-Dossier-AY2026-2027.csv',
+        ], 200);
+    }
 }

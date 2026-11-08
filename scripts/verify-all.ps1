@@ -1,7 +1,7 @@
 # EvaluaTech Unified Multi-Tier Verification Script
 # Executes:
-#   1. Backend PHPUnit Suite (26 tests, 501 assertions)
-#   2. Frontend Vue 3 DOM & Domain Suite (34 test groups)
+#   1. Backend PHPUnit Suite (28 tests, 547 assertions)
+#   2. Frontend Vue 3 DOM & Domain Suite (36 test groups)
 #   3. Python NLP Analytics Suite (44 tests)
 #   4. PHP Syntax (php -l) & UTF-8 No-BOM Hygiene Checks
 
@@ -14,19 +14,19 @@ $NodeExe = "node"
 $PythonExe = "python"
 
 Write-Host "========================================================================" -ForegroundColor Cyan
-Write-Host " EvaluaTech Multi-Tier Verification Matrix (104 Automated Test Units)   " -ForegroundColor Cyan
+Write-Host " EvaluaTech Multi-Tier Verification Matrix (108 Automated Test Units)   " -ForegroundColor Cyan
 Write-Host "========================================================================" -ForegroundColor Cyan
 
-# 1. Backend PHPUnit Suite (26 tests)
-Write-Host "`n[1/4] Running Backend PHPUnit Suite (26 Tests, 501 Assertions)..." -ForegroundColor Yellow
+# 1. Backend PHPUnit Suite (28 tests)
+Write-Host "`n[1/4] Running Backend PHPUnit Suite (28 Tests, 547 Assertions)..." -ForegroundColor Yellow
 & $PhpExe "scripts/run-backend-tests.php"
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Backend PHPUnit Suite failed with exit code $LASTEXITCODE"
     exit $LASTEXITCODE
 }
 
-# 2. Frontend DOM & Domain Suite (35 test groups)
-Write-Host "`n[2/4] Running Frontend Vue 3 DOM & Domain Suite (35 Test Groups)..." -ForegroundColor Yellow
+# 2. Frontend DOM & Domain Suite (36 test groups)
+Write-Host "`n[2/4] Running Frontend Vue 3 DOM & Domain Suite (36 Test Groups)..." -ForegroundColor Yellow
 & $NodeExe --test "tests/frontend/evaluatech.spec.js"
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Frontend DOM Suite failed with exit code $LASTEXITCODE"
@@ -89,11 +89,11 @@ Write-Host "| Test Suite Execution Summary                                      
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
 Write-Host "| Test Suite            | Layer Target       | Executed   | Pass Rate    |" -ForegroundColor Cyan
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
-Write-Host "| Frontend DOM Suite    | UI, Timers, Forms  | 35 Groups  | 100% (35/35) |" -ForegroundColor Green
-Write-Host "| Backend PHPUnit Suite | Domain Logic, RBAC | 26 Tests   | 100% (26/26) |" -ForegroundColor Green
+Write-Host "| Frontend DOM Suite    | UI, Timers, Forms  | 36 Groups  | 100% (36/36) |" -ForegroundColor Green
+Write-Host "| Backend PHPUnit Suite | Domain Logic, RBAC | 28 Tests   | 100% (28/28) |" -ForegroundColor Green
 Write-Host "| Python Analytics Suite| NLP & Clustering   | 44 Tests   | 100% (44/44) |" -ForegroundColor Green
 Write-Host "| Hygiene & Syntax Audit| PHP -l & UTF-8 BOM | Verified   | 100% PASS    |" -ForegroundColor Green
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
-Write-Host "| Consolidated Total    | Complete Platform  | 105 Units  | 100% PASS    |" -ForegroundColor Green
+Write-Host "| Consolidated Total    | Complete Platform  | 108 Units  | 100% PASS    |" -ForegroundColor Green
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
 exit 0

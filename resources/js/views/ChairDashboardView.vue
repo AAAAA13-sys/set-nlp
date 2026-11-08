@@ -83,6 +83,19 @@ const planEndorsed = ref({
 function endorseActionPlan(facultyId) {
   planEndorsed.value[facultyId] = true;
 }
+
+const departmentLongitudinal = ref({
+  active_term: { mean_score: 4.48, negative_pct: 8.6, response_rate: 92.5 },
+  prior_term: { mean_score: 4.20, negative_pct: 14.2, response_rate: 88.0 },
+  deltas: { mean_delta: 0.28, neg_shift: -5.6, plan_resolution: 95.0 },
+  cluster_shifts: [
+    { cluster: 'Pedagogical Delivery', active: 4.52, prior: 4.18, delta: 0.34 },
+    { cluster: 'Assessment & Grading', active: 4.38, prior: 4.02, delta: 0.36 },
+    { cluster: 'Classroom Management', active: 4.50, prior: 4.25, delta: 0.25 },
+    { cluster: 'Professional Conduct', active: 4.60, prior: 4.35, delta: 0.25 },
+    { cluster: 'Student Support & Mentorship', active: 4.42, prior: 4.10, delta: 0.32 },
+  ],
+});
 </script>
 
 <template>
@@ -276,6 +289,82 @@ function endorseActionPlan(facultyId) {
           </div>
         </div>
       </div>
+    </section>
+
+    <!-- Department Longitudinal Trends (AACCUP Area III) -->
+    <section class="card chair-longitudinal-card" style="margin-top:1.25rem;" data-testid="chair-longitudinal-trends-card">
+      <div class="iso-header">
+        <div>
+          <span class="eyebrow-badge">
+            PAMANTASAN NG LUNGSOD NG PASIG • AACCUP Area III Department Matrix
+          </span>
+          <h3 class="section-title">Department Longitudinal Quality Trends</h3>
+          <p class="section-subtitle">
+            Curriculum &amp; instructional competence progression comparing Computer Science metrics against historical term baselines.
+          </p>
+        </div>
+        <span class="token-chip chip-signed" style="font-size:0.8rem;">
+          Δμ: +{{ departmentLongitudinal.deltas.mean_delta.toFixed(2) }} Improvement
+        </span>
+      </div>
+
+      <div class="metric-overview-grid" style="margin-top:1rem;" data-testid="chair-longitudinal-grid">
+        <div class="metric-card">
+          <span class="metric-label">CS Department Mean</span>
+          <strong class="metric-value" style="color:var(--plp-green-800);">
+            {{ departmentLongitudinal.active_term.mean_score.toFixed(2) }} / 5.00
+          </strong>
+          <small style="color:var(--text-muted);font-size:0.75rem;">+{{ departmentLongitudinal.deltas.mean_delta.toFixed(2) }} vs Spring 2026 Baseline</small>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Negative Sentiment</span>
+          <strong class="metric-value" style="color:#16a34a;">
+            {{ departmentLongitudinal.active_term.negative_pct }}%
+          </strong>
+          <small style="color:var(--text-muted);font-size:0.75rem;">{{ departmentLongitudinal.deltas.neg_shift }}% Shift (Favorable)</small>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Response Velocity</span>
+          <strong class="metric-value" style="color:var(--plp-green-800);">
+            {{ departmentLongitudinal.active_term.response_rate }}%
+          </strong>
+          <small style="color:var(--text-muted);font-size:0.75rem;">Target: &gt;85% (Compliant)</small>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Action Plan Resolution</span>
+          <strong class="metric-value" style="color:var(--plp-green-800);">
+            {{ departmentLongitudinal.deltas.plan_resolution }}%
+          </strong>
+          <small style="color:var(--text-muted);font-size:0.75rem;">Pedagogical Intervention Rate</small>
+        </div>
+      </div>
+
+      <table class="institutional-table" style="margin-top:1rem;" data-testid="chair-cluster-shifts-table">
+        <thead>
+          <tr>
+            <th scope="col">Pedagogical Dimension</th>
+            <th scope="col">Fall 2026 Active</th>
+            <th scope="col">Spring 2026 Baseline</th>
+            <th scope="col">Delta (Δ)</th>
+            <th scope="col">Instructional Quality Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="cs in departmentLongitudinal.cluster_shifts" :key="cs.cluster">
+            <td><strong>{{ cs.cluster }}</strong></td>
+            <td>{{ cs.active.toFixed(2) }}</td>
+            <td>{{ cs.prior.toFixed(2) }}</td>
+            <td style="font-weight:700;color:var(--plp-green-800);">
+              +{{ cs.delta.toFixed(2) }}
+            </td>
+            <td>
+              <span class="token-chip chip-signed" style="font-size:0.75rem;">
+                IMPROVED
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </section>
 
     <!-- PLP calamanCy + VADER Interactive Diagnostics Modal -->

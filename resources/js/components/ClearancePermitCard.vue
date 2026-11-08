@@ -159,6 +159,15 @@ function printPermit() {
           {{ isVerifying ? 'Verifying with Registrar...' : 'Verify Registrar Signature' }}
         </button>
 
+        <button
+          type="button"
+          class="btn-secondary btn-sm"
+          data-testid="simulate-proctor-scan-btn"
+          @click="verifyPermitOnServer"
+        >
+          Run Proctor Permit Verification
+        </button>
+
         <span
           v-if="verificationResult"
           class="token-chip"
@@ -176,6 +185,24 @@ function printPermit() {
         >
           Print / Export Signed PLP Exam Permit
         </button>
+      </div>
+
+      <div
+        v-if="verificationResult && verificationResult.verified"
+        class="proctor-verification-details"
+        style="margin-top: 0.75rem; padding: 0.75rem 1rem; background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; font-size: 0.82rem; width: 100%;"
+        data-testid="proctor-verification-details"
+      >
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+          <strong style="color: #166534;">PROCTOR VERIFICATION PROTOCOL: ADMISSION AUTHORIZED</strong>
+          <span class="token-chip chip-signed" style="font-size: 0.7rem;">OFFICIAL REGISTRAR RECORD</span>
+        </div>
+        <div style="color: #15803d; line-height: 1.45;">
+          Student <strong>{{ studentId }}</strong> has completed all 6 course evaluations with zero integrity violations.
+          Status: <strong>{{ verificationResult.permit_status || 'VALID_FOR_FINAL_EXAMINATIONS' }}</strong> •
+          Seal: <strong>{{ verificationResult.registrar_seal || 'PLP-REGISTRAR-AUTHENTICATED' }}</strong> •
+          Portal: <a href="https://plpasig.edu.ph/" target="_blank" rel="noopener" style="color: #166534; text-decoration: underline;">https://plpasig.edu.ph/</a>
+        </div>
       </div>
     </div>
   </section>

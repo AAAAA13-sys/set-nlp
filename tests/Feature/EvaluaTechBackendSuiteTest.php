@@ -1724,4 +1724,160 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertSame('IN_PROGRESS', $endorseData['status']);
         $this->assertNotNull($endorseData['signed_off_at']);
     }
+
+    /**
+     * Test 27: Longitudinal semester trend analytics and action plan resolution rate (AACCUP Area III Accreditation).
+     */
+    public function test_27_longitudinal_semester_trends_and_action_plan_resolution_rate(): void
+    {
+        $service = new \App\Services\DecoupledEvaluationService($this->pdo);
+        $controller = new \App\Http\Controllers\Api\DeanAnalyticsController($service);
+
+        // 1. Verify service layer longitudinal metrics computation
+        $trends = $service->getLongitudinalSemesterTrends(1);
+        $this->assertIsArray($trends);
+        $this->assertSame(1, $trends['department_id']);
+        $this->assertStringContainsString('AACCUP Area III', $trends['accreditation_standard']);
+        $this->assertSame('PAMANTASAN NG LUNGSOD NG PASIG', $trends['institution']);
+        $this->assertSame('https://plpasig.edu.ph/', $trends['reference']);
+        $this->assertTrue($trends['accreditation_dossier_ready']);
+
+        // Check active term metrics
+        $this->assertArrayHasKey('active_term', $trends);
+        $this->assertSame('FALL-2026', $trends['active_term']['term_code']);
+        $this->assertGreaterThan(0.0, $trends['active_term']['mean_score']);
+        $this->assertArrayHasKey('cluster_scores', $trends['active_term']);
+
+        // Check prior term baseline
+        $this->assertArrayHasKey('prior_term', $trends);
+        $this->assertSame('SPRING-2026', $trends['prior_term']['term_code']);
+        $this->assertEqualsWithDelta(4.14, $trends['prior_term']['mean_score'], 0.05);
+
+        // Check computed deltas
+        $this->assertArrayHasKey('deltas', $trends);
+        $this->assertArrayHasKey('mean_score_delta', $trends['deltas']);
+        $this->assertArrayHasKey('negative_sentiment_shift_pct', $trends['deltas']);
+        $this->assertArrayHasKey('positive_sentiment_shift_pct', $trends['deltas']);
+        $this->assertArrayHasKey('action_plan_resolution_rate_pct', $trends['deltas']);
+
+        // Check cluster-by-cluster comparisons (5 clusters)
+        $this->assertCount(5, $trends['cluster_comparisons']);
+        $expectedClusters = [
+            'Pedagogical Delivery',
+            'Assessment & Grading',
+            'Classroom Management',
+            'Professional Conduct',
+            'Student Support & Mentorship',
+        ];
+        $actualClusters = array_column($trends['cluster_comparisons'], 'cluster');
+        $this->assertSame($expectedClusters, $actualClusters);
+
+        // Check historical semesters (multi-term trend)
+        $this->assertGreaterThanOrEqual(3, count($trends['historical_semesters']));
+
+        // 2. Controller endpoint verification with Dean authorization (all departments)
+        $deanUser = new class {
+            public int $id = 2;
+            public string $name = 'Dr. E. Soriano';
+            public string $role = 'dean';
+            public ?int $department_id = null;
+        };
+        $deanReq = new \Illuminate\Http\Request();
+        $deanReq->setUserResolver(fn () => $deanUser);
+        $deanRes = $controller->longitudinalTrends($deanReq);
+        $this->assertSame(200, $deanRes->getStatusCode());
+        $deanData = $deanRes->getData(true);
+        $this->assertNull($deanData['department_id']);
+        $this->assertTrue($deanData['accreditation_dossier_ready']);
+
+        // 3. Controller endpoint verification with Chair authorization & RBAC scoping
+        $chairUser = new class {
+            public int $id = 3;
+            public string $name = 'Dr. M. Santos';
+            public string $role = 'chair';
+            public int $department_id = 1;
+        };
+        $chairReq = new \Illuminate\Http\Request(['department_id' => 1]);
+        $chairReq->setUserResolver(fn () => $chairUser);
+        $chairRes = $controller->longitudinalTrends($chairReq);
+        $this->assertSame(200, $chairRes->getStatusCode());
+        $chairData = $chairRes->getData(true);
+        $this->assertSame(1, $chairData['department_id']);
+
+        // 4. Chair unauthorized department access check (Dept 2) -> 403
+        $unauthChairReq = new \Illuminate\Http\Request(['department_id' => 2]);
+        $unauthChairReq->setUserResolver(fn () => $chairUser);
+        $unauthRes = $controller->longitudinalTrends($unauthChairReq);
+        $this->assertSame(403, $unauthRes->getStatusCode());
+        $unauthData = $unauthRes->getData(true);
+        $this->assertSame('FORBIDDEN_DEPARTMENT_SCOPE', $unauthData['code']);
+
+        // 5. Accreditation Dossier Bundle Export
+        $exportReq = new \Illuminate\Http\Request(['department_id' => 1]);
+        $exportReq->setUserResolver(fn () => $deanUser);
+        $exportRes = $controller->exportAccreditationDossier($exportReq);
+        $this->assertSame(200, $exportRes->getStatusCode());
+        $exportData = $exportRes->getData(true);
+        $this->assertSame('aaccup_dossier_bundle', $exportData['format']);
+        $this->assertStringContainsString('AACCUP Area III', $exportData['csv_content']);
+        $this->assertStringContainsString('PAMANTASAN NG LUNGSOD NG PASIG', $exportData['csv_content']);
+    }
+
+    /**
+     * Test 28: Public proctor examination permit verification and cryptographic seal validation.
+     */
+    public function test_28_public_registrar_examination_permit_verification(): void
+    {
+        $service = new \App\Services\DecoupledEvaluationService($this->pdo);
+        $studentController = new \App\Http\Controllers\Api\StudentEvaluationController($service);
+
+        // 1. Ensure Student 11 has all 6 courses cleared so exam permit is unlocked
+        for ($secId = 1; $secId <= 6; $secId++) {
+            $service->submitEvaluation([
+                'student_id' => 11,
+                'course_section_id' => $secId,
+                'submission_key' => "FT02-PERMIT-VERIFY-SEC{$secId}",
+                'dwell_time_seconds' => 60,
+                'ratings' => [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5],
+                'comment_text' => 'Fully verified course evaluation for permit release.',
+                'confirm_uniform' => true,
+            ]);
+        }
+
+        // Get student's valid permit token
+        $queueData = $service->getStudentQueue(11);
+        $this->assertTrue($queueData['exam_permit_unlocked']);
+        $permitToken = (string) $queueData['exam_permit_token'];
+        $this->assertNotEmpty($permitToken);
+
+        // 2. Proctor unauthenticated verification request (no student session required)
+        $proctorReq = new \Illuminate\Http\Request([
+            'token' => $permitToken,
+            'institutional_id' => '2024-10892',
+        ]);
+        // Notice: No user resolver set, simulating unauthenticated proctor terminal
+        $verifyRes = $studentController->verifyPermit($proctorReq);
+        $this->assertSame(200, $verifyRes->getStatusCode());
+        $verifyData = $verifyRes->getData(true);
+
+        $this->assertTrue($verifyData['verified']);
+        $this->assertSame('CLEARED', $verifyData['status']);
+        $this->assertSame('VALID_FOR_FINAL_EXAMINATIONS', $verifyData['permit_status']);
+        $this->assertSame('PLP-REGISTRAR-AUTHENTICATED', $verifyData['registrar_seal']);
+        $this->assertSame('PAMANTASAN NG LUNGSOD NG PASIG', $verifyData['institution']);
+        $this->assertSame('https://plpasig.edu.ph/', $verifyData['reference']);
+        $this->assertSame('2024-10892', $verifyData['student_institutional_id']);
+        $this->assertNotEmpty($verifyData['security_verification_hash']);
+
+        // 3. Reject invalid permit token with HTTP 422
+        $invalidReq = new \Illuminate\Http\Request([
+            'token' => 'INVALID-FORGED-TOKEN-9999',
+            'institutional_id' => 'NON-EXISTENT-STUDENT-999',
+        ]);
+        $invalidRes = $studentController->verifyPermit($invalidReq);
+        $this->assertSame(422, $invalidRes->getStatusCode());
+        $invalidData = $invalidRes->getData(true);
+        $this->assertFalse($invalidData['verified']);
+        $this->assertSame('INVALID_TOKEN', $invalidData['status']);
+    }
 }
