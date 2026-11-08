@@ -20,6 +20,7 @@ Route::middleware(['role:student'])->group(function (): void {
     Route::post('/evaluation/submit', [StudentEvaluationController::class, 'submit']);
     Route::post('/student/evaluations/submit', [StudentEvaluationController::class, 'submit']);
     Route::get('/student/permit', [StudentEvaluationController::class, 'permit']);
+    Route::match(['GET', 'POST'], '/student/permit/verify', [StudentEvaluationController::class, 'verifyPermit']);
 });
 
 // Faculty Double-Blind Portal

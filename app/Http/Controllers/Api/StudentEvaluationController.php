@@ -78,4 +78,15 @@ class StudentEvaluationController extends Controller
             'total_count' => $queue['total_count'],
         ], 200);
     }
+
+    public function verifyPermit(Request $request): JsonResponse
+    {
+        $token = trim((string) ($request->input('token') ?? $request->input('exam_permit_token', '')));
+        $instId = $request->input('institutional_id') !== null ? (string) $request->input('institutional_id') : null;
+
+        $result = $this->evaluationService->verifyExaminationPermit($token, $instId);
+        $status = $result['verified'] ? 200 : 422;
+
+        return new JsonResponse($result, $status);
+    }
 }

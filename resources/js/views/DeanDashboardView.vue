@@ -8,7 +8,7 @@ import {
 } from '../utils/evaluationMath.js';
 
 const evaluationStore = useEvaluationStore();
-const activeTab = ref('overview'); // 'overview' | 'quality'
+const activeTab = ref('overview'); // 'overview' | 'quality' | 'qualitative'
 
 const overview = computed(() => evaluationStore.deanOverview);
 
@@ -17,6 +17,40 @@ const flaggedWatchlist = computed(() =>
     evaluateWatchlistFlag(item.mean_score, item.negative_sentiment_pct),
   ),
 );
+
+const qualitativeSynthesis = computed(() => {
+  return (
+    overview.value.qualitative_synthesis || {
+      submission_count: 4821,
+      nlp_engine: 'calamanCy+VADER',
+      calamancy_model: 'tl_calamancy_md',
+      calamancy_repo: 'https://github.com/ljvmiranda921/calamanCy',
+      top_descriptors: [],
+      improvement_topics: [],
+      improvement_clusters: {},
+      key_strengths: [],
+      key_recommendations: [],
+    }
+  );
+});
+
+const clustersList = [
+  'Pedagogical Delivery',
+  'Assessment & Grading',
+  'Classroom Management',
+  'Professional Conduct',
+  'Student Support & Mentorship',
+];
+
+function getClusterTopics(clusterName) {
+  const clusters = qualitativeSynthesis.value.improvement_clusters || {};
+  if (clusters[clusterName] && clusters[clusterName].length > 0) {
+    return clusters[clusterName];
+  }
+  return (qualitativeSynthesis.value.improvement_topics || []).filter(
+    (t) => t.pedagogical_tag === clusterName,
+  );
+}
 
 // Interactive 10-item SUS calculator defaulted to yield institutional Grade A
 const susResponses = ref([5, 1, 5, 2, 4, 2, 5, 1, 5, 2]);
@@ -148,6 +182,17 @@ function generateAccreditationCsv() {
             @click="activeTab = 'quality'"
           >
             SOP 3: ISO/IEC 25010 (4.77) &amp; SUS (83.92 Grade A)
+          </button>
+          <button
+            type="button"
+            role="tab"
+            class="tab-btn"
+            :class="{ active: activeTab === 'qualitative' }"
+            :aria-selected="activeTab === 'qualitative'"
+            data-testid="tab-qualitative-synthesis"
+            @click="activeTab = 'qualitative'"
+          >
+            SOP 4: Qualitative Synthesis (calamanCy)
           </button>
         </div>
       </div>
@@ -341,7 +386,7 @@ function generateAccreditationCsv() {
     </div>
 
     <!-- SOP 3: ISO/IEC 25010 & System Usability Scale (SUS) Tab -->
-    <div v-else class="dean-quality-panels" data-testid="iso-sus-panel">
+    <div v-else-if="activeTab === 'quality'" class="dean-quality-panels" data-testid="iso-sus-panel">
       <!-- PLP Institutional Accreditation & Quality Assurance Card -->
       <section class="card accreditation-card" style="margin-bottom: 1.25rem;" data-testid="accreditation-compliance-card">
         <div class="iso-header">
@@ -496,6 +541,160 @@ function generateAccreditationCsv() {
           </div>
         </div>
       </section>
+    </div>
+
+    <!-- SOP 4: College-Wide Qualitative Synthesis (calamanCy + VADER) Tab -->
+    <div v-else-if="activeTab === 'qualitative'" class="dean-qualitative-panels" data-testid="qualitative-synthesis-panel">
+      <!-- calamanCy Header Card -->
+      <section class="card synthesis-banner-card" style="margin-bottom: 1.25rem;" data-testid="calamancy-header-card">
+        <div class="iso-header">
+          <div>
+            <span class="eyebrow-badge">PAMANTASAN NG LUNGSOD NG PASIG • NLP Linguistic Intelligence</span>
+            <h3 class="section-title">Qualitative Narrative Synthesis (calamanCy • spaCy Tagalog/Taglish/English Pipeline)</h3>
+            <p class="section-subtitle">
+              Multi-question professor qualitative analysis synthesizing student narratives into word frequency, lemmas, and 5-cluster pedagogical dimensions.
+            </p>
+          </div>
+          <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+            <span class="badge-unlocked" style="background:var(--plp-green-800);color:#fff;" data-testid="calamancy-engine-badge">
+              Engine: {{ qualitativeSynthesis.nlp_engine }} (tl_calamancy_md)
+            </span>
+            <span class="badge-unlocked" style="background:var(--plp-gold-500);color:#000;">
+              Submissions Synthesized: {{ qualitativeSynthesis.submission_count }}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Q1: Top Descriptors Word Cloud -->
+      <section class="card descriptors-card" style="margin-bottom: 1.25rem;" data-testid="q1-top-descriptors-card">
+        <div class="watchlist-header">
+          <div>
+            <span class="eyebrow-badge">Question 1 • Three Words that Describe the Professor</span>
+            <h3 class="section-title">Top Faculty Descriptors (calamanCy Lemma &amp; Sentiment Classification)</h3>
+            <p class="section-subtitle">
+              Normalized frequency distribution of the 3-word qualitative descriptors submitted across the College of Computer Studies.
+            </p>
+          </div>
+        </div>
+
+        <div class="preset-rating-buttons" style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.75rem;" data-testid="top-descriptors-cloud">
+          <div
+            v-for="item in qualitativeSynthesis.top_descriptors"
+            :key="item.word"
+            class="token-chip"
+            :class="item.valence === 'Positive' ? 'chip-signed' : (item.valence === 'Negative' ? 'chip-warn' : 'chip-unlocked')"
+            style="padding: 0.45rem 0.85rem; font-size: 0.88rem; display:inline-flex; align-items:center; gap: 0.45rem;"
+            :data-testid="`descriptor-${item.word.toLowerCase()}`"
+          >
+            <strong>{{ item.word }}</strong>
+            <span style="font-size:0.75rem;opacity:0.85;">(x{{ item.count }})</span>
+            <span
+              style="font-size:0.7rem;padding:0.1rem 0.35rem;border-radius:4px;"
+              :style="{
+                background: item.valence === 'Positive' ? 'var(--plp-green-800)' : (item.valence === 'Negative' ? '#dc2626' : '#6b7280'),
+                color: '#ffffff'
+              }"
+            >
+              {{ item.valence }} ({{ item.polarity > 0 ? '+' : '' }}{{ item.polarity.toFixed(2) }})
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Q2: Room for Improvement Topics Grouped by 5 Pedagogical Clusters -->
+      <section class="card improvement-clusters-card" style="margin-bottom: 1.25rem;" data-testid="q2-improvement-clusters-card">
+        <div class="watchlist-header">
+          <div>
+            <span class="eyebrow-badge">Question 2 • Room for Improvements (Lettered a., b., c...)</span>
+            <h3 class="section-title">Institutional Pedagogical Improvement Clusters</h3>
+            <p class="section-subtitle">
+              Specific, constructive improvement topics classified across the 5 PLP pedagogical dimensions for accreditation evidence.
+            </p>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:1rem;margin-top:0.85rem;">
+          <div
+            v-for="clusterName in clustersList"
+            :key="clusterName"
+            class="cluster-box"
+            style="padding:0.85rem;background:#fafbfa;border:1px solid #d1fae5;border-radius:6px;"
+            :data-testid="`cluster-box-${clusterName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`"
+          >
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
+              <strong style="color:var(--plp-green-950);font-size:0.95rem;">
+                {{ clusterName }}
+              </strong>
+              <span class="token-chip chip-signed" style="font-size:0.72rem;">
+                {{ getClusterTopics(clusterName).length }} actionable topic(s)
+              </span>
+            </div>
+
+            <div v-if="getClusterTopics(clusterName).length === 0" style="font-size:0.82rem;color:#6b7280;font-style:italic;">
+              No critical improvement topics flagged under this pedagogical dimension.
+            </div>
+
+            <ul v-else style="margin:0;padding-left:1.2rem;font-size:0.85rem;line-height:1.5;">
+              <li
+                v-for="(tItem, tIdx) in getClusterTopics(clusterName)"
+                :key="tIdx"
+                style="margin-bottom:0.35rem;"
+                :data-testid="`cluster-topic-${tIdx}`"
+              >
+                <strong>{{ tItem.sub_item || `${String.fromCharCode(97 + (tIdx % 26))}.` }}</strong>
+                {{ tItem.topic }}
+                <span
+                  class="token-chip"
+                  :class="tItem.valence === 'Negative' ? 'chip-warn' : 'chip-signed'"
+                  style="margin-left:0.35rem;font-size:0.7rem;padding:0.1rem 0.35rem;"
+                >
+                  {{ tItem.valence }} ({{ tItem.polarity > 0 ? '+' : '' }}{{ tItem.polarity.toFixed(2) }})
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Q3 & Q4: Key Strengths & Recommendations Split Grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+        <section class="card strengths-card" data-testid="q3-key-strengths-card">
+          <span class="eyebrow-badge">Question 3 • Teaching Strengths</span>
+          <h3 class="section-title" style="font-size:1.1rem;">Key Teaching Strengths</h3>
+          <p class="section-subtitle" style="font-size:0.82rem;">
+            Synthesized instructional proficiencies and positive classroom practices highlighted by students.
+          </p>
+          <ul style="margin:0.75rem 0 0 1.2rem;padding:0;font-size:0.85rem;line-height:1.55;">
+            <li
+              v-for="(strItem, strIdx) in qualitativeSynthesis.key_strengths"
+              :key="strIdx"
+              style="margin-bottom:0.45rem;"
+              :data-testid="`strength-item-${strIdx}`"
+            >
+              {{ typeof strItem === 'object' ? (strItem.text || strItem) : strItem }}
+            </li>
+          </ul>
+        </section>
+
+        <section class="card recommendations-card" data-testid="q4-key-recommendations-card">
+          <span class="eyebrow-badge">Question 4 • Student Recommendations</span>
+          <h3 class="section-title" style="font-size:1.1rem;">Actionable Student Recommendations</h3>
+          <p class="section-subtitle" style="font-size:0.82rem;">
+            Student recommendations for curriculum design, lab equipment, and pacing enhancements.
+          </p>
+          <ul style="margin:0.75rem 0 0 1.2rem;padding:0;font-size:0.85rem;line-height:1.55;">
+            <li
+              v-for="(recItem, recIdx) in qualitativeSynthesis.key_recommendations"
+              :key="recIdx"
+              style="margin-bottom:0.45rem;"
+              :data-testid="`recommendation-item-${recIdx}`"
+            >
+              {{ typeof recItem === 'object' ? (recItem.text || recItem) : recItem }}
+            </li>
+          </ul>
+        </section>
+      </div>
     </div>
   </main>
 </template>

@@ -204,6 +204,16 @@ namespace PHPUnit\Framework {
                     );
                 }
             }
+
+            public static function assertIsArray(mixed $actual, string $message = ''): void
+            {
+                self::$assertionCount++;
+                if (!is_array($actual)) {
+                    throw new AssertionFailedError(
+                        $message !== '' ? $message : "Failed asserting that value is of type array."
+                    );
+                }
+            }
         }
     }
 }
@@ -330,7 +340,8 @@ namespace Tests {
                         'Professional Conduct',
                         'Student Support & Mentorship'
                     )),
-                    recorded_date TEXT NOT NULL
+                    recorded_date TEXT NOT NULL,
+                    professor_questions_json TEXT NULL
                 );
 
                 CREATE INDEX idx_vault_section_faculty_term ON evaluation_vault(course_section_id, faculty_id, academic_term_id);

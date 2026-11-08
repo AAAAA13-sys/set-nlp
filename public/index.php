@@ -134,6 +134,8 @@ if (str_starts_with($uriPath, '/api/')) {
         $response = (new StudentEvaluationController($service))->submit($request);
     } elseif ($uriPath === '/api/student/permit' && $method === 'GET') {
         $response = (new StudentEvaluationController($service))->permit($request);
+    } elseif ($uriPath === '/api/student/permit/verify') {
+        $response = (new StudentEvaluationController($service))->verifyPermit($request);
     } elseif (preg_match('#^/api/faculty/sections/(\d+)/report$#', $uriPath, $m) === 1 && $method === 'GET') {
         $response = (new FacultyPortalController($service))->sectionReport($request, (int) $m[1]);
     } elseif (preg_match('#^/api/faculty/sections/(\d+)/submit-grades$#', $uriPath, $m) === 1 && $method === 'POST') {

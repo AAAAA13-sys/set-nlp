@@ -267,6 +267,109 @@ export const DEMO_DEAN_METRICS = {
       { cohort: 'Deans & Chairs', sampleSize: 5, meanScore: 86.0 },
     ],
   },
+  qualitative_synthesis: {
+    submission_count: 4821,
+    nlp_engine: 'calamanCy+VADER',
+    calamancy_model: 'tl_calamancy_md',
+    calamancy_repo: 'https://github.com/ljvmiranda921/calamanCy',
+    top_descriptors: [
+      { word: 'Clear', lemma: 'clear', count: 1420, polarity: 0.65, valence: 'Positive' },
+      { word: 'Approachable', lemma: 'approachable', count: 1180, polarity: 0.72, valence: 'Positive' },
+      { word: 'Dedicated', lemma: 'dedicate', count: 954, polarity: 0.68, valence: 'Positive' },
+      { word: 'Mabait', lemma: 'bait', count: 842, polarity: 0.55, valence: 'Positive' },
+      { word: 'Fast-paced', lemma: 'fast', count: 428, polarity: -0.22, valence: 'Negative' },
+      { word: 'Strict', lemma: 'strict', count: 395, polarity: -0.15, valence: 'Negative' },
+      { word: 'Engaging', lemma: 'engage', count: 374, polarity: 0.61, valence: 'Positive' },
+    ],
+    improvement_topics: [
+      {
+        sub_item: 'a.',
+        topic: 'Provide step-by-step code demonstrations before lab exercises',
+        polarity: -0.15,
+        valence: 'Negative',
+        pedagogical_tag: 'Pedagogical Delivery',
+      },
+      {
+        sub_item: 'b.',
+        topic: 'Return graded quizzes and assignments within 14 days with rubrics',
+        polarity: -0.35,
+        valence: 'Negative',
+        pedagogical_tag: 'Assessment & Grading',
+      },
+      {
+        sub_item: 'c.',
+        topic: 'Ensure prompt lecture start times and adhere to syllabus schedule',
+        polarity: -0.28,
+        valence: 'Negative',
+        pedagogical_tag: 'Classroom Management',
+      },
+      {
+        sub_item: 'd.',
+        topic: 'Maintain approachable consultation demeanor during office hours',
+        polarity: -0.18,
+        valence: 'Negative',
+        pedagogical_tag: 'Professional Conduct',
+      },
+      {
+        sub_item: 'e.',
+        topic: 'Expand dedicated advisory time for capstone thesis debugging',
+        polarity: 0.12,
+        valence: 'Neutral',
+        pedagogical_tag: 'Student Support & Mentorship',
+      },
+    ],
+    improvement_clusters: {
+      'Pedagogical Delivery': [
+        {
+          sub_item: 'a.',
+          topic: 'Provide step-by-step code demonstrations before lab exercises',
+          polarity: -0.15,
+          valence: 'Negative',
+        },
+      ],
+      'Assessment & Grading': [
+        {
+          sub_item: 'b.',
+          topic: 'Return graded quizzes and assignments within 14 days with rubrics',
+          polarity: -0.35,
+          valence: 'Negative',
+        },
+      ],
+      'Classroom Management': [
+        {
+          sub_item: 'c.',
+          topic: 'Ensure prompt lecture start times and adhere to syllabus schedule',
+          polarity: -0.28,
+          valence: 'Negative',
+        },
+      ],
+      'Professional Conduct': [
+        {
+          sub_item: 'd.',
+          topic: 'Maintain approachable consultation demeanor during office hours',
+          polarity: -0.18,
+          valence: 'Negative',
+        },
+      ],
+      'Student Support & Mentorship': [
+        {
+          sub_item: 'e.',
+          topic: 'Expand dedicated advisory time for capstone thesis debugging',
+          polarity: 0.12,
+          valence: 'Neutral',
+        },
+      ],
+    },
+    key_strengths: [
+      'Demonstrates deep subject matter mastery in data structures and algorithms with real-world case studies.',
+      'Encourages active student participation through interactive live coding and pair programming exercises.',
+      'Provides supplementary open-source learning repositories and recorded lecture walkthroughs.',
+    ],
+    key_recommendations: [
+      'Standardize rubric criterion breakdowns for programming laboratory exams before submission deadlines.',
+      'Integrate formative comprehension check-ins midway through 90-minute algorithmic lecture blocks.',
+    ],
+  },
 };
 
 /**

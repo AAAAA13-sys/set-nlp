@@ -325,18 +325,21 @@ class EvaluaTechBackendSuiteTest extends TestCase
             );
             $commentHash = hash_hmac('sha256', $commentText . '|' . $vaultUuid, $this->vaultSalt);
             $coarseDate = date('Y-m-d', $nowUnix);
+            $profQuestionsJson = isset($input['professor_questions']) && is_array($input['professor_questions'])
+                ? json_encode($input['professor_questions'])
+                : null;
 
             $stmtVault = $this->pdo->prepare("
                 INSERT INTO evaluation_vault (
                     id, course_section_id, faculty_id, academic_term_id, ratings_json,
                     mean_score, rating_variance, is_straight_lined, dwell_time_seconds,
                     comment_text, comment_hash, sentiment_polarity, sentiment_valence,
-                    pedagogical_tag, recorded_date
+                    pedagogical_tag, recorded_date, professor_questions_json
                 ) VALUES (
                     :id, :section_id, :faculty_id, :term_id, :ratings_json,
                     :mean_score, :rating_variance, :is_straight_lined, :dwell_time_seconds,
                     :comment_text, :comment_hash, :polarity, :valence,
-                    :tag, :recorded_date
+                    :tag, :recorded_date, :prof_questions_json
                 )
             ");
             $stmtVault->execute([
@@ -355,6 +358,7 @@ class EvaluaTechBackendSuiteTest extends TestCase
                 ':valence' => $nlp['valence'],
                 ':tag' => $nlp['pedagogical_tag'],
                 ':recorded_date' => $coarseDate,
+                ':prof_questions_json' => $profQuestionsJson,
             ]);
 
             $this->pdo->commit();
@@ -1211,5 +1215,101 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertArrayHasKey('iso_25010', $accreditation['accreditation_frameworks']);
         $this->assertArrayHasKey('Pedagogical Delivery', $accreditation['five_clusters']);
         $this->assertSame(1, $accreditation['action_plans_summary']['total_action_plans']);
+    }
+
+    /**
+     * Test 22: Digital examination permit verification for registrar/proctors and college-wide qualitative synthesis.
+     */
+    public function test_22_digital_examination_permit_verification_and_college_qualitative_synthesis(): void
+    {
+        $service = new \App\Services\DecoupledEvaluationService(
+            $this->pdo,
+            null,
+            new \App\Services\AnalyticsClientService(null, 1.5, true),
+            'test-secret-key-32-chars-long!!'
+        );
+
+        // 1. Initial State: Student 11 (2024-10892) has 0 of 6 enrolled sections completed
+        $initialVerification = $service->verifyExaminationPermit('PERMIT-2024-10892-FALL2026-TEST', '2024-10892');
+        $this->assertFalse($initialVerification['verified']);
+        $this->assertSame('PENDING', $initialVerification['status']);
+        $this->assertSame('PAMANTASAN NG LUNGSOD NG PASIG', $initialVerification['institution']);
+        $this->assertSame('https://plpasig.edu.ph/', $initialVerification['reference']);
+        $this->assertSame('2024-10892', $initialVerification['student_institutional_id']);
+        $this->assertSame(0, $initialVerification['completed_evaluations']);
+        $this->assertSame(6, $initialVerification['total_enrolled_courses']);
+        $this->assertStringContainsString('gated', strtolower($initialVerification['message']));
+
+        // 2. Submit high-fidelity evaluations for all 6 sections (with section 1 holding professor qualitative questions)
+        $profQuestions = [
+            'three_words' => ['Dedicated', 'Clear', 'Approachable'],
+            'room_for_improvements' => [
+                ['topic' => 'Provide more step-by-step laboratory code demonstrations'],
+                ['topic' => 'Return programming quiz feedback within 14 days'],
+            ],
+            'teaching_strengths' => 'Explains complex data structures clearly with practical hands-on examples.',
+            'recommendations' => 'Incorporate live debugging sessions before major midterm programming exams.',
+            'additional_observation' => 'Very supportive and accessible during weekly consultation hours.',
+        ];
+
+        for ($secId = 1; $secId <= 6; $secId++) {
+            $ratings = [
+                5, 4, 5, 4, 5, // Cluster 1: Pedagogical Delivery
+                4, 4, 3, 4, 4, // Cluster 2: Assessment & Grading
+                5, 5, 4, 5, 4, // Cluster 3: Classroom Management
+                5, 5, 5, 4, 5, // Cluster 4: Professional Conduct
+                4, 5, 4, 4, 5, // Cluster 5: Student Support & Mentorship
+            ];
+
+            $payload = [
+                'student_id' => 11,
+                'course_section_id' => $secId,
+                'submission_key' => "FT02-PERMIT-SYNTHESIS-STUDENT-11-SEC-{$secId}",
+                'ratings' => $ratings,
+                'narrative_comment' => "Feedback for section {$secId}: Excellent instruction and clear demonstrations.",
+                'dwell_time_seconds' => 65,
+                'confirm_uniform' => false,
+            ];
+
+            if ($secId === 1) {
+                $payload['professor_questions'] = $profQuestions;
+            }
+
+            $subRes = $this->executeAtomicEvaluationSubmission($payload);
+            $this->assertSame(201, $subRes['status']);
+            $this->assertNotEmpty($subRes['clearance_token']);
+        }
+
+        // 3. Post-submission Verification: Examination Permit is now CLEARED & Registrar-Authenticated (6/6 completed)
+        $clearedVerification = $service->verifyExaminationPermit('PERMIT-2024-10892-FALL2026-TEST', '2024-10892');
+        $this->assertTrue($clearedVerification['verified']);
+        $this->assertSame('CLEARED', $clearedVerification['status']);
+        $this->assertSame('VALID_FOR_FINAL_EXAMINATIONS', $clearedVerification['permit_status']);
+        $this->assertSame('PLP-REGISTRAR-AUTHENTICATED', $clearedVerification['registrar_seal']);
+        $this->assertNotEmpty($clearedVerification['security_verification_hash']);
+        $this->assertSame(6, $clearedVerification['completed_evaluations']);
+        $this->assertSame(6, $clearedVerification['total_enrolled_courses']);
+
+        // 4. College-Wide Qualitative Synthesis in Dean Metrics
+        $deanMetrics = $service->getDeanDashboardMetrics(1);
+        $this->assertArrayHasKey('qualitative_synthesis', $deanMetrics);
+        $synthesis = $deanMetrics['qualitative_synthesis'];
+
+        $this->assertGreaterThanOrEqual(1, $synthesis['submission_count']);
+        $this->assertNotEmpty($synthesis['top_descriptors']);
+        $topWords = array_column($synthesis['top_descriptors'], 'word');
+        $this->assertTrue(in_array('Dedicated', $topWords, true) || in_array('Clear', $topWords, true));
+
+        $this->assertNotEmpty($synthesis['improvement_topics']);
+        $this->assertArrayHasKey('improvement_clusters', $synthesis);
+        $this->assertArrayHasKey('Pedagogical Delivery', $synthesis['improvement_clusters']);
+
+        $this->assertNotEmpty($synthesis['key_strengths']);
+        $this->assertNotEmpty($synthesis['key_recommendations']);
+        $this->assertSame('calamanCy+VADER', $synthesis['nlp_engine']);
+
+        // 5. Verify Dean metrics includes action_plans_summary
+        $this->assertArrayHasKey('action_plans_summary', $deanMetrics);
+        $this->assertIsArray($deanMetrics['action_plans_summary']);
     }
 }

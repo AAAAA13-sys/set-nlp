@@ -311,21 +311,36 @@ class AnalyticsClientService
         }
 
         $formattedImprovements = [];
+        $improvementClusters = [
+            'Pedagogical Delivery' => [],
+            'Assessment & Grading' => [],
+            'Classroom Management' => [],
+            'Professional Conduct' => [],
+            'Student Support & Mentorship' => [],
+        ];
+
         foreach ($improvementTopics as $idx => $t) {
             $nlp = $this->analyzeLocally($t);
-            $formattedImprovements[] = [
+            $tag = $nlp['pedagogical_tag'] ?? 'Pedagogical Delivery';
+            if (!isset($improvementClusters[$tag])) {
+                $tag = 'Pedagogical Delivery';
+            }
+            $entry = [
                 'sub_item' => chr(97 + ($idx % 26)) . '.',
                 'topic' => $t,
                 'polarity' => $nlp['polarity'],
                 'valence' => $nlp['valence'],
-                'pedagogical_tag' => $nlp['pedagogical_tag'],
+                'pedagogical_tag' => $tag,
             ];
+            $formattedImprovements[] = $entry;
+            $improvementClusters[$tag][] = $entry;
         }
 
         return [
             'submission_count' => count($questionnaires),
             'top_descriptors' => $topDescriptors,
             'improvement_topics' => $formattedImprovements,
+            'improvement_clusters' => $improvementClusters,
             'key_strengths' => array_values(array_unique($strengths)),
             'key_recommendations' => array_values(array_unique($recommendations)),
             'optional_observations' => array_values(array_unique($observations)),

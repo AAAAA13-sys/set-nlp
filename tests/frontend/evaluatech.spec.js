@@ -36,7 +36,7 @@ function readResourceFile(relativePath) {
   return fs.readFileSync(path.join(JS_DIR, relativePath), 'utf8');
 }
 
-describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (26 Test Groups)', () => {
+describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (27 Test Groups)', () => {
   // 1. Header portal branding & active term display
   describe('Group 01: Header portal branding & active term display (NavbarHeader.vue — Pamantasan ng Lungsod ng Pasig)', () => {
     it('renders PAMANTASAN NG LUNGSOD NG PASIG branding, PLP Green/Gold theme, active term, logged-in student ID 2024-10892, and clearance status badge', () => {
@@ -521,6 +521,50 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (26 Test Groups)', ()
       assert.ok(deanViewSfc.includes('approve-plan-btn-'));
       assert.ok(deanViewSfc.includes('resolve-plan-btn-'));
       assert.ok(deanViewSfc.includes('Dean Verification Notes:'));
+    });
+  });
+
+  // 27. Digital Examination Permit Registrar Verification & Dean Qualitative Narrative Synthesis (calamanCy + VADER)
+  describe('Group 27: Digital Examination Permit Registrar Verification & Dean Qualitative Synthesis', () => {
+    it('verifies interactive registrar signature check on examination permit card and renders calamanCy synthesis tab', () => {
+      const permitCardSfc = readResourceFile('components/ClearancePermitCard.vue');
+      const deanViewSfc = readResourceFile('views/DeanDashboardView.vue');
+
+      // 1. Verify ClearancePermitCard registrar verification button and seal badge
+      assert.ok(permitCardSfc.includes('data-testid="verify-permit-btn"'));
+      assert.ok(permitCardSfc.includes('data-testid="permit-verification-badge"'));
+      assert.ok(permitCardSfc.includes('SEAL: PLP-REGISTRAR-AUTHENTICATED'));
+      assert.ok(permitCardSfc.includes('verifyPermitOnServer'));
+      assert.ok(permitCardSfc.includes('/api/student/permit/verify'));
+
+      // 2. Verify DeanDashboardView SOP 4 tab switch & calamanCy header
+      assert.ok(deanViewSfc.includes('data-testid="tab-qualitative-synthesis"'));
+      assert.ok(deanViewSfc.includes('data-testid="qualitative-synthesis-panel"'));
+      assert.ok(deanViewSfc.includes('data-testid="calamancy-header-card"'));
+      assert.ok(deanViewSfc.includes('data-testid="calamancy-engine-badge"'));
+      assert.ok(deanViewSfc.includes('tl_calamancy_md'));
+
+      // 3. Verify Q1 Top Descriptors cloud and lemma badges
+      assert.ok(deanViewSfc.includes('data-testid="q1-top-descriptors-card"'));
+      assert.ok(deanViewSfc.includes('data-testid="top-descriptors-cloud"'));
+
+      // 4. Verify Q2 Room for Improvement 5-cluster breakdown
+      assert.ok(deanViewSfc.includes('data-testid="q2-improvement-clusters-card"'));
+      assert.ok(deanViewSfc.includes('clustersList'));
+      assert.ok(deanViewSfc.includes('getClusterTopics'));
+
+      // 5. Verify Q3 & Q4 Key Strengths and Recommendations
+      assert.ok(deanViewSfc.includes('data-testid="q3-key-strengths-card"'));
+      assert.ok(deanViewSfc.includes('data-testid="q4-key-recommendations-card"'));
+
+      // 6. Verify DEMO_DEAN_METRICS qualitative_synthesis payload integrity
+      assert.ok(DEMO_DEAN_METRICS.qualitative_synthesis);
+      assert.equal(DEMO_DEAN_METRICS.qualitative_synthesis.nlp_engine, 'calamanCy+VADER');
+      assert.ok(DEMO_DEAN_METRICS.qualitative_synthesis.top_descriptors.length >= 5);
+      assert.ok(DEMO_DEAN_METRICS.qualitative_synthesis.improvement_topics.length >= 4);
+      assert.ok(DEMO_DEAN_METRICS.qualitative_synthesis.key_strengths.length >= 2);
+      assert.ok(DEMO_DEAN_METRICS.qualitative_synthesis.key_recommendations.length >= 2);
+      assert.ok(DEMO_DEAN_METRICS.qualitative_synthesis.improvement_clusters['Pedagogical Delivery']);
     });
   });
 });
