@@ -35,6 +35,7 @@ Route::middleware(['role:dean,chair,admin'])->group(function (): void {
     Route::get('/dean/watchlist', [DeanAnalyticsController::class, 'watchlist']);
     Route::get('/dean/quality-metrics', [DeanAnalyticsController::class, 'qualityMetrics']);
     Route::get('/dean/accreditation', [DeanAnalyticsController::class, 'accreditationSummary']);
+    Route::post('/dean/action-plan/status', [DeanAnalyticsController::class, 'updateActionPlanStatus']);
     Route::post('/dean/sus/evaluate', [DeanAnalyticsController::class, 'evaluateLiveSus']);
     Route::post('/dean/export-csv', [DeanAnalyticsController::class, 'exportCsv']);
 });

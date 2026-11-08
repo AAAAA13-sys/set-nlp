@@ -90,7 +90,36 @@ class DeanAnalyticsController extends Controller
 
     public function accreditationSummary(): JsonResponse
     {
-        return new JsonResponse($this->qualityService->getPlpAccreditationSummary(), 200);
+        $actionPlanSummary = $this->evaluationService->getActionPlansSummary();
+        return new JsonResponse($this->qualityService->getPlpAccreditationSummary($actionPlanSummary), 200);
+    }
+
+    public function updateActionPlanStatus(Request $request): JsonResponse
+    {
+        $planId = trim((string) $request->input('plan_id', ''));
+        $facultyId = (int) $request->input('faculty_id', 0);
+        $status = trim((string) $request->input('status', 'PENDING_REVIEW'));
+        $deanNotes = $request->input('dean_notes') !== null ? (string) $request->input('dean_notes') : null;
+        $user = $request->user();
+        $signedOffBy = $user ? (int) ($user->id ?? 0) : null;
+
+        if ($planId === '' || $facultyId <= 0) {
+            return new JsonResponse([
+                'updated' => false,
+                'code' => 'INVALID_PLAN_PAYLOAD',
+                'message' => 'plan_id and faculty_id are required fields.',
+            ], 422);
+        }
+
+        $result = $this->evaluationService->updateActionPlanStatus(
+            $planId,
+            $facultyId,
+            $status,
+            $deanNotes,
+            $signedOffBy
+        );
+
+        return new JsonResponse($result, 200);
     }
 
     public function evaluateLiveSus(Request $request): JsonResponse

@@ -74,7 +74,7 @@ if (str_starts_with($uriPath, '/api/')) {
     $rawBody = (string) file_get_contents('php://input');
     $jsonPayload = json_decode($rawBody, true);
     $input = array_merge($_GET, $_POST, is_array($jsonPayload) ? $jsonPayload : []);
-    $request = new Request($input, $_SERVER);
+    $request = new Request($input);
 
     $response = null;
 
@@ -146,6 +146,8 @@ if (str_starts_with($uriPath, '/api/')) {
         $response = (new DeanAnalyticsController($service))->qualityMetrics();
     } elseif ($uriPath === '/api/dean/accreditation' && $method === 'GET') {
         $response = (new DeanAnalyticsController($service))->accreditationSummary();
+    } elseif ($uriPath === '/api/dean/action-plan/status' && $method === 'POST') {
+        $response = (new DeanAnalyticsController($service))->updateActionPlanStatus($request);
     } elseif ($uriPath === '/api/dean/sus/evaluate' && $method === 'POST') {
         $response = (new DeanAnalyticsController($service))->evaluateLiveSus($request);
     } elseif ($uriPath === '/api/dean/intervention-plan' && $method === 'POST') {

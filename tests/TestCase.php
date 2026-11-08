@@ -348,6 +348,34 @@ namespace Tests {
                     portability REAL NOT NULL,
                     recorded_date TEXT NOT NULL
                 );
+
+                CREATE TABLE evaluation_vault_v2_extensions (
+                    vault_id TEXT PRIMARY KEY,
+                    cluster_scores_json TEXT NULL,
+                    professor_questions_json TEXT NULL,
+                    nlp_engine TEXT NOT NULL DEFAULT 'calamanCy+VADER'
+                );
+
+                CREATE TABLE faculty_action_plans (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    plan_id TEXT NOT NULL UNIQUE,
+                    faculty_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    department_id INTEGER NULL REFERENCES departments(id) ON DELETE SET NULL,
+                    primary_cluster TEXT NOT NULL DEFAULT 'Pedagogical Delivery',
+                    status TEXT NOT NULL DEFAULT 'PENDING_REVIEW' CHECK(status IN ('PENDING_REVIEW', 'APPROVED', 'IN_PROGRESS', 'RESOLVED')),
+                    urgency_level TEXT NOT NULL DEFAULT 'MODERATE',
+                    mean_score REAL NOT NULL,
+                    negative_sentiment_pct REAL NOT NULL,
+                    interventions_json TEXT NULL,
+                    dean_notes TEXT NULL,
+                    signed_off_by_user_id INTEGER NULL REFERENCES users(id) ON DELETE SET NULL,
+                    signed_off_at TEXT NULL,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
+
+                CREATE INDEX idx_fap_faculty ON faculty_action_plans(faculty_id);
+                CREATE INDEX idx_fap_status ON faculty_action_plans(status);
             ");
         }
 

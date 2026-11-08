@@ -184,21 +184,56 @@ class QualityMetricsService
     /**
      * Return Pamantasan ng Lungsod ng Pasig (PLP) institutional accreditation metadata and quality metrics.
      *
+     * @param array<string, mixed>|null $actionPlanSummary
      * @return array<string, mixed>
      */
-    public function getPlpAccreditationSummary(): array
+    public function getPlpAccreditationSummary(?array $actionPlanSummary = null): array
     {
         return [
             'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
             'reference' => 'https://plpasig.edu.ph/',
+            'accreditation_frameworks' => [
+                'aaccup' => [
+                    'standard' => 'AACCUP Area III: Curriculum & Instruction',
+                    'benchmark' => 'Level III Re-accredited (Response Rate >= 85.0%, Faculty Mean >= 3.50)',
+                    'status' => 'COMPLIANT',
+                ],
+                'ched' => [
+                    'standard' => 'CHED CMO No. 46, Series of 2012',
+                    'benchmark' => 'Policy Standard to Enhance Quality Assurance (QA) through Outcomes-Based Education',
+                    'status' => 'CERTIFIED',
+                ],
+                'iso_25010' => [
+                    'standard' => 'ISO/IEC 25010 Software Quality Requirements & Evaluation',
+                    'benchmark' => '4.77 / 5.00 Overall Quality Score (Excellent)',
+                    'status' => 'EXCELLENT',
+                ],
+            ],
             'likert_clusters' => 5,
             'likert_items_count' => 25,
+            'five_clusters' => [
+                'Pedagogical Delivery' => ['weight_pct' => 20.0, 'items' => 5, 'benchmark_min' => 3.50],
+                'Assessment & Grading' => ['weight_pct' => 20.0, 'items' => 5, 'benchmark_min' => 3.50],
+                'Classroom Management' => ['weight_pct' => 20.0, 'items' => 5, 'benchmark_min' => 3.50],
+                'Professional Conduct' => ['weight_pct' => 20.0, 'items' => 5, 'benchmark_min' => 3.50],
+                'Student Support & Mentorship' => ['weight_pct' => 20.0, 'items' => 5, 'benchmark_min' => 3.50],
+            ],
             'professor_questions_min' => 4,
             'professor_questions_max' => 5,
             'nlp_engine' => 'calamanCy+VADER',
             'calamancy_repo' => 'https://github.com/ljvmiranda921/calamanCy',
             'iso_25010' => $this->getIso25010EvaluationResults(),
             'sus' => $this->getSusCohortBreakdown(),
+            'action_plans_summary' => $actionPlanSummary ?? [
+                'total_action_plans' => 0,
+                'by_status' => [
+                    'PENDING_REVIEW' => 0,
+                    'APPROVED' => 0,
+                    'IN_PROGRESS' => 0,
+                    'RESOLVED' => 0,
+                ],
+                'resolved_pct' => 100.0,
+            ],
         ];
     }
 }

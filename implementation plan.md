@@ -187,9 +187,9 @@ Acceptance: all 85+ automated test units pass across Frontend, Backend, and Pyth
 
 ## Focused multi-tier verification matrix
 
-- [x] **Frontend DOM Suite (25 Vitest groups)**: verify queue progress bar math, 45s dwell timer state transitions, straight-line $\sigma^2 = 0$ modal interception, double-blind lock screen rendering, Dean watchlist filtering, and mobile/desktop viewport responsiveness.
-- [x] **Backend PHPUnit Suite (20 tests)**: verify five-role RBAC isolation, CSV/JSON roster import atomicity, `FT-02` submission idempotency, $<45\text{ s}$ speed-run rejection, $\sigma^2 = 0$ confirmation flagging, complete structural separation between `evaluation_clearances` and `evaluation_vault`, double-blind lock invariant, and Dean watchlist calculations.
-- [x] **Python Analytics Suite (40 Pytest tests)**: verify VADER polarity bounds $[-1.0, +1.0]$, valence band cutoffs, accurate classification of all four pedagogical dimensions, Chapter III benchmark comment assertions, batch endpoint throughput, and graceful handling of empty or symbol-only comments.
+- [x] **Frontend DOM Suite (26 Vitest groups)**: verify queue progress bar math, 45s dwell timer state transitions, straight-line $\sigma^2 = 0$ modal interception, double-blind lock screen rendering, Dean watchlist filtering, mobile/desktop viewport responsiveness, and AACCUP/CHED/ISO accreditation and action plan resolution milestones.
+- [x] **Backend PHPUnit Suite (21 tests, 343 assertions)**: verify five-role RBAC isolation, CSV/JSON roster import atomicity, `FT-02` submission idempotency, $<45\text{ s}$ speed-run rejection, $\sigma^2 = 0$ confirmation flagging, complete structural separation between `evaluation_clearances` and `evaluation_vault`, double-blind lock invariant, Dean watchlist calculations, action plan status tracking (`PENDING_REVIEW`, `APPROVED`, `IN_PROGRESS`, `RESOLVED`), and institutional accreditation compliance summaries.
+- [x] **Python Analytics Suite (44 Pytest tests)**: verify VADER polarity bounds $[-1.0, +1.0]$, valence band cutoffs, accurate classification of all four pedagogical dimensions, Chapter III benchmark comment assertions, batch endpoint throughput, multi-student professor qualitative questionnaire synthesis, and automated pedagogical action plan generation.
 - [x] **Concurrency & Quality Suite**: verify 1,000-thread concurrent submission resilience without deadlocks or double-clearances, UTF-8 no-BOM file encoding, and clean `git diff --check` output.
 
 ## Delivery order and exclusions
@@ -202,8 +202,9 @@ Acceptance: all 85+ automated test units pass across Frontend, Backend, and Pyth
 | Authenticity Guards | Speed-runs ($<45\text{ s}$) rejected and straight-lining ($\sigma^2 = 0$) flagged |
 | Double-Blind Lock | Faculty reports stay inaccessible until both grades and registrar lock are set |
 | Python NLP Pipeline | Polarity scores and 4 pedagogical tags classify accurately with fallback resilience |
-| Vue.js 3 Portals | Student, Faculty, Chair, Dean, and Admin SPA views pass all 25 DOM test groups |
-| Verification & Load | All 85+ automated tests (Vitest, PHPUnit, Pytest) and concurrency checks pass |
+| Vue.js 3 Portals | Student, Faculty, Chair, Dean, and Admin SPA views pass all 26 DOM test groups |
+| Verification & Load | All 91+ automated tests (Vitest, PHPUnit, Pytest) and concurrency checks pass |
+| Accreditation & Action Plans | AACCUP Level III, CHED CMO 46, ISO 25010 (4.77), and Dean action plan resolution tracking live |
 
 - [x] Implement one phase at a time and update only its affected callers, Vue stores, and tests.
 - [x] Exclude live third-party enterprise Active Directory/Shibboleth servers, multilingual slang translation models, longitudinal multi-year data warehouse migrations, and automated faculty payroll/tenure decision execution.

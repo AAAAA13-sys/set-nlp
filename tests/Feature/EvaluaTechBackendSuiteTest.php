@@ -1137,4 +1137,79 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $savedCount = (int) $this->pdo->query("SELECT COUNT(*) FROM quality_evaluations")->fetchColumn();
         $this->assertSame(1, $savedCount);
     }
+
+    /**
+     * Test 21: Dean action plan status tracking, resolution milestones, and institutional accreditation compliance.
+     */
+    public function test_21_action_plan_status_tracking_and_accreditation_compliance_summary(): void
+    {
+        $service = new \App\Services\DecoupledEvaluationService($this->pdo);
+        $qualityService = new \App\Services\QualityMetricsService();
+
+        // 1. Initial watchlist item generates action plan with default PENDING_REVIEW status
+        $mockSummaries = [
+            [
+                'faculty_id' => 5,
+                'faculty_name' => 'Prof. A. Dela Cruz',
+                'department_id' => 1,
+                'mean_score' => 3.15,
+                'negative_sentiment_pct' => 42.0,
+                'primary_tag' => 'Pedagogical Delivery',
+            ],
+        ];
+
+        $watchlist = $service->computeDeanWatchlist($mockSummaries);
+        $this->assertCount(1, $watchlist);
+        $this->assertSame('PENDING_REVIEW', $watchlist[0]['action_plan']['status']);
+        $this->assertNull($watchlist[0]['action_plan']['dean_notes']);
+
+        $planId = $watchlist[0]['action_plan']['plan_id'];
+        $this->assertNotEmpty($planId);
+
+        // 2. Update status to APPROVED with Dean signoff notes
+        $updateResult = $service->updateActionPlanStatus(
+            $planId,
+            5,
+            'APPROVED',
+            'Approved by Dean: Faculty assigned to active learning laboratory teaching observation.',
+            2
+        );
+
+        $this->assertTrue($updateResult['updated']);
+        $this->assertSame('APPROVED', $updateResult['status']);
+        $this->assertStringContainsString('active learning', $updateResult['dean_notes']);
+
+        // 3. Re-computing watchlist reflects the updated APPROVED status and notes
+        $updatedWatchlist = $service->computeDeanWatchlist($mockSummaries);
+        $this->assertSame('APPROVED', $updatedWatchlist[0]['action_plan']['status']);
+        $this->assertSame($updateResult['dean_notes'], $updatedWatchlist[0]['action_plan']['dean_notes']);
+        $this->assertNotNull($updatedWatchlist[0]['action_plan']['signed_off_at']);
+
+        // 4. Update status to RESOLVED
+        $resolveResult = $service->updateActionPlanStatus(
+            $planId,
+            5,
+            'RESOLVED',
+            'Mid-term milestone achieved: Mean score recovered to 3.85, negative sentiment reduced to 12.5%.'
+        );
+        $this->assertTrue($resolveResult['updated']);
+        $this->assertSame('RESOLVED', $resolveResult['status']);
+
+        // 5. Action plans summary verifies aggregated counts
+        $planSummary = $service->getActionPlansSummary();
+        $this->assertSame(1, $planSummary['total_action_plans']);
+        $this->assertSame(1, $planSummary['by_status']['RESOLVED']);
+        $this->assertEqualsWithDelta(100.0, (float) $planSummary['resolved_pct'], 0.1);
+
+        // 6. Institutional accreditation summary includes AACCUP, CHED, ISO 25010, 5 clusters, and action plan summary
+        $accreditation = $qualityService->getPlpAccreditationSummary($planSummary);
+        $this->assertSame('PAMANTASAN NG LUNGSOD NG PASIG', $accreditation['institution']);
+        $this->assertSame(5, $accreditation['likert_clusters']);
+        $this->assertSame(25, $accreditation['likert_items_count']);
+        $this->assertArrayHasKey('aaccup', $accreditation['accreditation_frameworks']);
+        $this->assertArrayHasKey('ched', $accreditation['accreditation_frameworks']);
+        $this->assertArrayHasKey('iso_25010', $accreditation['accreditation_frameworks']);
+        $this->assertArrayHasKey('Pedagogical Delivery', $accreditation['five_clusters']);
+        $this->assertSame(1, $accreditation['action_plans_summary']['total_action_plans']);
+    }
 }

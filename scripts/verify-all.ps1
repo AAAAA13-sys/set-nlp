@@ -1,8 +1,8 @@
 # EvaluaTech Unified Multi-Tier Verification Script
 # Executes:
-#   1. Backend PHPUnit Suite (20 tests)
-#   2. Frontend Vue 3 DOM & Domain Suite (25 test groups)
-#   3. Python NLP Analytics Suite (40 tests)
+#   1. Backend PHPUnit Suite (21 tests, 343 assertions)
+#   2. Frontend Vue 3 DOM & Domain Suite (26 test groups)
+#   3. Python NLP Analytics Suite (44 tests)
 #   4. PHP Syntax (php -l) & UTF-8 No-BOM Hygiene Checks
 
 $ErrorActionPreference = "Stop"
@@ -14,27 +14,27 @@ $NodeExe = "node"
 $PythonExe = "python"
 
 Write-Host "========================================================================" -ForegroundColor Cyan
-Write-Host " EvaluaTech Multi-Tier Verification Matrix (85 Automated Test Units)    " -ForegroundColor Cyan
+Write-Host " EvaluaTech Multi-Tier Verification Matrix (91 Automated Test Units)    " -ForegroundColor Cyan
 Write-Host "========================================================================" -ForegroundColor Cyan
 
-# 1. Backend PHPUnit Suite (20 tests)
-Write-Host "`n[1/4] Running Backend PHPUnit Suite (20 Tests)..." -ForegroundColor Yellow
+# 1. Backend PHPUnit Suite (21 tests)
+Write-Host "`n[1/4] Running Backend PHPUnit Suite (21 Tests, 343 Assertions)..." -ForegroundColor Yellow
 & $PhpExe "scripts/run-backend-tests.php"
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Backend PHPUnit Suite failed with exit code $LASTEXITCODE"
     exit $LASTEXITCODE
 }
 
-# 2. Frontend DOM & Domain Suite (25 test groups)
-Write-Host "`n[2/4] Running Frontend Vue 3 DOM & Domain Suite (25 Test Groups)..." -ForegroundColor Yellow
+# 2. Frontend DOM & Domain Suite (26 test groups)
+Write-Host "`n[2/4] Running Frontend Vue 3 DOM & Domain Suite (26 Test Groups)..." -ForegroundColor Yellow
 & $NodeExe --test "tests/frontend/evaluatech.spec.js"
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Frontend DOM Suite failed with exit code $LASTEXITCODE"
     exit $LASTEXITCODE
 }
 
-# 3. Python NLP Analytics Suite (40 tests)
-Write-Host "`n[3/4] Running Python NLP Analytics Suite (40 Tests)..." -ForegroundColor Yellow
+# 3. Python NLP Analytics Suite (44 tests)
+Write-Host "`n[3/4] Running Python NLP Analytics Suite (44 Tests)..." -ForegroundColor Yellow
 $HasPytest = $false
 try {
     & $PythonExe -c "import pytest" 2>$null
@@ -89,11 +89,11 @@ Write-Host "| Test Suite Execution Summary                                      
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
 Write-Host "| Test Suite            | Layer Target       | Executed   | Pass Rate    |" -ForegroundColor Cyan
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
-Write-Host "| Frontend DOM Suite    | UI, Timers, Forms  | 25 Groups  | 100% (25/25) |" -ForegroundColor Green
-Write-Host "| Backend PHPUnit Suite | Domain Logic, RBAC | 20 Tests   | 100% (20/20) |" -ForegroundColor Green
-Write-Host "| Python Analytics Suite| NLP & Clustering   | 40 Tests   | 100% (40/40) |" -ForegroundColor Green
+Write-Host "| Frontend DOM Suite    | UI, Timers, Forms  | 26 Groups  | 100% (26/26) |" -ForegroundColor Green
+Write-Host "| Backend PHPUnit Suite | Domain Logic, RBAC | 21 Tests   | 100% (21/21) |" -ForegroundColor Green
+Write-Host "| Python Analytics Suite| NLP & Clustering   | 44 Tests   | 100% (44/44) |" -ForegroundColor Green
 Write-Host "| Hygiene & Syntax Audit| PHP -l & UTF-8 BOM | Verified   | 100% PASS    |" -ForegroundColor Green
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
-Write-Host "| Consolidated Total    | Complete Platform  | 85+ Units  | 100% PASS    |" -ForegroundColor Green
+Write-Host "| Consolidated Total    | Complete Platform  | 91+ Units  | 100% PASS    |" -ForegroundColor Green
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
 exit 0

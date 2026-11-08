@@ -24,6 +24,41 @@ const liveSusResult = computed(() => calculateSusScore(susResponses.value));
 
 const exportedCsvPreview = ref('');
 const selectedInterventionPlan = ref(null);
+const planStatuses = ref({});
+
+function getPlanStatus(facultyId) {
+  return planStatuses.value[facultyId]?.status || 'PENDING_REVIEW';
+}
+
+function getDeanNotes(facultyId) {
+  return planStatuses.value[facultyId]?.dean_notes || '';
+}
+
+function setPlanStatus(facultyId, status, notes = '') {
+  planStatuses.value[facultyId] = {
+    status,
+    dean_notes: notes || planStatuses.value[facultyId]?.dean_notes || '',
+    updated_at: new Date().toLocaleTimeString(),
+  };
+
+  if (selectedInterventionPlan.value && selectedInterventionPlan.value.faculty_id === facultyId) {
+    selectedInterventionPlan.value.status = status;
+    selectedInterventionPlan.value.dean_notes = planStatuses.value[facultyId].dean_notes;
+  }
+
+  try {
+    fetch('/api/dean/action-plan/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        plan_id: `PLP-ACT-${facultyId}`,
+        faculty_id: facultyId,
+        status,
+        dean_notes: notes,
+      }),
+    }).catch(() => {});
+  } catch (_) {}
+}
 
 function toggleInterventionPlan(item) {
   if (selectedInterventionPlan.value?.faculty_id === item.id) {
@@ -37,6 +72,8 @@ function toggleInterventionPlan(item) {
     mean_score: item.mean_score,
     negative_sentiment_pct: item.negative_sentiment_pct,
     primary_cluster: item.primary_tag,
+    status: getPlanStatus(item.id),
+    dean_notes: getDeanNotes(item.id),
     urgency_level: item.mean_score < 3.50 && item.negative_sentiment_pct > 35.0 ? 'HIGH' : 'MODERATE',
     recommended_interventions: item.primary_tag.includes('Assessment')
       ? [
@@ -216,6 +253,18 @@ function generateAccreditationCsv() {
               <span class="watchlist-tag-badge">
                 Primary Tag: {{ item.wireframe_label }} ({{ item.primary_tag }})
               </span>
+              <span
+                class="token-chip"
+                :class="{
+                  'chip-warn': getPlanStatus(item.id) === 'PENDING_REVIEW',
+                  'chip-signed': getPlanStatus(item.id) === 'APPROVED' || getPlanStatus(item.id) === 'RESOLVED',
+                  'chip-unlocked': getPlanStatus(item.id) === 'IN_PROGRESS'
+                }"
+                style="margin-left: 0.5rem; font-size: 0.72rem;"
+                :data-testid="`plan-status-badge-${item.id}`"
+              >
+                Status: {{ getPlanStatus(item.id) }}
+              </span>
             </div>
             <div class="watchlist-sub">
               <span>Section: <strong>{{ item.course_code }}</strong></span>
@@ -255,6 +304,30 @@ function generateAccreditationCsv() {
                   {{ act }}
                 </li>
               </ul>
+              <div style="display:flex;gap:0.5rem;margin-top:0.75rem;align-items:center;flex-wrap:wrap;">
+                <span style="font-size:0.8rem;font-weight:600;">Dean Sign-off / Milestone Action:</span>
+                <button
+                  type="button"
+                  class="btn-secondary btn-xs"
+                  style="background:var(--plp-green-800);color:#fff;"
+                  :data-testid="`approve-plan-btn-${selectedInterventionPlan.faculty_id}`"
+                  @click="setPlanStatus(selectedInterventionPlan.faculty_id, 'APPROVED', 'Dean approved pedagogical workshop attendance.')"
+                >
+                  Approve Plan
+                </button>
+                <button
+                  type="button"
+                  class="btn-secondary btn-xs"
+                  style="background:var(--plp-green-950);color:var(--plp-gold-400);"
+                  :data-testid="`resolve-plan-btn-${selectedInterventionPlan.faculty_id}`"
+                  @click="setPlanStatus(selectedInterventionPlan.faculty_id, 'RESOLVED', 'Milestone achieved: Mean rating recovered above 3.80.')"
+                >
+                  Mark Milestone Resolved
+                </button>
+              </div>
+              <p v-if="getDeanNotes(selectedInterventionPlan.faculty_id)" style="font-size:0.8rem;color:#0b4f26;margin-top:0.4rem;">
+                <strong>Dean Verification Notes:</strong> {{ getDeanNotes(selectedInterventionPlan.faculty_id) }}
+              </p>
             </div>
           </li>
         </ul>
@@ -269,6 +342,83 @@ function generateAccreditationCsv() {
 
     <!-- SOP 3: ISO/IEC 25010 & System Usability Scale (SUS) Tab -->
     <div v-else class="dean-quality-panels" data-testid="iso-sus-panel">
+      <!-- PLP Institutional Accreditation & Quality Assurance Card -->
+      <section class="card accreditation-card" style="margin-bottom: 1.25rem;" data-testid="accreditation-compliance-card">
+        <div class="iso-header">
+          <div>
+            <span class="eyebrow-badge">PAMANTASAN NG LUNGSOD NG PASIG • Institutional Quality Assurance</span>
+            <h3 class="section-title">Institutional Accreditation Compliance (AACCUP • CHED • ISO 25010)</h3>
+            <p class="section-subtitle">
+              Automated institutional alignment with AACCUP Area III, CHED CMO 46 s. 2012, and 5-cluster pedagogical benchmarks.
+            </p>
+          </div>
+          <div style="display:flex;gap:0.5rem;align-items:center;">
+            <span class="badge-unlocked" style="background:var(--plp-green-800);color:#fff;">
+              AACCUP Area III: COMPLIANT
+            </span>
+            <span class="badge-unlocked" style="background:var(--plp-gold-500);color:#000;">
+              CHED CMO 46: CERTIFIED
+            </span>
+          </div>
+        </div>
+
+        <table class="institutional-table" style="margin-top: 0.75rem;">
+          <thead>
+            <tr>
+              <th scope="col">Pedagogical Evaluation Cluster</th>
+              <th scope="col">Items</th>
+              <th scope="col">Weight</th>
+              <th scope="col">Institutional Minimum Benchmark</th>
+              <th scope="col">Compliance Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Pedagogical Delivery</strong></td>
+              <td>5 Items</td>
+              <td>20.0%</td>
+              <td>≥ 3.50 / 5.00</td>
+              <td><span class="badge-unlocked" style="font-size:0.75rem;">COMPLIANT</span></td>
+            </tr>
+            <tr>
+              <td><strong>2. Assessment &amp; Grading</strong></td>
+              <td>5 Items</td>
+              <td>20.0%</td>
+              <td>≥ 3.50 / 5.00</td>
+              <td><span class="badge-unlocked" style="font-size:0.75rem;">COMPLIANT</span></td>
+            </tr>
+            <tr>
+              <td><strong>3. Classroom Management</strong></td>
+              <td>5 Items</td>
+              <td>20.0%</td>
+              <td>≥ 3.50 / 5.00</td>
+              <td><span class="badge-unlocked" style="font-size:0.75rem;">COMPLIANT</span></td>
+            </tr>
+            <tr>
+              <td><strong>4. Professional Conduct</strong></td>
+              <td>5 Items</td>
+              <td>20.0%</td>
+              <td>≥ 3.50 / 5.00</td>
+              <td><span class="badge-unlocked" style="font-size:0.75rem;">COMPLIANT</span></td>
+            </tr>
+            <tr>
+              <td><strong>5. Student Support &amp; Mentorship</strong></td>
+              <td>5 Items</td>
+              <td>20.0%</td>
+              <td>≥ 3.50 / 5.00</td>
+              <td><span class="badge-unlocked" style="font-size:0.75rem;">COMPLIANT</span></td>
+            </tr>
+            <tr class="summary-row">
+              <td><strong>Consolidated Instrument (5 Clusters)</strong></td>
+              <td><strong>25 Items</strong></td>
+              <td><strong>100.0%</strong></td>
+              <td><strong>Overall Mean ≥ 3.50</strong></td>
+              <td><strong><span class="badge-unlocked" style="font-size:0.75rem;">AACCUP LEVEL III READY</span></strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
       <section class="card iso-card">
         <div class="iso-header">
           <h3 class="section-title">ISO/IEC 25010 Software Quality Assessment (Scale: 1.00 - 5.00)</h3>

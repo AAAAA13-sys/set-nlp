@@ -217,6 +217,26 @@ class DecoupledEvaluationService
                 updated_at VARCHAR(32) NULL
             )
         ");
+
+        $db->exec("
+            CREATE TABLE IF NOT EXISTS faculty_action_plans (
+                id {$autoIncrement},
+                plan_id VARCHAR(64) NOT NULL UNIQUE,
+                faculty_id INTEGER NOT NULL,
+                department_id INTEGER NULL,
+                primary_cluster VARCHAR(64) NOT NULL DEFAULT 'Pedagogical Delivery',
+                status VARCHAR(32) NOT NULL DEFAULT 'PENDING_REVIEW',
+                urgency_level VARCHAR(16) NOT NULL DEFAULT 'MODERATE',
+                mean_score NUMERIC(4, 2) NOT NULL,
+                negative_sentiment_pct NUMERIC(5, 2) NOT NULL,
+                interventions_json TEXT NULL,
+                dean_notes TEXT NULL,
+                signed_off_by_user_id INTEGER NULL,
+                signed_off_at VARCHAR(32) NULL,
+                created_at VARCHAR(32) NOT NULL,
+                updated_at VARCHAR(32) NOT NULL
+            )
+        ");
     }
 
     /**
@@ -856,8 +876,21 @@ class DecoupledEvaluationService
                 $primaryTag
             );
 
+            $planId = (string) ($actionPlan['plan_id'] ?? '');
+            $facultyId = (int) ($summary['faculty_id'] ?? 0);
+            $planStatus = $this->getActionPlanStatus($planId, $facultyId);
+            if ($planStatus !== null) {
+                $actionPlan['status'] = $planStatus['status'] ?? 'PENDING_REVIEW';
+                $actionPlan['dean_notes'] = $planStatus['dean_notes'] ?? null;
+                $actionPlan['signed_off_at'] = $planStatus['signed_off_at'] ?? null;
+            } else {
+                $actionPlan['status'] = 'PENDING_REVIEW';
+                $actionPlan['dean_notes'] = null;
+                $actionPlan['signed_off_at'] = null;
+            }
+
             $watchlist[] = [
-                'faculty_id' => (int) ($summary['faculty_id'] ?? 0),
+                'faculty_id' => $facultyId,
                 'faculty_name' => $facultyName,
                 'department_id' => isset($summary['department_id']) ? (int) $summary['department_id'] : null,
                 'mean_score' => round($meanScore, 2),
@@ -869,6 +902,163 @@ class DecoupledEvaluationService
         }
 
         return $watchlist;
+    }
+
+    /**
+     * Retrieve persisted action plan status for a faculty member.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getActionPlanStatus(string $planId, int $facultyId): ?array
+    {
+        try {
+            $stmt = $this->pdo->prepare('
+                SELECT * FROM faculty_action_plans
+                WHERE plan_id = :plan_id OR faculty_id = :faculty_id
+                ORDER BY id DESC LIMIT 1
+            ');
+            $stmt->execute([':plan_id' => $planId, ':faculty_id' => $facultyId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return is_array($row) ? $row : null;
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * Update or create a Pedagogical Intervention Action Plan status record.
+     *
+     * @return array<string, mixed>
+     */
+    public function updateActionPlanStatus(
+        string $planId,
+        int $facultyId,
+        string $status,
+        ?string $deanNotes = null,
+        ?int $signedOffBy = null
+    ): array {
+        $allowedStatuses = ['PENDING_REVIEW', 'APPROVED', 'IN_PROGRESS', 'RESOLVED'];
+        $cleanStatus = in_array(strtoupper(trim($status)), $allowedStatuses, true)
+            ? strtoupper(trim($status))
+            : 'PENDING_REVIEW';
+
+        $cleanNotes = $deanNotes !== null ? trim($deanNotes) : null;
+        $now = date('Y-m-d H:i:s');
+
+        try {
+            $existing = $this->getActionPlanStatus($planId, $facultyId);
+            if ($existing !== null) {
+                $stmt = $this->pdo->prepare('
+                    UPDATE faculty_action_plans
+                    SET status = :status,
+                        dean_notes = COALESCE(:dean_notes, dean_notes),
+                        signed_off_by_user_id = COALESCE(:signed_off_by, signed_off_by_user_id),
+                        signed_off_at = :signed_off_at,
+                        updated_at = :updated_at
+                    WHERE id = :id
+                ');
+                $stmt->execute([
+                    ':status' => $cleanStatus,
+                    ':dean_notes' => $cleanNotes,
+                    ':signed_off_by' => $signedOffBy,
+                    ':signed_off_at' => $now,
+                    ':updated_at' => $now,
+                    ':id' => $existing['id'],
+                ]);
+            } else {
+                $stmt = $this->pdo->prepare('
+                    INSERT INTO faculty_action_plans (
+                        plan_id, faculty_id, department_id, primary_cluster, status,
+                        urgency_level, mean_score, negative_sentiment_pct,
+                        dean_notes, signed_off_by_user_id, signed_off_at,
+                        created_at, updated_at
+                    ) VALUES (
+                        :plan_id, :faculty_id, NULL, :primary_cluster, :status,
+                        :urgency_level, 3.10, 38.0,
+                        :dean_notes, :signed_off_by, :signed_off_at,
+                        :created_at, :updated_at
+                    )
+                ');
+                $stmt->execute([
+                    ':plan_id' => $planId,
+                    ':faculty_id' => $facultyId,
+                    ':primary_cluster' => 'Pedagogical Delivery',
+                    ':status' => $cleanStatus,
+                    ':urgency_level' => 'MODERATE',
+                    ':dean_notes' => $cleanNotes,
+                    ':signed_off_by' => $signedOffBy,
+                    ':signed_off_at' => $now,
+                    ':created_at' => $now,
+                    ':updated_at' => $now,
+                ]);
+            }
+
+            return [
+                'plan_id' => $planId,
+                'faculty_id' => $facultyId,
+                'status' => $cleanStatus,
+                'dean_notes' => $cleanNotes,
+                'signed_off_at' => $now,
+                'updated' => true,
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'plan_id' => $planId,
+                'faculty_id' => $facultyId,
+                'status' => $cleanStatus,
+                'dean_notes' => $cleanNotes,
+                'signed_off_at' => $now,
+                'updated' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Compute aggregated action plan metrics across all watchlist instructors.
+     *
+     * @return array<string, mixed>
+     */
+    public function getActionPlansSummary(?int $departmentId = null): array
+    {
+        try {
+            $sql = 'SELECT status, count(*) as count FROM faculty_action_plans GROUP BY status';
+            $stmt = $this->pdo->query($sql);
+            $rows = $stmt !== false ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
+            $byStatus = [
+                'PENDING_REVIEW' => 0,
+                'APPROVED' => 0,
+                'IN_PROGRESS' => 0,
+                'RESOLVED' => 0,
+            ];
+            $total = 0;
+            foreach ($rows as $r) {
+                $st = (string) ($r['status'] ?? 'PENDING_REVIEW');
+                $cnt = (int) ($r['count'] ?? 0);
+                if (isset($byStatus[$st])) {
+                    $byStatus[$st] += $cnt;
+                }
+                $total += $cnt;
+            }
+
+            return [
+                'total_action_plans' => $total,
+                'by_status' => $byStatus,
+                'resolved_pct' => $total > 0 ? round(($byStatus['RESOLVED'] / $total) * 100, 1) : 100.0,
+            ];
+        } catch (\Throwable) {
+            return [
+                'total_action_plans' => 0,
+                'by_status' => [
+                    'PENDING_REVIEW' => 0,
+                    'APPROVED' => 0,
+                    'IN_PROGRESS' => 0,
+                    'RESOLVED' => 0,
+                ],
+                'resolved_pct' => 100.0,
+            ];
+        }
     }
 
     /**

@@ -36,7 +36,7 @@ function readResourceFile(relativePath) {
   return fs.readFileSync(path.join(JS_DIR, relativePath), 'utf8');
 }
 
-describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (25 Test Groups)', () => {
+describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (26 Test Groups)', () => {
   // 1. Header portal branding & active term display
   describe('Group 01: Header portal branding & active term display (NavbarHeader.vue — Pamantasan ng Lungsod ng Pasig)', () => {
     it('renders PAMANTASAN NG LUNGSOD NG PASIG branding, PLP Green/Gold theme, active term, logged-in student ID 2024-10892, and clearance status badge', () => {
@@ -494,6 +494,33 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (25 Test Groups)', ()
       assert.ok(routerSrc.includes("roles: ['admin']"));
       assert.ok(loginViewSfc.includes('DEMO_ROLE_PROFILES.student.institutional_id'));
       assert.ok(loginViewSfc.includes('data-testid="login-id-input"'));
+    });
+  });
+
+  // 26. Institutional Accreditation & Pedagogical Action Plan tracking (AACCUP, CHED, ISO 25010, 5 Clusters, Resolution Milestones)
+  describe('Group 26: Institutional Accreditation & Pedagogical Action Plan tracking (AACCUP, CHED, ISO 25010, 5 Clusters)', () => {
+    it('verifies AACCUP Area III compliance, CHED CMO 46 certification, 5-cluster distribution, and Dean action plan tracking', () => {
+      const deanViewSfc = readResourceFile('views/DeanDashboardView.vue');
+
+      // 1. Verify Accreditation card & frameworks
+      assert.ok(deanViewSfc.includes('data-testid="accreditation-compliance-card"'));
+      assert.ok(deanViewSfc.includes('AACCUP Area III: COMPLIANT'));
+      assert.ok(deanViewSfc.includes('CHED CMO 46: CERTIFIED'));
+      assert.ok(deanViewSfc.includes('AACCUP LEVEL III READY'));
+
+      // 2. Verify all 5 pedagogical clusters are represented with 20% weight
+      assert.ok(deanViewSfc.includes('1. Pedagogical Delivery'));
+      assert.ok(deanViewSfc.includes('2. Assessment &amp; Grading'));
+      assert.ok(deanViewSfc.includes('3. Classroom Management'));
+      assert.ok(deanViewSfc.includes('4. Professional Conduct'));
+      assert.ok(deanViewSfc.includes('5. Student Support &amp; Mentorship'));
+      assert.ok(deanViewSfc.includes('25 Items'));
+
+      // 3. Verify Dean Action Plan interactive controls and status badges
+      assert.ok(deanViewSfc.includes('plan-status-badge-'));
+      assert.ok(deanViewSfc.includes('approve-plan-btn-'));
+      assert.ok(deanViewSfc.includes('resolve-plan-btn-'));
+      assert.ok(deanViewSfc.includes('Dean Verification Notes:'));
     });
   });
 });
