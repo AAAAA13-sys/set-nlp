@@ -933,4 +933,47 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (34 Test Groups)', ()
       assert.ok(apiRoutes.includes('/chair/longitudinal-trends'));
     });
   });
+
+  // 37. Department Completion Heatmaps & AACCUP Level III Compliance Audit Checklist
+  describe('Group 37: Department Completion Heatmaps & AACCUP Level III Compliance Audit Checklist', () => {
+    it('verifies department completion heatmap rendering, color bands, table rows, and 8-point accreditation audit checklist', () => {
+      const deanViewSfc = readResourceFile('views/DeanDashboardView.vue');
+      const chairViewSfc = readResourceFile('views/ChairDashboardView.vue');
+      const apiRoutes = fs.readFileSync(path.join(ROOT_DIR, 'routes', 'api.php'), 'utf8');
+
+      // 1. Verify Dean dashboard completion heatmap matrix and legend
+      assert.ok(deanViewSfc.includes('data-testid="completion-heatmap-card"'));
+      assert.ok(deanViewSfc.includes('data-testid="heatmap-legend"'));
+      assert.ok(deanViewSfc.includes('data-testid="heatmap-table"'));
+      assert.ok(deanViewSfc.includes('EXCELLENT'));
+      assert.ok(deanViewSfc.includes('OPTIMAL'));
+      assert.ok(deanViewSfc.includes('WARNING'));
+      assert.ok(deanViewSfc.includes('CRITICAL'));
+      assert.ok(deanViewSfc.includes('fetchHeatmapData'));
+
+      // 2. Verify Dean dashboard AACCUP Level III & CHED CMO 46 compliance checklist card
+      assert.ok(deanViewSfc.includes('data-testid="compliance-audit-checklist-card"'));
+      assert.ok(deanViewSfc.includes('data-testid="compliance-checkpoints-grid"'));
+      assert.ok(deanViewSfc.includes('CRIT-01'));
+      assert.ok(deanViewSfc.includes('CRIT-02'));
+      assert.ok(deanViewSfc.includes('CRIT-03'));
+      assert.ok(deanViewSfc.includes('CRIT-04'));
+      assert.ok(deanViewSfc.includes('CRIT-05'));
+      assert.ok(deanViewSfc.includes('CRIT-06'));
+      assert.ok(deanViewSfc.includes('CRIT-07'));
+      assert.ok(deanViewSfc.includes('CRIT-08'));
+      assert.ok(deanViewSfc.includes('GRADE A (EXCELLENT)'));
+      assert.ok(deanViewSfc.includes('fetchComplianceAudit'));
+
+      // 3. Verify Chair dashboard department completion heatmap card
+      assert.ok(chairViewSfc.includes('data-testid="chair-completion-heatmap-card"'));
+      assert.ok(chairViewSfc.includes('data-testid="chair-heatmap-table"'));
+      assert.ok(chairViewSfc.includes('chairHeatmapData'));
+
+      // 4. Verify API route endpoints for heatmap and compliance audit
+      assert.ok(apiRoutes.includes('/dean/completion-heatmap'));
+      assert.ok(apiRoutes.includes('/chair/completion-heatmap'));
+      assert.ok(apiRoutes.includes('/dean/compliance-audit'));
+    });
+  });
 });

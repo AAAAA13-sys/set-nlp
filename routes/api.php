@@ -41,6 +41,8 @@ Route::middleware(['role:dean,chair,admin'])->group(function (): void {
     Route::get('/dean/watchlist', [DeanAnalyticsController::class, 'watchlist']);
     Route::get('/dean/quality-metrics', [DeanAnalyticsController::class, 'qualityMetrics']);
     Route::get('/dean/accreditation', [DeanAnalyticsController::class, 'accreditationSummary']);
+    Route::get('/dean/compliance-audit', [DeanAnalyticsController::class, 'complianceAudit']);
+    Route::get('/dean/completion-heatmap', [DeanAnalyticsController::class, 'completionHeatmap']);
     Route::get('/dean/longitudinal-trends', [DeanAnalyticsController::class, 'longitudinalTrends']);
     Route::post('/dean/export-dossier-bundle', [DeanAnalyticsController::class, 'exportAccreditationDossier']);
     Route::get('/dean/qualitative-synthesis', [DeanAnalyticsController::class, 'qualitativeSynthesis']);
@@ -52,6 +54,7 @@ Route::middleware(['role:dean,chair,admin'])->group(function (): void {
     // Dedicated Chair Workspace Endpoints (SOP 2)
     Route::get('/chair/overview', [DeanAnalyticsController::class, 'overview']);
     Route::get('/chair/watchlist', [DeanAnalyticsController::class, 'watchlist']);
+    Route::get('/chair/completion-heatmap', [DeanAnalyticsController::class, 'completionHeatmap']);
     Route::get('/chair/longitudinal-trends', [DeanAnalyticsController::class, 'longitudinalTrends']);
     Route::post('/chair/action-plan/status', [DeanAnalyticsController::class, 'updateActionPlanStatus']);
 });

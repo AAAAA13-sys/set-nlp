@@ -238,4 +238,38 @@ class DeanAnalyticsController extends Controller
             'filename' => 'PLP-AACCUP-Area-III-Dossier-AY2026-2027.csv',
         ], 200);
     }
+
+    public function completionHeatmap(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
+
+        if ($user !== null) {
+            $role = is_string($user->role ?? null)
+                ? $user->role
+                : ($user->role instanceof UserRole ? $user->role->value : '');
+
+            if ($role === UserRole::CHAIR->value) {
+                $chairDeptId = isset($user->department_id) ? (int) $user->department_id : null;
+                if ($requestedDeptId !== null && $requestedDeptId !== $chairDeptId) {
+                    return new JsonResponse([
+                        'authorized' => false,
+                        'code' => 'FORBIDDEN_DEPARTMENT_SCOPE',
+                        'message' => 'Department Chairs are strictly scoped to their assigned department.',
+                    ], 403);
+                }
+                $requestedDeptId = $chairDeptId;
+            }
+        }
+
+        $heatmap = $this->evaluationService->getDepartmentCompletionHeatmap($requestedDeptId);
+        return new JsonResponse($heatmap, 200);
+    }
+
+    public function complianceAudit(Request $request): JsonResponse
+    {
+        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
+        $audit = $this->evaluationService->getAccreditationComplianceAudit($requestedDeptId);
+        return new JsonResponse($audit, 200);
+    }
 }

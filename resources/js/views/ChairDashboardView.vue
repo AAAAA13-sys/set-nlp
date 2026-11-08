@@ -96,6 +96,16 @@ const departmentLongitudinal = ref({
     { cluster: 'Student Support & Mentorship', active: 4.42, prior: 4.10, delta: 0.32 },
   ],
 });
+
+const chairHeatmapData = ref({
+  overall_completion_rate: 93.8,
+  target_pct: 85.0,
+  sections: [
+    { section_id: 1, section_code: 'CS401-A', course_code: 'CS-401', course_title: 'Algorithms & Complexity', faculty_name: 'Prof. A. Dela Cruz', enrolled: 42, evaluated: 39, rate: 92.9, target_met: true, color_hex: '#0b4f26' },
+    { section_id: 2, section_code: 'CS405-A', course_code: 'CS-405', course_title: 'Software Engineering II', faculty_name: 'Dr. M. Santos', enrolled: 38, evaluated: 36, rate: 94.7, target_met: true, color_hex: '#0b4f26' },
+    { section_id: 5, section_code: 'CS408-A', course_code: 'CS-408', course_title: 'Natural Language Processing', faculty_name: 'Prof. K. Gomez', enrolled: 36, evaluated: 34, rate: 94.4, target_met: true, color_hex: '#0b4f26' },
+  ],
+});
 </script>
 
 <template>
@@ -360,6 +370,62 @@ const departmentLongitudinal = ref({
             <td>
               <span class="token-chip chip-signed" style="font-size:0.75rem;">
                 IMPROVED
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Department Completion Heatmap Matrix -->
+    <section class="card chair-heatmap-card" style="margin-top:1.25rem;" data-testid="chair-completion-heatmap-card">
+      <div class="iso-header">
+        <div>
+          <span class="eyebrow-badge">
+            PAMANTASAN NG LUNGSOD NG PASIG • Chapter II Operational Wireframe
+          </span>
+          <h3 class="section-title">Computer Science Section Completion Heatmap</h3>
+          <p class="section-subtitle">
+            Course-by-course response density monitoring against the institutional &gt; 85% participation threshold.
+          </p>
+        </div>
+        <span class="token-chip chip-signed" style="font-size:0.8rem;">
+          CS Completion Velocity: {{ chairHeatmapData.overall_completion_rate }}%
+        </span>
+      </div>
+
+      <table class="institutional-table" style="margin-top:1rem;" data-testid="chair-heatmap-table">
+        <thead>
+          <tr>
+            <th scope="col">Course Code &amp; Title</th>
+            <th scope="col">Section Code</th>
+            <th scope="col">Assigned Instructor</th>
+            <th scope="col">Enrolled</th>
+            <th scope="col">Evaluated</th>
+            <th scope="col">Completion Rate</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="sec in chairHeatmapData.sections" :key="sec.section_id">
+            <td><strong>{{ sec.course_code }}</strong> — {{ sec.course_title }}</td>
+            <td><code>{{ sec.section_code }}</code></td>
+            <td>{{ sec.faculty_name }}</td>
+            <td>{{ sec.enrolled }}</td>
+            <td>{{ sec.evaluated }}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:0.5rem;">
+                <div style="flex:1;height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden;min-width:60px;">
+                  <div :style="{ width: `${sec.rate}%`, background: sec.color_hex, height: '100%' }"></div>
+                </div>
+                <strong :style="{ color: sec.color_hex, fontSize: '0.85rem' }">
+                  {{ sec.rate }}%
+                </strong>
+              </div>
+            </td>
+            <td>
+              <span class="token-chip chip-signed" style="font-size:0.72rem;">
+                ✓ TARGET MET (&gt;85%)
               </span>
             </td>
           </tr>

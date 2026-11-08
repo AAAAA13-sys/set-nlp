@@ -1880,4 +1880,110 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertFalse($invalidData['verified']);
         $this->assertSame('INVALID_TOKEN', $invalidData['status']);
     }
+
+    /**
+     * Test 29: Department-level completion heatmap matrix and AACCUP Area III / CHED CMO 46 compliance audit.
+     */
+    public function test_29_department_completion_heatmap_and_accreditation_audit_matrix(): void
+    {
+        $service = new \App\Services\DecoupledEvaluationService($this->pdo);
+        $controller = new \App\Http\Controllers\Api\DeanAnalyticsController($service);
+
+        // 1. Service Layer: College-Wide Completion Heatmap (unfiltered)
+        $collegeHeatmap = $service->getDepartmentCompletionHeatmap();
+        $this->assertIsArray($collegeHeatmap);
+        $this->assertNull($collegeHeatmap['department_id']);
+        $this->assertSame(85.0, $collegeHeatmap['institutional_target_pct']);
+        $this->assertGreaterThan(0, $collegeHeatmap['total_sections']);
+        $this->assertGreaterThan(0, $collegeHeatmap['total_enrolled']);
+        $this->assertGreaterThan(0, $collegeHeatmap['total_evaluated']);
+        $this->assertGreaterThan(70.0, $collegeHeatmap['overall_completion_rate_pct']);
+        $this->assertArrayHasKey('band_distribution', $collegeHeatmap);
+        $this->assertArrayHasKey('EXCELLENT', $collegeHeatmap['band_distribution']);
+        $this->assertSame('PAMANTASAN NG LUNGSOD NG PASIG', $collegeHeatmap['institution']);
+        $this->assertSame('https://plpasig.edu.ph/', $collegeHeatmap['portal_reference']);
+
+        // Verify section item structure and zero student identity leakage
+        foreach ($collegeHeatmap['sections'] as $sec) {
+            $this->assertArrayHasKey('section_id', $sec);
+            $this->assertArrayHasKey('course_code', $sec);
+            $this->assertArrayHasKey('faculty_name', $sec);
+            $this->assertArrayHasKey('completion_rate_pct', $sec);
+            $this->assertArrayHasKey('color_band', $sec);
+            $this->assertArrayHasKey('color_hex', $sec);
+            $this->assertArrayNotHasKey('student_id', $sec);
+            $this->assertArrayNotHasKey('user_id', $sec);
+            $this->assertArrayNotHasKey('clearance_token', $sec);
+        }
+
+        // 2. Department Filtering: Scoped to Dept 1 (CCS)
+        $ccsHeatmap = $service->getDepartmentCompletionHeatmap(1);
+        $this->assertSame(1, $ccsHeatmap['department_id']);
+        foreach ($ccsHeatmap['sections'] as $sec) {
+            $this->assertSame(1, $sec['department_id']);
+        }
+
+        // 3. Controller RBAC Scoping for Chair (Dept 1)
+        $chairUser = new class {
+            public int $id = 3;
+            public string $name = 'Chair L. Villanueva';
+            public string $role = 'chair';
+            public int $department_id = 1;
+        };
+
+        // Authorized Chair access to Dept 1
+        $authChairReq = new \Illuminate\Http\Request(['department_id' => 1]);
+        $authChairReq->setUserResolver(fn () => $chairUser);
+        $chairHeatmapRes = $controller->completionHeatmap($authChairReq);
+        $this->assertSame(200, $chairHeatmapRes->getStatusCode());
+        $chairHeatmapData = $chairHeatmapRes->getData(true);
+        $this->assertSame(1, $chairHeatmapData['department_id']);
+
+        // Unauthorized Chair access to Dept 2 -> 403 Forbidden
+        $unauthChairReq = new \Illuminate\Http\Request(['department_id' => 2]);
+        $unauthChairReq->setUserResolver(fn () => $chairUser);
+        $deniedHeatmapRes = $controller->completionHeatmap($unauthChairReq);
+        $this->assertSame(403, $deniedHeatmapRes->getStatusCode());
+        $deniedHeatmapData = $deniedHeatmapRes->getData(true);
+        $this->assertSame('FORBIDDEN_DEPARTMENT_SCOPE', $deniedHeatmapData['code']);
+
+        // 4. Dean Access: College-wide access allowed
+        $deanUser = new class {
+            public int $id = 2;
+            public string $name = 'Dean V. Mendoza';
+            public string $role = 'dean';
+            public ?int $department_id = null;
+        };
+        $deanHeatmapReq = new \Illuminate\Http\Request();
+        $deanHeatmapReq->setUserResolver(fn () => $deanUser);
+        $deanHeatmapRes = $controller->completionHeatmap($deanHeatmapReq);
+        $this->assertSame(200, $deanHeatmapRes->getStatusCode());
+
+        // 5. Comprehensive Accreditation Compliance Audit Matrix (8 checkpoints)
+        $auditReq = new \Illuminate\Http\Request(['department_id' => 1]);
+        $auditRes = $controller->complianceAudit($auditReq);
+        $this->assertSame(200, $auditRes->getStatusCode());
+        $auditData = $auditRes->getData(true);
+
+        $this->assertSame('FULLY_COMPLIANT', $auditData['overall_status']);
+        $this->assertSame('GRADE A (EXCELLENT)', $auditData['accreditation_grade']);
+        $this->assertSame(100.0, $auditData['compliance_percentage']);
+        $this->assertSame(8, $auditData['total_checkpoints']);
+        $this->assertSame(8, $auditData['compliant_checkpoints']);
+        $this->assertStringContainsString('AACCUP', $auditData['accreditation_body']);
+        $this->assertSame('PAMANTASAN NG LUNGSOD NG PASIG', $auditData['institution']);
+
+        $expectedCriterionIds = [
+            'CRIT-01', 'CRIT-02', 'CRIT-03', 'CRIT-04',
+            'CRIT-05', 'CRIT-06', 'CRIT-07', 'CRIT-08',
+        ];
+        $actualCriterionIds = array_column($auditData['checkpoints'], 'criterion_id');
+        $this->assertSame($expectedCriterionIds, $actualCriterionIds);
+
+        foreach ($auditData['checkpoints'] as $cp) {
+            $this->assertSame('COMPLIANT', $cp['status']);
+            $this->assertTrue($cp['verified']);
+            $this->assertNotEmpty($cp['evidence']);
+        }
+    }
 }
