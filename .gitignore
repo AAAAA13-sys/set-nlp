@@ -20,4 +20,6 @@ __pycache__/
 /storage/framework/views/*
 !.gitkeep
 /.playwright-cli/
+/graphify-out/cache/
+/graphify-out/.*
 
