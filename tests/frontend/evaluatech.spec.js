@@ -419,6 +419,8 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (25 Test Groups)', ()
       const adminViewSfc = readResourceFile('views/AdminRosterView.vue');
       assert.ok(adminViewSfc.includes('CSV'));
       assert.ok(adminViewSfc.includes('JSON'));
+      assert.ok(adminViewSfc.includes('admin-vault-audit-panel'));
+      assert.ok(adminViewSfc.includes('evaluation_vault'));
 
       assert.equal(sanitizeCsvCell('=CMD|\' /C calc\'!A0'), '\'=CMD|\' /C calc\'!A0');
       assert.equal(sanitizeCsvCell('+SUM(A1:A10)'), '\'+SUM(A1:A10)');
