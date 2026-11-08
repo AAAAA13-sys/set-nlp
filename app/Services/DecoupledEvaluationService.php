@@ -847,14 +847,24 @@ class DecoupledEvaluationService
                 ? 'BOTH_MEAN_AND_NEGATIVE_SENTIMENT'
                 : ($lowMean ? 'LOW_MEAN_SCORE' : 'HIGH_NEGATIVE_SENTIMENT');
 
+            $facultyName = (string) ($summary['faculty_name'] ?? 'Instructor');
+            $primaryTag = (string) ($summary['primary_tag'] ?? 'Pedagogical Delivery');
+            $actionPlan = $this->analytics->generateInterventionPlan(
+                $facultyName,
+                $meanScore,
+                $negativePct,
+                $primaryTag
+            );
+
             $watchlist[] = [
                 'faculty_id' => (int) ($summary['faculty_id'] ?? 0),
-                'faculty_name' => (string) ($summary['faculty_name'] ?? 'Instructor'),
+                'faculty_name' => $facultyName,
                 'department_id' => isset($summary['department_id']) ? (int) $summary['department_id'] : null,
                 'mean_score' => round($meanScore, 2),
                 'negative_sentiment_pct' => round($negativePct, 1),
-                'primary_tag' => (string) ($summary['primary_tag'] ?? 'Pedagogical Delivery'),
+                'primary_tag' => $primaryTag,
                 'watchlist_reason' => $reason,
+                'action_plan' => $actionPlan,
             ];
         }
 

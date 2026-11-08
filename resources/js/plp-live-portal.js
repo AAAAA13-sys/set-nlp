@@ -127,6 +127,7 @@ const state = {
   nlpLabText: 'Napakalinaw magpaliwanag ni Prof sa complex algorithms at laging may practical code examples sa klase.',
   nlpLabSampleId: 'taglish-delivery',
   securityAuditResult: null,
+  selectedWatchlistInterventionId: null,
 };
 
 function escapeHtml(value) {
@@ -824,7 +825,45 @@ function renderDeanView() {
                       <span>Section: <strong>${escapeHtml(w.course_code)}</strong></span>
                       <span>Negative Sentiment Share: <strong>${w.negative_sentiment_pct}%</strong></span>
                       <span>Representative Extract: <em>"${escapeHtml(w.sample_comment)}"</em></span>
+                      <button type="button" class="btn-secondary btn-xs" style="margin-top:0.35rem;" data-action="toggle-watchlist-action-plan" data-item-id="${w.id}">
+                        ${state.selectedWatchlistInterventionId === w.id ? 'Hide Intervention Plan' : 'Generate Pedagogical Intervention Plan'}
+                      </button>
                     </div>
+                    ${
+                      state.selectedWatchlistInterventionId === w.id
+                        ? `
+                        <div class="intervention-plan-box" style="margin-top:0.75rem;padding:0.85rem;background:#f8faf8;border:1px solid var(--plp-green-800);border-radius:6px;">
+                          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
+                            <span class="eyebrow-badge">PAMANTASAN NG LUNGSOD NG PASIG • Academic Excellence Intervention</span>
+                            <span class="badge-locked" style="background:var(--plp-gold-500);color:#000;">
+                              Urgency: ${w.mean_score < 3.5 && w.negative_sentiment_pct > 35 ? 'HIGH' : 'MODERATE'}
+                            </span>
+                          </div>
+                          <h4 style="margin:0.2rem 0;color:var(--plp-green-950);">
+                            Intervention Strategy: ${escapeHtml(w.faculty_name)} (${escapeHtml(w.primary_tag)})
+                          </h4>
+                          <p style="font-size:0.84rem;margin:0.3rem 0;color:#4b5563;">
+                            Timeline: <strong>Immediate (Weeks 1-4 of following term) with mid-term review</strong> • Target: <strong>Mean &ge; 3.80 / Negative &le; 15%</strong>
+                          </p>
+                          <ul style="font-size:0.84rem;margin:0.4rem 0 0 1.2rem;padding:0;line-height:1.5;">
+                            ${
+                              w.primary_tag.includes('Assessment')
+                                ? `
+                                <li>Establish a strict 14-day turnaround SLA for returning graded quizzes and programming assignments.</li>
+                                <li>Publish explicit analytic rubrics with criterion point distributions prior to major exams.</li>
+                                <li>Conduct structured post-exam feedback review sessions addressing frequently missed concepts.</li>
+                              `
+                                : `
+                                <li>Enforce strict lecture start punctuality and instructional time budgeting across all scheduled blocks.</li>
+                                <li>Align weekly topic pacing directly with the approved PLP departmental course syllabus timeline.</li>
+                                <li>Structure 90-minute lecture blocks into 20-minute active learning segments to sustain student engagement.</li>
+                              `
+                            }
+                          </ul>
+                        </div>
+                      `
+                        : ''
+                    }
                   </li>
                 `,
                   )
@@ -1323,6 +1362,10 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       renderApp();
     } else if (action === 'dean-tab') {
       state.deanActiveTab = actionEl.getAttribute('data-tab');
+      renderApp();
+    } else if (action === 'toggle-watchlist-action-plan') {
+      const itemId = Number(actionEl.getAttribute('data-item-id'));
+      state.selectedWatchlistInterventionId = state.selectedWatchlistInterventionId === itemId ? null : itemId;
       renderApp();
     } else if (action === 'export-csv') {
       const headers = ['CourseCode', 'FacultyName', 'MeanScore', 'NegativeSentimentPct', 'PrimaryTag'];

@@ -948,6 +948,16 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertSame('Faculty Member X', $watchlist[0]['name']);
         $this->assertSame('Faculty Member Y', $watchlist[1]['name']);
         $this->assertSame('Prof. Z (High Neg)', $watchlist[2]['name']);
+
+        // Verify service layer computeDeanWatchlist includes action_plan with intervention strategies
+        $service = new \App\Services\DecoupledEvaluationService($this->pdo);
+        $computedWatchlist = $service->computeDeanWatchlist([
+            ['faculty_id' => 101, 'faculty_name' => 'Faculty Member X', 'mean_score' => 3.10, 'negative_sentiment_pct' => 41.0, 'primary_tag' => 'Assessment & Grading'],
+        ]);
+        $this->assertCount(1, $computedWatchlist);
+        $this->assertArrayHasKey('action_plan', $computedWatchlist[0]);
+        $this->assertSame('HIGH', $computedWatchlist[0]['action_plan']['urgency_level']);
+        $this->assertNotEmpty($computedWatchlist[0]['action_plan']['recommended_interventions']);
     }
 
     /**

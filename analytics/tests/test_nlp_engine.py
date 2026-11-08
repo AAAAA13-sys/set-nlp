@@ -21,6 +21,7 @@ from analytics.engine import (
     classify_pedagogical_domain,
     classify_valence,
     extract_calamancy_features,
+    generate_pedagogical_action_plan,
     summarize_comments,
     synthesize_professor_questionnaires,
 )
@@ -522,6 +523,33 @@ class EvaluaTechNLPEngineTestSuite(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertEqual(resp["submission_count"], 1)
         self.assertEqual(resp["top_descriptors"][0]["word"], "Clear")
+
+    def test_43_generate_pedagogical_action_plan_intervention_strategies(self) -> None:
+        plan = generate_pedagogical_action_plan(
+            faculty_name="Dr. R. Garcia",
+            mean_score=3.10,
+            negative_sentiment_pct=42.5,
+            primary_tag="Assessment & Grading",
+        )
+        self.assertEqual(plan["faculty_name"], "Dr. R. Garcia")
+        self.assertEqual(plan["primary_cluster"], "Assessment & Grading")
+        self.assertEqual(plan["urgency_level"], "HIGH")
+        self.assertTrue(len(plan["recommended_interventions"]) >= 3)
+        self.assertTrue(any("14-day" in act or "rubric" in act.lower() for act in plan["recommended_interventions"]))
+        self.assertEqual(plan["institution"], "PAMANTASAN NG LUNGSOD NG PASIG")
+
+    def test_44_api_intervention_plan_endpoint(self) -> None:
+        payload = {
+            "faculty_name": "Prof. K. Gomez",
+            "mean_score": 3.30,
+            "negative_sentiment_pct": 36.0,
+            "primary_tag": "Classroom Management",
+        }
+        status, resp = handle_request("POST", "/analyze/intervention-plan", payload)
+        self.assertEqual(status, 200)
+        self.assertEqual(resp["faculty_name"], "Prof. K. Gomez")
+        self.assertEqual(resp["primary_cluster"], "Classroom Management")
+        self.assertTrue(len(resp["recommended_interventions"]) >= 3)
 
 
 if __name__ == "__main__":

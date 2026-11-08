@@ -1755,3 +1755,90 @@ def analyze_plp_section_dossier(
         "mean_score": mean_score,
         "watchlist_triggered": watchlist_triggered,
     }
+
+
+def generate_pedagogical_action_plan(
+    faculty_name: str,
+    mean_score: float | int | None,
+    negative_sentiment_pct: float | int | None,
+    primary_tag: str | None = None,
+    sample_comments: Iterable[Any] | None = None,
+) -> dict[str, Any]:
+    """Generate an institutional Pedagogical Action & Intervention Plan for a watchlist instructor.
+
+    Tailored for Pamantasan ng Lungsod ng Pasig (PLP) Deans and Department Chairs.
+    """
+    clean_name = str(faculty_name or "Faculty Member").strip()
+    score = float(mean_score) if mean_score is not None else 3.10
+    neg_pct = float(negative_sentiment_pct) if negative_sentiment_pct is not None else 38.0
+    tag = str(primary_tag or "Pedagogical Delivery").strip()
+    if tag not in FIVE_PEDAGOGICAL_CLUSTERS:
+        tag = "Pedagogical Delivery"
+
+    low_score = score < 3.50
+    high_negative = neg_pct > 35.0
+
+    if low_score and high_negative:
+        trigger_desc = f"Both overall mean score ({score:.2f} < 3.50) and negative sentiment share ({neg_pct:.1f}% > 35.0%) breached institutional thresholds."
+        urgency = "HIGH"
+    elif low_score:
+        trigger_desc = f"Overall mean score ({score:.2f} / 5.00) is below the institutional benchmark of 3.50."
+        urgency = "MODERATE"
+    elif high_negative:
+        trigger_desc = f"Negative qualitative sentiment share ({neg_pct:.1f}%) exceeds the 35.0% intervention threshold."
+        urgency = "MODERATE"
+    else:
+        trigger_desc = f"Instructor performance meets baseline standards (Mean: {score:.2f}, Negative: {neg_pct:.1f}%)."
+        urgency = "STANDARD"
+
+    cluster_strategies = {
+        "Pedagogical Delivery": [
+            "Incorporate step-by-step live coding and practical laboratory demonstrations during dynamic programming lectures.",
+            "Implement periodic formative check-ins (e.g., 5-minute exit tickets) to calibrate pacing to learner comprehension.",
+            "Participate in the PLP College of Computer Studies Peer Teaching Observation & Active Learning Workshop.",
+        ],
+        "Assessment & Grading": [
+            "Establish a strict 14-day turnaround SLA for returning graded quizzes, assignments, and programming deliverables.",
+            "Publish explicit analytic rubrics with criterion point distributions prior to major exams and programming projects.",
+            "Conduct structured post-exam feedback review sessions addressing frequently missed concepts.",
+        ],
+        "Classroom Management": [
+            "Enforce strict session start punctuality and instructional time budgeting across all scheduled lecture and lab hours.",
+            "Align weekly topic pacing directly with the approved PLP departmental course syllabus timeline.",
+            "Structure 90-minute lecture blocks into 20-minute active learning segments to sustain student engagement.",
+        ],
+        "Professional Conduct": [
+            "Maintain an open, empathetic, and professional classroom environment conducive to active student inquiry.",
+            "Ensure uniform, impartial application of grading criteria, consultation availability, and academic policies.",
+            "Participate in the PLP Academic Integrity & Student-Centered Pedagogical Communication Seminar.",
+        ],
+        "Student Support & Mentorship": [
+            "Publish and adhere to regular weekly office consultation hours (minimum 4 scheduled hours per week).",
+            "Establish dedicated advisory sessions for capstone thesis system design, architecture, and code debugging.",
+            "Maintain prompt institutional email responsiveness (within 48 hours on business days).",
+        ],
+    }
+
+    interventions = cluster_strategies.get(tag, cluster_strategies["Pedagogical Delivery"])
+    plan_id = f"PLP-ACT-{re.sub(r'[^A-Z0-9]', '', clean_name.upper())[:8]}-{math.floor(score * 10)}"
+
+    return {
+        "plan_id": plan_id,
+        "institution": PLP_INSTITUTION_NAME,
+        "reference": PLP_REFERENCE_URL,
+        "faculty_name": clean_name,
+        "mean_score": round(score, 2),
+        "negative_sentiment_pct": round(neg_pct, 1),
+        "primary_cluster": tag,
+        "trigger_description": trigger_desc,
+        "urgency_level": urgency,
+        "recommended_interventions": interventions,
+        "timeline": "Immediate (Weeks 1-4 of following academic term) with mid-term milestone review",
+        "target_milestone": {
+            "target_mean_score": 3.80,
+            "target_negative_pct": 15.0,
+            "target_cluster_improvement": f"+0.50 points in {tag}",
+        },
+        "dean_signoff_required": True,
+        "nlp_engine": "calamanCy+VADER",
+    }

@@ -336,6 +336,123 @@ class AnalyticsClientService
     }
 
     /**
+     * Generate an institutional pedagogical action plan for a watchlist instructor.
+     *
+     * @return array<string, mixed>
+     */
+    public function generateInterventionPlan(
+        string $facultyName,
+        float $meanScore,
+        float $negativePct,
+        string $primaryTag
+    ): array {
+        if (!$this->preferLocalFallback && !self::$circuitOpen) {
+            $remoteResult = $this->callFlaskEndpoint('/analyze/intervention-plan', [
+                'faculty_name' => $facultyName,
+                'mean_score' => $meanScore,
+                'negative_sentiment_pct' => $negativePct,
+                'primary_tag' => $primaryTag,
+            ]);
+            if (is_array($remoteResult) && isset($remoteResult['recommended_interventions'])) {
+                return $remoteResult;
+            }
+        }
+
+        return $this->generateInterventionPlanLocally($facultyName, $meanScore, $negativePct, $primaryTag);
+    }
+
+    /**
+     * Deterministic local PHP pedagogical action plan generator fallback.
+     *
+     * @return array<string, mixed>
+     */
+    public function generateInterventionPlanLocally(
+        string $facultyName,
+        float $meanScore,
+        float $negativePct,
+        string $primaryTag
+    ): array {
+        $cleanName = trim($facultyName) !== '' ? trim($facultyName) : 'Faculty Member';
+        $tag = in_array($primaryTag, [
+            self::TAG_PEDAGOGICAL_DELIVERY,
+            self::TAG_ASSESSMENT_GRADING,
+            self::TAG_CLASSROOM_MANAGEMENT,
+            self::TAG_PROFESSIONAL_CONDUCT,
+            self::TAG_STUDENT_SUPPORT_MENTORSHIP,
+        ], true) ? $primaryTag : self::TAG_PEDAGOGICAL_DELIVERY;
+
+        $lowScore = $meanScore < 3.50;
+        $highNeg = $negativePct > 35.0;
+
+        if ($lowScore && $highNeg) {
+            $urgency = 'HIGH';
+            $triggerDesc = "Both overall mean score ({$meanScore} < 3.50) and negative sentiment share ({$negativePct}% > 35.0%) breached institutional thresholds.";
+        } elseif ($lowScore) {
+            $urgency = 'MODERATE';
+            $triggerDesc = "Overall mean score ({$meanScore} / 5.00) is below the institutional benchmark of 3.50.";
+        } elseif ($highNeg) {
+            $urgency = 'MODERATE';
+            $triggerDesc = "Negative qualitative sentiment share ({$negativePct}%) exceeds the 35.0% intervention threshold.";
+        } else {
+            $urgency = 'STANDARD';
+            $triggerDesc = "Instructor performance meets baseline standards (Mean: {$meanScore}, Negative: {$negativePct}%).";
+        }
+
+        $clusterStrategies = [
+            self::TAG_PEDAGOGICAL_DELIVERY => [
+                'Incorporate step-by-step live coding and practical laboratory demonstrations during dynamic programming lectures.',
+                'Implement periodic formative check-ins (e.g., 5-minute exit tickets) to calibrate pacing to learner comprehension.',
+                'Participate in the PLP College of Computer Studies Peer Teaching Observation & Active Learning Workshop.',
+            ],
+            self::TAG_ASSESSMENT_GRADING => [
+                'Establish a strict 14-day turnaround SLA for returning graded quizzes, assignments, and programming deliverables.',
+                'Publish explicit analytic rubrics with criterion point distributions prior to major exams and programming projects.',
+                'Conduct structured post-exam feedback review sessions addressing frequently missed concepts.',
+            ],
+            self::TAG_CLASSROOM_MANAGEMENT => [
+                'Enforce strict session start punctuality and instructional time budgeting across all scheduled lecture and lab hours.',
+                'Align weekly topic pacing directly with the approved PLP departmental course syllabus timeline.',
+                'Structure 90-minute lecture blocks into 20-minute active learning segments to sustain student engagement.',
+            ],
+            self::TAG_PROFESSIONAL_CONDUCT => [
+                'Maintain an open, empathetic, and professional classroom environment conducive to active student inquiry.',
+                'Ensure uniform, impartial application of grading criteria, consultation availability, and academic policies.',
+                'Participate in the PLP Academic Integrity & Student-Centered Pedagogical Communication Seminar.',
+            ],
+            self::TAG_STUDENT_SUPPORT_MENTORSHIP => [
+                'Publish and adhere to regular weekly office consultation hours (minimum 4 scheduled hours per week).',
+                'Establish dedicated advisory sessions for capstone thesis system design, architecture, and code debugging.',
+                'Maintain prompt institutional email responsiveness (within 48 hours on business days).',
+            ],
+        ];
+
+        $interventions = $clusterStrategies[$tag] ?? $clusterStrategies[self::TAG_PEDAGOGICAL_DELIVERY];
+        $slug = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $cleanName) ?: 'FAC', 0, 8));
+        $planId = "PLP-ACT-{$slug}-" . (int) ($meanScore * 10);
+
+        return [
+            'plan_id' => $planId,
+            'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
+            'reference' => 'https://plpasig.edu.ph/',
+            'faculty_name' => $cleanName,
+            'mean_score' => round($meanScore, 2),
+            'negative_sentiment_pct' => round($negativePct, 1),
+            'primary_cluster' => $tag,
+            'trigger_description' => $triggerDesc,
+            'urgency_level' => $urgency,
+            'recommended_interventions' => $interventions,
+            'timeline' => 'Immediate (Weeks 1-4 of following academic term) with mid-term milestone review',
+            'target_milestone' => [
+                'target_mean_score' => 3.80,
+                'target_negative_pct' => 15.0,
+                'target_cluster_improvement' => "+0.50 points in {$tag}",
+            ],
+            'dean_signoff_required' => true,
+            'nlp_engine' => self::NLP_ENGINE_NAME,
+        ];
+    }
+
+    /**
      * Map polarity score P in [-1.0, +1.0] to institutional valence bands.
      */
     public function classifyValence(float $polarity): string

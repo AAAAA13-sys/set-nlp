@@ -29,6 +29,7 @@ from .engine import (
     analyze_comment,
     analyze_plp_section_dossier,
     analyze_professor_questions,
+    generate_pedagogical_action_plan,
     summarize_comments,
     synthesize_professor_questionnaires,
 )
@@ -171,6 +172,24 @@ def handle_request(method: str, path: str, body: Any = None) -> tuple[int, dict[
             professor_questions=professor_questions,
         )
         return 200, dossier
+
+    if clean_path in ("/analyze/intervention-plan", "/analyze/action-plan", "/analyze/intervention"):
+        if http_method != "POST":
+            return 405, {"error": "Method not allowed."}
+        ok, payload = _parse_body(body)
+        if not ok or not isinstance(payload, dict):
+            return 400, {"error": "Invalid JSON object payload."}
+        faculty_name = payload.get("faculty_name", "Faculty Member")
+        mean_score = payload.get("mean_score", 3.10)
+        negative_sentiment_pct = payload.get("negative_sentiment_pct", 38.0)
+        primary_tag = payload.get("primary_tag", "Pedagogical Delivery")
+        plan = generate_pedagogical_action_plan(
+            faculty_name=faculty_name,
+            mean_score=mean_score,
+            negative_sentiment_pct=negative_sentiment_pct,
+            primary_tag=primary_tag,
+        )
+        return 200, plan
 
     return 404, {"error": "Endpoint not found."}
 

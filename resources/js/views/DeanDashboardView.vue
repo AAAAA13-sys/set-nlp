@@ -23,6 +23,40 @@ const susResponses = ref([5, 1, 5, 2, 4, 2, 5, 1, 5, 2]);
 const liveSusResult = computed(() => calculateSusScore(susResponses.value));
 
 const exportedCsvPreview = ref('');
+const selectedInterventionPlan = ref(null);
+
+function toggleInterventionPlan(item) {
+  if (selectedInterventionPlan.value?.faculty_id === item.id) {
+    selectedInterventionPlan.value = null;
+    return;
+  }
+  selectedInterventionPlan.value = {
+    faculty_id: item.id,
+    faculty_name: item.faculty_name,
+    course_code: item.course_code,
+    mean_score: item.mean_score,
+    negative_sentiment_pct: item.negative_sentiment_pct,
+    primary_cluster: item.primary_tag,
+    urgency_level: item.mean_score < 3.50 && item.negative_sentiment_pct > 35.0 ? 'HIGH' : 'MODERATE',
+    recommended_interventions: item.primary_tag.includes('Assessment')
+      ? [
+          'Establish a strict 14-day turnaround SLA for returning graded quizzes and programming assignments.',
+          'Publish explicit analytic rubrics with criterion point distributions prior to major exams.',
+          'Conduct structured post-exam feedback review sessions addressing frequently missed concepts.',
+        ]
+      : [
+          'Enforce strict lecture start punctuality and instructional time budgeting across all scheduled blocks.',
+          'Align topic pacing directly with the approved PLP departmental course syllabus timeline.',
+          'Structure 90-minute lecture blocks into 20-minute active learning segments to sustain student engagement.',
+        ],
+    target_milestone: {
+      target_mean_score: 3.80,
+      target_negative_pct: 15.0,
+      target_cluster_improvement: `+0.50 points in ${item.primary_tag}`,
+    },
+    timeline: 'Immediate (Weeks 1-4 of following academic term) with mid-term milestone review',
+  };
+}
 
 function generateAccreditationCsv() {
   const headers = ['CourseCode', 'FacultyName', 'MeanScore', 'NegativeSentimentPct', 'PrimaryTag'];
@@ -187,6 +221,40 @@ function generateAccreditationCsv() {
               <span>Section: <strong>{{ item.course_code }}</strong></span>
               <span>Negative Sentiment Share: <strong>{{ item.negative_sentiment_pct }}%</strong></span>
               <span>Representative Extract: <em>"{{ item.sample_comment }}"</em></span>
+              <button
+                type="button"
+                class="btn-secondary btn-xs"
+                style="margin-top: 0.35rem;"
+                :data-testid="`toggle-action-plan-${item.id}`"
+                @click="toggleInterventionPlan(item)"
+              >
+                {{ selectedInterventionPlan?.faculty_id === item.id ? 'Hide Intervention Plan' : 'Generate Pedagogical Intervention Plan' }}
+              </button>
+            </div>
+
+            <div
+              v-if="selectedInterventionPlan?.faculty_id === item.id"
+              class="intervention-plan-box"
+              style="margin-top: 0.75rem; padding: 0.85rem; background: #f8faf8; border: 1px solid var(--plp-green-800); border-radius: 6px;"
+              data-testid="dean-intervention-plan"
+            >
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
+                <span class="eyebrow-badge">PAMANTASAN NG LUNGSOD NG PASIG • Academic Excellence Intervention</span>
+                <span class="badge-locked" style="background:var(--plp-gold-500);color:#000;">
+                  Urgency: {{ selectedInterventionPlan.urgency_level }}
+                </span>
+              </div>
+              <h4 style="margin: 0.2rem 0; color: var(--plp-green-950);">
+                Intervention Strategy: {{ selectedInterventionPlan.faculty_name }} ({{ selectedInterventionPlan.primary_cluster }})
+              </h4>
+              <p style="font-size: 0.84rem; margin: 0.3rem 0; color: #4b5563;">
+                Timeline: <strong>{{ selectedInterventionPlan.timeline }}</strong> • Target: <strong>Mean ≥ {{ selectedInterventionPlan.target_milestone.target_mean_score }} / Negative ≤ {{ selectedInterventionPlan.target_milestone.target_negative_pct }}%</strong>
+              </p>
+              <ul style="font-size: 0.84rem; margin: 0.4rem 0 0 1.2rem; padding: 0; line-height: 1.5;">
+                <li v-for="(act, aIdx) in selectedInterventionPlan.recommended_interventions" :key="aIdx">
+                  {{ act }}
+                </li>
+              </ul>
             </div>
           </li>
         </ul>

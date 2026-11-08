@@ -148,6 +148,14 @@ if (str_starts_with($uriPath, '/api/')) {
         $response = (new DeanAnalyticsController($service))->accreditationSummary();
     } elseif ($uriPath === '/api/dean/sus/evaluate' && $method === 'POST') {
         $response = (new DeanAnalyticsController($service))->evaluateLiveSus($request);
+    } elseif ($uriPath === '/api/dean/intervention-plan' && $method === 'POST') {
+        $analytics = new AnalyticsClientService();
+        $fName = (string) ($input['faculty_name'] ?? 'Faculty Member');
+        $mScore = (float) ($input['mean_score'] ?? 3.10);
+        $negPct = (float) ($input['negative_sentiment_pct'] ?? 38.0);
+        $pTag = (string) ($input['primary_tag'] ?? 'Pedagogical Delivery');
+        $plan = $analytics->generateInterventionPlan($fName, $mScore, $negPct, $pTag);
+        $response = new JsonResponse($plan, 200);
     } elseif ($uriPath === '/api/dean/export-csv' && $method === 'POST') {
         $response = (new DeanAnalyticsController($service))->exportCsv($request);
     } elseif ($uriPath === '/api/admin/rosters/import' && $method === 'POST') {
