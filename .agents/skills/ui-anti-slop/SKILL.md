@@ -67,3 +67,4 @@ Scan every view in `resources/js/views/` and component in `resources/js/componen
 - [ ] **Performance**: Fast transitions ($\le 150\text{ ms}$), zero layout shift (CLS = 0).
 - [ ] **Contrast**: WCAG 2.2 AA compliant ($\ge 4.5:1$ for normal text, $\ge 3:1$ for UI components).
 - [ ] **Print Ready**: Clear borders, solid print backgrounds, no page breaks across cards.
+
