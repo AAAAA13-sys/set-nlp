@@ -1,5 +1,7 @@
 <script setup>
-defineProps({
+import { onMounted, onUnmounted } from 'vue';
+
+const props = defineProps({
   visible: {
     type: Boolean,
     default: false,
@@ -15,6 +17,20 @@ defineProps({
 });
 
 const emit = defineEmits(['confirm', 'cancel']);
+
+function handleKeyDown(event) {
+  if (event.key === 'Escape' && props.visible) {
+    emit('cancel');
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeyDown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown);
+});
 </script>
 
 <template>

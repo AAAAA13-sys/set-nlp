@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import {
   CALAMANCY_CONFIG,
   FIVE_LIKERT_CLUSTERS,
@@ -8,7 +8,7 @@ import {
   validateProfessorQuestions,
 } from '../utils/evaluationMath.js';
 
-defineProps({
+const props = defineProps({
   visible: {
     type: Boolean,
     default: true,
@@ -16,6 +16,20 @@ defineProps({
 });
 
 const emit = defineEmits(['close']);
+
+function handleKeyDown(event) {
+  if (event.key === 'Escape' && props.visible) {
+    emit('close');
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeyDown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown);
+});
 
 const sampleNarratives = [
   {

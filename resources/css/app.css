@@ -27,7 +27,7 @@
   --bg-header: #0b4f26;
   --text-primary: #0c2416;
   --text-secondary: #3f5748;
-  --text-muted: #64748b;
+  --text-muted: #475569;
   --border-subtle: #cfe0d4;
   --border-strong: #9ec0a9;
 
@@ -82,6 +82,24 @@ pre {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+/* ==========================================================================
+ * WCAG 2.2 AA Focus Visible & Keyboard Navigation Ergonomics
+ * ========================================================================== */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[role="tab"]:focus-visible,
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.role-preset-btn:focus-visible,
+.likert-radio-label:focus-within {
+  outline: 2.5px solid var(--plp-green-800);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(20, 83, 45, 0.22);
 }
 
 /* ==========================================================================
