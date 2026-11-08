@@ -1310,7 +1310,7 @@ class EvaluaTechBackendSuiteTest extends TestCase
 
         // 5. Verify Dean metrics includes action_plans_summary
         $this->assertArrayHasKey('action_plans_summary', $deanMetrics);
-        $this->assertIsArray($deanMetrics['action_plans_summary']);
+        $this->assertTrue(is_array($deanMetrics['action_plans_summary']));
     }
 
     /**
@@ -1707,7 +1707,7 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertSame(200, $watchlistRes->getStatusCode());
         $watchlistData = $watchlistRes->getData(true);
         $this->assertSame(1, $watchlistData['department_id']);
-        $this->assertIsArray($watchlistData['watchlist']);
+        $this->assertTrue(is_array($watchlistData['watchlist']));
 
         // 5. Chair endorses an action plan for a department faculty member -> 200 OK
         $endorseReq = new \Illuminate\Http\Request([
