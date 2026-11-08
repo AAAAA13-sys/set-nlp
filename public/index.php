@@ -95,6 +95,11 @@ if (str_starts_with($uriPath, '/api/')) {
             $analysis['professor_questionnaire'] = $analytics->analyzeProfessorQuestionnaire($input['professor_questions']);
         }
         $response = new JsonResponse($analysis, 200);
+    } elseif ($uriPath === '/api/nlp/synthesis' && $method === 'POST') {
+        $analytics = new AnalyticsClientService();
+        $items = $input['questionnaires'] ?? (isset($input[0]) ? $input : [$input]);
+        $synthesis = $analytics->synthesizeQuestionnaires(is_array($items) ? $items : []);
+        $response = new JsonResponse($synthesis, 200);
     } elseif ($uriPath === '/api/security/vault-audit' && $method === 'GET') {
         $audit = $service->verifyVaultAnonymity();
         $recentVault = $pdo->query('SELECT id, course_section_id, mean_score, rating_variance, is_straight_lined, dwell_time_seconds, comment_hash, sentiment_polarity, sentiment_valence, pedagogical_tag, recorded_date FROM evaluation_vault ORDER BY rowid DESC LIMIT 5')->fetchAll(\PDO::FETCH_ASSOC);

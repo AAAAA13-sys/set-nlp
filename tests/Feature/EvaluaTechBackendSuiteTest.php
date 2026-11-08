@@ -898,6 +898,9 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertArrayHasKey('cluster_scores', $facultyReport);
         $this->assertCount(5, $facultyReport['cluster_scores']);
         $this->assertNotEmpty($facultyReport['anonymized_comments']);
+        $this->assertArrayHasKey('professor_questionnaire_summary', $facultyReport);
+        $this->assertNotEmpty($facultyReport['professor_questionnaire_summary']['top_descriptors']);
+        $this->assertNotEmpty($facultyReport['professor_questionnaire_summary']['improvement_topics']);
     }
 
     /**

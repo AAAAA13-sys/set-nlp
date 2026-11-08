@@ -216,6 +216,126 @@ class AnalyticsClientService
     }
 
     /**
+     * Synthesize multiple student professor questionnaires across a section.
+     *
+     * @param list<array<string, mixed>> $questionnaires
+     * @return array<string, mixed>
+     */
+    public function synthesizeQuestionnaires(array $questionnaires): array
+    {
+        if (empty($questionnaires)) {
+            return [
+                'submission_count' => 0,
+                'top_descriptors' => [],
+                'improvement_topics' => [],
+                'key_strengths' => [],
+                'key_recommendations' => [],
+                'optional_observations' => [],
+                'nlp_engine' => self::NLP_ENGINE_NAME,
+                'calamancy_model' => self::CALAMANCY_DEFAULT_MODEL,
+                'calamancy_repo' => self::CALAMANCY_REPO_URL,
+            ];
+        }
+
+        if (!$this->preferLocalFallback && !self::$circuitOpen) {
+            $remoteResult = $this->callFlaskEndpoint('/analyze/synthesize', ['questionnaires' => $questionnaires]);
+            if (is_array($remoteResult) && isset($remoteResult['top_descriptors'])) {
+                return $remoteResult;
+            }
+        }
+
+        return $this->synthesizeQuestionnairesLocally($questionnaires);
+    }
+
+    /**
+     * Deterministic local PHP synthesis of professor questionnaires across students.
+     *
+     * @param list<array<string, mixed>> $questionnaires
+     * @return array<string, mixed>
+     */
+    public function synthesizeQuestionnairesLocally(array $questionnaires): array
+    {
+        $wordCounts = [];
+        $improvementTopics = [];
+        $strengths = [];
+        $recommendations = [];
+        $observations = [];
+
+        foreach ($questionnaires as $q) {
+            $rawWords = $q['three_words'] ?? [];
+            if (is_array($rawWords)) {
+                foreach ($rawWords as $w) {
+                    $cleaned = ucfirst(strtolower(trim((string) $w)));
+                    if ($cleaned !== '') {
+                        $wordCounts[$cleaned] = ($wordCounts[$cleaned] ?? 0) + 1;
+                    }
+                }
+            }
+
+            $rawTopics = $q['room_for_improvements'] ?? [];
+            if (is_array($rawTopics)) {
+                foreach ($rawTopics as $t) {
+                    $topicStr = trim((string) (is_array($t) ? ($t['topic'] ?? '') : $t));
+                    if ($topicStr !== '') {
+                        $improvementTopics[] = $topicStr;
+                    }
+                }
+            }
+
+            $str = trim((string) ($q['teaching_strengths'] ?? ''));
+            if ($str !== '') {
+                $strengths[] = $str;
+            }
+
+            $rec = trim((string) ($q['recommendations'] ?? ''));
+            if ($rec !== '') {
+                $recommendations[] = $rec;
+            }
+
+            $obs = trim((string) ($q['additional_observation'] ?? ''));
+            if ($obs !== '') {
+                $observations[] = $obs;
+            }
+        }
+
+        arsort($wordCounts);
+        $topDescriptors = [];
+        foreach ($wordCounts as $w => $cnt) {
+            $nlp = $this->analyzeLocally($w);
+            $topDescriptors[] = [
+                'word' => $w,
+                'count' => $cnt,
+                'polarity' => $nlp['polarity'],
+                'valence' => $nlp['valence'],
+            ];
+        }
+
+        $formattedImprovements = [];
+        foreach ($improvementTopics as $idx => $t) {
+            $nlp = $this->analyzeLocally($t);
+            $formattedImprovements[] = [
+                'sub_item' => chr(97 + ($idx % 26)) . '.',
+                'topic' => $t,
+                'polarity' => $nlp['polarity'],
+                'valence' => $nlp['valence'],
+                'pedagogical_tag' => $nlp['pedagogical_tag'],
+            ];
+        }
+
+        return [
+            'submission_count' => count($questionnaires),
+            'top_descriptors' => $topDescriptors,
+            'improvement_topics' => $formattedImprovements,
+            'key_strengths' => array_values(array_unique($strengths)),
+            'key_recommendations' => array_values(array_unique($recommendations)),
+            'optional_observations' => array_values(array_unique($observations)),
+            'nlp_engine' => self::NLP_ENGINE_NAME,
+            'calamancy_model' => self::CALAMANCY_DEFAULT_MODEL,
+            'calamancy_repo' => self::CALAMANCY_REPO_URL,
+        ];
+    }
+
+    /**
      * Map polarity score P in [-1.0, +1.0] to institutional valence bands.
      */
     public function classifyValence(float $polarity): string

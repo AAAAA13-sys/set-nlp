@@ -1381,6 +1381,147 @@ def analyze_professor_questions(payload: dict[str, Any] | None) -> dict[str, Any
     }
 
 
+def synthesize_professor_questionnaires(
+    questionnaires: Iterable[dict[str, Any]] | None,
+) -> dict[str, Any]:
+    """Synthesize structured Professor Qualitative Questions across multiple student submissions.
+
+    Aggregates:
+      1. Top descriptors from Q1 ('three_words') with counts, lemmas, and polarity.
+      2. Grouped room for improvement topics from Q2 with lettered items ('a.', 'b.', ...)
+         categorized into the 5 pedagogical dimensions.
+      3. Key teaching strengths from Q3.
+      4. Actionable recommendations from Q4.
+      5. Optional observations from Q5 (max 5 questions cap).
+    """
+    if questionnaires is None or isinstance(questionnaires, (str, bytes)):
+        items: list[dict[str, Any]] = []
+    else:
+        try:
+            items = [q for q in questionnaires if isinstance(q, dict)]
+        except TypeError:
+            items = []
+
+    if not items:
+        return {
+            "submission_count": 0,
+            "top_descriptors": [],
+            "improvement_topics": [],
+            "improvement_clusters": {tag: [] for tag in FIVE_PEDAGOGICAL_CLUSTERS},
+            "key_strengths": [],
+            "key_recommendations": [],
+            "optional_observations": [],
+            "nlp_engine": "calamanCy+VADER",
+            "calamancy_repo": CALAMANCY_REPO_URL,
+        }
+
+    word_counts: dict[str, int] = {}
+    improvement_topics_list: list[dict[str, Any]] = []
+    strengths_list: list[dict[str, Any]] = []
+    recommendations_list: list[dict[str, Any]] = []
+    observations_list: list[dict[str, Any]] = []
+
+    for q in items:
+        analysis = analyze_professor_questions(q) if not q.get("nlp_engine") else q
+
+        # 1. Q1 Three Words
+        q1_words = analysis.get("q1_three_words", {}).get("words", [])
+        if not q1_words and isinstance(q.get("three_words"), (list, tuple)):
+            q1_words = [str(w).strip() for w in q["three_words"] if str(w).strip()]
+        for w in q1_words:
+            norm_w = str(w).strip().capitalize()
+            if norm_w:
+                word_counts[norm_w] = word_counts.get(norm_w, 0) + 1
+
+        # 2. Q2 Room for improvements
+        q2_topics = analysis.get("q2_room_for_improvements", {}).get("topics", [])
+        for t in q2_topics:
+            if isinstance(t, dict) and t.get("topic"):
+                improvement_topics_list.append(t)
+
+        # 3. Q3 Teaching strengths
+        q3_text = (
+            analysis.get("q3_teaching_strengths", {}).get("text", "")
+            if isinstance(analysis.get("q3_teaching_strengths"), dict)
+            else str(q.get("teaching_strengths", "")).strip()
+        )
+        if q3_text:
+            strengths_list.append({
+                "text": q3_text,
+                "analysis": analysis.get("q3_teaching_strengths", {}).get("analysis") or analyze_comment(q3_text),
+            })
+
+        # 4. Q4 Recommendations
+        q4_text = (
+            analysis.get("q4_recommendations", {}).get("text", "")
+            if isinstance(analysis.get("q4_recommendations"), dict)
+            else str(q.get("recommendations", "")).strip()
+        )
+        if q4_text:
+            recommendations_list.append({
+                "text": q4_text,
+                "analysis": analysis.get("q4_recommendations", {}).get("analysis") or analyze_comment(q4_text),
+            })
+
+        # 5. Q5 Additional observations
+        q5_block = analysis.get("q5_additional_observation")
+        q5_text = (
+            q5_block.get("text", "")
+            if isinstance(q5_block, dict)
+            else str(q.get("additional_observation", "")).strip()
+        )
+        if q5_text:
+            observations_list.append({
+                "text": q5_text,
+                "analysis": (q5_block.get("analysis") if isinstance(q5_block, dict) else None) or analyze_comment(q5_text),
+            })
+
+    # Build sorted descriptors with lemmas and sentiment
+    sorted_words = sorted(word_counts.items(), key=lambda kv: (-kv[1], kv[0]))
+    top_descriptors = []
+    for word, count in sorted_words:
+        w_analysis = analyze_comment(word)
+        top_descriptors.append({
+            "word": word,
+            "lemma": lemmatize_calamancy_token(word),
+            "count": count,
+            "polarity": w_analysis["polarity"],
+            "valence": w_analysis["valence"],
+        })
+
+    # Cluster improvements by pedagogical tag
+    improvement_clusters: dict[str, list[dict[str, Any]]] = {tag: [] for tag in FIVE_PEDAGOGICAL_CLUSTERS}
+    formatted_improvements: list[dict[str, Any]] = []
+
+    for idx, item in enumerate(improvement_topics_list):
+        tag = item.get("pedagogical_tag", "Pedagogical Delivery")
+        if tag not in improvement_clusters:
+            tag = "Pedagogical Delivery"
+        letter = chr(ord("a") + (idx % 26))
+        entry = {
+            "sub_item": f"{letter}.",
+            "label": f"{letter}. Topic {idx + 1}",
+            "topic": item.get("topic", ""),
+            "polarity": item.get("polarity", 0.0),
+            "valence": item.get("valence", "Neutral"),
+            "pedagogical_tag": tag,
+        }
+        formatted_improvements.append(entry)
+        improvement_clusters[tag].append(entry)
+
+    return {
+        "submission_count": len(items),
+        "top_descriptors": top_descriptors,
+        "improvement_topics": formatted_improvements,
+        "improvement_clusters": improvement_clusters,
+        "key_strengths": strengths_list,
+        "key_recommendations": recommendations_list,
+        "optional_observations": observations_list,
+        "nlp_engine": "calamanCy+VADER",
+        "calamancy_repo": CALAMANCY_REPO_URL,
+    }
+
+
 def analyze_batch(comments: Iterable[Any] | None) -> list[dict[str, Any]]:
     """Analyze a batch of comments and return a list of classification dictionaries."""
     if comments is None or isinstance(comments, (str, bytes)):

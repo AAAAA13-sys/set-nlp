@@ -694,19 +694,43 @@ function renderFacultyView() {
               <div class="metric-overview-grid" style="margin-bottom: 1rem;">
                 <div class="metric-card">
                   <span class="metric-label">1. Top 3 Experience Descriptors</span>
-                  <strong class="metric-value" style="font-size:1rem;">${escapeHtml(state.threeWords.filter(Boolean).join(' • ') || 'Malinaw • Approachable • Organized')}</strong>
+                  <strong class="metric-value" style="font-size:1rem;">
+                    ${
+                      sec.professor_questionnaire_summary?.top_descriptors?.length
+                        ? escapeHtml(sec.professor_questionnaire_summary.top_descriptors.slice(0, 3).map((d) => `${d.word}${d.count > 1 ? ` (×${d.count})` : ''}`).join(' • '))
+                        : escapeHtml(state.threeWords.filter(Boolean).join(' • ') || 'Malinaw • Approachable • Organized')
+                    }
+                  </strong>
                 </div>
                 <div class="metric-card">
                   <span class="metric-label">2. Room for Improvements (a., b.)</span>
-                  <span class="section-subtitle">${state.improvementTopics.filter(Boolean).map((t, i) => `<strong>${String.fromCharCode(97 + i)}.</strong> ${escapeHtml(t)}`).join('<br/>')}</span>
+                  <span class="section-subtitle">
+                    ${
+                      sec.professor_questionnaire_summary?.improvement_topics?.length
+                        ? sec.professor_questionnaire_summary.improvement_topics.slice(0, 2).map((t, i) => `<strong>${escapeHtml(t.sub_item || `${String.fromCharCode(97 + i)}.`)}</strong> ${escapeHtml(t.topic)}`).join('<br/>')
+                        : state.improvementTopics.filter(Boolean).map((t, i) => `<strong>${String.fromCharCode(97 + i)}.</strong> ${escapeHtml(t)}`).join('<br/>')
+                    }
+                  </span>
                 </div>
                 <div class="metric-card">
                   <span class="metric-label">3. Key Teaching Strengths</span>
-                  <span class="section-subtitle">${escapeHtml(state.teachingStrengths)}</span>
+                  <span class="section-subtitle">
+                    ${
+                      sec.professor_questionnaire_summary?.key_strengths?.[0]
+                        ? escapeHtml(sec.professor_questionnaire_summary.key_strengths[0])
+                        : escapeHtml(state.teachingStrengths)
+                    }
+                  </span>
                 </div>
                 <div class="metric-card">
                   <span class="metric-label">4. Actionable Recommendations</span>
-                  <span class="section-subtitle">${escapeHtml(state.courseRecommendations)}</span>
+                  <span class="section-subtitle">
+                    ${
+                      sec.professor_questionnaire_summary?.key_recommendations?.[0]
+                        ? escapeHtml(sec.professor_questionnaire_summary.key_recommendations[0])
+                        : escapeHtml(state.courseRecommendations)
+                    }
+                  </span>
                 </div>
               </div>
               <h4>calamanCy + VADER NLP-Classified Narrative Insights (Zero Student Identifiers)</h4>

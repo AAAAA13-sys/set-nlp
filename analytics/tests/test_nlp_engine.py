@@ -22,6 +22,7 @@ from analytics.engine import (
     classify_valence,
     extract_calamancy_features,
     summarize_comments,
+    synthesize_professor_questionnaires,
 )
 
 
@@ -474,6 +475,53 @@ class EvaluaTechNLPEngineTestSuite(unittest.TestCase):
             server.shutdown()
             server.server_close()
             thread.join(timeout=2)
+
+    def test_41_synthesize_professor_questionnaires_aggregates_descriptors_and_topics(self) -> None:
+        sample_submissions = [
+            {
+                "three_words": ["Malinaw", "Approachable", "Organized"],
+                "room_for_improvements": [
+                    "Faster turnaround time when returning quiz scores",
+                    "More step-by-step live coding walkthroughs",
+                ],
+                "teaching_strengths": "Explains complex algorithms clearly.",
+                "recommendations": "Provide practice problem sets before midterms.",
+            },
+            {
+                "three_words": ["Malinaw", "Pasyente", "Organized"],
+                "room_for_improvements": [
+                    "Need more rubric details on programming projects",
+                ],
+                "teaching_strengths": "Very approachable during consultation hours.",
+                "recommendations": "Post slides in advance.",
+            },
+        ]
+        synthesis = synthesize_professor_questionnaires(sample_submissions)
+        self.assertEqual(synthesis["submission_count"], 2)
+        top_words = {d["word"]: d["count"] for d in synthesis["top_descriptors"]}
+        self.assertEqual(top_words.get("Malinaw"), 2)
+        self.assertEqual(top_words.get("Organized"), 2)
+        self.assertEqual(top_words.get("Approachable"), 1)
+        self.assertTrue(len(synthesis["improvement_topics"]) >= 3)
+        self.assertIn("Assessment & Grading", synthesis["improvement_clusters"])
+        self.assertTrue(len(synthesis["key_strengths"]) == 2)
+        self.assertTrue(len(synthesis["key_recommendations"]) == 2)
+
+    def test_42_api_synthesize_questionnaires_endpoint(self) -> None:
+        payload = {
+            "questionnaires": [
+                {
+                    "three_words": ["Clear", "Helpful", "Engaging"],
+                    "room_for_improvements": ["Return tests faster"],
+                    "teaching_strengths": "Great examples.",
+                    "recommendations": "More group work.",
+                }
+            ]
+        }
+        status, resp = handle_request("POST", "/analyze/synthesize", payload)
+        self.assertEqual(status, 200)
+        self.assertEqual(resp["submission_count"], 1)
+        self.assertEqual(resp["top_descriptors"][0]["word"], "Clear")
 
 
 if __name__ == "__main__":

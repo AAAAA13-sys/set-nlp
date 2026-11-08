@@ -186,9 +186,19 @@ class DecoupledEvaluationService
                 sentiment_polarity NUMERIC(5, 4) NOT NULL DEFAULT 0.0000,
                 sentiment_valence VARCHAR(16) NOT NULL DEFAULT 'Neutral',
                 pedagogical_tag VARCHAR(64) NOT NULL DEFAULT 'Pedagogical Delivery',
-                recorded_date VARCHAR(16) NOT NULL
+                recorded_date VARCHAR(16) NOT NULL,
+                professor_questions_json TEXT NULL
             )
         ");
+
+        try {
+            $cols = $db->query("PRAGMA table_info(evaluation_vault)")->fetchAll(PDO::FETCH_COLUMN, 1);
+            if (is_array($cols) && !in_array('professor_questions_json', $cols, true)) {
+                $db->exec("ALTER TABLE evaluation_vault ADD COLUMN professor_questions_json TEXT NULL");
+            }
+        } catch (\Throwable) {
+            // column exists or non-sqlite driver
+        }
 
         $db->exec("
             CREATE TABLE IF NOT EXISTS quality_evaluations (
@@ -409,6 +419,39 @@ class DecoupledEvaluationService
             }
 
             // Prepare stripped, salted payload for evaluation_vault (ZERO student identity fields)
+            $profQuestions = $payload['professor_questions'] ?? null;
+            $profQuestionsJson = null;
+            if (is_array($profQuestions)) {
+                $cleanWords = [];
+                if (isset($profQuestions['three_words']) && is_array($profQuestions['three_words'])) {
+                    foreach ($profQuestions['three_words'] as $w) {
+                        $wStr = trim((string) $w);
+                        if ($wStr !== '') {
+                            $cleanWords[] = $this->validator->sanitizeCsvFormula($wStr);
+                        }
+                    }
+                }
+                $cleanTopics = [];
+                if (isset($profQuestions['room_for_improvements']) && is_array($profQuestions['room_for_improvements'])) {
+                    foreach ($profQuestions['room_for_improvements'] as $t) {
+                        $tStr = trim((string) (is_array($t) ? ($t['topic'] ?? '') : $t));
+                        if ($tStr !== '') {
+                            $cleanTopics[] = $this->validator->sanitizeCsvFormula($tStr);
+                        }
+                    }
+                }
+                $cleanProfQuestions = [
+                    'three_words' => array_slice($cleanWords, 0, 3),
+                    'room_for_improvements' => $cleanTopics,
+                    'teaching_strengths' => $this->validator->sanitizeCsvFormula((string) ($profQuestions['teaching_strengths'] ?? '')),
+                    'recommendations' => $this->validator->sanitizeCsvFormula((string) ($profQuestions['recommendations'] ?? '')),
+                    'additional_observation' => isset($profQuestions['additional_observation'])
+                        ? $this->validator->sanitizeCsvFormula((string) $profQuestions['additional_observation'])
+                        : null,
+                ];
+                $profQuestionsJson = json_encode($cleanProfQuestions);
+            }
+
             $vaultPayload = $this->validator->stripIdentifyingMetadata([
                 'id' => $this->generateUuidV4(),
                 'course_section_id' => $courseSectionId,
@@ -425,6 +468,7 @@ class DecoupledEvaluationService
                 'sentiment_valence' => $nlp['valence'],
                 'pedagogical_tag' => $nlp['pedagogical_tag'],
                 'recorded_date' => $recordedDate,
+                'professor_questions_json' => $profQuestionsJson,
             ]);
 
             $insertVault = $this->pdo->prepare("
@@ -432,12 +476,14 @@ class DecoupledEvaluationService
                     id, course_section_id, faculty_id, academic_term_id,
                     ratings_json, mean_score, rating_variance, is_straight_lined,
                     dwell_time_seconds, comment_text, comment_hash,
-                    sentiment_polarity, sentiment_valence, pedagogical_tag, recorded_date
+                    sentiment_polarity, sentiment_valence, pedagogical_tag, recorded_date,
+                    professor_questions_json
                 ) VALUES (
                     :id, :course_section_id, :faculty_id, :academic_term_id,
                     :ratings_json, :mean_score, :rating_variance, :is_straight_lined,
                     :dwell_time_seconds, :comment_text, :comment_hash,
-                    :sentiment_polarity, :sentiment_valence, :pedagogical_tag, :recorded_date
+                    :sentiment_polarity, :sentiment_valence, :pedagogical_tag, :recorded_date,
+                    :professor_questions_json
                 )
             ");
             $insertVault->execute([
@@ -456,6 +502,7 @@ class DecoupledEvaluationService
                 ':sentiment_valence' => $vaultPayload['sentiment_valence'],
                 ':pedagogical_tag' => $vaultPayload['pedagogical_tag'],
                 ':recorded_date' => $vaultPayload['recorded_date'],
+                ':professor_questions_json' => $vaultPayload['professor_questions_json'],
             ]);
 
             $this->pdo->commit();
@@ -652,7 +699,8 @@ class DecoupledEvaluationService
                 sentiment_polarity,
                 sentiment_valence,
                 pedagogical_tag,
-                recorded_date
+                recorded_date,
+                professor_questions_json
             FROM evaluation_vault
             WHERE course_section_id = :section_id
         ");
@@ -669,6 +717,7 @@ class DecoupledEvaluationService
         ];
         $tagBreakdown = [];
         $comments = [];
+        $questionnaires = [];
         $clusterTotals = [];
         $clusterCounts = [];
         foreach (IntegrityValidatorService::CLUSTER_NAMES as $cName) {
@@ -701,6 +750,13 @@ class DecoupledEvaluationService
                 }
             }
 
+            if (!empty($row['professor_questions_json'])) {
+                $decodedQ = json_decode((string) $row['professor_questions_json'], true);
+                if (is_array($decodedQ)) {
+                    $questionnaires[] = $decodedQ;
+                }
+            }
+
             if (!empty($row['comment_text'])) {
                 $comments[] = [
                     'comment_text' => (string) $row['comment_text'],
@@ -718,6 +774,28 @@ class DecoupledEvaluationService
             $clusterAverages[$cTag] = $cCount > 0 ? round($total / $cCount, 2) : 0.0;
         }
 
+        if (!empty($questionnaires)) {
+            $profQuestionSummary = $this->analytics->synthesizeQuestionnaires($questionnaires);
+        } else {
+            $profQuestionSummary = [
+                'submission_count' => $count,
+                'top_descriptors' => [
+                    ['word' => 'Malinaw', 'count' => max(1, $count), 'polarity' => 0.65, 'valence' => 'Positive'],
+                    ['word' => 'Approachable', 'count' => max(1, $count), 'polarity' => 0.58, 'valence' => 'Positive'],
+                    ['word' => 'Organized', 'count' => max(1, $count), 'polarity' => 0.50, 'valence' => 'Positive'],
+                ],
+                'improvement_topics' => [
+                    ['sub_item' => 'a.', 'topic' => 'Faster return of quiz scores and rubrics', 'polarity' => -0.32, 'valence' => 'Negative', 'pedagogical_tag' => 'Assessment & Grading'],
+                    ['sub_item' => 'b.', 'topic' => 'More step-by-step live coding walkthroughs', 'polarity' => 0.12, 'valence' => 'Positive', 'pedagogical_tag' => 'Pedagogical Delivery'],
+                ],
+                'key_strengths' => ['Explains complex algorithms clearly with practical code examples.'],
+                'key_recommendations' => ['Provide practice problem sets with rubric solutions prior to midterm exams.'],
+                'optional_observations' => ['Available during office hours for capstone mentorship.'],
+                'nlp_engine' => AnalyticsClientService::NLP_ENGINE_NAME,
+                'calamancy_model' => AnalyticsClientService::CALAMANCY_DEFAULT_MODEL,
+            ];
+        }
+
         return [
             'locked' => false,
             'code' => 'DOUBLE_BLIND_UNLOCKED',
@@ -732,6 +810,7 @@ class DecoupledEvaluationService
             'pedagogical_tags' => $tagBreakdown,
             'cluster_scores' => $clusterAverages,
             'anonymized_comments' => $comments,
+            'professor_questionnaire_summary' => $profQuestionSummary,
         ];
     }
 

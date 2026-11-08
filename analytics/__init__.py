@@ -17,6 +17,7 @@ from .engine import (
     extract_calamancy_features,
     lemmatize_calamancy_token,
     summarize_comments,
+    synthesize_professor_questionnaires,
 )
 
 __all__ = [
@@ -36,4 +37,5 @@ __all__ = [
     "extract_calamancy_features",
     "lemmatize_calamancy_token",
     "summarize_comments",
+    "synthesize_professor_questionnaires",
 ]

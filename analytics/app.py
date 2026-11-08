@@ -30,6 +30,7 @@ from .engine import (
     analyze_plp_section_dossier,
     analyze_professor_questions,
     summarize_comments,
+    synthesize_professor_questionnaires,
 )
 
 try:
@@ -97,15 +98,38 @@ def handle_request(method: str, path: str, body: Any = None) -> tuple[int, dict[
             result["professor_questions"] = analyze_professor_questions(payload["professor_questions"])
         return 200, result
 
-    if clean_path == "/analyze/questionnaire":
+    if clean_path in ("/analyze/questionnaire", "/analyze/questionnaires"):
         if http_method != "POST":
             return 405, {"error": "Method not allowed."}
         ok, payload = _parse_body(body)
-        if not ok or not isinstance(payload, dict):
+        if not ok or payload is None:
             return 400, {"error": "Invalid JSON object payload."}
+        if isinstance(payload, list):
+            synthesis = synthesize_professor_questionnaires(payload)
+            return 200, synthesis
+        if not isinstance(payload, dict):
+            return 400, {"error": "Invalid JSON object payload."}
+        if "questionnaires" in payload and isinstance(payload["questionnaires"], list):
+            synthesis = synthesize_professor_questionnaires(payload["questionnaires"])
+            return 200, synthesis
         analysis = analyze_professor_questions(payload)
         status = 200 if analysis.get("valid", False) or "error_code" not in analysis else 422
         return status, analysis
+
+    if clean_path in ("/analyze/synthesize", "/analyze/questionnaires/synthesize", "/analyze/questionnaire/synthesize"):
+        if http_method != "POST":
+            return 405, {"error": "Method not allowed."}
+        ok, payload = _parse_body(body)
+        if not ok or payload is None:
+            return 400, {"error": "Invalid JSON payload."}
+        if isinstance(payload, list):
+            items = payload
+        elif isinstance(payload, dict):
+            items = payload.get("questionnaires", payload.get("items", [payload]))
+        else:
+            items = []
+        synthesis = synthesize_professor_questionnaires(items)
+        return 200, synthesis
 
     if clean_path == "/analyze/batch":
         if http_method != "POST":

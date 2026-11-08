@@ -34,6 +34,10 @@ class EvaluaTechDemoSeeder extends Seeder
         $now = date('Y-m-d H:i:s');
         $today = date('Y-m-d');
 
+        // Reset clearances and vault to restore canonical state cleanly
+        $this->pdo->exec("DELETE FROM evaluation_clearances");
+        $this->pdo->exec("DELETE FROM evaluation_vault");
+
         // 1. Departments
         $this->pdo->exec("
             INSERT OR IGNORE INTO departments (id, code, name, college_name, created_at, updated_at)

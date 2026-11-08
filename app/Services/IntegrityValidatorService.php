@@ -325,6 +325,14 @@ class IntegrityValidatorService
     }
 
     /**
+     * Neutralize CSV formula injection alias for formula sanitization.
+     */
+    public function sanitizeCsvFormula(string $value): string
+    {
+        return $this->sanitizeCsvCell($value);
+    }
+
+    /**
      * Compute a one-way salted HMAC-SHA256 hash for an anonymized evaluation comment.
      */
     public function computeCommentHash(
