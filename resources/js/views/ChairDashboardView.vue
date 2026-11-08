@@ -200,7 +200,7 @@ function endorseActionPlan(facultyId) {
     </section>
 
     <!-- Department Watchlist Pedagogical Intervention & Chair Review -->
-    <section v-if="departmentWatchlist.length > 0" class="card chair-watchlist-card" style="margin-top:1.25rem;" data-testid="chair-watchlist-card">
+    <section class="card chair-watchlist-card" style="margin-top:1.25rem;" data-testid="chair-watchlist-card">
       <div class="watchlist-header">
         <div>
           <span class="eyebrow-badge" style="background:#fee2e2;color:#991b1b;border-color:#fca5a5;">
@@ -213,45 +213,56 @@ function endorseActionPlan(facultyId) {
         </div>
       </div>
 
-      <div v-for="item in departmentWatchlist" :key="item.id" style="margin-top:1rem;padding:1rem;background:#fffaf0;border:1px solid #feebc8;border-radius:8px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
-          <div>
-            <h4 style="margin:0;font-size:1.05rem;color:#744210;">
-              {{ item.faculty_name }} — {{ item.course_code }} (Mean: {{ item.mean_score.toFixed(2) }} / Negative: {{ item.negative_sentiment_pct.toFixed(1) }}%)
-            </h4>
-            <p style="margin:0.25rem 0 0;font-size:0.85rem;color:#975a16;">
-              Primary Pedagogical Focus: <strong>{{ item.primary_tag }}</strong>
-            </p>
+      <div v-if="departmentWatchlist.length === 0" style="padding: 1.25rem; text-align: center; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; margin-top: 1rem;" data-testid="chair-watchlist-empty">
+        <div style="font-weight: 700; color: #166534; font-size: 0.95rem;">
+          ✓ Department Quality Benchmark Met
+        </div>
+        <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #15803d;">
+          All Computer Science department faculty members currently meet or exceed institutional accreditation standards (Mean ≥ 3.50, Negative Sentiment ≤ 35%). No diagnostic interventions required.
+        </p>
+      </div>
+
+      <div v-else>
+        <div v-for="item in departmentWatchlist" :key="item.id" style="margin-top:1rem;padding:1rem;background:#fffaf0;border:1px solid #feebc8;border-radius:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+            <div>
+              <h4 style="margin:0;font-size:1.05rem;color:#744210;">
+                {{ item.faculty_name }} — {{ item.course_code }} (Mean: {{ item.mean_score.toFixed(2) }} / Negative: {{ item.negative_sentiment_pct.toFixed(1) }}%)
+              </h4>
+              <p style="margin:0.25rem 0 0;font-size:0.85rem;color:#975a16;">
+                Primary Pedagogical Focus: <strong>{{ item.primary_tag }}</strong>
+              </p>
+            </div>
+            <span class="token-chip chip-warn" style="font-size:0.8rem;">
+              {{ planEndorsed[item.id] ? 'CHAIR ENDORSED' : 'PENDING CHAIR REVIEW' }}
+            </span>
           </div>
-          <span class="token-chip chip-warn" style="font-size:0.8rem;">
-            {{ planEndorsed[item.id] ? 'CHAIR ENDORSED' : 'PENDING CHAIR REVIEW' }}
-          </span>
-        </div>
 
-        <div style="margin-top:0.75rem;">
-          <label style="display:block;font-size:0.82rem;font-weight:600;color:#744210;margin-bottom:0.35rem;">
-            Department Chair Intervention Notes &amp; Recommendation to Dean:
-          </label>
-          <textarea
-            v-model="chairNotes[item.id]"
-            rows="2"
-            style="width:100%;padding:0.5rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.85rem;"
-            placeholder="Add chair notes regarding assessment rubrics, lecture punctuality, or syllabus pacing..."
-          ></textarea>
-        </div>
+          <div style="margin-top:0.75rem;">
+            <label style="display:block;font-size:0.82rem;font-weight:600;color:#744210;margin-bottom:0.35rem;">
+              Department Chair Intervention Notes &amp; Recommendation to Dean:
+            </label>
+            <textarea
+              v-model="chairNotes[item.id]"
+              rows="2"
+              style="width:100%;padding:0.5rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.85rem;"
+              placeholder="Add chair notes regarding assessment rubrics, lecture punctuality, or syllabus pacing..."
+            ></textarea>
+          </div>
 
-        <div style="margin-top:0.5rem;display:flex;gap:0.5rem;align-items:center;">
-          <button
-            type="button"
-            class="btn-primary btn-xs"
-            data-testid="chair-endorse-plan-btn"
-            @click="endorseActionPlan(item.id)"
-          >
-            {{ planEndorsed[item.id] ? 'Update Chair Endorsement' : 'Endorse Action Plan to Dean' }}
-          </button>
-          <small v-if="planEndorsed[item.id]" style="color:#059669;font-weight:600;">
-            ✓ Endorsement logged and transmitted to Dean V. Mendoza.
-          </small>
+          <div style="margin-top:0.5rem;display:flex;gap:0.5rem;align-items:center;">
+            <button
+              type="button"
+              class="btn-primary btn-xs"
+              data-testid="chair-endorse-plan-btn"
+              @click="endorseActionPlan(item.id)"
+            >
+              {{ planEndorsed[item.id] ? 'Update Chair Endorsement' : 'Endorse Action Plan to Dean' }}
+            </button>
+            <small v-if="planEndorsed[item.id]" style="color:#059669;font-weight:600;">
+              ✓ Endorsement logged and transmitted to Dean V. Mendoza.
+            </small>
+          </div>
         </div>
       </div>
     </section>

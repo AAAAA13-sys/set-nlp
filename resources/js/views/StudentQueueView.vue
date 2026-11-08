@@ -149,6 +149,16 @@ function completeAllPendingDemo() {
                 </button>
               </td>
             </tr>
+            <tr v-if="!evaluationStore.courses || evaluationStore.courses.length === 0" data-testid="queue-empty-state">
+              <td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                <div style="font-weight: 600; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.25rem;">
+                  No Course Sections Found for Evaluation
+                </div>
+                <p style="margin: 0; font-size: 0.85rem;">
+                  You have no pending faculty evaluations for the active term. Please contact the Office of the University Registrar if you believe this is an error.
+                </p>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>

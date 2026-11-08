@@ -366,7 +366,16 @@ async function downloadQualitativeCsv() {
           </button>
         </div>
 
-        <ul class="watchlist-items">
+        <div v-if="flaggedWatchlist.length === 0" style="padding: 1.5rem; text-align: center; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; margin-top: 1rem;" data-testid="dean-watchlist-empty">
+          <div style="font-weight: 700; color: #166534; font-size: 1rem;">
+            ✓ College-Wide Quality Benchmark Met
+          </div>
+          <p style="margin: 0.35rem 0 0; font-size: 0.85rem; color: #15803d;">
+            All academic department instructors currently meet or exceed institutional quality standards. Zero faculty members trigger the exception threshold (Mean &lt; 3.50 or Negative Sentiment &gt; 35%).
+          </p>
+        </div>
+
+        <ul v-else class="watchlist-items">
           <li
             v-for="item in flaggedWatchlist"
             :key="item.id"

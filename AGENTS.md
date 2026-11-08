@@ -37,7 +37,7 @@ This file is the primary repository entry point and multi-tier engineering guide
 
 ## Specialized agency workers (`.agents/skills/`)
 
-This repository includes **6 specialized workers** adapted from `agency-agents` in `.agents/skills/` alongside workspace rules in `.agents/rules/`:
+This repository includes **7 specialized workers** adapted from `agency-agents` in `.agents/skills/` alongside workspace rules in `.agents/rules/`:
 
 1. **Backend Architect** ([`agency-backend-architect`](.agents/skills/agency-backend-architect/SKILL.md)): Owns Laravel 12 architecture, dual-token cryptographic decoupling (`evaluation_clearances` vs `evaluation_vault`), pessimistic row locking (`SELECT ... FOR UPDATE`), `FT-02` submission idempotency, and double-blind grade-lock state machines.
 2. **Frontend Developer** ([`agency-frontend-developer`](.agents/skills/agency-frontend-developer/SKILL.md)): Owns the Vue.js 3 SPA (`resources/js/`), Pinia state stores, Vue Router role guards, responsive mobile ($375\times812$) and desktop ($1366\times768$) layouts, live 45-second dwell timers, straight-line ($\sigma^2 = 0$) confirmation modals, and digital exam clearance cards.
@@ -45,6 +45,7 @@ This repository includes **6 specialized workers** adapted from `agency-agents` 
 4. **Security Guardian** ([`agency-security-guardian`](.agents/skills/agency-security-guardian/SKILL.md)): Owns zero-knowledge student anonymity verification, metadata/IP stripping before vault persistence, HMAC-SHA256 salted hashes, server-signed dwell token verification, five-role RBAC isolation, and CSV formula injection neutralization.
 5. **QA Reality Checker** ([`agency-qa-reality-checker`](.agents/skills/agency-qa-reality-checker/SKILL.md)): Owns evidence-based certification across the 25 Frontend Vitest DOM groups, 20 Backend PHPUnit tests, 40 Python Pytest tests, 1,000-user Apache JMeter concurrency benchmark ($<248\text{ ms}$ latency, $0\%$ 5xx errors), and ISO/IEC 25010 / SUS (`83.92` Grade A) validation.
 6. **Code Reviewer** ([`agency-code-reviewer`](.agents/skills/agency-code-reviewer/SKILL.md)): Owns cross-tier caller tracing (Laravel API resources $\leftrightarrow$ Vue Pinia stores $\leftrightarrow$ Python JSON payloads), surgical minimal-diff discipline, and regression prevention.
+7. **UI Anti-Slop Specialist** ([`ui-anti-slop`](.agents/skills/ui-anti-slop/SKILL.md)): Owns anti-slop gatekeeping, eliminating generic AI clichés (unprompted purple gradients, lazy card grids, fake badges, missing empty states), and enforcing authentic PLP institutional branding (`#0b4f26` Green, `#eab308` Gold), ergonomic density, and WCAG 2.2 AA accessibility.
 
 ## Done means
 

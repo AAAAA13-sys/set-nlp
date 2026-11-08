@@ -379,6 +379,16 @@ function toggleLock(sectionId, field) {
                 </span>
               </td>
             </tr>
+            <tr v-if="!evaluationStore.sectionLocks || evaluationStore.sectionLocks.length === 0" data-testid="admin-locks-empty">
+              <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem;">
+                  No Course Sections Configured
+                </div>
+                <p style="margin: 0; font-size: 0.85rem;">
+                  Import academic rosters above to populate course section double-blind lock controls.
+                </p>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
