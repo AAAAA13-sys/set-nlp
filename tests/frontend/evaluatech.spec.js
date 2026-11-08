@@ -406,6 +406,10 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (25 Test Groups)', ()
       assert.equal(sample5.pedagogical_tag, 'Student Support & Mentorship');
       assert.equal(sample5.nlp_engine, 'calamanCy+VADER');
       assert.equal(CALAMANCY_CONFIG.repo, 'https://github.com/ljvmiranda921/calamanCy');
+
+      const labModalSfc = readResourceFile('components/PlpAnalyticsLabModal.vue');
+      assert.ok(labModalSfc.includes('plp-nlp-lab-modal'));
+      assert.ok(labModalSfc.includes('CALAMANCY_CONFIG'));
     });
   });
 

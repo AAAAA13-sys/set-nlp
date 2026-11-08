@@ -406,6 +406,31 @@ class EvaluaTechNLPEngineTestSuite(unittest.TestCase):
         self.assertAlmostEqual(data["summary"]["negative_pct"], 66.67, places=2)
         self.assertTrue(data["summary"]["watchlist_flagged"])
 
+        # Verify Pamantasan ng Lungsod ng Pasig (PLP) Section Dossier Endpoint
+        dossier_resp = self.client.post(
+            "/analyze/dossier",
+            json={
+                "comments": [
+                    "Explains complex algorithms very clearly and provides great practical code examples.",
+                    "Takes over a month to return quiz scores and provides no helpful feedback.",
+                ],
+                "ratings": [5, 4, 5, 4, 5] * 5,
+                "professor_questions": {
+                    "three_words": ["Malinaw", "Organisado", "Matulungin"],
+                    "room_for_improvements": ["a. Return quiz feedback faster"],
+                    "teaching_strengths": "Clear algorithm explanations",
+                    "recommendations": "More code walkthroughs",
+                },
+            },
+        )
+        self.assertEqual(dossier_resp.status_code, 200)
+        dossier = dossier_resp.get_json()
+        self.assertEqual(dossier["institution"], "PAMANTASAN NG LUNGSOD NG PASIG")
+        self.assertEqual(dossier["nlp_engine"], "calamanCy+VADER")
+        self.assertIn("cluster_means", dossier)
+        self.assertEqual(len(dossier["cluster_means"]), 5)
+        self.assertTrue(dossier["watchlist_triggered"])  # Negative pct = 50.0% > 35%
+
     def test_38_api_validation_errors_on_malformed_or_missing_payloads(self) -> None:
         status_bad_json, _ = handle_request("POST", "/analyze", "{malformed json")
         self.assertEqual(status_bad_json, 400)

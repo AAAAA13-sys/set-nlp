@@ -888,6 +888,16 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertSame('Pedagogical Delivery', $summary['pedagogical_tag']);
         $this->assertArrayNotHasKey('student_id', $summary);
         $this->assertArrayNotHasKey('submission_key', $summary);
+
+        // Verify service layer getFacultySectionReport() includes 5-cluster scores and anonymity
+        $service = new \App\Services\DecoupledEvaluationService($this->pdo);
+        $facultyReport = $service->getFacultySectionReport(1, 5);
+        $this->assertFalse($facultyReport['locked']);
+        $this->assertSame('DOUBLE_BLIND_UNLOCKED', $facultyReport['code']);
+        $this->assertSame(1, $facultyReport['response_count']);
+        $this->assertArrayHasKey('cluster_scores', $facultyReport);
+        $this->assertCount(5, $facultyReport['cluster_scores']);
+        $this->assertNotEmpty($facultyReport['anonymized_comments']);
     }
 
     /**

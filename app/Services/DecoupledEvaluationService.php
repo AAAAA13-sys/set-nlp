@@ -643,6 +643,7 @@ class DecoupledEvaluationService
 
         $stmt = $this->pdo->prepare("
             SELECT
+                ratings_json,
                 mean_score,
                 rating_variance,
                 is_straight_lined,
@@ -668,6 +669,12 @@ class DecoupledEvaluationService
         ];
         $tagBreakdown = [];
         $comments = [];
+        $clusterTotals = [];
+        $clusterCounts = [];
+        foreach (IntegrityValidatorService::CLUSTER_NAMES as $cName) {
+            $clusterTotals[$cName] = 0.0;
+            $clusterCounts[$cName] = 0;
+        }
 
         foreach ($vaultRows as $row) {
             $meanSum += (float) $row['mean_score'];
@@ -681,6 +688,19 @@ class DecoupledEvaluationService
             $tag = (string) ($row['pedagogical_tag'] ?? 'Pedagogical Delivery');
             $tagBreakdown[$tag] = ($tagBreakdown[$tag] ?? 0) + 1;
 
+            if (!empty($row['ratings_json'])) {
+                $decodedRatings = json_decode((string) $row['ratings_json'], true);
+                if (is_array($decodedRatings)) {
+                    $rowClusterScores = $this->validator->calculateClusterScores($decodedRatings);
+                    foreach ($rowClusterScores as $cTag => $cMean) {
+                        if (isset($clusterTotals[$cTag]) && $cMean > 0) {
+                            $clusterTotals[$cTag] += $cMean;
+                            $clusterCounts[$cTag]++;
+                        }
+                    }
+                }
+            }
+
             if (!empty($row['comment_text'])) {
                 $comments[] = [
                     'comment_text' => (string) $row['comment_text'],
@@ -690,6 +710,12 @@ class DecoupledEvaluationService
                     'recorded_date' => (string) $row['recorded_date'],
                 ];
             }
+        }
+
+        $clusterAverages = [];
+        foreach ($clusterTotals as $cTag => $total) {
+            $cCount = $clusterCounts[$cTag];
+            $clusterAverages[$cTag] = $cCount > 0 ? round($total / $cCount, 2) : 0.0;
         }
 
         return [
@@ -704,6 +730,7 @@ class DecoupledEvaluationService
             'straight_lined_count' => $straightLinedCount,
             'sentiment_distribution' => $sentimentCounts,
             'pedagogical_tags' => $tagBreakdown,
+            'cluster_scores' => $clusterAverages,
             'anonymized_comments' => $comments,
         ];
     }
