@@ -237,6 +237,24 @@ class DecoupledEvaluationService
                 updated_at VARCHAR(32) NOT NULL
             )
         ");
+
+        $db->exec("
+            CREATE TABLE IF NOT EXISTS evaluation_window_configs (
+                id {$autoIncrement},
+                academic_term_id INTEGER NOT NULL UNIQUE,
+                status VARCHAR(24) NOT NULL DEFAULT 'OPEN',
+                min_dwell_seconds INTEGER NOT NULL DEFAULT 45,
+                straight_line_variance_threshold NUMERIC(5, 4) NOT NULL DEFAULT 0.0000,
+                watchlist_mean_threshold NUMERIC(4, 2) NOT NULL DEFAULT 3.50,
+                watchlist_negative_sentiment_pct NUMERIC(5, 2) NOT NULL DEFAULT 35.00,
+                announcement_message TEXT NULL,
+                starts_at VARCHAR(32) NULL,
+                ends_at VARCHAR(32) NULL,
+                updated_by_user_id INTEGER NULL,
+                created_at VARCHAR(32) NOT NULL,
+                updated_at VARCHAR(32) NOT NULL
+            )
+        ");
     }
 
     /**
@@ -307,16 +325,36 @@ class DecoupledEvaluationService
         }
         $clusterScores = $this->validator->calculateClusterScores($ratings);
 
-        // 3. Speed-Run Guard (< 45 seconds for 20 items)
-        if (!$this->validator->validateDwellTime($dwellSeconds, count($ratings))) {
+        // Resolve section metadata (faculty_id, academic_term_id) early
+        $section = $this->findSectionById($courseSectionId);
+        $facultyId = (int) ($payload['faculty_id'] ?? ($section['faculty_id'] ?? 1));
+        $academicTermId = (int) ($payload['academic_term_id'] ?? ($section['academic_term_id'] ?? 1));
+
+        // Window status check (SOP 1 / Period Control)
+        $window = $this->getEvaluationWindow($academicTermId);
+        if ($window['status'] !== 'OPEN' || !$window['evaluation_open']) {
+            return [
+                'accepted' => false,
+                'status' => 'REJECTED',
+                'code' => 'EVALUATION_WINDOW_CLOSED',
+                'http_status' => 422,
+                'window_status' => $window['status'],
+                'academic_term_id' => $academicTermId,
+                'message' => 'The student evaluation window is currently closed or suspended for this academic term.',
+            ];
+        }
+
+        // 3. Speed-Run Guard (< 45 seconds for 20 items, or configurable min_dwell_seconds)
+        $minRequiredDwell = (int) ($window['min_dwell_seconds'] ?? IntegrityValidatorService::MIN_DWELL_SECONDS_20_ITEMS);
+        if ($dwellSeconds < $minRequiredDwell || !$this->validator->validateDwellTime($dwellSeconds, count($ratings))) {
             return [
                 'accepted' => false,
                 'status' => 'REJECTED',
                 'code' => 'SPEED_RUN_DETECTED',
                 'http_status' => 422,
                 'dwell_time_seconds' => $dwellSeconds,
-                'minimum_required_seconds' => IntegrityValidatorService::MIN_DWELL_SECONDS_20_ITEMS,
-                'message' => 'Minimum 45-second interaction dwell time is required to ensure thoughtful evaluation.',
+                'minimum_required_seconds' => $minRequiredDwell,
+                'message' => "Minimum {$minRequiredDwell}-second interaction dwell time is required to ensure thoughtful evaluation.",
             ];
         }
 
@@ -326,7 +364,7 @@ class DecoupledEvaluationService
                 $studentId,
                 $courseSectionId,
                 $this->appSecret,
-                IntegrityValidatorService::MIN_DWELL_SECONDS_20_ITEMS
+                $minRequiredDwell
             );
             if (!$tokenValid) {
                 return [
@@ -339,10 +377,11 @@ class DecoupledEvaluationService
             }
         }
 
-        // 4. Straight-Line / Zero-Variance Guard (\sigma^2 = 0)
+        // 4. Straight-Line / Zero-Variance Guard (\sigma^2 <= straight_line_variance_threshold)
+        $varianceThreshold = (float) ($window['straight_line_variance_threshold'] ?? 0.0);
         $meanScore = $this->validator->calculateMean($ratings);
         $ratingVariance = $this->validator->calculateVariance($ratings);
-        $isStraightLined = ($ratingVariance === 0.0);
+        $isStraightLined = ($ratingVariance <= $varianceThreshold);
 
         if ($isStraightLined && !$confirmUniform) {
             return [
@@ -356,11 +395,6 @@ class DecoupledEvaluationService
                 'message' => 'Uniform Likert ratings detected (variance = 0.0). Please confirm if this uniform rating is intentional.',
             ];
         }
-
-        // Resolve section metadata (faculty_id, academic_term_id)
-        $section = $this->findSectionById($courseSectionId);
-        $facultyId = (int) ($payload['faculty_id'] ?? ($section['faculty_id'] ?? 1));
-        $academicTermId = (int) ($payload['academic_term_id'] ?? ($section['academic_term_id'] ?? 1));
 
         // 5. NLP Sentiment & Pedagogical Classification (with bounded circuit-breaker fallback)
         $nlp = $this->analytics->analyzeComment($commentText);
@@ -1407,6 +1441,181 @@ class DecoupledEvaluationService
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return is_array($row) ? $row : null;
+    }
+
+    /**
+     * Retrieve the evaluation window and period control configuration.
+     *
+     * @return array<string, mixed>
+     */
+    public function getEvaluationWindow(?int $termId = null): array
+    {
+        $term = null;
+        if ($termId !== null && $termId > 0) {
+            $stmt = $this->pdo->prepare('SELECT * FROM academic_terms WHERE id = :id LIMIT 1');
+            $stmt->execute([':id' => $termId]);
+            $term = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+
+        if (!is_array($term)) {
+            $term = $this->pdo->query('SELECT * FROM academic_terms WHERE is_active = 1 LIMIT 1')->fetch(PDO::FETCH_ASSOC);
+        }
+
+        if (!is_array($term)) {
+            $term = $this->pdo->query('SELECT * FROM academic_terms ORDER BY id ASC LIMIT 1')->fetch(PDO::FETCH_ASSOC);
+        }
+
+        $resolvedTermId = is_array($term) ? (int) $term['id'] : 1;
+        $termCode = is_array($term) ? (string) ($term['code'] ?? 'FALL-2026') : 'FALL-2026';
+        $termName = is_array($term) ? (string) ($term['name'] ?? 'Fall 2026') : 'Fall 2026';
+        $academicYear = is_array($term) ? (string) ($term['academic_year'] ?? '2026-2027') : '2026-2027';
+        $isActive = is_array($term) ? (bool) ($term['is_active'] ?? 1) : true;
+        $evalOpen = is_array($term) ? (bool) ($term['evaluation_open'] ?? 1) : true;
+
+        $stmtCfg = $this->pdo->prepare('SELECT * FROM evaluation_window_configs WHERE academic_term_id = :term_id LIMIT 1');
+        $stmtCfg->execute([':term_id' => $resolvedTermId]);
+        $config = $stmtCfg->fetch(PDO::FETCH_ASSOC);
+
+        if (!is_array($config)) {
+            $now = date('Y-m-d H:i:s');
+            try {
+                $stmtIns = $this->pdo->prepare('
+                    INSERT INTO evaluation_window_configs (
+                        academic_term_id, status, min_dwell_seconds, straight_line_variance_threshold,
+                        watchlist_mean_threshold, watchlist_negative_sentiment_pct, announcement_message,
+                        created_at, updated_at
+                    ) VALUES (
+                        :term_id, :status, :min_dwell, :variance_thresh, :mean_thresh, :neg_pct, :announcement, :created, :updated
+                    )
+                ');
+                $stmtIns->execute([
+                    ':term_id' => $resolvedTermId,
+                    ':status' => $evalOpen ? 'OPEN' : 'CLOSED',
+                    ':min_dwell' => 45,
+                    ':variance_thresh' => 0.0,
+                    ':mean_thresh' => self::WATCHLIST_MIN_MEAN_SCORE,
+                    ':neg_pct' => self::WATCHLIST_MAX_NEGATIVE_PCT,
+                    ':announcement' => 'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active.',
+                    ':created' => $now,
+                    ':updated' => $now,
+                ]);
+
+                $stmtCfg->execute([':term_id' => $resolvedTermId]);
+                $config = $stmtCfg->fetch(PDO::FETCH_ASSOC);
+            } catch (\Throwable) {
+                // Table might not exist or insert collision
+            }
+        }
+
+        $status = is_array($config) ? (string) ($config['status'] ?? 'OPEN') : 'OPEN';
+        $effectiveOpen = ($status === 'OPEN') && $evalOpen;
+
+        return [
+            'academic_term_id' => $resolvedTermId,
+            'term_code' => $termCode,
+            'term_name' => $termName,
+            'academic_year' => $academicYear,
+            'is_active' => $isActive,
+            'evaluation_open' => $effectiveOpen,
+            'status' => $status,
+            'min_dwell_seconds' => is_array($config) ? (int) ($config['min_dwell_seconds'] ?? 45) : 45,
+            'straight_line_variance_threshold' => is_array($config) ? (float) ($config['straight_line_variance_threshold'] ?? 0.0) : 0.0,
+            'watchlist_mean_threshold' => is_array($config) ? (float) ($config['watchlist_mean_threshold'] ?? self::WATCHLIST_MIN_MEAN_SCORE) : self::WATCHLIST_MIN_MEAN_SCORE,
+            'watchlist_negative_sentiment_pct' => is_array($config) ? (float) ($config['watchlist_negative_sentiment_pct'] ?? self::WATCHLIST_MAX_NEGATIVE_PCT) : self::WATCHLIST_MAX_NEGATIVE_PCT,
+            'announcement_message' => is_array($config) ? (string) ($config['announcement_message'] ?? '') : 'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active.',
+            'starts_at' => is_array($config) ? ($config['starts_at'] ?? null) : null,
+            'ends_at' => is_array($config) ? ($config['ends_at'] ?? null) : null,
+            'updated_at' => is_array($config) ? ($config['updated_at'] ?? null) : null,
+        ];
+    }
+
+    /**
+     * Update the evaluation window and period control configuration.
+     *
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    public function updateEvaluationWindow(array $data, ?int $userId = null): array
+    {
+        $termId = (int) ($data['academic_term_id'] ?? 1);
+        $status = strtoupper(trim((string) ($data['status'] ?? 'OPEN')));
+        if (!in_array($status, ['OPEN', 'SUSPENDED', 'CLOSED'], true)) {
+            $status = 'OPEN';
+        }
+
+        $minDwell = isset($data['min_dwell_seconds']) ? max(0, min(300, (int) $data['min_dwell_seconds'])) : 45;
+        $varianceThresh = isset($data['straight_line_variance_threshold']) ? max(0.0, min(1.0, (float) $data['straight_line_variance_threshold'])) : 0.0;
+        $meanThresh = isset($data['watchlist_mean_threshold']) ? max(1.0, min(5.0, (float) $data['watchlist_mean_threshold'])) : self::WATCHLIST_MIN_MEAN_SCORE;
+        $negPctThresh = isset($data['watchlist_negative_sentiment_pct']) ? max(0.0, min(100.0, (float) $data['watchlist_negative_sentiment_pct'])) : self::WATCHLIST_MAX_NEGATIVE_PCT;
+        $announcement = isset($data['announcement_message']) ? trim((string) $data['announcement_message']) : null;
+        $now = date('Y-m-d H:i:s');
+
+        // Check if config exists
+        $stmtChk = $this->pdo->prepare('SELECT id FROM evaluation_window_configs WHERE academic_term_id = :term_id LIMIT 1');
+        $stmtChk->execute([':term_id' => $termId]);
+        $exists = $stmtChk->fetchColumn();
+
+        if ($exists) {
+            $stmtUpd = $this->pdo->prepare('
+                UPDATE evaluation_window_configs
+                SET status = :status,
+                    min_dwell_seconds = :min_dwell,
+                    straight_line_variance_threshold = :variance_thresh,
+                    watchlist_mean_threshold = :mean_thresh,
+                    watchlist_negative_sentiment_pct = :neg_pct,
+                    announcement_message = COALESCE(:announcement, announcement_message),
+                    updated_by_user_id = :user_id,
+                    updated_at = :updated_at
+                WHERE academic_term_id = :term_id
+            ');
+            $stmtUpd->execute([
+                ':status' => $status,
+                ':min_dwell' => $minDwell,
+                ':variance_thresh' => $varianceThresh,
+                ':mean_thresh' => $meanThresh,
+                ':neg_pct' => $negPctThresh,
+                ':announcement' => $announcement,
+                ':user_id' => $userId,
+                ':updated_at' => $now,
+                ':term_id' => $termId,
+            ]);
+        } else {
+            $stmtIns = $this->pdo->prepare('
+                INSERT INTO evaluation_window_configs (
+                    academic_term_id, status, min_dwell_seconds, straight_line_variance_threshold,
+                    watchlist_mean_threshold, watchlist_negative_sentiment_pct, announcement_message,
+                    updated_by_user_id, created_at, updated_at
+                ) VALUES (
+                    :term_id, :status, :min_dwell, :variance_thresh, :mean_thresh, :neg_pct, :announcement, :user_id, :created_at, :updated_at
+                )
+            ');
+            $stmtIns->execute([
+                ':term_id' => $termId,
+                ':status' => $status,
+                ':min_dwell' => $minDwell,
+                ':variance_thresh' => $varianceThresh,
+                ':mean_thresh' => $meanThresh,
+                ':neg_pct' => $negPctThresh,
+                ':announcement' => $announcement ?? 'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active.',
+                ':user_id' => $userId,
+                ':created_at' => $now,
+                ':updated_at' => $now,
+            ]);
+        }
+
+        // Also synchronize academic_terms.evaluation_open flag
+        try {
+            $evalOpenVal = ($status === 'OPEN') ? 1 : 0;
+            $stmtTerm = $this->pdo->prepare('UPDATE academic_terms SET evaluation_open = :open_val WHERE id = :id');
+            $stmtTerm->execute([
+                ':open_val' => $evalOpenVal,
+                ':id' => $termId,
+            ]);
+        } catch (\Throwable) {
+            // non-fatal if column or table differs in mock tests
+        }
+
+        return $this->getEvaluationWindow($termId);
     }
 
     private function generateUuidV4(): string

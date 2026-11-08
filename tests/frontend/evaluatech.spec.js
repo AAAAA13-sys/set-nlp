@@ -36,7 +36,7 @@ function readResourceFile(relativePath) {
   return fs.readFileSync(path.join(JS_DIR, relativePath), 'utf8');
 }
 
-describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (28 Test Groups)', () => {
+describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (29 Test Groups)', () => {
   // 1. Header portal branding & active term display
   describe('Group 01: Header portal branding & active term display (NavbarHeader.vue — Pamantasan ng Lungsod ng Pasig)', () => {
     it('renders PAMANTASAN NG LUNGSOD NG PASIG branding, PLP Green/Gold theme, active term, logged-in student ID 2024-10892, and clearance status badge', () => {
@@ -592,6 +592,53 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (28 Test Groups)', ()
       // 4. Verify institutional excellence metadata
       assert.ok(facultyViewSfc.includes('PAMANTASAN NG LUNGSOD NG PASIG • Continuous Pedagogical Improvement'));
       assert.ok(facultyViewSfc.includes('Dean Verification &amp; Sign-off Notes:'));
+    });
+  });
+
+  // 29. Admin Evaluation Window & Parameter Tuning Console (SOP 1 / SOP 2)
+  describe('Group 29: Admin Evaluation Window & Parameter Tuning Console', () => {
+    it('renders evaluation window card, status transition buttons, dynamic threshold inputs, and submission block guard', () => {
+      const adminViewSfc = readResourceFile('views/AdminRosterView.vue');
+      const studentQueueSfc = readResourceFile('views/StudentQueueView.vue');
+      const evaluationStoreCode = readResourceFile('stores/evaluation.js');
+
+      // 1. Verify AdminRosterView elements
+      assert.ok(adminViewSfc.includes('data-testid="admin-evaluation-window-card"'));
+      assert.ok(adminViewSfc.includes('data-testid="admin-window-status-badge"'));
+      assert.ok(adminViewSfc.includes('data-testid="btn-set-window-open"'));
+      assert.ok(adminViewSfc.includes('data-testid="btn-set-window-suspended"'));
+      assert.ok(adminViewSfc.includes('data-testid="btn-set-window-closed"'));
+      assert.ok(adminViewSfc.includes('data-testid="admin-dwell-input"'));
+      assert.ok(adminViewSfc.includes('data-testid="admin-variance-input"'));
+      assert.ok(adminViewSfc.includes('data-testid="admin-watchlist-mean-input"'));
+      assert.ok(adminViewSfc.includes('data-testid="admin-watchlist-neg-input"'));
+      assert.ok(adminViewSfc.includes('data-testid="admin-announcement-input"'));
+      assert.ok(adminViewSfc.includes('data-testid="save-evaluation-window-btn"'));
+      assert.ok(adminViewSfc.includes('data-testid="evaluation-window-status-msg"'));
+
+      // 2. Verify StudentQueueView announcement & window alert elements
+      assert.ok(studentQueueSfc.includes('data-testid="student-window-announcement"'));
+      assert.ok(studentQueueSfc.includes('data-testid="student-window-status-alert"'));
+
+      // 3. Verify Pinia evaluation store window state and actions
+      assert.ok(evaluationStoreCode.includes('evaluationWindow'));
+      assert.ok(evaluationStoreCode.includes('fetchEvaluationWindow'));
+      assert.ok(evaluationStoreCode.includes('updateEvaluationWindowConfig'));
+      assert.ok(evaluationStoreCode.includes('setEvaluationWindowStatus'));
+      assert.ok(evaluationStoreCode.includes('EVALUATION_WINDOW_CLOSED'));
+
+      // 4. Verify dynamic threshold evaluations via pure math domain functions
+      // Speed-run dwell threshold tuning
+      assert.equal(isDwellTimeValid(40, 20, 45), false);
+      assert.equal(isDwellTimeValid(50, 20, 45), true);
+      assert.equal(isDwellTimeValid(50, 20, 60), false); // Under customized 60s window threshold
+      assert.equal(isDwellTimeValid(65, 20, 60), true);
+
+      // Dean Watchlist cutoff parameter tuning
+      assert.equal(evaluateWatchlistFlag(3.55, 20.0, 3.5, 35.0), false);
+      assert.equal(evaluateWatchlistFlag(3.55, 20.0, 3.6, 35.0), true); // Triggered under tightened 3.60 threshold
+      assert.equal(evaluateWatchlistFlag(4.1, 32.0, 3.5, 35.0), false);
+      assert.equal(evaluateWatchlistFlag(4.1, 32.0, 3.5, 30.0), true); // Triggered under tightened 30% negative threshold
     });
   });
 });

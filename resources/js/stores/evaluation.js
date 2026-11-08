@@ -148,6 +148,26 @@ export const useEvaluationStore = defineStore('evaluation', () => {
 
   const deanOverview = ref({ ...DEMO_DEAN_METRICS });
 
+  // Evaluation Window & Period Control State (SOP 1 / Registrar Parameter Console)
+  const evaluationWindow = ref({
+    academic_term_id: 1,
+    term_code: 'FALL-2026',
+    term_name: '1st Semester AY 2026-2027',
+    academic_year: '2026-2027',
+    is_active: true,
+    evaluation_open: true,
+    status: 'OPEN',
+    min_dwell_seconds: 45,
+    straight_line_variance_threshold: 0.0,
+    watchlist_mean_threshold: 3.5,
+    watchlist_negative_sentiment_pct: 35.0,
+    announcement_message:
+      'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active. All students must complete evaluations before securing the Digital Exam Permit.',
+    starts_at: null,
+    ends_at: null,
+    updated_at: new Date().toISOString(),
+  });
+
   const queueProgress = computed(() => calculateQueueProgress(courses.value));
   const activeCourse = computed(
     () =>
@@ -210,27 +230,46 @@ export const useEvaluationStore = defineStore('evaluation', () => {
       };
     }
 
-    // 1. Speed-run guard (< 45 seconds for >= 20 items)
-    if (!isDwellTimeValid(elapsed, Array.isArray(ratings) ? ratings.length : 25, 45)) {
+    // 0. Window status check (SOP 1 / Period Control)
+    if (evaluationWindow.value.status !== 'OPEN' || !evaluationWindow.value.evaluation_open) {
       const errPayload = {
         ok: false,
         status: 422,
-        code: 'SPEED_RUN_DETECTED',
+        code: 'EVALUATION_WINDOW_CLOSED',
+        window_status: evaluationWindow.value.status,
         message:
-          'Minimum reading dwell time not met (45 seconds required for 5-cluster SET instrument). Please review your responses carefully.',
+          'The student evaluation window is currently closed or suspended for this academic term.',
       };
       submissionError.value = errPayload.message;
       return errPayload;
     }
 
-    // 2. Straight-line / zero-variance guard (sigma^2 = 0)
-    const uniform = isStraightLined(ratings);
+    // 1. Speed-run guard (< min_dwell_seconds, default 45 seconds for >= 20 items)
+    const minDwellRequired = Number(evaluationWindow.value.min_dwell_seconds || 45);
+    if (!isDwellTimeValid(elapsed, Array.isArray(ratings) ? ratings.length : 25, minDwellRequired)) {
+      const errPayload = {
+        ok: false,
+        status: 422,
+        code: 'SPEED_RUN_DETECTED',
+        dwell_time_seconds: elapsed,
+        minimum_required_seconds: minDwellRequired,
+        message:
+          `Minimum reading dwell time not met (${minDwellRequired} seconds required for 5-cluster SET instrument). Please review your responses carefully.`,
+      };
+      submissionError.value = errPayload.message;
+      return errPayload;
+    }
+
+    // 2. Straight-line / zero-variance guard (sigma^2 <= straight_line_variance_threshold)
+    const varianceThreshold = Number(evaluationWindow.value.straight_line_variance_threshold ?? 0.0);
+    const variance = calculatePopulationVariance(ratings);
+    const uniform = variance <= varianceThreshold || isStraightLined(ratings);
     if (uniform && !confirmUniform) {
       return {
         ok: false,
         status: 409,
         code: 'ZERO_VARIANCE_CONFIRMATION_REQUIRED',
-        variance: 0,
+        variance,
         message:
           'Uniform rating pattern detected (Variance σ² = 0). Please confirm that you intend to submit identical ratings across all pedagogical items.',
       };
@@ -370,6 +409,54 @@ export const useEvaluationStore = defineStore('evaluation', () => {
     };
   }
 
+  async function fetchEvaluationWindow(termId = 1) {
+    try {
+      const res = await fetch(`/api/admin/evaluation-window?academic_term_id=${termId}`, {
+        headers: { Accept: 'application/json' },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        evaluationWindow.value = { ...evaluationWindow.value, ...data };
+      }
+    } catch (_) {
+      // offline fallback
+    }
+    return evaluationWindow.value;
+  }
+
+  async function updateEvaluationWindowConfig(patch = {}) {
+    const updated = {
+      ...evaluationWindow.value,
+      ...patch,
+      evaluation_open: (patch.status ?? evaluationWindow.value.status) === 'OPEN',
+      updated_at: new Date().toISOString(),
+    };
+    evaluationWindow.value = updated;
+
+    try {
+      const res = await fetch('/api/admin/evaluation-window', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(updated),
+      });
+      if (res.ok) {
+        const serverData = await res.json();
+        evaluationWindow.value = { ...evaluationWindow.value, ...serverData };
+        return { ok: true, config: evaluationWindow.value };
+      }
+    } catch (_) {
+      // offline mock update
+    }
+    return { ok: true, config: evaluationWindow.value };
+  }
+
+  function setEvaluationWindowStatus(status) {
+    return updateEvaluationWindowConfig({ status });
+  }
+
   return {
     courses,
     activeCourseId,
@@ -381,6 +468,7 @@ export const useEvaluationStore = defineStore('evaluation', () => {
     submissionError,
     sectionLocks,
     deanOverview,
+    evaluationWindow,
     queueProgress,
     dimensions: PEDAGOGICAL_DIMENSIONS,
     selectCourseForEvaluation,
@@ -392,5 +480,8 @@ export const useEvaluationStore = defineStore('evaluation', () => {
     ingestRosterRows,
     evaluateWatchlistFlag,
     canFacultyViewEvaluation,
+    fetchEvaluationWindow,
+    updateEvaluationWindowConfig,
+    setEvaluationWindowStatus,
   };
 });

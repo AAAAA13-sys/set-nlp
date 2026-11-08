@@ -111,4 +111,35 @@ class AdminRosterController extends Controller
             'double_blind_unlocked' => $this->evaluationService->canFacultyViewSection($gradesSubmitted, $lockState),
         ], 200);
     }
+
+    public function getEvaluationWindow(Request $request): JsonResponse
+    {
+        $termId = $request->input('academic_term_id') !== null ? (int) $request->input('academic_term_id') : null;
+        $window = $this->evaluationService->getEvaluationWindow($termId);
+
+        return new JsonResponse($window, 200);
+    }
+
+    public function updateEvaluationWindow(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        if ($user !== null) {
+            $role = is_string($user->role ?? null)
+                ? $user->role
+                : ($user->role instanceof UserRole ? $user->role->value : '');
+            if ($role !== UserRole::ADMIN->value) {
+                return new JsonResponse([
+                    'authorized' => false,
+                    'code' => 'FORBIDDEN_ROLE',
+                    'message' => 'Only the University Registrar / System Administrator may modify the evaluation window parameters.',
+                ], 403);
+            }
+        }
+
+        $userId = $user !== null ? (int) ($user->id ?? 1) : null;
+        $payload = $request->all();
+        $updatedWindow = $this->evaluationService->updateEvaluationWindow($payload, $userId);
+
+        return new JsonResponse($updatedWindow, 200);
+    }
 }

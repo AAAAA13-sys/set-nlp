@@ -313,6 +313,8 @@ namespace Tests {
                     status TEXT NOT NULL DEFAULT 'CLEARED' CHECK(status IN ('PENDING', 'CLEARED')),
                     clearance_token TEXT NOT NULL,
                     cleared_at TEXT NOT NULL,
+                    created_at TEXT NULL,
+                    updated_at TEXT NULL,
                     UNIQUE(student_id, course_section_id)
                 );
 
@@ -387,6 +389,22 @@ namespace Tests {
 
                 CREATE INDEX idx_fap_faculty ON faculty_action_plans(faculty_id);
                 CREATE INDEX idx_fap_status ON faculty_action_plans(status);
+
+                CREATE TABLE evaluation_window_configs (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    academic_term_id INTEGER NOT NULL UNIQUE REFERENCES academic_terms(id) ON DELETE CASCADE,
+                    status TEXT NOT NULL DEFAULT 'OPEN' CHECK(status IN ('OPEN', 'SUSPENDED', 'CLOSED')),
+                    min_dwell_seconds INTEGER NOT NULL DEFAULT 45,
+                    straight_line_variance_threshold REAL NOT NULL DEFAULT 0.0,
+                    watchlist_mean_threshold REAL NOT NULL DEFAULT 3.50,
+                    watchlist_negative_sentiment_pct REAL NOT NULL DEFAULT 35.0,
+                    announcement_message TEXT NULL,
+                    starts_at TEXT NULL,
+                    ends_at TEXT NULL,
+                    updated_by_user_id INTEGER NULL REFERENCES users(id) ON DELETE SET NULL,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
             ");
         }
 
@@ -399,6 +417,16 @@ namespace Tests {
 
                 INSERT INTO academic_terms (id, code, name, period_label, is_active) VALUES
                 (1, 'FALL-2026', 'Fall', 'Final SET', 1);
+
+                INSERT INTO evaluation_window_configs (
+                    academic_term_id, status, min_dwell_seconds, straight_line_variance_threshold,
+                    watchlist_mean_threshold, watchlist_negative_sentiment_pct, announcement_message,
+                    created_at, updated_at
+                ) VALUES (
+                    1, 'OPEN', 45, 0.0, 3.50, 35.0,
+                    'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active.',
+                    datetime('now'), datetime('now')
+                );
             ");
 
             $pwd = password_hash('EvaluaTech!2026', PASSWORD_BCRYPT, ['cost' => 4]);

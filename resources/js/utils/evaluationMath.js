@@ -687,8 +687,8 @@ export function validateProfessorQuestions(payload = {}) {
  * @param {number} negativeSentimentPct
  * @returns {boolean}
  */
-export function evaluateWatchlistFlag(meanScore, negativeSentimentPct) {
-  return Number(meanScore) < 3.5 || Number(negativeSentimentPct) > 35;
+export function evaluateWatchlistFlag(meanScore, negativeSentimentPct, meanThreshold = 3.5, negPctThreshold = 35.0) {
+  return Number(meanScore) < Number(meanThreshold) || Number(negativeSentimentPct) > Number(negPctThreshold);
 }
 
 /**

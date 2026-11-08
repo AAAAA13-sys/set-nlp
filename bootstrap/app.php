@@ -193,6 +193,11 @@ namespace Illuminate\Http {
                 return $this->payload[$key] ?? $default;
             }
 
+            public function query(?string $key = null, mixed $default = null): mixed
+            {
+                return $this->input($key, $default);
+            }
+
             public function boolean(string $key, bool $default = false): bool
             {
                 if (!array_key_exists($key, $this->payload)) {

@@ -46,4 +46,6 @@ Route::middleware(['role:dean,chair,admin'])->group(function (): void {
 Route::middleware(['role:admin'])->group(function (): void {
     Route::post('/admin/rosters/import', [AdminRosterController::class, 'import']);
     Route::post('/admin/sections/{sectionId}/registrar-lock', [AdminRosterController::class, 'toggleRegistrarLock']);
+    Route::get('/admin/evaluation-window', [AdminRosterController::class, 'getEvaluationWindow']);
+    Route::post('/admin/evaluation-window', [AdminRosterController::class, 'updateEvaluationWindow']);
 });

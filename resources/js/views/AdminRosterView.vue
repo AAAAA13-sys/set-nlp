@@ -25,6 +25,45 @@ const rosterInput = ref(
 const importStatus = ref(null);
 const vaultAuditData = ref(null);
 
+const windowForm = ref({
+  status: evaluationStore.evaluationWindow?.status || 'OPEN',
+  min_dwell_seconds: evaluationStore.evaluationWindow?.min_dwell_seconds || 45,
+  straight_line_variance_threshold: evaluationStore.evaluationWindow?.straight_line_variance_threshold || 0.0,
+  watchlist_mean_threshold: evaluationStore.evaluationWindow?.watchlist_mean_threshold || 3.5,
+  watchlist_negative_sentiment_pct: evaluationStore.evaluationWindow?.watchlist_negative_sentiment_pct || 35.0,
+  announcement_message: evaluationStore.evaluationWindow?.announcement_message || '',
+});
+
+const windowSaveStatus = ref(null);
+
+async function handleSaveEvaluationWindow() {
+  windowSaveStatus.value = null;
+  try {
+    const res = await evaluationStore.updateEvaluationWindowConfig({
+      academic_term_id: evaluationStore.evaluationWindow?.academic_term_id || 1,
+      ...windowForm.value,
+    });
+    windowSaveStatus.value = {
+      ok: true,
+      message: `Evaluation window parameters successfully updated. Current Status: ${evaluationStore.evaluationWindow.status}.`,
+    };
+  } catch (err) {
+    windowSaveStatus.value = {
+      ok: false,
+      message: `Failed to update evaluation window: ${err.message}`,
+    };
+  }
+}
+
+function setWindowStatusQuick(newStatus) {
+  windowForm.value.status = newStatus;
+  evaluationStore.setEvaluationWindowStatus(newStatus);
+  windowSaveStatus.value = {
+    ok: true,
+    message: `Evaluation window status changed to ${newStatus}.`,
+  };
+}
+
 async function runVaultAudit() {
   try {
     const res = await fetch('/api/security/vault-audit');
@@ -108,6 +147,170 @@ function toggleLock(sectionId, field) {
         Manage atomic CSV/JSON course enrollments for <strong>Pamantasan ng Lungsod ng Pasig</strong> and synchronize
         Registrar Grade Locks (`registrar_lock`) to release aggregated faculty evaluation reports safely.
       </p>
+    </section>
+
+    <section class="card evaluation-window-card" aria-labelledby="window-heading" data-testid="admin-evaluation-window-card">
+      <div class="watchlist-header">
+        <div>
+          <span class="eyebrow-badge">
+            SOP 1 &amp; SOP 2 • Evaluation Window &amp; Period Control Console
+          </span>
+          <h3 id="window-heading" class="section-title">
+            Academic Term Period Status &amp; Parameter Tuning
+          </h3>
+          <p class="section-subtitle">
+            Configure the student evaluation period for <strong>{{ evaluationStore.evaluationWindow.term_name }} ({{ evaluationStore.evaluationWindow.term_code }})</strong>,
+            tune dwell timer and straight-lining thresholds, and control university-wide access.
+          </p>
+        </div>
+        <div class="window-status-pill-wrap">
+          <span
+            class="status-badge"
+            :class="{
+              'status-completed': evaluationStore.evaluationWindow.status === 'OPEN',
+              'status-pending': evaluationStore.evaluationWindow.status === 'SUSPENDED',
+              'status-danger': evaluationStore.evaluationWindow.status === 'CLOSED',
+            }"
+            data-testid="admin-window-status-badge"
+          >
+            STATUS: {{ evaluationStore.evaluationWindow.status }}
+          </span>
+        </div>
+      </div>
+
+      <div class="window-status-quick-actions">
+        <label class="param-label" style="margin-right: 0.5rem; font-weight: 600;">Window Status Transition:</label>
+        <button
+          type="button"
+          class="btn-toggle"
+          :class="evaluationStore.evaluationWindow.status === 'OPEN' ? 'toggle-on' : 'toggle-off'"
+          data-testid="btn-set-window-open"
+          @click="setWindowStatusQuick('OPEN')"
+        >
+          ● OPEN (Evaluations Active)
+        </button>
+        <button
+          type="button"
+          class="btn-toggle"
+          :class="evaluationStore.evaluationWindow.status === 'SUSPENDED' ? 'toggle-on' : 'toggle-off'"
+          data-testid="btn-set-window-suspended"
+          @click="setWindowStatusQuick('SUSPENDED')"
+        >
+          ⏸ SUSPENDED (Temporary Hold)
+        </button>
+        <button
+          type="button"
+          class="btn-toggle"
+          :class="evaluationStore.evaluationWindow.status === 'CLOSED' ? 'toggle-on' : 'toggle-off'"
+          data-testid="btn-set-window-closed"
+          @click="setWindowStatusQuick('CLOSED')"
+        >
+          ✕ CLOSED (Term Concluded)
+        </button>
+      </div>
+
+      <form class="window-params-grid" @submit.prevent="handleSaveEvaluationWindow">
+        <div class="param-group">
+          <label for="admin-dwell-input" class="param-label">
+            Min Interaction Dwell Time (seconds)
+            <span class="param-subtext">Speed-run rejection barrier (&ge; 45s required for 5 clusters)</span>
+          </label>
+          <input
+            id="admin-dwell-input"
+            v-model.number="windowForm.min_dwell_seconds"
+            type="number"
+            min="10"
+            max="300"
+            class="param-input"
+            data-testid="admin-dwell-input"
+          />
+        </div>
+
+        <div class="param-group">
+          <label for="admin-variance-input" class="param-label">
+            Straight-Line Variance Cutoff (&sigma;&sup2;)
+            <span class="param-subtext">Uniform rating trigger (&sigma;&sup2; = 0.0 requires confirmation)</span>
+          </label>
+          <input
+            id="admin-variance-input"
+            v-model.number="windowForm.straight_line_variance_threshold"
+            type="number"
+            step="0.001"
+            min="0.0"
+            max="1.0"
+            class="param-input"
+            data-testid="admin-variance-input"
+          />
+        </div>
+
+        <div class="param-group">
+          <label for="admin-watchlist-mean-input" class="param-label">
+            Dean Watchlist Rating Trigger (&mu; &lt;)
+            <span class="param-subtext">Instructors below this mean Likert score trigger watchlist (default 3.50)</span>
+          </label>
+          <input
+            id="admin-watchlist-mean-input"
+            v-model.number="windowForm.watchlist_mean_threshold"
+            type="number"
+            step="0.05"
+            min="1.0"
+            max="5.0"
+            class="param-input"
+            data-testid="admin-watchlist-mean-input"
+          />
+        </div>
+
+        <div class="param-group">
+          <label for="admin-watchlist-neg-input" class="param-label">
+            Dean Watchlist Negative Sentiment (% &gt;)
+            <span class="param-subtext">Instructors with negative comments exceeding this % trigger watchlist (default 35.0%)</span>
+          </label>
+          <input
+            id="admin-watchlist-neg-input"
+            v-model.number="windowForm.watchlist_negative_sentiment_pct"
+            type="number"
+            step="0.5"
+            min="0.0"
+            max="100.0"
+            class="param-input"
+            data-testid="admin-watchlist-neg-input"
+          />
+        </div>
+
+        <div class="param-group full-width">
+          <label for="admin-announcement-input" class="param-label">
+            Portal Announcement &amp; Student Guidance Banner
+            <span class="param-subtext">Broadcasted to students on their evaluation queue dashboard</span>
+          </label>
+          <input
+            id="admin-announcement-input"
+            v-model="windowForm.announcement_message"
+            type="text"
+            class="param-input"
+            data-testid="admin-announcement-input"
+          />
+        </div>
+
+        <div
+          v-if="windowSaveStatus"
+          class="alert-banner full-width"
+          :class="windowSaveStatus.ok ? 'alert-success' : 'alert-error'"
+          role="status"
+          data-testid="evaluation-window-status-msg"
+        >
+          {{ windowSaveStatus.message }}
+        </div>
+
+        <div class="form-submit-footer full-width">
+          <button
+            type="submit"
+            class="btn-primary"
+            data-testid="save-evaluation-window-btn"
+          >
+            Save Evaluation Window &amp; Threshold Configuration
+          </button>
+        </div>
+      </form>
     </section>
 
     <section class="card registrar-locks-card" aria-labelledby="locks-heading">
@@ -262,3 +465,66 @@ function toggleLock(sectionId, field) {
     </section>
   </main>
 </template>
+
+<style scoped>
+.window-status-pill-wrap {
+  display: flex;
+  align-items: center;
+}
+.window-status-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 1rem 0;
+  padding: 0.85rem 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+.window-params-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+.param-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.param-group.full-width {
+  grid-column: 1 / -1;
+}
+.param-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+.param-subtext {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #64748b;
+  margin-top: 0.15rem;
+}
+.param-input {
+  padding: 0.6rem 0.85rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.925rem;
+  color: #0f172a;
+  background-color: #ffffff;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.param-input:focus {
+  border-color: #0b4f26;
+  box-shadow: 0 0 0 3px rgba(11, 79, 38, 0.15);
+}
+.status-danger {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #f87171;
+}
+</style>

@@ -168,6 +168,10 @@ if (str_starts_with($uriPath, '/api/')) {
         $response = (new AdminRosterController(null, $service))->import($request);
     } elseif (preg_match('#^/api/admin/sections/(\d+)/registrar-lock$#', $uriPath, $m) === 1 && $method === 'POST') {
         $response = (new AdminRosterController(null, $service))->toggleRegistrarLock($request, (int) $m[1]);
+    } elseif ($uriPath === '/api/admin/evaluation-window' && $method === 'GET') {
+        $response = (new AdminRosterController(null, $service))->getEvaluationWindow($request);
+    } elseif ($uriPath === '/api/admin/evaluation-window' && $method === 'POST') {
+        $response = (new AdminRosterController(null, $service))->updateEvaluationWindow($request);
     } else {
         $response = new JsonResponse([
             'error' => 'NOT_FOUND',

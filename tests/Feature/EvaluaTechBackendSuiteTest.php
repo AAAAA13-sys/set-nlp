@@ -1404,4 +1404,130 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertTrue($respData['updated']);
         $this->assertSame('IN_PROGRESS', $respData['status']);
     }
+
+    /**
+     * Test 24: Admin evaluation window & period control console (SOP 1 / SOP 2).
+     *
+     * Validates that University Registrar / Admin can dynamically configure evaluation window status
+     * (OPEN, SUSPENDED, CLOSED) and tuning thresholds (dwell timer, variance, watchlist cutoffs),
+     * that student submissions are blocked when the window is non-OPEN, and that non-admin roles
+     * are strictly forbidden from modifying window parameters.
+     */
+    public function test_24_admin_evaluation_window_controls_and_threshold_configuration(): void
+    {
+        $service = new \App\Services\DecoupledEvaluationService($this->pdo, null, new \App\Services\AnalyticsClientService(null, 1.5, true));
+        $adminController = new \App\Http\Controllers\Api\AdminRosterController(null, $service);
+
+        // 1. Initial State: Window is OPEN for Academic Term 1
+        $initialWindow = $service->getEvaluationWindow(1);
+        $this->assertSame(1, $initialWindow['academic_term_id']);
+        $this->assertSame('OPEN', $initialWindow['status']);
+        $this->assertTrue($initialWindow['evaluation_open']);
+        $this->assertSame(45, $initialWindow['min_dwell_seconds']);
+        $this->assertEqualsWithDelta(0.0, $initialWindow['straight_line_variance_threshold'], 0.001);
+        $this->assertEqualsWithDelta(3.50, $initialWindow['watchlist_mean_threshold'], 0.001);
+        $this->assertEqualsWithDelta(35.0, $initialWindow['watchlist_negative_sentiment_pct'], 0.001);
+        $this->assertNotEmpty($initialWindow['announcement_message']);
+
+        // 2. Controller GET /api/admin/evaluation-window
+        $getRequest = new \Illuminate\Http\Request(['academic_term_id' => 1]);
+        $getResponse = $adminController->getEvaluationWindow($getRequest);
+        $this->assertSame(200, $getResponse->getStatusCode());
+        $getData = $getResponse->getData(true);
+        $this->assertSame('OPEN', $getData['status']);
+        $this->assertTrue($getData['evaluation_open']);
+
+        // 3. Admin updates window to SUSPENDED with customized 60s dwell requirement
+        $adminUser = (object) ['id' => 1, 'role' => 'admin'];
+        $updateRequest = new \Illuminate\Http\Request([
+            'academic_term_id' => 1,
+            'status' => 'SUSPENDED',
+            'min_dwell_seconds' => 60,
+            'straight_line_variance_threshold' => 0.02,
+            'watchlist_mean_threshold' => 3.60,
+            'watchlist_negative_sentiment_pct' => 30.0,
+            'announcement_message' => 'PLP SET is temporarily suspended for system synchronization.',
+        ]);
+        $updateRequest->setUserResolver(fn () => $adminUser);
+
+        $updateResponse = $adminController->updateEvaluationWindow($updateRequest);
+        $this->assertSame(200, $updateResponse->getStatusCode());
+        $updatedData = $updateResponse->getData(true);
+        $this->assertSame('SUSPENDED', $updatedData['status']);
+        $this->assertFalse($updatedData['evaluation_open']);
+        $this->assertSame(60, $updatedData['min_dwell_seconds']);
+        $this->assertEqualsWithDelta(0.02, $updatedData['straight_line_variance_threshold'], 0.001);
+        $this->assertEqualsWithDelta(3.60, $updatedData['watchlist_mean_threshold'], 0.001);
+        $this->assertEqualsWithDelta(30.0, $updatedData['watchlist_negative_sentiment_pct'], 0.001);
+        $this->assertSame('PLP SET is temporarily suspended for system synchronization.', $updatedData['announcement_message']);
+
+        // 4. Verify student submission is REJECTED with EVALUATION_WINDOW_CLOSED when SUSPENDED
+        $ratings = array_fill(0, 20, 4);
+        $ratings[0] = 5;
+        $ratings[1] = 3;
+        $submissionWhileSuspended = $service->submitEvaluation([
+            'student_id' => 11,
+            'course_section_id' => 1,
+            'submission_key' => 'SUB-WINDOW-TEST-001',
+            'ratings' => $ratings,
+            'dwell_time_seconds' => 75,
+            'comment_text' => 'Good lectures and structured syllabus.',
+        ]);
+        $this->assertFalse($submissionWhileSuspended['accepted']);
+        $this->assertSame('REJECTED', $submissionWhileSuspended['status']);
+        $this->assertSame('EVALUATION_WINDOW_CLOSED', $submissionWhileSuspended['code']);
+        $this->assertSame(422, $submissionWhileSuspended['http_status']);
+        $this->assertSame('SUSPENDED', $submissionWhileSuspended['window_status']);
+
+        // 5. Update window to CLOSED and verify rejection continues
+        $service->updateEvaluationWindow([
+            'academic_term_id' => 1,
+            'status' => 'CLOSED',
+        ], 1);
+        $submissionWhileClosed = $service->submitEvaluation([
+            'student_id' => 11,
+            'course_section_id' => 1,
+            'submission_key' => 'SUB-WINDOW-TEST-002',
+            'ratings' => $ratings,
+            'dwell_time_seconds' => 75,
+            'comment_text' => 'Good lectures and structured syllabus.',
+        ]);
+        $this->assertFalse($submissionWhileClosed['accepted']);
+        $this->assertSame('EVALUATION_WINDOW_CLOSED', $submissionWhileClosed['code']);
+        $this->assertSame('CLOSED', $submissionWhileClosed['window_status']);
+
+        // 6. Reopen Window (status: OPEN, min_dwell_seconds: 45) and verify submission succeeds
+        $service->updateEvaluationWindow([
+            'academic_term_id' => 1,
+            'status' => 'OPEN',
+            'min_dwell_seconds' => 45,
+            'straight_line_variance_threshold' => 0.0,
+        ], 1);
+
+        $submissionReopened = $service->submitEvaluation([
+            'student_id' => 11,
+            'course_section_id' => 1,
+            'submission_key' => 'SUB-WINDOW-TEST-003',
+            'ratings' => $ratings,
+            'dwell_time_seconds' => 50,
+            'comment_text' => 'Good lectures and structured syllabus.',
+        ]);
+        $this->assertTrue($submissionReopened['accepted']);
+        $this->assertSame('CLEARED', $submissionReopened['status']);
+        $this->assertNotEmpty($submissionReopened['clearance_token']);
+
+        // 7. Non-admin role security guard: Faculty or Student cannot modify evaluation window
+        $facultyUser = (object) ['id' => 5, 'role' => 'faculty'];
+        $unauthorizedRequest = new \Illuminate\Http\Request([
+            'academic_term_id' => 1,
+            'status' => 'CLOSED',
+        ]);
+        $unauthorizedRequest->setUserResolver(fn () => $facultyUser);
+
+        $unauthorizedResponse = $adminController->updateEvaluationWindow($unauthorizedRequest);
+        $this->assertSame(403, $unauthorizedResponse->getStatusCode());
+        $unauthorizedData = $unauthorizedResponse->getData(true);
+        $this->assertFalse($unauthorizedData['authorized']);
+        $this->assertSame('FORBIDDEN_ROLE', $unauthorizedData['code']);
+    }
 }

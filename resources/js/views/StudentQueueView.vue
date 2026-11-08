@@ -79,6 +79,25 @@ function completeAllPendingDemo() {
           :style="{ width: `${progress.percentage}%` }"
         ></div>
       </div>
+
+      <div
+        v-if="evaluationStore.evaluationWindow?.announcement_message"
+        class="alert-banner alert-success"
+        style="margin-top: 1rem;"
+        data-testid="student-window-announcement"
+      >
+        <strong>Notice from the Office of the University Registrar:</strong> {{ evaluationStore.evaluationWindow.announcement_message }}
+      </div>
+
+      <div
+        v-if="evaluationStore.evaluationWindow?.status !== 'OPEN'"
+        class="alert-banner alert-error"
+        style="margin-top: 0.5rem;"
+        data-testid="student-window-status-alert"
+      >
+        <strong>Evaluation Window Status ({{ evaluationStore.evaluationWindow?.status }}):</strong>
+        Evaluation submissions are currently paused or concluded for this academic term.
+      </div>
     </section>
 
     <section class="card queue-table-card" aria-label="Enrolled Course Evaluations">
