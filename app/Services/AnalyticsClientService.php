@@ -23,10 +23,11 @@ class AnalyticsClientService
     private static bool $circuitOpen = false;
 
     public function __construct(
-        private string $serviceUrl = 'http://127.0.0.1:5001',
+        private ?string $serviceUrl = null,
         private float $timeoutSeconds = 1.5,
         private bool $preferLocalFallback = false
     ) {
+        $this->serviceUrl = $this->serviceUrl ?? (getenv('NLP_SERVICE_URL') ?: 'http://127.0.0.1:5001');
     }
 
     public static function resetCircuitBreaker(): void

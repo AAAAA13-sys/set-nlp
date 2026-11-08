@@ -87,4 +87,27 @@ class DeanAnalyticsController extends Controller
             'csv_content' => $csv,
         ], 200);
     }
+
+    public function accreditationSummary(): JsonResponse
+    {
+        return new JsonResponse($this->qualityService->getPlpAccreditationSummary(), 200);
+    }
+
+    public function evaluateLiveSus(Request $request): JsonResponse
+    {
+        $rawItems = $request->input('items') ?? $request->input('sus_items') ?? [];
+        $items = is_array($rawItems) ? $rawItems : [];
+        $cohort = (string) $request->input('cohort', 'Students');
+
+        try {
+            $result = $this->qualityService->evaluateLiveSusSubmission($items, $cohort);
+            return new JsonResponse($result, 200);
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse([
+                'accepted' => false,
+                'code' => 'INVALID_SUS_SUBMISSION',
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+    }
 }

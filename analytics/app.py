@@ -27,6 +27,7 @@ from .engine import (
     PEDAGOGICAL_TAGS,
     analyze_batch,
     analyze_comment,
+    analyze_plp_section_dossier,
     analyze_professor_questions,
     summarize_comments,
 )
@@ -130,6 +131,22 @@ def handle_request(method: str, path: str, body: Any = None) -> tuple[int, dict[
             "results": results,
             "summary": summary,
         }
+
+    if clean_path in ("/analyze/dossier", "/analyze-dossier"):
+        if http_method != "POST":
+            return 405, {"error": "Method not allowed."}
+        ok, payload = _parse_body(body)
+        if not ok or not isinstance(payload, dict):
+            return 400, {"error": "Invalid JSON object payload."}
+        comments = payload.get("comments", payload.get("comment", []))
+        cluster_ratings = payload.get("cluster_ratings", payload.get("ratings"))
+        professor_questions = payload.get("professor_questions", payload.get("qualitative_questions"))
+        dossier = analyze_plp_section_dossier(
+            comments=comments,
+            cluster_ratings=cluster_ratings,
+            professor_questions=professor_questions,
+        )
+        return 200, dossier
 
     return 404, {"error": "Endpoint not found."}
 
@@ -237,13 +254,20 @@ def create_app() -> Any:
         status_code, payload = handle_request(request.method, "/analyze/batch", raw_body)
         return jsonify(payload), status_code
 
+    @flask_app.route("/analyze/dossier", methods=["GET", "POST", "PUT", "DELETE"])
+    @flask_app.route("/analyze-dossier", methods=["GET", "POST", "PUT", "DELETE"])
+    def analyze_dossier_endpoint() -> Any:
+        raw_body = request.get_data(as_text=True)
+        status_code, payload = handle_request(request.method, "/analyze/dossier", raw_body)
+        return jsonify(payload), status_code
+
     return flask_app
 
 
 app = create_app()
 
 
-def run_server(host: str = "127.0.0.1", port: int = 5005) -> None:  # pragma: no cover
+def run_server(host: str = "127.0.0.1", port: int = 5001) -> None:  # pragma: no cover
     """Start the EvaluaTech NLP HTTP service."""
     if Flask is not None and hasattr(app, "run"):
         app.run(host=host, port=port, debug=False)
@@ -257,5 +281,5 @@ def run_server(host: str = "127.0.0.1", port: int = 5005) -> None:  # pragma: no
 
 if __name__ == "__main__":  # pragma: no cover
     listen_host = os.environ.get("NLP_HOST", "127.0.0.1")
-    listen_port = int(os.environ.get("NLP_PORT", "5005"))
+    listen_port = int(os.environ.get("NLP_PORT", "5001"))
     run_server(listen_host, listen_port)

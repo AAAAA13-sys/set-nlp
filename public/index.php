@@ -101,6 +101,10 @@ if (str_starts_with($uriPath, '/api/')) {
         $audit['recent_anonymized_vault_entries'] = $recentVault ?: [];
         $audit['institution'] = 'PAMANTASAN NG LUNGSOD NG PASIG';
         $response = new JsonResponse($audit, 200);
+    } elseif ($uriPath === '/api/security/audit' && $method === 'GET') {
+        $auditService = new \App\Services\SecurityAuditService();
+        $fullAudit = $auditService->runFullInstitutionalSecurityAudit($pdo);
+        $response = new JsonResponse($fullAudit, 200);
     } elseif ($uriPath === '/api/admin/reset-demo' && $method === 'POST') {
         (new EvaluaTechDemoSeeder($pdo))->run();
         $response = new JsonResponse([
@@ -135,6 +139,10 @@ if (str_starts_with($uriPath, '/api/')) {
         $response = (new DeanAnalyticsController($service))->watchlist($request);
     } elseif ($uriPath === '/api/dean/quality-metrics' && $method === 'GET') {
         $response = (new DeanAnalyticsController($service))->qualityMetrics();
+    } elseif ($uriPath === '/api/dean/accreditation' && $method === 'GET') {
+        $response = (new DeanAnalyticsController($service))->accreditationSummary();
+    } elseif ($uriPath === '/api/dean/sus/evaluate' && $method === 'POST') {
+        $response = (new DeanAnalyticsController($service))->evaluateLiveSus($request);
     } elseif ($uriPath === '/api/dean/export-csv' && $method === 'POST') {
         $response = (new DeanAnalyticsController($service))->exportCsv($request);
     } elseif ($uriPath === '/api/admin/rosters/import' && $method === 'POST') {

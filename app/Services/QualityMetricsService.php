@@ -146,4 +146,59 @@ class QualityMetricsService
 
         return 'Needs Improvement';
     }
+
+    /**
+     * Evaluate a live 10-item SUS submission (1..5) and compare against the PLP 83.92 institutional benchmark.
+     *
+     * @param array<int, int|float> $items
+     * @return array<string, mixed>
+     */
+    public function evaluateLiveSusSubmission(array $items, string $cohort = 'Students'): array
+    {
+        $susScore = $this->calculateSusScore($items);
+
+        if ($susScore >= 80.3) {
+            $qualitativeGrade = 'Grade A / Excellent';
+        } elseif ($susScore >= 68.0) {
+            $qualitativeGrade = 'Grade B / Good';
+        } else {
+            $qualitativeGrade = 'Marginal / Needs Improvement';
+        }
+
+        $institutionalBenchmark = 83.92;
+
+        return [
+            'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
+            'reference' => 'https://plpasig.edu.ph/',
+            'cohort' => trim($cohort) !== '' ? trim($cohort) : 'Students',
+            'sus_score' => $susScore,
+            'qualitative_grade' => $qualitativeGrade,
+            'grade' => $qualitativeGrade,
+            'institutional_benchmark_mean' => $institutionalBenchmark,
+            'benchmark_delta' => round($susScore - $institutionalBenchmark, 2),
+            'meets_institutional_grade_a' => $susScore >= 80.3,
+            'meets_above_average_benchmark' => $susScore >= 68.0,
+        ];
+    }
+
+    /**
+     * Return Pamantasan ng Lungsod ng Pasig (PLP) institutional accreditation metadata and quality metrics.
+     *
+     * @return array<string, mixed>
+     */
+    public function getPlpAccreditationSummary(): array
+    {
+        return [
+            'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
+            'reference' => 'https://plpasig.edu.ph/',
+            'likert_clusters' => 5,
+            'likert_items_count' => 25,
+            'professor_questions_min' => 4,
+            'professor_questions_max' => 5,
+            'nlp_engine' => 'calamanCy+VADER',
+            'calamancy_repo' => 'https://github.com/ljvmiranda921/calamanCy',
+            'iso_25010' => $this->getIso25010EvaluationResults(),
+            'sus' => $this->getSusCohortBreakdown(),
+        ];
+    }
 }

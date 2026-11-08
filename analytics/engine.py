@@ -38,7 +38,10 @@ except ImportError:  # pragma: no cover - deterministic calamanCy adapter active
 
 
 CALAMANCY_REPO_URL: str = "https://github.com/ljvmiranda921/calamanCy"
+CALAMANCY_REPO: str = CALAMANCY_REPO_URL
 CALAMANCY_DEFAULT_MODEL: str = "tl_calamancy_md-0.1.0"
+PLP_INSTITUTION_NAME: str = "PAMANTASAN NG LUNGSOD NG PASIG"
+PLP_REFERENCE_URL: str = "https://plpasig.edu.ph/"
 MAX_PROFESSOR_QUESTIONS: int = 5
 MIN_PROFESSOR_QUESTIONS: int = 4
 LIKERT_SCALE_POINTS: tuple[int, ...] = (1, 2, 3, 4, 5)
@@ -50,6 +53,7 @@ PEDAGOGICAL_TAGS: tuple[str, ...] = (
     "Professional Conduct",
     "Student Support & Mentorship",
 )
+FIVE_PEDAGOGICAL_CLUSTERS: tuple[str, ...] = PEDAGOGICAL_TAGS
 
 FIVE_LIKERT_CLUSTERS: tuple[dict[str, Any], ...] = (
     {
@@ -1481,4 +1485,132 @@ def summarize_comments(comments: Iterable[Any] | None) -> dict[str, Any]:
         "primary_negative_tag": primary_negative_tag,
         "tag_breakdown": tag_breakdown,
         "watchlist_flagged": negative_pct > 35.0,
+    }
+
+
+def _compute_five_cluster_means(cluster_ratings: Any) -> tuple[dict[str, float] | None, float | None]:
+    """Compute 5-cluster means across `FIVE_PEDAGOGICAL_CLUSTERS` from 25-item, 5-value, or dict inputs."""
+    if cluster_ratings is None:
+        return None, None
+
+    if isinstance(cluster_ratings, dict):
+        cluster_means: dict[str, float] = {}
+        for idx, cluster_name in enumerate(FIVE_PEDAGOGICAL_CLUSTERS):
+            raw_val = (
+                cluster_ratings.get(cluster_name)
+                if cluster_name in cluster_ratings
+                else cluster_ratings.get(f"cluster_{idx + 1}", cluster_ratings.get(f"CLUSTER-{idx + 1}"))
+            )
+            if isinstance(raw_val, (list, tuple)) and raw_val:
+                nums = [float(x) for x in raw_val if isinstance(x, (int, float))]
+                cluster_means[cluster_name] = round(sum(nums) / len(nums), 2) if nums else 0.0
+            elif isinstance(raw_val, (int, float)):
+                cluster_means[cluster_name] = round(float(raw_val), 2)
+            else:
+                cluster_means[cluster_name] = 0.0
+        valid_vals = [v for v in cluster_means.values() if v > 0]
+        mean_score = round(sum(valid_vals) / len(valid_vals), 2) if valid_vals else 0.0
+        return cluster_means, mean_score
+
+    if not isinstance(cluster_ratings, (list, tuple)) or len(cluster_ratings) == 0:
+        return None, None
+
+    # Handle list of rating vectors (multiple student submissions)
+    if all(isinstance(row, (list, tuple)) for row in cluster_ratings):
+        per_submission_means: list[dict[str, float]] = []
+        for row in cluster_ratings:
+            row_means, _ = _compute_five_cluster_means(list(row))
+            if row_means is not None:
+                per_submission_means.append(row_means)
+        if not per_submission_means:
+            return None, None
+        aggregated: dict[str, float] = {}
+        for cluster_name in FIVE_PEDAGOGICAL_CLUSTERS:
+            vals = [m[cluster_name] for m in per_submission_means if cluster_name in m]
+            aggregated[cluster_name] = round(sum(vals) / len(vals), 2) if vals else 0.0
+        overall = round(sum(aggregated.values()) / len(aggregated), 2) if aggregated else 0.0
+        return aggregated, overall
+
+    numeric_items: list[float] = []
+    for item in cluster_ratings:
+        if isinstance(item, (int, float)) and not isinstance(item, bool):
+            numeric_items.append(float(item))
+    if not numeric_items:
+        return None, None
+
+    cluster_means = {}
+    if len(numeric_items) >= 25:
+        for idx, cluster_name in enumerate(FIVE_PEDAGOGICAL_CLUSTERS):
+            slice_items = numeric_items[idx * 5 : (idx + 1) * 5]
+            cluster_means[cluster_name] = round(sum(slice_items) / len(slice_items), 2)
+    elif len(numeric_items) == 5:
+        for idx, cluster_name in enumerate(FIVE_PEDAGOGICAL_CLUSTERS):
+            cluster_means[cluster_name] = round(numeric_items[idx], 2)
+    elif len(numeric_items) == 20:
+        overall_20 = sum(numeric_items) / 20.0
+        for idx, cluster_name in enumerate(FIVE_PEDAGOGICAL_CLUSTERS):
+            if idx < 4:
+                slice_items = numeric_items[idx * 5 : (idx + 1) * 5]
+                cluster_means[cluster_name] = round(sum(slice_items) / len(slice_items), 2)
+            else:
+                cluster_means[cluster_name] = round(overall_20, 2)
+    else:
+        chunk_size = max(1, len(numeric_items) // len(FIVE_PEDAGOGICAL_CLUSTERS))
+        for idx, cluster_name in enumerate(FIVE_PEDAGOGICAL_CLUSTERS):
+            start = min(idx * chunk_size, len(numeric_items) - 1)
+            end = min((idx + 1) * chunk_size, len(numeric_items))
+            slice_items = numeric_items[start:end] or [numeric_items[-1]]
+            cluster_means[cluster_name] = round(sum(slice_items) / len(slice_items), 2)
+
+    mean_score = round(sum(numeric_items) / len(numeric_items), 2)
+    return cluster_means, mean_score
+
+
+def analyze_plp_section_dossier(
+    comments: Any,
+    cluster_ratings: Any = None,
+    professor_questions: Any = None,
+) -> dict[str, Any]:
+    """Synthesize a Pamantasan ng Lungsod ng Pasig (PLP) Faculty Section Evaluation Dossier.
+
+    Combines:
+      - Institutional metadata (`PAMANTASAN NG LUNGSOD NG PASIG`, `https://plpasig.edu.ph/`)
+      - `calamanCy+VADER` narrative comment sentiment and 5-cluster breakdown
+      - Structured 4-to-5 professor qualitative questions summary (if provided)
+      - 5-cluster Likert rating means across `FIVE_PEDAGOGICAL_CLUSTERS` (if provided)
+      - Dean Exception Watchlist trigger (`mean_score < 3.50` or `negative_pct > 35.0`)
+    """
+    if isinstance(comments, str):
+        comment_list: list[Any] = [comments] if comments.strip() else []
+    else:
+        comment_list = comments
+
+    comment_summary = summarize_comments(comment_list)
+    cluster_means, mean_score = _compute_five_cluster_means(cluster_ratings)
+
+    prof_questions_summary: dict[str, Any] | list[dict[str, Any]] | None = None
+    if isinstance(professor_questions, dict):
+        prof_questions_summary = analyze_professor_questions(professor_questions)
+    elif isinstance(professor_questions, list) and professor_questions:
+        analyzed_q = [
+            analyze_professor_questions(q) for q in professor_questions if isinstance(q, dict)
+        ]
+        prof_questions_summary = analyzed_q[0] if len(analyzed_q) == 1 else analyzed_q
+
+    negative_pct = float(comment_summary.get("negative_pct", 0.0))
+    low_rating_flag = (mean_score is not None) and (mean_score < 3.50)
+    high_negative_flag = negative_pct > 35.0
+    watchlist_triggered = bool(low_rating_flag or high_negative_flag)
+
+    return {
+        "institution": PLP_INSTITUTION_NAME,
+        "reference": PLP_REFERENCE_URL,
+        "nlp_engine": "calamanCy+VADER",
+        "calamancy_model": CALAMANCY_DEFAULT_MODEL,
+        "calamancy_repo": CALAMANCY_REPO,
+        "comment_summary": comment_summary,
+        "professor_questions_summary": prof_questions_summary,
+        "cluster_means": cluster_means,
+        "mean_score": mean_score,
+        "watchlist_triggered": watchlist_triggered,
     }

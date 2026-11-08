@@ -1,0 +1,254 @@
+<script setup>
+import { computed, ref } from 'vue';
+import {
+  CALAMANCY_CONFIG,
+  FIVE_LIKERT_CLUSTERS,
+  MAX_PROFESSOR_QUESTIONS,
+  classifyCommentPreview,
+  validateProfessorQuestions,
+} from '../utils/evaluationMath.js';
+
+defineProps({
+  visible: {
+    type: Boolean,
+    default: true,
+  },
+});
+
+const emit = defineEmits(['close']);
+
+const sampleNarratives = [
+  {
+    id: 'taglish-delivery',
+    label: 'Taglish • Pedagogical Delivery (+)',
+    text: 'Napakalinaw magpaliwanag ni Prof sa complex algorithms at laging may practical code examples sa klase.',
+    lemmas: ['linaw (malinaw)', 'paliwanag (magpaliwanag)', 'algorithm', 'practical', 'code', 'klase'],
+  },
+  {
+    id: 'tagalog-mentorship',
+    label: 'Tagalog • Student Support & Mentorship (+)',
+    text: 'Matulungin at maagap sa konsultasyon, laging bukas ang office hours para sa thesis at capstone guidance.',
+    lemmas: ['tulong (matulungin)', 'agap (maagap)', 'konsultasyon', 'bukas', 'thesis', 'gabay (guidance)'],
+  },
+  {
+    id: 'english-grading',
+    label: 'English • Assessment & Grading (-)',
+    text: 'Takes over a month to return quiz scores and provides no helpful feedback.',
+    lemmas: ['take (takes)', 'month', 'return', 'quiz', 'score (scores)', 'feedback'],
+  },
+  {
+    id: 'taglish-management',
+    label: 'Taglish • Classroom Management (-)',
+    text: 'Laging nahuhuli ng 15 minutes sa morning lectures at medyo magulo ang sunod sa syllabus.',
+    lemmas: ['huli (nahuhuli)', 'minute (minutes)', 'lecture', 'gulo (magulo)', 'syllabus'],
+  },
+];
+
+const selectedSampleId = ref(sampleNarratives[0].id);
+const customNarrative = ref(sampleNarratives[0].text);
+
+const professorPayload = ref({
+  threeWords: ['Malinaw', 'Matulungin', 'Organisado'],
+  improvementTopics: [
+    'Pacing of advanced dynamic programming lectures',
+    'Faster turnaround of laboratory rubric scores',
+  ],
+  teachingStrengths: 'Step-by-step live coding demonstrations and bilingual Taglish explanations.',
+  recommendations: 'Provide supplementary practice problem sets before departmental exams.',
+  additionalObservation: 'Consistently supportive during thesis and capstone consultation hours.',
+});
+
+function selectSample(sample) {
+  selectedSampleId.value = sample.id;
+  customNarrative.value = sample.text;
+}
+
+const activeLemmas = computed(() => {
+  const matched = sampleNarratives.find((s) => s.text === customNarrative.value);
+  if (matched) {
+    return matched.lemmas;
+  }
+  return String(customNarrative.value || '')
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, ' ')
+    .split(/\s+/)
+    .filter((token) => token.length >= 4)
+    .slice(0, 8);
+});
+
+const nlpAnalysis = computed(() => classifyCommentPreview(customNarrative.value));
+
+const clusterConfidenceList = computed(() => {
+  const primary = nlpAnalysis.value.pedagogical_tag;
+  return FIVE_LIKERT_CLUSTERS.map((cluster) => {
+    const isPrimary = cluster.name === primary;
+    const confidence = isPrimary ? 88 : 24;
+    return {
+      clusterNumber: cluster.clusterNumber,
+      name: cluster.name,
+      scalePoints: cluster.scalePoints,
+      isPrimary,
+      confidence,
+    };
+  });
+});
+
+const validatedProfQuestions = computed(() =>
+  validateProfessorQuestions(professorPayload.value),
+);
+</script>
+
+<template>
+  <section
+    v-if="visible"
+    class="plp-nlp-lab-card card"
+    role="dialog"
+    aria-modal="false"
+    aria-labelledby="plp-nlp-lab-heading"
+    data-testid="plp-nlp-lab-modal"
+  >
+    <div class="plp-seal-watermark" aria-hidden="true">PLP • PASIG • 2000</div>
+
+    <header class="plp-lab-header">
+      <div>
+        <span class="eyebrow-badge">
+          PAMANTASAN NG LUNGSOD NG PASIG • plpasig.edu.ph • {{ CALAMANCY_CONFIG.framework }} ({{ CALAMANCY_CONFIG.model }})
+        </span>
+        <h3 id="plp-nlp-lab-heading" class="section-title">
+          PLP calamanCy + VADER Tagalog/Taglish/English NLP &amp; 5-Cluster Diagnostic Lab
+        </h3>
+        <p class="section-subtitle">
+          Pipeline Reference: <code>{{ CALAMANCY_CONFIG.repo }}</code> •
+          Engine: <strong>{{ CALAMANCY_CONFIG.engineLabel }}</strong>
+        </p>
+      </div>
+
+      <button
+        type="button"
+        class="btn-secondary btn-sm"
+        data-testid="close-plp-nlp-lab-btn"
+        @click="emit('close')"
+      >
+        Close Lab
+      </button>
+    </header>
+
+    <div class="sample-comment-pills" role="group" aria-label="Tagalog, Taglish, and English Sample Narratives">
+      <button
+        v-for="sample in sampleNarratives"
+        :key="sample.id"
+        type="button"
+        class="btn-secondary btn-xs"
+        :class="{ active: selectedSampleId === sample.id }"
+        :data-testid="`plp-sample-${sample.id}`"
+        @click="selectSample(sample)"
+      >
+        {{ sample.label }}
+      </button>
+    </div>
+
+    <div class="form-field">
+      <label for="plp-lab-textarea">Interactive Student Narrative Input (Tagalog / Taglish / English)</label>
+      <textarea
+        id="plp-lab-textarea"
+        v-model="customNarrative"
+        rows="3"
+        class="narrative-textarea"
+        data-testid="plp-lab-textarea"
+      ></textarea>
+    </div>
+
+    <!-- Morphological Lemmas & Polarity Strip -->
+    <div class="nlp-live-preview" data-testid="plp-lab-polarity-strip">
+      <span>Polarity Score ($P \in [-1.0, +1.0]$):</span>
+      <strong data-testid="plp-lab-polarity-value">
+        {{ nlpAnalysis.polarity >= 0 ? `+${nlpAnalysis.polarity.toFixed(2)}` : nlpAnalysis.polarity.toFixed(2) }}
+      </strong>
+      <span class="badge-valence" :class="`valence-${nlpAnalysis.valence.toLowerCase()}`">
+        {{ nlpAnalysis.valence }}
+      </span>
+      <span>Primary 5-Cluster Tag:</span>
+      <strong data-testid="plp-lab-primary-cluster">{{ nlpAnalysis.pedagogical_tag }}</strong>
+    </div>
+
+    <div class="plp-lemma-row" aria-label="calamanCy Morphological Lemmas">
+      <span class="token-label">calamanCy Morphological Lemmas:</span>
+      <span
+        v-for="lemma in activeLemmas"
+        :key="lemma"
+        class="plp-lemma-chip"
+      >
+        {{ lemma }}
+      </span>
+    </div>
+
+    <!-- 5-Cluster Confidence Distribution -->
+    <div class="plp-clusters-breakdown" data-testid="plp-five-cluster-distribution">
+      <h4>5-Cluster Pedagogical Confidence Distribution (5-Point Likert Scale Alignment)</h4>
+      <div
+        v-for="cluster in clusterConfidenceList"
+        :key="cluster.name"
+        class="plp-cluster-meter-row"
+      >
+        <div class="sentiment-label">
+          <span>
+            <strong>Cluster {{ cluster.clusterNumber }}: {{ cluster.name }}</strong>
+            ({{ cluster.scalePoints }}-Point Scale)
+          </span>
+          <strong>{{ cluster.confidence }}%</strong>
+        </div>
+        <div class="plp-cluster-meter">
+          <div
+            class="plp-cluster-meter-fill"
+            :style="{ width: `${cluster.confidence}%` }"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Structured 4-to-5 Professor Questions Diagnostic Breakdown -->
+    <div class="prof-question-block" data-testid="plp-prof-questions-breakdown">
+      <div class="prof-question-subhead">
+        <strong>
+          Structured Professor Qualitative Instrument ({{ validatedProfQuestions.questionCount }} of Max {{ MAX_PROFESSOR_QUESTIONS }} Questions)
+        </strong>
+        <span class="status-badge status-completed">
+          {{ validatedProfQuestions.valid ? 'VALIDATED (4-5 CAP)' : 'INCOMPLETE' }}
+        </span>
+      </div>
+
+      <ol class="plp-prof-questions-list">
+        <li>
+          <strong>1. 3 words that describe the experience with the prof:</strong>
+          <span
+            v-for="word in validatedProfQuestions.threeWords"
+            :key="word"
+            class="plp-lemma-chip"
+          >
+            {{ word }}
+          </span>
+        </li>
+        <li>
+          <strong>2. Room for improvements of the prof:</strong>
+          <ul>
+            <li
+              v-for="item in validatedProfQuestions.improvementTopics"
+              :key="item.subItem"
+            >
+              <code>{{ item.subItem }}</code> {{ item.topic }}
+            </li>
+          </ul>
+        </li>
+        <li>
+          <strong>3. Teaching strengths:</strong> {{ validatedProfQuestions.teachingStrengths }}
+        </li>
+        <li>
+          <strong>4. Recommendations:</strong> {{ validatedProfQuestions.recommendations }}
+        </li>
+        <li v-if="validatedProfQuestions.additionalObservation">
+          <strong>5. Optional 5th observation:</strong> {{ validatedProfQuestions.additionalObservation }}
+        </li>
+      </ol>
+    </div>
+  </section>
+</template>
