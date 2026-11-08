@@ -15,6 +15,18 @@ if /I "%~1"=="--verify" (
     exit /b !ERRORLEVEL!
 )
 
+if /I "%~1"=="--benchmark" (
+    echo.
+    echo [Benchmark 1/2] Running Empirical Chapter III Benchmarks...
+    python "%~dp0tests\load\verify_plp_benchmarks.py"
+    if !ERRORLEVEL! NEQ 0 exit /b !ERRORLEVEL!
+
+    echo.
+    echo [Benchmark 2/2] Running High-Concurrency Stress Benchmark [200+ Requests]...
+    python "%~dp0tests\load\run_concurrent_benchmark.py"
+    exit /b !ERRORLEVEL!
+)
+
 echo.
 echo [Step 1/3] Running Multi-Tier Verification Suite (85+ Tests)...
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\verify-all.ps1"
@@ -33,5 +45,6 @@ echo   - Student Queue (2024-10892): http://127.0.0.1:8000/queue
 echo   - Faculty Double-Blind View : http://127.0.0.1:8000/faculty
 echo   - Dean Analytical Overview  : http://127.0.0.1:8000/dean
 echo   - Registrar Admin Console   : http://127.0.0.1:8000/admin
+echo   - PLP calamanCy NLP Lab     : http://127.0.0.1:8000/nlp-lab
 echo.
 "%PHP_EXE%" -S 127.0.0.1:8000 -t public public\index.php
