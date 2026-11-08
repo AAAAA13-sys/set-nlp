@@ -27,7 +27,7 @@ import re
 from typing import Any, Iterable
 
 try:
-    from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer as _VaderAnalyzer
+    from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer as _VaderAnalyzer  # type: ignore[import-not-found,import-untyped]
 except ImportError:  # pragma: no cover - fallback active when vaderSentiment is absent
     _VaderAnalyzer = None
 

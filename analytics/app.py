@@ -35,7 +35,7 @@ from .engine import (
 )
 
 try:
-    from flask import Flask, jsonify, request
+    from flask import Flask, jsonify, request  # type: ignore[import-not-found,import-untyped]
 except ImportError:  # pragma: no cover - fallback active when Flask is not installed
     Flask = None
     jsonify = None
