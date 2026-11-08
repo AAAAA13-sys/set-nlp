@@ -36,7 +36,7 @@ function readResourceFile(relativePath) {
   return fs.readFileSync(path.join(JS_DIR, relativePath), 'utf8');
 }
 
-describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (33 Test Groups)', () => {
+describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (34 Test Groups)', () => {
   // 1. Header portal branding & active term display
   describe('Group 01: Header portal branding & active term display (NavbarHeader.vue — Pamantasan ng Lungsod ng Pasig)', () => {
     it('renders PAMANTASAN NG LUNGSOD NG PASIG branding, PLP Green/Gold theme, active term, logged-in student ID 2024-10892, and clearance status badge', () => {
@@ -817,6 +817,41 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (33 Test Groups)', ()
       assert.ok(navbarSfc.includes('aria-label="Pamantasan ng Lungsod ng Pasig Institutional Portal Header"'));
       assert.ok(appCss.includes('--plp-green-900: #0b4f26'));
       assert.ok(appCss.includes('--plp-gold-500: #eab308'));
+    });
+  });
+
+  // 34. Institutional Login Portal, RA 10173 Privacy Notice & Header Sign Out Workflow
+  describe('Group 34: Institutional Login Portal, RA 10173 Privacy Notice & Header Sign Out Workflow', () => {
+    it('verifies login form controls, show/hide password toggle, RA 10173 privacy banner, role preset chips, and navbar sign out', () => {
+      const loginViewSfc = readResourceFile('views/LoginView.vue');
+      const navbarSfc = readResourceFile('components/NavbarHeader.vue');
+
+      // 1. Verify LoginView card structure and institutional branding
+      assert.ok(loginViewSfc.includes('data-testid="login-card"'));
+      assert.ok(loginViewSfc.includes('data-testid="login-privacy-banner"'));
+      assert.ok(loginViewSfc.includes('RA 10173 Data Privacy'));
+      assert.ok(loginViewSfc.includes('Cryptographic Decoupling'));
+      assert.ok(loginViewSfc.includes('PAMANTASAN NG LUNGSOD NG PASIG'));
+
+      // 2. Verify all five seeded role preset buttons for rapid institutional demonstration
+      assert.ok(loginViewSfc.includes('data-testid="`preset-role-${roleKey}`"') || loginViewSfc.includes('preset-role-'));
+      assert.ok(loginViewSfc.includes('selectPresetRole'));
+      assert.ok(loginViewSfc.includes('quickSignIn'));
+
+      // 3. Verify interactive input fields, show/hide password toggle, and remember session
+      assert.ok(loginViewSfc.includes('data-testid="login-id-input"'));
+      assert.ok(loginViewSfc.includes('data-testid="login-password-input"'));
+      assert.ok(loginViewSfc.includes('data-testid="toggle-password-btn"'));
+      assert.ok(loginViewSfc.includes('togglePasswordVisibility'));
+      assert.ok(loginViewSfc.includes('data-testid="remember-session-input"'));
+      assert.ok(loginViewSfc.includes('data-testid="login-submit-btn"'));
+      assert.ok(loginViewSfc.includes('data-testid="one-click-login-btn"'));
+
+      // 4. Verify NavbarHeader Sign Out / Sign In workflow
+      assert.ok(navbarSfc.includes('data-testid="navbar-logout-btn"'));
+      assert.ok(navbarSfc.includes('data-testid="navbar-login-btn"'));
+      assert.ok(navbarSfc.includes('handleLogout'));
+      assert.ok(navbarSfc.includes("roleNavLinks"));
     });
   });
 });

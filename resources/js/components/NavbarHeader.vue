@@ -36,6 +36,9 @@ const roleNavLinks = {
   admin: [
     { to: '/admin', label: 'Admin & Locks', testId: 'nav-link-admin-console' },
   ],
+  guest: [
+    { to: '/login', label: 'Sign In', testId: 'nav-link-login' },
+  ],
 };
 
 const authorizedNavLinks = computed(() => {
@@ -49,6 +52,13 @@ function onRoleChange(event) {
   const targetRoute = getDefaultRouteForRole(nextRole);
   if (router) {
     router.push(targetRoute).catch(() => {});
+  }
+}
+
+async function handleLogout() {
+  await authStore.logout();
+  if (router) {
+    router.push('/login').catch(() => {});
   }
 }
 </script>
@@ -131,6 +141,27 @@ function onRoleChange(event) {
           >
             <span>Clearance:</span>
             <strong>{{ authStore.currentRole === 'student' ? clearanceStatus : (authStore.user?.role_label || authStore.currentRole.toUpperCase()) }}</strong>
+          </div>
+
+          <div class="navbar-auth-actions" style="display:flex;align-items:center;">
+            <button
+              v-if="authStore.isAuthenticated"
+              type="button"
+              class="btn-secondary btn-xs navbar-logout-btn"
+              data-testid="navbar-logout-btn"
+              title="Sign out of current institutional workspace"
+              @click="handleLogout"
+            >
+              Sign Out
+            </button>
+            <router-link
+              v-else
+              to="/login"
+              class="btn-primary btn-xs navbar-login-link"
+              data-testid="navbar-login-btn"
+            >
+              Sign In
+            </router-link>
           </div>
         </div>
       </div>
