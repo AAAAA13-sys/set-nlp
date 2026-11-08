@@ -1312,4 +1312,96 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertArrayHasKey('action_plans_summary', $deanMetrics);
         $this->assertIsArray($deanMetrics['action_plans_summary']);
     }
+
+    /**
+     * Test 23: Faculty double-blind section report includes pedagogical action plan when watchlist triggered.
+     */
+    public function test_23_faculty_section_report_includes_pedagogical_action_plan_when_watchlist_triggered(): void
+    {
+        $service = new \App\Services\DecoupledEvaluationService(
+            $this->pdo,
+            null,
+            new \App\Services\AnalyticsClientService(null, 1.5, true),
+            'test-secret-key-32-chars-long!!'
+        );
+
+        // 1. Submit evaluation for section 4 (MATH-201, Dr. R. Garcia, faculty_id 8) with low ratings & negative comment
+        $ratings = [
+            3, 3, 2, 3, 3, // Cluster 1: 2.80
+            2, 2, 2, 3, 2, // Cluster 2: 2.20 (Assessment & Grading)
+            3, 3, 3, 3, 3, // Cluster 3: 3.00
+            3, 3, 3, 3, 3, // Cluster 4: 3.00
+            3, 2, 3, 3, 2, // Cluster 5: 2.60
+        ];
+
+        $subRes = $this->executeAtomicEvaluationSubmission([
+            'student_id' => 11,
+            'course_section_id' => 4,
+            'submission_key' => 'FT02-FACULTY-REPORT-SEC-4',
+            'ratings' => $ratings,
+            'comment_text' => 'Takes over a month to return quiz scores and provides no helpful feedback.',
+            'dwell_time_seconds' => 70,
+            'confirm_uniform' => false,
+        ]);
+        $this->assertSame(201, $subRes['status']);
+
+        // 2. Section 4 is initially locked because term_grades_submitted = 0, registrar_lock = 0
+        $lockedReport = $service->getFacultySectionReport(4, 8);
+        $this->assertTrue($lockedReport['locked']);
+        $this->assertSame('DOUBLE_BLIND_LOCKED', $lockedReport['code']);
+
+        // 3. Unlock Section 4: term_grades_submitted = 1, registrar_lock = 1
+        $this->pdo->exec('UPDATE course_sections SET term_grades_submitted = 1, registrar_lock = 1 WHERE id = 4');
+
+        $unlockedReport = $service->getFacultySectionReport(4, 8);
+        $this->assertFalse($unlockedReport['locked']);
+        $this->assertSame('DOUBLE_BLIND_UNLOCKED', $unlockedReport['code']);
+        $this->assertLessThan(3.50, $unlockedReport['overall_mean_score']);
+        $this->assertNotNull($unlockedReport['action_plan']);
+
+        $actionPlan = $unlockedReport['action_plan'];
+        $this->assertNotEmpty($actionPlan['plan_id']);
+        $this->assertSame('PENDING_REVIEW', $actionPlan['status']);
+        $this->assertSame('Dr. R. Garcia', $actionPlan['faculty_name']);
+        $this->assertArrayHasKey('recommended_interventions', $actionPlan);
+        $this->assertArrayHasKey('target_milestone', $actionPlan);
+
+        // 4. Update status to IN_PROGRESS through updateActionPlanStatus
+        $service->updateActionPlanStatus(
+            $actionPlan['plan_id'],
+            8,
+            'IN_PROGRESS',
+            'Approved by Dean: Instructor enrolled in PLP Rubric Design & Assessment Turnaround Workshop.'
+        );
+
+        $inProgressReport = $service->getFacultySectionReport(4, 8);
+        $this->assertSame('IN_PROGRESS', $inProgressReport['action_plan']['status']);
+        $this->assertStringContainsString('Rubric Design', $inProgressReport['action_plan']['dean_notes']);
+
+        // 5. Update status to RESOLVED and verify reflection in report
+        $service->updateActionPlanStatus(
+            $actionPlan['plan_id'],
+            8,
+            'RESOLVED',
+            'Milestone achieved: Mid-term assessment turnaround SLA reduced to 7 days.'
+        );
+
+        $resolvedReport = $service->getFacultySectionReport(4, 8);
+        $this->assertSame('RESOLVED', $resolvedReport['action_plan']['status']);
+        $this->assertStringContainsString('Milestone achieved', $resolvedReport['action_plan']['dean_notes']);
+
+        // 6. Verify controller endpoint for faculty action plan status update
+        $controller = new \App\Http\Controllers\Api\FacultyPortalController($service);
+        $request = new \Illuminate\Http\Request([
+            'plan_id' => $actionPlan['plan_id'],
+            'faculty_id' => 8,
+            'status' => 'IN_PROGRESS',
+            'dean_notes' => 'Faculty acknowledged plan and started implementation.',
+        ]);
+        $response = $controller->updateActionPlanStatus($request);
+        $this->assertSame(200, $response->getStatusCode());
+        $respData = $response->getData(true);
+        $this->assertTrue($respData['updated']);
+        $this->assertSame('IN_PROGRESS', $respData['status']);
+    }
 }

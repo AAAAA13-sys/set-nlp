@@ -84,4 +84,23 @@ class FacultyPortalController extends Controller
             'double_blind_unlocked' => $this->evaluationService->canFacultyViewSection(true, $registrarLock),
         ], 200);
     }
+
+    public function updateActionPlanStatus(Request $request): JsonResponse
+    {
+        $planId = trim((string) $request->input('plan_id', ''));
+        $facultyId = (int) $request->input('faculty_id', 0);
+        $status = strtoupper(trim((string) $request->input('status', 'IN_PROGRESS')));
+        $notes = $request->input('dean_notes') !== null ? (string) $request->input('dean_notes') : null;
+
+        if ($planId === '' || $facultyId <= 0) {
+            return new JsonResponse([
+                'updated' => false,
+                'message' => 'plan_id and faculty_id are required.',
+            ], 422);
+        }
+
+        $result = $this->evaluationService->updateActionPlanStatus($planId, $facultyId, $status, $notes);
+
+        return new JsonResponse($result, 200);
+    }
 }

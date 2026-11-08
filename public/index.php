@@ -140,6 +140,8 @@ if (str_starts_with($uriPath, '/api/')) {
         $response = (new FacultyPortalController($service))->sectionReport($request, (int) $m[1]);
     } elseif (preg_match('#^/api/faculty/sections/(\d+)/submit-grades$#', $uriPath, $m) === 1 && $method === 'POST') {
         $response = (new FacultyPortalController($service))->submitTermGrades($request, (int) $m[1]);
+    } elseif ($uriPath === '/api/faculty/action-plan/status' && $method === 'POST') {
+        $response = (new FacultyPortalController($service))->updateActionPlanStatus($request);
     } elseif ($uriPath === '/api/dean/overview' && $method === 'GET') {
         $response = (new DeanAnalyticsController($service))->overview($request);
     } elseif ($uriPath === '/api/dean/watchlist' && $method === 'GET') {

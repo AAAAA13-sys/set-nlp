@@ -36,7 +36,7 @@ function readResourceFile(relativePath) {
   return fs.readFileSync(path.join(JS_DIR, relativePath), 'utf8');
 }
 
-describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (27 Test Groups)', () => {
+describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (28 Test Groups)', () => {
   // 1. Header portal branding & active term display
   describe('Group 01: Header portal branding & active term display (NavbarHeader.vue — Pamantasan ng Lungsod ng Pasig)', () => {
     it('renders PAMANTASAN NG LUNGSOD NG PASIG branding, PLP Green/Gold theme, active term, logged-in student ID 2024-10892, and clearance status badge', () => {
@@ -565,6 +565,33 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (27 Test Groups)', ()
       assert.ok(DEMO_DEAN_METRICS.qualitative_synthesis.key_strengths.length >= 2);
       assert.ok(DEMO_DEAN_METRICS.qualitative_synthesis.key_recommendations.length >= 2);
       assert.ok(DEMO_DEAN_METRICS.qualitative_synthesis.improvement_clusters['Pedagogical Delivery']);
+    });
+  });
+
+  // 28. Faculty Portal Pedagogical Action Plan Acknowledgment & Milestone Resolution
+  describe('Group 28: Faculty Portal Pedagogical Action Plan Acknowledgment & Milestone Resolution', () => {
+    it('renders pedagogical action plan card for watchlist-flagged sections with interactive implementation actions', () => {
+      const facultyViewSfc = readResourceFile('views/FacultyDashboardView.vue');
+
+      // 1. Verify action plan card and status badge
+      assert.ok(facultyViewSfc.includes('data-testid="faculty-action-plan-card"'));
+      assert.ok(facultyViewSfc.includes('data-testid="faculty-plan-status-badge"'));
+      assert.ok(facultyViewSfc.includes('sectionActionPlan'));
+
+      // 2. Verify interactive faculty buttons
+      assert.ok(facultyViewSfc.includes('data-testid="faculty-acknowledge-plan-btn"'));
+      assert.ok(facultyViewSfc.includes('data-testid="faculty-submit-milestone-btn"'));
+      assert.ok(facultyViewSfc.includes('data-testid="faculty-plan-resolved-badge"'));
+      assert.ok(facultyViewSfc.includes('updateFacultyPlanStatus'));
+      assert.ok(facultyViewSfc.includes('/api/faculty/action-plan/status'));
+
+      // 3. Verify preview action plan button for demonstration
+      assert.ok(facultyViewSfc.includes('data-testid="preview-watchlist-plan-btn"'));
+      assert.ok(facultyViewSfc.includes('previewWatchlistSection'));
+
+      // 4. Verify institutional excellence metadata
+      assert.ok(facultyViewSfc.includes('PAMANTASAN NG LUNGSOD NG PASIG • Continuous Pedagogical Improvement'));
+      assert.ok(facultyViewSfc.includes('Dean Verification &amp; Sign-off Notes:'));
     });
   });
 });

@@ -28,6 +28,7 @@ Route::middleware(['role:faculty'])->group(function (): void {
     Route::post('/faculty/sections/{sectionId}/submit-grades', [FacultyPortalController::class, 'submitTermGrades']);
     Route::get('/faculty/sections/{sectionId}/report', [FacultyPortalController::class, 'sectionReport'])
         ->middleware('double_blind');
+    Route::post('/faculty/action-plan/status', [FacultyPortalController::class, 'updateActionPlanStatus']);
 });
 
 // Dean & Department Chair Diagnostic Analytics & Watchlist (SOP 2 & SOP 3)

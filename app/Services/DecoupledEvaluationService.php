@@ -910,6 +910,28 @@ class DecoupledEvaluationService
             ];
         }
 
+        $fid = (int) $section['faculty_id'];
+        $overallMean = $count > 0 ? round($meanSum / $count, 2) : 0.0;
+        $negativeCount = $sentimentCounts['Negative'];
+        $negPct = $count > 0 ? ($negativeCount / $count) * 100.0 : 0.0;
+        $actionPlan = null;
+
+        if ($this->shouldFlagOnWatchlist($overallMean, $negPct)) {
+            $facultyName = (string) ($section['instructor_name'] ?? 'Instructor');
+            arsort($tagBreakdown);
+            $primaryTag = (string) (array_key_first($tagBreakdown) ?? 'Pedagogical Delivery');
+            $actionPlan = $this->analytics->generateInterventionPlan(
+                $facultyName,
+                $overallMean,
+                $negPct,
+                $primaryTag
+            );
+            $statusData = $this->getActionPlanStatus($actionPlan['plan_id'], $fid);
+            $actionPlan['status'] = $statusData['status'] ?? 'PENDING_REVIEW';
+            $actionPlan['dean_notes'] = $statusData['dean_notes'] ?? null;
+            $actionPlan['signed_off_at'] = $statusData['signed_off_at'] ?? null;
+        }
+
         return [
             'locked' => false,
             'code' => 'DOUBLE_BLIND_UNLOCKED',
@@ -918,13 +940,14 @@ class DecoupledEvaluationService
             'term_grades_submitted' => true,
             'registrar_lock' => true,
             'response_count' => $count,
-            'overall_mean_score' => $count > 0 ? round($meanSum / $count, 2) : 0.0,
+            'overall_mean_score' => $overallMean,
             'straight_lined_count' => $straightLinedCount,
             'sentiment_distribution' => $sentimentCounts,
             'pedagogical_tags' => $tagBreakdown,
             'cluster_scores' => $clusterAverages,
             'anonymized_comments' => $comments,
             'professor_questionnaire_summary' => $profQuestionSummary,
+            'action_plan' => $actionPlan,
         ];
     }
 
@@ -1372,7 +1395,14 @@ class DecoupledEvaluationService
      */
     private function findSectionById(int $courseSectionId): ?array
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM course_sections WHERE id = :id LIMIT 1');
+        $stmt = $this->pdo->prepare('
+            SELECT cs.*, u.name AS instructor_name, c.code AS course_code, c.title AS course_title
+            FROM course_sections cs
+            LEFT JOIN users u ON u.id = cs.faculty_id
+            LEFT JOIN courses c ON c.id = cs.course_id
+            WHERE cs.id = :id
+            LIMIT 1
+        ');
         $stmt->execute([':id' => $courseSectionId]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
