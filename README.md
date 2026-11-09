@@ -44,13 +44,14 @@
 
 ## 2. Quick Start & Verification
 
-### Run the Full 120-Unit Multi-Tier Verification Suite
+### Run the Full 123-Unit Multi-Tier Verification Suite
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-all.ps1
 ```
-- **Backend PHPUnit Suite**: `34 / 34 PASS (866 assertions)`
-- **Frontend Vue 3 DOM & Domain Suite**: `40 / 40 Test Groups PASS`
+- **Backend PHPUnit Suite**: `35 / 35 PASS (901 assertions)`
+- **Frontend Vue 3 DOM & Domain Suite**: `42 / 42 Test Groups PASS`
 - **Python `calamanCy` + VADER NLP Suite**: `46 / 46 PASS`
+- **Hygiene & Syntax Audit**: `50 PHP files clean (php -l), 203 files UTF-8 No-BOM`
 
 ### Launch the Live PLP Portal (`http://127.0.0.1:8000`)
 ```bat
@@ -67,3 +68,4 @@ Then open:
 - **Faculty Double-Blind Portal**: `http://127.0.0.1:8000/faculty`
 - **Dean Analytical Overview & Watchlist**: `http://127.0.0.1:8000/dean`
 - **PLP Registrar Admin & Locks Console**: `http://127.0.0.1:8000/admin`
+- **Academic Setup & Cycle Management**: `http://127.0.0.1:8000/admin/setup`
