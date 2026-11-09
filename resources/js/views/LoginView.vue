@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getDefaultRouteForRole, useAuthStore } from '../stores/auth.js';
 import { useEvaluationStore } from '../stores/evaluation.js';
+import { showJQueryUiError } from '../utils/jqueryUiNotification.js';
 import { sanitizeRedirectPath, throttle } from '../utils/uxHelpers.js';
 
 const route = useRoute();
@@ -50,10 +51,12 @@ async function performLogin() {
   const trimmedId = institutionalId.value.trim();
   if (!trimmedId) {
     errorMessage.value = 'Enter your student number, employee ID, or email.';
+    showJQueryUiError(errorMessage.value, 'Missing Identifier', 4000);
     return;
   }
   if (!password.value) {
     errorMessage.value = 'Enter your password to sign in.';
+    showJQueryUiError(errorMessage.value, 'Missing Password', 4000);
     return;
   }
 
@@ -75,6 +78,7 @@ async function performLogin() {
   } catch (err) {
     errorMessage.value =
       err?.message || 'Incorrect ID or password. Please check your credentials.';
+    showJQueryUiError(errorMessage.value, 'Sign-In Failed', 4000);
   }
 }
 

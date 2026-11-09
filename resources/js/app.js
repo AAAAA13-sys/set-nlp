@@ -84,6 +84,7 @@ export const EvaluaTechAppShell = defineComponent({
       if (isSplitLoginRoute.value) {
         return h('div', { id: 'main-workspace', class: 'evaluatech-login-shell' }, [
           h(RouterView),
+          h(JQueryUiNotification),
         ]);
       }
 
