@@ -834,7 +834,18 @@ async function toggleLock(sectionId, field) {
         </div>
 
         <div v-if="securityPosture.recent_security_events?.length" class="audit-events-box" data-testid="security-audit-events-box">
-          <h4>Recent Sanitized Security Audit Events (Zero Student PII)</h4>
+          <h4>
+            Recent Security Audit Events
+            <span class="ui-badge-count">{{ securityPosture.recent_security_events.length }}</span>
+            <span
+              class="ui-hint"
+              tabindex="0"
+              role="note"
+              aria-label="Zero student PII audit log"
+              data-hint="Sanitized security telemetry log containing zero student-identifying fields."
+            >?</span>
+            <span class="sr-only"> Recent Sanitized Security Audit Events (Zero Student PII)</span>
+          </h4>
           <ul class="audit-event-list tabular-nums">
             <li v-for="ev in securityPosture.recent_security_events.slice(0, 6)" :key="ev.id">
               <span class="audit-sev">{{ ev.severity }}</span>

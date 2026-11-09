@@ -48,7 +48,8 @@ Every authenticated screen shares the deep-emerald left sidebar (`#103c2e`) and 
 | Control / Button | Location | What Happens When Clicked |
 | :--- | :--- | :--- |
 | **Collapse Sidebar Button** (`[data-testid="sidebar-collapse-toggle"]`) | Top-right of emerald sidebar (`[‖]`) or `Ctrl + B` | Toggles the left sidebar between full width (`248px`) and compact icon rail (`68px`). |
-| **Workspace Links** (`My Courses`, `Evaluate Professor`, `Exam Permit & Share`, etc.) | Left sidebar under `WORKSPACE` | Navigates directly to the selected page; active route is highlighted with a warm gold pill (`#f4cd42`). |
+| **Workspace Links** (`My Courses`, `Evaluate Professor`, `Exam Permit & Share`, etc.) | Left sidebar under `WORKSPACE` | Navigates directly to the selected page; active route is highlighted with a warm gold pill (`#f4cd42`), and `My Courses` displays a live pending course count pill (e.g., `3`). |
+| **Clearance Status Badge (`Clearance: PENDING ?`)** (`[data-testid="navbar-clearance-badge"]`) | Top navbar right strip (Student role) | Displays overall clearance status (`PENDING` vs `CLEARED`) with an interactive `?` `.ui-hint` tooltip explaining examination permit requirements. |
 | **`Command Palette` (`Ctrl K`)** (`[data-testid="sidebar-cmdk-btn"]` / `[data-testid="navbar-cmdk-btn"]`) | Left sidebar under `QUICK TOOLS` & top navbar search bar | Opens the keyboard-driven **Command Palette Modal** (`Ctrl + K`) to jump to any page or toggle table density. |
 | **`Evaluation Analysis` (`AI`)** (`[data-testid="sidebar-quivr-btn"]`) | Left sidebar under `QUICK TOOLS` (Chair, Dean, Registrar) | Opens the **Professor's Evaluation Analysis** slide-over drawer to search anonymized student comments. |
 | **`Shortcuts & Rules` (`?`)** (`[data-testid="sidebar-shortcuts-btn"]`) | Left sidebar under `QUICK TOOLS` | Opens the **Keyboard Shortcuts & Evaluation Rules** reference modal. |
@@ -209,4 +210,15 @@ Every authenticated screen shares the deep-emerald left sidebar (`#103c2e`) and 
 - **Shortcuts & Evaluation Rules Modal (`?`)**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/19_shortcuts_cheatsheet_modal.png`
 - **403 Access Restricted**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/15_access_denied_403.png`
 - **404 Page Not Found**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/16_not_found_404.png`
+- **Destructive Action Safeguard Modal (`DestructiveConfirmModal.vue`)**: Features an inline `?` `.ui-hint` tooltip badge explaining governance audit logging and dual-token preservation.
+- **Graceful Error Recovery Banner (`ErrorRecoveryBanner.vue`)**: Displays an inline `?` `.ui-hint` tooltip badge confirming that local evaluation drafts remain safely saved in the browser while retrying.
+- **Reusable Institutional Data Table (`ReusableDataTable.vue`)**: Equipped with `/` keyboard search focus, facet filter pills, column sorting, `Comfortable` / `Compact` row density toggle, `?` `.ui-hint` shortcut tooltip, and `.ui-badge-count` pagination counters.
+
+---
+
+## 9. Knowledge Graph & GraphRAG Architecture (`graphify-out/`)
+
+- **Interactive HTML Graph**: `graphify-out/graph.html`
+- **Raw Graph JSON**: `graphify-out/graph.json` (`1,412 nodes`, `2,645 edges`, `86 communities`)
+- **Audit Report**: `graphify-out/GRAPH_REPORT.md`
 

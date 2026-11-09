@@ -790,8 +790,9 @@ function exportAccreditationDossier() {
         <div class="watchlist-header">
           <div>
             <h3 class="section-title">
-              Faculty Exception Watchlist (Score &lt; 3.5 OR Negative Sentiment &gt; 35%)
-              <span class="ui-hint" tabindex="0" data-hint="Automated alerts for early pedagogical support by the Dean and Department Chair.">?</span>
+              Faculty Exception Watchlist<span class="sr-only"> (Score &lt; 3.5 OR Negative Sentiment &gt; 35%)</span>
+              <span class="ui-badge-count">{{ flaggedWatchlist.length }}</span>
+              <span class="ui-hint" tabindex="0" role="note" aria-label="Watchlist criteria" data-hint="Flags instructors with mean score < 3.50 or negative sentiment > 35% for early pedagogical support.">?</span>
             </h3>
           </div>
           <button
@@ -1058,7 +1059,10 @@ function exportAccreditationDossier() {
 
       <section class="card iso-card" style="margin-bottom: 1.25rem;">
         <div class="iso-header">
-          <h3 class="section-title">ISO/IEC 25010 Software Quality Assessment (Scale: 1.00 – 5.00)</h3>
+          <h3 class="section-title">
+            ISO/IEC 25010 Software Quality Assessment<span class="sr-only"> (Scale: 1.00 – 5.00)</span>
+            <span class="ui-hint" tabindex="0" role="note" aria-label="ISO/IEC 25010 scale" data-hint="Evaluates software quality characteristics on a 1.00 to 5.00 scale.">?</span>
+          </h3>
           <span class="badge-unlocked tabular-nums">
             Overall Mean Quality Score: {{ overview.iso25010.overallMean }} ({{ overview.iso25010.interpretation }})
           </span>
@@ -1089,7 +1093,11 @@ function exportAccreditationDossier() {
 
       <section class="card sus-card">
         <div class="iso-header">
-          <h3 class="section-title">System Usability Scale (SUS) Score Breakdown (N = 50)</h3>
+          <h3 class="section-title">
+            System Usability Scale (SUS) Score Breakdown<span class="sr-only"> (N = 50)</span>
+            <span class="ui-badge-count">N = 50</span>
+            <span class="ui-hint" tabindex="0" role="note" aria-label="SUS sample size" data-hint="Empirical usability evaluation across N = 50 respondents (Students, Faculty, Chairs, Deans, Registrar).">?</span>
+          </h3>
           <span class="badge-unlocked tabular-nums">
             Consolidated Mean SUS: {{ overview.sus.consolidatedMean }} ({{ overview.sus.grade }})
           </span>
