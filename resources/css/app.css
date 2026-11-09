@@ -210,9 +210,10 @@ textarea:focus-visible,
 
 .app-shell-authenticated {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   min-height: 100dvh;
   background: var(--canvas);
+  width: 100%;
 }
 
 .app-shell-student {

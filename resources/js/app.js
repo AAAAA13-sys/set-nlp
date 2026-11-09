@@ -88,46 +88,22 @@ export const EvaluaTechAppShell = defineComponent({
       }
 
       if (isAuthenticatedWorkspace.value) {
-        if (authStore.currentRole === 'student') {
-          return h('div', { class: 'evaluatech-app-shell app-shell-student' }, [
-            h('div', { class: 'app-body' }, [
-              h(NavbarHeader),
-              h('div', { id: 'main-workspace', class: 'evaluatech-view-container' }, [
-                h(RouterView),
-              ]),
-            ]),
-          ]);
-        }
-
-        return h('div', { class: 'evaluatech-app-shell app-shell-authenticated' }, [
-          h(WorkspaceSidebar, {
-            collapsed: sidebarCollapsed.value,
-            mobileOpen: mobileSidebarOpen.value,
-            onToggleCollapse: toggleSidebarCollapse,
-            onCloseMobile: () => {
-              mobileSidebarOpen.value = false;
-            },
-            onOpenCommandPalette: () => {
-              showCommandPalette.value = true;
-            },
-            onOpenShortcuts: () => {
-              showShortcutsModal.value = true;
-            },
-            onOpenQuivrBrain: () => {
-              showQuivrBrain.value = true;
-            },
-          }),
+        const isStudent = authStore.currentRole === 'student';
+        return h('div', { class: `evaluatech-app-shell ${isStudent ? 'app-shell-student' : 'app-shell-authenticated'}` }, [
           h('div', { class: 'app-body' }, [
             h(NavbarHeader, {
-              onOpenMobileSidebar: () => {
-                mobileSidebarOpen.value = true;
-              },
               onOpenCommandPalette: () => {
                 showCommandPalette.value = true;
               },
+              onOpenShortcuts: () => {
+                showShortcutsModal.value = true;
+              },
+              onOpenQuivrBrain: () => {
+                showQuivrBrain.value = true;
+              },
             }),
             h('div', { id: 'main-workspace', class: 'evaluatech-view-container' }, [
-              h(WorkspaceOnboardingBanner),
+              !isStudent ? h(WorkspaceOnboardingBanner) : null,
               h(RouterView),
             ]),
           ]),
@@ -142,7 +118,7 @@ export const EvaluaTechAppShell = defineComponent({
             onOpenQuivrBrain: () => {
               showQuivrBrain.value = true;
             },
-            onToggleSidebar: toggleSidebarCollapse,
+            onToggleSidebar: () => {},
           }),
           h(ShortcutsCheatsheetModal, {
             visible: showShortcutsModal.value,

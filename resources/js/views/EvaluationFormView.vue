@@ -275,6 +275,9 @@ onMounted(async () => {
   await evaluationStore.selectCourseForEvaluation(targetId);
   hydrateSectionDraft(activeSectionId.value);
   formOpenedAt.value = Date.now();
+  if (typeof window !== 'undefined') {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }
 });
 
 onUnmounted(() => {
@@ -702,15 +705,7 @@ function returnToQueue() {
             {{ stepValidationMessage }}
           </div>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-            <button
-              type="button"
-              class="btn-secondary"
-              @click="returnToQueue"
-            >
-              ← Back to My Courses
-            </button>
-
+          <div style="display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
             <button
               type="button"
               class="btn-primary"

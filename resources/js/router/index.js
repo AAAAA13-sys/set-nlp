@@ -147,6 +147,12 @@ export function createEvaluaTechRouter(history) {
   const routerInstance = createRouter({
     history: resolvedHistory,
     routes,
+    scrollBehavior(to, from, savedPosition) {
+      if (savedPosition) {
+        return savedPosition;
+      }
+      return { top: 0, left: 0 };
+    },
   });
 
   routerInstance.beforeEach(async (to) => {

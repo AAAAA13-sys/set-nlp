@@ -36,8 +36,8 @@ function goHome() {
 
       <div class="notfound-guidance">
         <div v-if="authStore.currentRole !== 'student'" class="guidance-item">
-          <strong>Use the sidebar menu</strong>
-          <span>Select a page from the left sidebar or press <kbd>Ctrl + K</kbd> to jump to a section.</span>
+          <strong>Use the top navigation bar</strong>
+          <span>Select a page from the top navigation bar or press <kbd>Ctrl + K</kbd> to jump to a section.</span>
         </div>
         <div v-else class="guidance-item">
           <strong>Return to course evaluations</strong>

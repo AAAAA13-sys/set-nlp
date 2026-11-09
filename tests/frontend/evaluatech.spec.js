@@ -1236,4 +1236,35 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupStoreSrc.includes('/api/admin/setup/sections/assign-faculty'));
     });
   });
+
+  describe('Group 42: Universal Top-Bar Single-Page Navigation, Mobile Expandable Menu & User UI Cleanups', () => {
+    it('verifies universal top-bar navigation across roles, mobile dropdown menu beneath header, app shell column layout, and user-requested UI simplifications', () => {
+      const navbarSfc = readResourceFile('components/NavbarHeader.vue');
+      const appJsSrc = readResourceFile('app.js');
+      const evalFormSfc = readResourceFile('views/EvaluationFormView.vue');
+      const appCss = readResourceFile('../css/app.css');
+      const notFoundSfc = readResourceFile('views/NotFoundView.vue');
+
+      // 1. Universal Top-Bar Desktop & Mobile Navigation (NavbarHeader.vue)
+      assert.ok(navbarSfc.includes('sch-inline-nav'), 'Desktop top-bar inline nav container');
+      assert.ok(navbarSfc.includes('sch-nav-pill'), 'Top-bar nav pill buttons');
+      assert.ok(navbarSfc.includes('isLinkActive(link)'), 'Active page indicator detection');
+      assert.ok(navbarSfc.includes('mobile-menu-trigger'), 'Mobile accessible menu button');
+      assert.ok(navbarSfc.includes('sch-mobile-dropdown-menu'), 'Mobile dropdown menu expanding beneath top bar');
+      assert.ok(navbarSfc.includes('toggleMobileMenu'), 'Mobile dropdown menu toggle handler');
+
+      // 2. App Shell Column Layout without Runtime Sidebar
+      assert.ok(appJsSrc.includes('app-shell-authenticated'), 'Authenticated app shell container');
+      assert.ok(appCss.includes('.app-shell-authenticated {'), 'Authenticated shell styling');
+      assert.ok(appCss.includes('flex-direction: column'), 'Top-bar full-width column layout');
+      assert.equal(appJsSrc.includes('h(WorkspaceSidebar,'), false, 'WorkspaceSidebar must not be rendered at runtime');
+
+      // 3. User UI Cleanups (Back to Courses at top, autosave hidden, fullscreen removed, brand kicker sr-only)
+      assert.ok(evalFormSfc.includes('data-testid="top-back-to-courses-btn"'), 'Back to courses button at top of evaluation form');
+      assert.ok(evalFormSfc.includes('v-show="false" class="autosave-pill'), 'Autosave pill visually hidden');
+      assert.equal(evalFormSfc.includes('fullscreen-toggle-btn'), false, 'Focused Fullscreen button must not exist in evaluation form template');
+      assert.ok(navbarSfc.includes('<span class="sr-only">PAMANTASAN NG LUNGSOD NG PASIG · plpasig.edu.ph</span>'), 'Header kicker visually hidden via sr-only');
+      assert.ok(notFoundSfc.includes('Use the top navigation bar'), '404 guidance points to top navigation bar');
+    });
+  });
 });
