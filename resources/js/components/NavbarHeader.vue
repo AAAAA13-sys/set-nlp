@@ -87,11 +87,7 @@ async function handleLogout() {
         </button>
 
         <div class="sch-brand-stack">
-          <div class="sch-kicker-row">
-            <span class="sch-uni-kicker">PAMANTASAN NG LUNGSOD NG PASIG</span>
-            <span class="sch-domain-dot" aria-hidden="true">·</span>
-            <span class="sch-domain-kicker">plpasig.edu.ph</span>
-          </div>
+          <span class="sr-only">PAMANTASAN NG LUNGSOD NG PASIG · plpasig.edu.ph</span>
           <h1 class="sch-portal-heading">Student Evaluation of Teachers<span class="sr-only"> Institutional Evaluation Portal</span></h1>
         </div>
       </div>
@@ -217,21 +213,6 @@ async function handleLogout() {
   white-space: nowrap;
 }
 
-.sch-kicker-row {
-  display: flex;
-  align-items: center;
-  gap: 0.38rem;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: #176347;
-}
-
-.sch-domain-kicker {
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  color: #4b5e53;
-}
 
 .sch-portal-heading {
   margin: 0;

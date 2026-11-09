@@ -483,7 +483,7 @@ function returnToQueue() {
     <!-- Removed enrolled-subjects-switcher per user request -->
 
     <section class="card eval-header-card">
-      <div class="eval-top-bar" style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 0.85rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line-soft);">
+      <div class="eval-top-bar" style="margin-bottom: 0.85rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line-soft);">
         <button
           type="button"
           class="btn-secondary btn-sm"
