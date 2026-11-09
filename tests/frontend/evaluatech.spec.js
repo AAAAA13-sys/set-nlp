@@ -300,6 +300,9 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(facultyViewSfc.includes('canFacultyViewEvaluation'));
       assert.ok(facultyViewSfc.includes('data-testid="faculty-unlocked-report"'));
       assert.ok(facultyViewSfc.includes('DOUBLE-BLIND UNLOCKED'));
+      assert.ok(facultyViewSfc.includes('data-testid="print-faculty-report-btn"'));
+      assert.ok(facultyViewSfc.includes('data-testid="print-faculty-report-auth"'));
+      assert.ok(facultyViewSfc.includes('printEvaluationReport'));
     });
   });
 

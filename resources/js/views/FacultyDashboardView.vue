@@ -163,6 +163,12 @@ async function updateFacultyPlanStatus(newStatus) {
     await evaluationStore.fetchFacultySectionReport(secId);
   } catch (_) {}
 }
+
+function printEvaluationReport() {
+  if (typeof window !== 'undefined' && typeof window.print === 'function') {
+    window.print();
+  }
+}
 </script>
 
 <template>
@@ -310,7 +316,7 @@ async function updateFacultyPlanStatus(newStatus) {
       aria-labelledby="unlocked-report-heading"
       data-testid="faculty-unlocked-report"
     >
-      <div class="unlocked-header">
+      <div class="unlocked-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
         <div>
           <span class="badge-unlocked">RESULTS AVAILABLE<span class="sr-only"> DOUBLE-BLIND UNLOCKED</span></span>
           <h3 id="unlocked-report-heading" class="section-title">
@@ -321,6 +327,17 @@ async function updateFacultyPlanStatus(newStatus) {
             Evaluations Logged: <strong>{{ responseCount }} / {{ activeSection.enrolled_count }}</strong> •
             Overall Section Mean: <strong>{{ overallMeanScore.toFixed(2) }} / 5.00</strong>
           </p>
+        </div>
+        <div class="unlocked-header-actions">
+          <button
+            type="button"
+            class="btn-primary"
+            data-testid="print-faculty-report-btn"
+            style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.95rem; font-size: 0.85rem;"
+            @click="printEvaluationReport"
+          >
+            <span>Print / Export Rating Sheet</span>
+          </button>
         </div>
       </div>
 
@@ -494,6 +511,31 @@ async function updateFacultyPlanStatus(newStatus) {
             <span>Polarity: <strong>{{ comment.polarity >= 0 ? `+${comment.polarity.toFixed(2)}` : comment.polarity.toFixed(2) }}</strong></span>
             <span>Valence: <strong>{{ comment.valence }}</strong></span>
             <span>Pedagogical Tag: <strong>{{ comment.tag }}</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Official Rating Sheet Print Endorsement & Signatures Block -->
+      <div class="print-permit-auth-block" data-testid="print-faculty-report-auth">
+        <div class="auth-seal-watermark">
+          <span class="seal-badge">SEAL: PLP-ACADEMIC-AFFAIRS-EVALUATION-RECORD</span>
+          <small class="seal-sub">Official Student Evaluation of Teachers (SET) Rating Sheet • AY 2026-2027</small>
+        </div>
+        <div class="auth-signatures-row">
+          <div class="sig-column">
+            <div class="sig-line"></div>
+            <strong class="sig-title">{{ activeSection.instructor_name }}</strong>
+            <span class="sig-caption">Faculty Member</span>
+          </div>
+          <div class="sig-column">
+            <div class="sig-line"></div>
+            <strong class="sig-title">DEPARTMENT CHAIR</strong>
+            <span class="sig-caption">Department of Computer Science</span>
+          </div>
+          <div class="sig-column">
+            <div class="sig-line"></div>
+            <strong class="sig-title">DR. V. MENDOZA</strong>
+            <span class="sig-caption">Dean, College of Computer Studies</span>
           </div>
         </div>
       </div>
