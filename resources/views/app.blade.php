@@ -36,7 +36,7 @@
                             </svg>
                         </div>
                         <div class="brand-text-stack">
-                            <span class="plp-university-title">PAMANTASAN NG LUNGSOD NG PASIG</span>
+                            <span class="plp-university-title">PLP EVALUTECH</span>
                             <div class="brand-sub-row">
                                 <span class="brand-badge">PLP • EvaluaTech</span>
                                 <h1 class="brand-title">Institutional Evaluation Portal</h1>

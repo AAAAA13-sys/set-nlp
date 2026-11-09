@@ -69,7 +69,6 @@ const draftSavedLabel = ref('Autosave ready');
 
 const currentStep = ref(1);
 const stepValidationMessage = ref('');
-const isFullscreen = ref(false);
 
 function scrollToFirstUnanswered() {
   const firstUnansweredIndex = ratings.value.findIndex(
@@ -107,27 +106,6 @@ function returnToStep1() {
   stepValidationMessage.value = '';
   if (typeof window !== 'undefined') {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-}
-
-function toggleFullscreen() {
-  if (typeof document === 'undefined') return;
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().then(() => {
-      isFullscreen.value = true;
-    }).catch(() => {
-      isFullscreen.value = false;
-    });
-  } else {
-    document.exitFullscreen().then(() => {
-      isFullscreen.value = false;
-    }).catch(() => {});
-  }
-}
-
-function handleFullscreenChange() {
-  if (typeof document !== 'undefined') {
-    isFullscreen.value = Boolean(document.fullscreenElement);
   }
 }
 
@@ -257,9 +235,6 @@ function confirmDiscardDraft() {
 }
 
 onMounted(async () => {
-  if (typeof document !== 'undefined') {
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-  }
   await evaluationStore.fetchEvaluationWindow();
   if (!evaluationStore.courses || evaluationStore.courses.length === 0) {
     await evaluationStore.fetchQueue();
@@ -280,11 +255,7 @@ onMounted(async () => {
   }
 });
 
-onUnmounted(() => {
-  if (typeof document !== 'undefined') {
-    document.removeEventListener('fullscreenchange', handleFullscreenChange);
-  }
-});
+onUnmounted(() => {});
 
 watch(
   () => route?.params?.courseSectionId,
@@ -452,10 +423,6 @@ async function executeSubmission(confirmUniform = false) {
     draftSavedLabel.value = 'Submitted & cleared';
   }
 
-  if (typeof document !== 'undefined' && document.fullscreenElement) {
-    document.exitFullscreen().catch(() => {});
-  }
-
   statusBanner.value = {
     type: 'success',
     code: 'CLEARANCE_ISSUED',
@@ -494,7 +461,7 @@ function returnToQueue() {
       <div class="eval-top-bar" style="margin-bottom: 0.85rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line-soft);">
         <button
           type="button"
-          class="btn-secondary btn-sm"
+          class="btn-secondary btn-sm eval-back-btn"
           data-testid="top-back-to-courses-btn"
           @click="returnToQueue"
         >
@@ -522,7 +489,7 @@ function returnToQueue() {
         </div>
 
         <div class="eval-header-tools">
-          <div v-show="false" class="autosave-pill tabular-nums" data-testid="draft-autosave-badge">
+          <div v-show="false" class="autosave-pill tabular-nums" data-testid="draft-autosave-badge" style="display: none !important;">
             <span class="autosave-dot" aria-hidden="true"></span>
             <span>{{ draftSavedLabel }}</span>
             <button
@@ -536,7 +503,7 @@ function returnToQueue() {
             </button>
           </div>
 
-          <div v-show="false" class="idempotency-box">
+          <div v-show="false" class="idempotency-box" style="display: none !important;">
             <span class="token-label">FT-02 Submission Key:</span>
             <code data-testid="submission-key-code">{{ evaluationStore.submissionKey || 'Initializing…' }}</code>
           </div>

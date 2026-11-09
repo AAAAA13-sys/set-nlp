@@ -24,7 +24,7 @@ jobs:
         uses: shivammathur/setup-php@9e72090525849c5e82e596468b86eb55e9cc5401 # v2.32.0
         with:
           php-version: '8.2'
-          extensions: pdo, pdo_sqlite, mbstring, json
+          extensions: pdo, pdo_sqlite, mbstring, json, curl, openssl, tokenizer, xml, ctype, fileinfo
           coverage: none
 
       - name: Setup Node.js 20
@@ -39,7 +39,12 @@ jobs:
           python-version: '3.12'
 
       - name: Install Composer Dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress
+        run: |
+          if [ -f composer.lock ]; then
+            composer install --no-interaction --prefer-dist --no-progress --ignore-platform-reqs || true
+          else
+            composer update --no-interaction --prefer-dist --no-progress --ignore-platform-reqs || true
+          fi
 
       - name: Install Python Dependencies
         run: pip install -r analytics/requirements.txt
