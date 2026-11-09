@@ -87,6 +87,17 @@ export const EvaluaTechAppShell = defineComponent({
       }
 
       if (isAuthenticatedWorkspace.value) {
+        if (authStore.currentRole === 'student') {
+          return h('div', { class: 'evaluatech-app-shell app-shell-student' }, [
+            h('div', { class: 'app-body' }, [
+              h(NavbarHeader),
+              h('div', { id: 'main-workspace', class: 'evaluatech-view-container' }, [
+                h(RouterView),
+              ]),
+            ]),
+          ]);
+        }
+
         return h('div', { class: 'evaluatech-app-shell app-shell-authenticated' }, [
           h(WorkspaceSidebar, {
             collapsed: sidebarCollapsed.value,

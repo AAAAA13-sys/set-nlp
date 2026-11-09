@@ -1,7 +1,6 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import ClearancePermitCard from '../components/ClearancePermitCard.vue';
 import DestructiveConfirmModal from '../components/DestructiveConfirmModal.vue';
 import ErrorRecoveryBanner from '../components/ErrorRecoveryBanner.vue';
 import StraightLineModal from '../components/StraightLineModal.vue';
@@ -407,13 +406,7 @@ function returnToQueue() {
           <h2 class="subjects-bar-title">Select Professor to Evaluate</h2>
         </div>
         <div class="subjects-bar-progress-pill tabular-nums">
-          <span>Progress: <strong>{{ progress.completed }} of {{ progress.total }} Completed</strong> ({{ progress.percentage }}%)</span>
-          <span
-            class="progress-status-chip"
-            :class="progress.allCleared ? 'is-cleared' : 'is-pending'"
-          >
-            {{ progress.allCleared ? 'PERMIT UNLOCKED' : 'PERMIT PENDING' }}
-          </span>
+          <span>Evaluated: <strong>{{ progress.completed }} of {{ progress.total }} Courses</strong> ({{ progress.percentage }}%)</span>
         </div>
       </div>
 
@@ -852,16 +845,22 @@ function returnToQueue() {
       </section>
     </form>
 
-    <!-- Master Examination Permit when 100% Cleared -->
-    <div v-if="progress.allCleared" style="margin-top: 1.25rem;">
-      <ClearancePermitCard
-        :student-id="authStore.user?.institutional_id || '2024-10892'"
-        :student-name="authStore.user?.name || authStore.user?.full_name || 'Student'"
-        :active-term="evaluationStore.evaluationWindow?.term_name || authStore.activeTerm || '1st Semester AY 2026-2027'"
-        :exam-permit-token="evaluationStore.examPermitToken"
-        :courses="evaluationStore.courses"
-      />
-    </div>
+    <!-- All Courses Evaluated Completion Notice -->
+    <section
+      v-if="progress.allCleared"
+      class="card all-courses-completed-card"
+      data-testid="all-evaluations-completed-card"
+      style="text-align: center; padding: 2.25rem 1.5rem; margin-top: 1.25rem; background: #ffffff; border: 1px solid #dce7dc; border-radius: 12px;"
+    >
+      <div class="completion-icon-badge" aria-hidden="true" style="margin: 0 auto 0.75rem;">✓</div>
+      <h3 class="section-title">All Course Evaluations Completed</h3>
+      <p class="section-subtitle">
+        You have successfully submitted evaluations for all <strong>{{ progress.total }} enrolled courses</strong>.
+      </p>
+      <p style="font-size: 0.88rem; color: #4b5563; max-width: 620px; margin: 0.75rem auto 0; line-height: 1.6;">
+        Thank you for taking the time to share your feedback. Your ratings and written comments have been recorded and cryptographically decoupled to support instructional excellence at Pamantasan ng Lungsod ng Pasig.
+      </p>
+    </section>
 
     <StraightLineModal
       :visible="showStraightLineModal"

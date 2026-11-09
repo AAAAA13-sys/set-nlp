@@ -215,6 +215,14 @@ textarea:focus-visible,
   background: var(--canvas);
 }
 
+.app-shell-student {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--canvas);
+  width: 100%;
+}
+
 .app-body {
   flex: 1;
   min-width: 0;

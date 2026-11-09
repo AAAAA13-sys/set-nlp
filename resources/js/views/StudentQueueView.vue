@@ -1,7 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import ClearancePermitCard from '../components/ClearancePermitCard.vue';
 import ErrorRecoveryBanner from '../components/ErrorRecoveryBanner.vue';
 import SkeletonLoader from '../components/SkeletonLoader.vue';
 import { useAuthStore } from '../stores/auth.js';
@@ -103,7 +102,7 @@ function startEvaluation(course) {
           <h2 id="queue-heading" class="section-title">
             My Courses
             <span class="ui-badge-count">{{ progress.completed }} / {{ progress.total }}</span>
-            <span class="ui-hint" tabindex="0" aria-label="Examination permit requirement" data-hint="Complete all enrolled course evaluations to unlock your examination permit.">?</span>
+            <span class="ui-hint" tabindex="0" aria-label="Course evaluation guidance" data-hint="Complete evaluations for all enrolled courses.">?</span>
             <span class="sr-only">({{ progress.completed }} of {{ progress.total }} Completed)</span>
           </h2>
           <div class="queue-meta-strip" style="font-size: 0.8rem; color: #4b5563; margin-top: 0.35rem;">
@@ -118,7 +117,7 @@ function startEvaluation(course) {
         <div class="queue-stats-pill tabular-nums">
           <span>Progress: <strong>{{ progress.percentage }}%</strong></span>
           <span class="divider" aria-hidden="true">·</span>
-          <span>Permit: <strong>{{ progress.clearanceStatus }}</strong></span>
+          <span>Status: <strong>{{ progress.completed === progress.total ? 'Completed' : `${progress.total - progress.completed} Remaining` }}</strong></span>
         </div>
       </div>
 
@@ -319,14 +318,20 @@ function startEvaluation(course) {
       </div>
     </section>
 
-    <ClearancePermitCard
+    <section
       v-if="progress.allCleared"
-      :student-id="authStore.user?.institutional_id || ''"
-      :student-name="authStore.user?.name || ''"
-      :active-term="authStore.activeTerm || '1st Semester AY 2026-2027'"
-      :exam-permit-token="evaluationStore.examPermitToken"
-      :courses="evaluationStore.courses"
-    />
+      class="card all-courses-completed-card"
+      style="text-align: center; padding: 2rem 1.5rem; margin-top: 1rem; background: #ffffff; border: 1px solid #dce7dc; border-radius: 12px;"
+    >
+      <div style="font-size: 2rem; margin-bottom: 0.5rem; color: #166534;" aria-hidden="true">✓</div>
+      <h3 class="section-title">All Course Evaluations Completed</h3>
+      <p class="section-subtitle">
+        You have evaluated all <strong>{{ progress.total }} enrolled courses</strong> for this semester.
+      </p>
+      <p style="font-size: 0.85rem; color: #4b5563; max-width: 600px; margin: 0.5rem auto 0; line-height: 1.5;">
+        Thank you for your valuable feedback to the faculty of Pamantasan ng Lungsod ng Pasig.
+      </p>
+    </section>
   </main>
 </template>
 

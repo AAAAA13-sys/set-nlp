@@ -72,7 +72,7 @@ async function handleLogout() {
     <div class="sch-topbar-inner">
       <div class="sch-topbar-left">
         <button
-          v-if="showAuthenticatedBar"
+          v-if="showAuthenticatedBar && authStore.currentRole !== 'student'"
           type="button"
           class="mobile-menu-trigger"
           aria-label="Open workspace navigation drawer"
@@ -120,7 +120,7 @@ async function handleLogout() {
         </div>
 
         <template v-if="showAuthenticatedBar">
-          <nav class="sch-inline-nav" aria-label="Primary Workspace Navigation" data-testid="navbar-quick-nav">
+          <nav v-if="authStore.currentRole !== 'student'" class="sch-inline-nav" aria-label="Primary Workspace Navigation" data-testid="navbar-quick-nav">
             <router-link
               v-for="link in authorizedNavLinks"
               :key="link.to"
@@ -133,26 +133,15 @@ async function handleLogout() {
           </nav>
 
           <div
-            class="sch-status-pill"
-            :class="authStore.currentRole === 'student' && !isCleared ? 'is-pending' : 'is-cleared'"
+            v-if="authStore.currentRole !== 'student'"
+            class="sch-status-pill is-cleared"
             data-testid="navbar-clearance-badge"
             role="status"
           >
-            <span>{{ authStore.currentRole === 'student' ? 'Clearance:' : 'Role:' }}</span>
+            <span>Role:</span>
             <strong>
-              {{
-                authStore.currentRole === 'student'
-                  ? clearanceStatus
-                  : authStore.user?.role_label || String(authStore.currentRole || '').toUpperCase()
-              }}
+              {{ authStore.user?.role_label || String(authStore.currentRole || '').toUpperCase() }}
             </strong>
-            <span
-              v-if="authStore.currentRole === 'student'"
-              class="ui-hint"
-              tabindex="0"
-              aria-label="Clearance requirement"
-              data-hint="Clears automatically when all enrolled courses are evaluated."
-            >?</span>
           </div>
 
           <div class="sch-signed-in" data-testid="logged-in-user">
