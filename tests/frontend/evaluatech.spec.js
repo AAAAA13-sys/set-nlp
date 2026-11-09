@@ -1286,4 +1286,29 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(notFoundSfc.includes('Use the top navigation bar'), '404 guidance points to top navigation bar');
     });
   });
+
+  describe('Group 43: Academic Supervisor Evaluation Report Inspection & Student Clearance Receipt Certificate', () => {
+    it('verifies Department Chair evaluation breakdown inspection modal and student course clearance receipt print certificate', () => {
+      const chairViewSfc = readResourceFile('views/ChairDashboardView.vue');
+      const evalFormSfc = readResourceFile('views/EvaluationFormView.vue');
+
+      // 1. Department Chair Faculty Evaluation Report Modal (ChairDashboardView.vue)
+      assert.ok(chairViewSfc.includes('view-eval-report-btn-'), 'Chair faculty roster table view report button');
+      assert.ok(chairViewSfc.includes('data-testid="chair-faculty-eval-modal"'), 'Chair faculty evaluation report modal container');
+      assert.ok(chairViewSfc.includes('data-testid="report-performance-adjective"'), 'Performance descriptive adjective badge');
+      assert.ok(chairViewSfc.includes('data-testid="print-chair-report-btn"'), 'Print/Export faculty report button');
+      assert.ok(chairViewSfc.includes('openFacultyReportModal'), 'Open faculty report modal handler');
+      assert.ok(chairViewSfc.includes('closeFacultyReportModal'), 'Close faculty report modal handler');
+      assert.ok(chairViewSfc.includes('getPerformanceRatingText'), 'Performance adjective rating function');
+
+      // 2. Student Course Evaluation Clearance Receipt (EvaluationFormView.vue)
+      assert.ok(evalFormSfc.includes('data-testid="print-course-receipt-btn"'), 'Print clearance receipt button on submission success');
+      assert.ok(evalFormSfc.includes('data-testid="print-completed-course-receipt-btn"'), 'Print clearance receipt button on completed course view');
+      assert.ok(evalFormSfc.includes('data-testid="student-clearance-receipt-card"'), 'Student clearance receipt modal container');
+      assert.ok(evalFormSfc.includes('data-testid="receipt-clearance-token"'), 'Cryptographic clearance signature token element');
+      assert.ok(evalFormSfc.includes('data-testid="print-receipt-action-btn"'), 'Print official receipt action button');
+      assert.ok(evalFormSfc.includes('openReceiptModal'), 'Open receipt modal handler');
+      assert.ok(evalFormSfc.includes('closeReceiptModal'), 'Close receipt modal handler');
+    });
+  });
 });
