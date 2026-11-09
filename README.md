@@ -44,13 +44,13 @@
 
 ## 2. Quick Start & Verification
 
-### Run the Full 85-Unit Multi-Tier Verification Suite
+### Run the Full 119-Unit Multi-Tier Verification Suite
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-all.ps1
 ```
-- **Backend PHPUnit Suite**: `20 / 20 PASS (307 assertions)`
-- **Frontend Vue 3 DOM & Domain Suite**: `25 / 25 Test Groups PASS`
-- **Python `calamanCy` + VADER NLP Suite**: `40 / 40 PASS`
+- **Backend PHPUnit Suite**: `33 / 33 PASS (818 assertions)`
+- **Frontend Vue 3 DOM & Domain Suite**: `40 / 40 Test Groups PASS`
+- **Python `calamanCy` + VADER NLP Suite**: `46 / 46 PASS`
 
 ### Launch the Live PLP Portal (`http://127.0.0.1:8000`)
 ```bat

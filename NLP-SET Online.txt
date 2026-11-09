@@ -183,8 +183,8 @@ EvaluaTech is engineered using a decoupled, four-tier web architecture that isol
                                        │
                                        ▼
                       ┌───────────────────────────────────┐
-                      │    Client-Side Timer & Guard      │
-                      │  (Enforces Min. Dwell Duration)   │
+                      │     Mandatory Timing & Guard      │
+                      │ (Ready-to-Submit Duration >= 0s)  │
                       └─────────────────┬─────────────────┘
                                         │
                                         ▼
@@ -294,7 +294,7 @@ The development of EvaluaTech is governed by the **Agile Development Methodology
 2. **Sprint 2 (Queue & Clearance Engine):** Implementation of dynamic student queues, transactional submission handling, and clearance issuance.
 
 
-3. **Sprint 3 (Integrity & Concurrency Safeguards):** Engineering submission dwell-time validation, straight-line detection, row-level pessimistic locking, and idempotency key checks.
+3. **Sprint 3 (Integrity & Concurrency Safeguards):** Engineering submission timing validation (non-negative duration, evaluation window schedules), straight-line detection, row-level pessimistic locking, and idempotency key checks.
 
 
 4. **Sprint 4 (Analytics & Sentiment Pipeline):** Integration of the Flask/Python NLP engine for sentiment polarity scoring and text categorization.

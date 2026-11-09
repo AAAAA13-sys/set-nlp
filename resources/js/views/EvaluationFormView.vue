@@ -14,7 +14,6 @@ import {
   calculateMean,
   calculatePopulationVariance,
   classifyCommentPreview,
-  isDwellTimeValid,
   isStraightLined,
   validateProfessorQuestions,
 } from '../utils/evaluationMath.js';
@@ -48,7 +47,7 @@ const statusBanner = ref(null);
 const networkFailureDetail = ref('');
 const draftSavedLabel = ref('Autosave ready');
 
-let timerHandle = null;
+const formOpenedAt = ref(Date.now());
 let hydratingDraft = false;
 
 const activeSectionId = computed(
@@ -66,6 +65,7 @@ function resetBlankForm() {
   additionalObservation.value = '';
   statusBanner.value = null;
   networkFailureDetail.value = '';
+  formOpenedAt.value = Date.now();
 }
 
 function hydrateSectionDraft(sectionId) {
@@ -139,16 +139,7 @@ onMounted(async () => {
     Number.isFinite(sectionParam) && sectionParam > 0 ? sectionParam : null,
   );
   hydrateSectionDraft(activeSectionId.value);
-  timerHandle = setInterval(() => {
-    evaluationStore.incrementDwellTime(1);
-  }, 1000);
-});
-
-onUnmounted(() => {
-  if (timerHandle) {
-    clearInterval(timerHandle);
-    timerHandle = null;
-  }
+  formOpenedAt.value = Date.now();
 });
 
 watch(
@@ -159,6 +150,7 @@ watch(
       resetBlankForm();
       await evaluationStore.selectCourseForEvaluation(parsed);
       hydrateSectionDraft(parsed);
+      formOpenedAt.value = Date.now();
     }
   },
 );
@@ -194,9 +186,6 @@ const clusterMeans = computed(() => {
 });
 const straightLined = computed(
   () => allRatingsAnswered.value && isStraightLined(ratings.value),
-);
-const dwellValid = computed(() =>
-  isDwellTimeValid(evaluationStore.dwellSeconds, 25, 0),
 );
 const nlpPreview = computed(() => classifyCommentPreview(commentText.value));
 
@@ -280,6 +269,7 @@ async function confirmStraightLineSubmit() {
 
 async function executeSubmission(confirmUniform = false) {
   networkFailureDetail.value = '';
+  const elapsed = Math.max(0, Math.floor((Date.now() - formOpenedAt.value) / 1000));
   const response = await evaluationStore.submitEvaluation({
     courseSectionId: evaluationStore.activeCourse?.course_section_id,
     ratings: ratings.value,
@@ -293,7 +283,7 @@ async function executeSubmission(confirmUniform = false) {
       recommendations: courseRecommendations.value.trim(),
       additional_observation: showFifthQuestion.value ? additionalObservation.value.trim() : null,
     },
-    dwellTimeSeconds: evaluationStore.dwellSeconds,
+    dwellTimeSeconds: elapsed,
     confirmUniform,
     idempotencyKey: evaluationStore.submissionKey,
   });

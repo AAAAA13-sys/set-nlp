@@ -616,7 +616,6 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(adminViewSfc.includes('data-testid="btn-set-window-reopen"'));
       assert.ok(adminViewSfc.includes('data-testid="btn-set-window-suspended"'));
       assert.ok(adminViewSfc.includes('data-testid="btn-set-window-closed"'));
-      assert.ok(adminViewSfc.includes('data-testid="admin-dwell-input"'));
       assert.ok(adminViewSfc.includes('data-testid="admin-starts-at-input"'));
       assert.ok(adminViewSfc.includes('data-testid="admin-ends-at-input"'));
       assert.ok(adminViewSfc.includes('data-testid="admin-timezone-badge"'));
@@ -639,11 +638,11 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(evaluationStoreCode.includes('EVALUATION_WINDOW_CLOSED'));
 
       // 4. Verify dynamic threshold evaluations via pure math domain functions
-      // Speed-run dwell threshold tuning
-      assert.equal(isDwellTimeValid(40, 20, 45), false);
-      assert.equal(isDwellTimeValid(50, 20, 45), true);
-      assert.equal(isDwellTimeValid(50, 20, 60), false); // Under customized 60s window threshold
-      assert.equal(isDwellTimeValid(65, 20, 60), true);
+      // Mandatory timing policy (0s+ allowed, negative blocked)
+      assert.equal(isDwellTimeValid(0, 20, 0), true);
+      assert.equal(isDwellTimeValid(30, 20, 0), true);
+      assert.equal(isDwellTimeValid(45, 20, 0), true);
+      assert.equal(isDwellTimeValid(-1, 20, 0), false);
 
       // Dean Watchlist cutoff parameter tuning
       assert.equal(evaluateWatchlistFlag(3.55, 20.0, 3.5, 35.0), false);

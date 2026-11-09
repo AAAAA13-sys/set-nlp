@@ -81,6 +81,7 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 - [x] **Checkpoint 3:** Frontend 4-user-group UX refinements, immediate submission workflow, and visible/expandable guidance implemented (`40 / 40 PASS`, 0 errors).
 - [x] **Checkpoint 4:** Agent instructions (`AGENTS.md`, `.agents/`), thesis manuscript (`NLP-SET Online.txt`), and walkthrough documentation synchronized.
 - [x] **Checkpoint 5:** All 119 automated tests, repository hygiene & syntax audit, and Playwright desktop/mobile visual verification completed (`100% PASS`).
+- [x] **Checkpoint 6:** Configurable administrator deadline management modal (`EXTEND` / `REOPEN`), strict boundary validation, zero hidden dwell input, and full documentation synchronization verified.
 
 ---
 
@@ -88,7 +89,7 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 
 | Verification Tier | Command Executed | Executed Units | Pass Count | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 33 tests (814 assertions) | 33 / 33 | **100% PASS** |
+| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 33 tests (818 assertions) | 33 / 33 | **100% PASS** |
 | **Frontend DOM & UX Suite** | `npm.cmd test` | 40 test groups | 40 / 40 | **100% PASS** |
 | **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 46 unit tests | 46 / 46 | **100% PASS** |
 | **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 48 PHP files, 191 sources | 100% clean | **100% PASS** |

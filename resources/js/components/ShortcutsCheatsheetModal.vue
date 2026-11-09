@@ -72,7 +72,7 @@ onUnmounted(() => {
         <section class="cheatsheet-col">
           <h4>Integrity &amp; Decoupling Rules</h4>
           <ul class="shortcut-list">
-            <li><span>Minimum Survey Dwell</span><code>&ge; 45s</code></li>
+            <li><span>Survey Submission Timing</span><code>Ready (&ge; 0s)</code></li>
             <li><span>Straight-Line Guard</span><code>&sigma;&sup2; = 0.0</code></li>
             <li><span>Double-Blind Unlock</span><code>Grades &amp;&amp; Lock</code></li>
             <li><span>Watchlist Mean Cutoff</span><code>&mu; &lt; 3.50</code></li>

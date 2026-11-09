@@ -2666,9 +2666,48 @@ class DecoupledEvaluationService
         $stmtChk->execute([':term_id' => $termId]);
         $existingCfg = $stmtChk->fetch(PDO::FETCH_ASSOC);
 
+        $resolvedStartsAt = $hasStartsAt ? $startsAt : (is_array($existingCfg) ? ($existingCfg['starts_at'] ?? null) : null);
+        $resolvedEndsAt = $hasEndsAt ? $endsAt : (is_array($existingCfg) ? ($existingCfg['ends_at'] ?? null) : null);
+
+        // Boundary validation: Closing time must strictly succeed opening time
+        if ($resolvedStartsAt !== null && $resolvedEndsAt !== null) {
+            $startsUnix = strtotime($resolvedStartsAt);
+            $endsUnix = strtotime($resolvedEndsAt);
+            if ($startsUnix !== false && $endsUnix !== false && $endsUnix <= $startsUnix) {
+                throw new \InvalidArgumentException('Evaluation window closing date must be strictly after the opening date.');
+            }
+        }
+
+        // Action-specific boundary checks
+        if ($rawAction === 'EXTEND') {
+            if ($resolvedEndsAt === null) {
+                throw new \InvalidArgumentException('An extended evaluation closing deadline must be specified.');
+            }
+            $newEndUnix = strtotime($resolvedEndsAt);
+            if ($newEndUnix === false) {
+                throw new \InvalidArgumentException('Invalid extension deadline format.');
+            }
+            if (is_array($existingCfg) && !empty($existingCfg['ends_at'])) {
+                $prevEndUnix = strtotime($existingCfg['ends_at']);
+                if ($prevEndUnix !== false && $newEndUnix <= $prevEndUnix) {
+                    throw new \InvalidArgumentException('Extension deadline must be set to a time strictly later than the previous deadline.');
+                }
+            }
+        } elseif ($rawAction === 'REOPEN') {
+            if ($resolvedEndsAt === null) {
+                throw new \InvalidArgumentException('A new closing deadline must be specified when reopening the evaluation window.');
+            }
+            $newEndUnix = strtotime($resolvedEndsAt);
+            if ($newEndUnix === false) {
+                throw new \InvalidArgumentException('Invalid reopening deadline format.');
+            }
+            $refNowUnix = isset($data['now_unix']) ? (int) $data['now_unix'] : time();
+            if ($newEndUnix <= $refNowUnix) {
+                throw new \InvalidArgumentException('Reopening deadline must be set to a future date and time.');
+            }
+        }
+
         if (is_array($existingCfg)) {
-            $resolvedStartsAt = $hasStartsAt ? $startsAt : ($existingCfg['starts_at'] ?? null);
-            $resolvedEndsAt = $hasEndsAt ? $endsAt : ($existingCfg['ends_at'] ?? null);
             $stmtUpd = $this->pdo->prepare('
                 UPDATE evaluation_window_configs
                 SET status = :status,

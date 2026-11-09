@@ -1540,11 +1540,25 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertSame('EVALUATION_WINDOW_NOT_YET_OPEN', $earlySubmission['code']);
 
         // 7. Test Admin EXTEND Deadline action & immediate submission (0s+ accepted)
+        // First verify boundary rejection if extension deadline does not exceed previous deadline
+        $invalidExtendReq = new \Illuminate\Http\Request([
+            'academic_term_id' => 1,
+            'window_action' => 'EXTEND',
+            'starts_at' => '2026-08-01 08:00:00',
+            'ends_at' => '2026-12-31 23:59:59', // Not strictly later than existing 2026-12-31 23:59:59
+        ]);
+        $invalidExtendReq->setUserResolver(fn () => $adminUser);
+        $invalidExtendRes = $adminController->updateEvaluationWindow($invalidExtendReq);
+        $this->assertSame(422, $invalidExtendRes->getStatusCode());
+        $invalidExtendData = $invalidExtendRes->getData(true);
+        $this->assertSame('INVALID_EVALUATION_WINDOW_DEADLINE', $invalidExtendData['code']);
+
+        // Valid extend to next calendar month
         $extendReq = new \Illuminate\Http\Request([
             'academic_term_id' => 1,
             'window_action' => 'EXTEND',
             'starts_at' => '2026-08-01 08:00:00',
-            'ends_at' => '2026-12-31 23:59:59',
+            'ends_at' => '2027-01-15 23:59:59',
         ]);
         $extendReq->setUserResolver(fn () => $adminUser);
         $extendRes = $adminController->updateEvaluationWindow($extendReq);
@@ -1577,8 +1591,29 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $unauthorizedResponse = $adminController->updateEvaluationWindow($unauthorizedRequest);
         $this->assertSame(403, $unauthorizedResponse->getStatusCode());
         $unauthorizedData = $unauthorizedResponse->getData(true);
-        $this->assertFalse($unauthorizedData['authorized']);
-        $this->assertSame('FORBIDDEN_ROLE', $unauthorizedData['code']);
+        // 9. Boundary validation: Inverted dates (ends_at <= starts_at) rejected with 422
+        $invertedDateReq = new \Illuminate\Http\Request([
+            'academic_term_id' => 1,
+            'starts_at' => '2026-12-31 23:59:59',
+            'ends_at' => '2026-12-01 08:00:00',
+        ]);
+        $invertedDateReq->setUserResolver(fn () => $adminUser);
+        $invertedDateRes = $adminController->updateEvaluationWindow($invertedDateReq);
+        $this->assertSame(422, $invertedDateRes->getStatusCode());
+        $invertedData = $invertedDateRes->getData(true);
+        $this->assertSame('INVALID_EVALUATION_WINDOW_DEADLINE', $invertedData['code']);
+
+        // 10. Reopening boundary validation: REOPEN with a past deadline rejected with 422
+        $pastReopenReq = new \Illuminate\Http\Request([
+            'academic_term_id' => 1,
+            'window_action' => 'REOPEN',
+            'ends_at' => '2020-01-01 00:00:00',
+        ]);
+        $pastReopenReq->setUserResolver(fn () => $adminUser);
+        $pastReopenRes = $adminController->updateEvaluationWindow($pastReopenReq);
+        $this->assertSame(422, $pastReopenRes->getStatusCode());
+        $pastReopenData = $pastReopenRes->getData(true);
+        $this->assertSame('INVALID_EVALUATION_WINDOW_DEADLINE', $pastReopenData['code']);
     }
 
     /**

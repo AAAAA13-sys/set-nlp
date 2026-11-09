@@ -290,7 +290,7 @@ const complianceAuditData = ref({
   compliant_checkpoints: 8,
   checkpoints: [
     { criterion_id: 'CRIT-01', title: 'Zero-Knowledge Cryptographic Anonymity Decoupling', status: 'COMPLIANT', evidence: 'Physical separation of evaluation_clearances and evaluation_vault; zero student foreign keys.' },
-    { criterion_id: 'CRIT-02', title: 'Anti-Speed-Run 45-Second Interaction Guard', status: 'COMPLIANT', evidence: 'Server-signed start tokens and dwell_time_seconds >= 45s enforced (sub-45s rejected with HTTP 422).' },
+    { criterion_id: 'CRIT-02', title: 'Mandatory Timing Policy & Window Compliance', status: 'COMPLIANT', evidence: 'Evaluations accepted whenever students are ready (dwell_time_seconds >= 0) within administrator-defined evaluation periods.' },
     { criterion_id: 'CRIT-03', title: 'Population Rating Variance Guard', status: 'COMPLIANT', evidence: 'Population variance computed across Likert items; sigma^2 = 0 triggers confirmation dialog.' },
     { criterion_id: 'CRIT-04', title: 'Double-Blind Faculty Grade Synchronization Lock', status: 'COMPLIANT', evidence: 'Reports locked until both term_grades_submitted = 1 and registrar_lock = 1.' },
     { criterion_id: 'CRIT-05', title: '5-Cluster Pedagogical Questionnaire Coverage', status: 'COMPLIANT', evidence: '25 Likert items across Delivery, Assessment, Management, Conduct, and Student Support.' },

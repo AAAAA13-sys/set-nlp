@@ -77,7 +77,6 @@ const filteredSecurityControls = computed(() => {
 
 const windowForm = ref({
   status: 'OPEN',
-  min_dwell_seconds: 0,
   starts_at: '2026-01-01 08:00:00',
   ends_at: '2026-12-31 23:59:59',
   timezone: 'Asia/Manila',
@@ -90,7 +89,6 @@ const windowForm = ref({
 function syncWindowFormFromStore() {
   windowForm.value = {
     status: evaluationStore.evaluationWindow?.status || 'OPEN',
-    min_dwell_seconds: Number(evaluationStore.evaluationWindow?.min_dwell_seconds ?? 0),
     starts_at: evaluationStore.evaluationWindow?.starts_at || '2026-01-01 08:00:00',
     ends_at: evaluationStore.evaluationWindow?.ends_at || '2026-12-31 23:59:59',
     timezone: evaluationStore.evaluationWindow?.timezone || 'Asia/Manila',
@@ -152,15 +150,88 @@ async function handleSaveEvaluationWindow() {
   }
 }
 
-async function executeWindowAction(action) {
+const showDeadlineModal = ref(false);
+const deadlineModalAction = ref('EXTEND');
+const deadlineModalNewDate = ref('');
+const deadlineModalJustification = ref('');
+const deadlineModalError = ref('');
+const deadlineModalSubmitting = ref(false);
+
+function formatDateTime(d) {
+  const pad = (n) => String(n).padStart(2, '0');
+  const yyyy = d.getFullYear();
+  const mm = pad(d.getMonth() + 1);
+  const dd = pad(d.getDate());
+  const hh = pad(d.getHours());
+  const min = pad(d.getMinutes());
+  const ss = pad(d.getSeconds());
+  return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+}
+
+function openDeadlineModal(action) {
+  deadlineModalAction.value = action;
+  deadlineModalError.value = '';
+  if (action === 'EXTEND') {
+    const baseDate = windowForm.value.ends_at ? new Date(windowForm.value.ends_at.replace(' ', 'T')) : new Date();
+    baseDate.setDate(baseDate.getDate() + 7);
+    deadlineModalNewDate.value = formatDateTime(baseDate);
+    deadlineModalJustification.value = 'Administrative deadline extension approved for student submission completion.';
+  } else {
+    const baseDate = new Date();
+    baseDate.setDate(baseDate.getDate() + 7);
+    deadlineModalNewDate.value = formatDateTime(baseDate);
+    deadlineModalJustification.value = 'Administrative evaluation reopening authorized by Academic Affairs.';
+  }
+  showDeadlineModal.value = true;
+}
+
+async function confirmDeadlineModal() {
+  deadlineModalError.value = '';
+  const targetDateStr = String(deadlineModalNewDate.value || '').trim();
+  if (!targetDateStr) {
+    deadlineModalError.value = 'Please specify a valid closing date and time (YYYY-MM-DD HH:MM:SS).';
+    return;
+  }
+  const targetUnix = Date.parse(targetDateStr.replace(' ', 'T'));
+  if (isNaN(targetUnix)) {
+    deadlineModalError.value = 'Invalid date format. Expected YYYY-MM-DD HH:MM:SS.';
+    return;
+  }
+  const nowUnix = Date.now();
+  if (targetUnix <= nowUnix) {
+    deadlineModalError.value = 'Deadline must be set to a future date and time.';
+    return;
+  }
+  if (deadlineModalAction.value === 'EXTEND' && windowForm.value.ends_at) {
+    const curUnix = Date.parse(windowForm.value.ends_at.replace(' ', 'T'));
+    if (!isNaN(curUnix) && targetUnix <= curUnix) {
+      deadlineModalError.value = 'Extension deadline must be set to a time strictly later than the previous deadline.';
+      return;
+    }
+  }
+
+  deadlineModalSubmitting.value = true;
+  try {
+    await executeWindowAction(deadlineModalAction.value, targetDateStr, deadlineModalJustification.value);
+    showDeadlineModal.value = false;
+  } catch (err) {
+    deadlineModalError.value = err.message || 'Failed to update evaluation window deadline.';
+  } finally {
+    deadlineModalSubmitting.value = false;
+  }
+}
+
+async function executeWindowAction(action, customDeadline = null, justification = null) {
   windowSaveStatus.value = null;
   try {
     const payload = {
       academic_term_id: evaluationStore.evaluationWindow?.academic_term_id || 1,
       window_action: action,
       starts_at: windowForm.value.starts_at,
-      ends_at: windowForm.value.ends_at,
-      announcement_message: windowForm.value.announcement_message,
+      ends_at: customDeadline || windowForm.value.ends_at,
+      announcement_message: justification
+        ? `${windowForm.value.announcement_message ? windowForm.value.announcement_message + ' ' : ''}[${action}: ${justification}]`.trim()
+        : windowForm.value.announcement_message,
     };
     if (action === 'OPEN' || action === 'RESUME') {
       payload.status = 'OPEN';
@@ -170,15 +241,19 @@ async function executeWindowAction(action) {
       payload.status = 'CLOSED';
     } else if (action === 'EXTEND') {
       payload.status = 'OPEN';
-      const currentEnd = new Date(windowForm.value.ends_at || Date.now());
-      currentEnd.setDate(currentEnd.getDate() + 7);
-      payload.ends_at = currentEnd.toISOString().replace('T', ' ').substring(0, 19);
+      if (!customDeadline) {
+        const currentEnd = new Date(windowForm.value.ends_at ? windowForm.value.ends_at.replace(' ', 'T') : Date.now());
+        currentEnd.setDate(currentEnd.getDate() + 7);
+        payload.ends_at = formatDateTime(currentEnd);
+      }
       windowForm.value.ends_at = payload.ends_at;
     } else if (action === 'REOPEN') {
       payload.status = 'OPEN';
-      const currentEnd = new Date();
-      currentEnd.setDate(currentEnd.getDate() + 7);
-      payload.ends_at = currentEnd.toISOString().replace('T', ' ').substring(0, 19);
+      if (!customDeadline) {
+        const currentEnd = new Date();
+        currentEnd.setDate(currentEnd.getDate() + 7);
+        payload.ends_at = formatDateTime(currentEnd);
+      }
       windowForm.value.ends_at = payload.ends_at;
     }
     await evaluationStore.updateEvaluationWindowConfig(payload);
@@ -192,6 +267,7 @@ async function executeWindowAction(action) {
       ok: false,
       message: `Failed to execute window action: ${err.message}`,
     };
+    throw err;
   }
 }
 
@@ -416,15 +492,15 @@ async function toggleLock(sectionId, field) {
           type="button"
           class="btn-toggle"
           data-testid="btn-set-window-extend"
-          @click="executeWindowAction('EXTEND')"
+          @click="openDeadlineModal('EXTEND')"
         >
-          EXTEND DEADLINE (+7 Days)
+          EXTEND DEADLINE
         </button>
         <button
           type="button"
           class="btn-toggle"
           data-testid="btn-set-window-reopen"
-          @click="executeWindowAction('REOPEN')"
+          @click="openDeadlineModal('REOPEN')"
         >
           REOPEN CLOSED PERIOD
         </button>
@@ -449,14 +525,6 @@ async function toggleLock(sectionId, field) {
       </div>
 
       <form class="window-params-grid" @submit.prevent="handleSaveEvaluationWindow">
-        <!-- Hidden input for backward compatibility with automated test suites -->
-        <input
-          id="admin-dwell-input"
-          v-model.number="windowForm.min_dwell_seconds"
-          type="hidden"
-          data-testid="admin-dwell-input"
-        />
-
         <div class="param-group">
           <label for="admin-starts-at-input" class="param-label">
             Opening Date &amp; Time (Asia/Manila)
@@ -1018,6 +1086,82 @@ async function toggleLock(sectionId, field) {
       @cancel="pendingDangerousStatus = null"
       @confirm="confirmDangerousWindowStatus"
     />
+
+    <!-- Configurable Deadline Management Modal (EXTEND / REOPEN) -->
+    <div
+      v-if="showDeadlineModal"
+      class="deadline-modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="deadline-modal-title"
+      data-testid="admin-deadline-modal"
+    >
+      <div class="deadline-modal-card card">
+        <header class="deadline-modal-header">
+          <h3 id="deadline-modal-title">
+            {{ deadlineModalAction === 'EXTEND' ? 'Extend Evaluation Window Deadline' : 'Reopen Evaluation Period' }}
+          </h3>
+          <p class="deadline-modal-sub">
+            Configure an administrator-selected submission deadline (Asia/Manila timezone) with required audit justification.
+          </p>
+        </header>
+
+        <div v-if="deadlineModalError" class="modal-error-banner" role="alert" data-testid="deadline-modal-error">
+          {{ deadlineModalError }}
+        </div>
+
+        <div class="modal-field-group">
+          <label for="deadline-modal-input" class="param-label">
+            Target Submission Deadline (Asia/Manila)
+            <span class="param-subtext">Format: YYYY-MM-DD HH:MM:SS</span>
+          </label>
+          <input
+            id="deadline-modal-input"
+            v-model="deadlineModalNewDate"
+            type="text"
+            class="param-input tabular-nums"
+            placeholder="YYYY-MM-DD HH:MM:SS"
+            data-testid="deadline-modal-input"
+          />
+        </div>
+
+        <div class="modal-field-group" style="margin-top: 0.75rem;">
+          <label for="deadline-justification-input" class="param-label">
+            Administrative Audit Justification
+            <span class="param-subtext">Reason recorded in security and evaluation audit telemetry</span>
+          </label>
+          <input
+            id="deadline-justification-input"
+            v-model="deadlineModalJustification"
+            type="text"
+            class="param-input"
+            placeholder="E.g. Approved extension by Academic Council for term completion"
+            data-testid="deadline-justification-input"
+          />
+        </div>
+
+        <footer class="deadline-modal-actions" style="margin-top: 1.25rem; display: flex; gap: 0.5rem; justify-content: flex-end;">
+          <button
+            type="button"
+            class="btn-outline"
+            data-testid="btn-cancel-deadline-modal"
+            :disabled="deadlineModalSubmitting"
+            @click="showDeadlineModal = false"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn-primary"
+            data-testid="btn-confirm-deadline-modal"
+            :disabled="deadlineModalSubmitting"
+            @click="confirmDeadlineModal"
+          >
+            {{ deadlineModalSubmitting ? 'Applying...' : 'Confirm & Apply Deadline' }}
+          </button>
+        </footer>
+      </div>
+    </div>
   </main>
 </template>
 
@@ -1270,5 +1414,50 @@ async function toggleLock(sectionId, field) {
 .audit-time {
   margin-left: auto;
   color: #5a6d62;
+}
+
+.deadline-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 60, 46, 0.45);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.deadline-modal-card {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.16);
+  border: 1px solid #d4dfd8;
+}
+
+.deadline-modal-header h3 {
+  margin: 0 0 0.35rem 0;
+  font-size: 1.15rem;
+  color: #103c2e;
+}
+
+.deadline-modal-sub {
+  margin: 0 0 1rem 0;
+  font-size: 0.85rem;
+  color: #4b6354;
+  line-height: 1.4;
+}
+
+.modal-error-banner {
+  padding: 0.6rem 0.85rem;
+  margin-bottom: 0.85rem;
+  background: #fdf2f2;
+  border: 1px solid #f8b4b4;
+  color: #9b1c1c;
+  border-radius: 6px;
+  font-size: 0.82rem;
 }
 </style>

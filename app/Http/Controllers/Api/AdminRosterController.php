@@ -203,7 +203,15 @@ class AdminRosterController extends Controller
             ], 422);
         }
 
-        $updatedWindow = $this->evaluationService->updateEvaluationWindow($payload, $userId);
+        try {
+            $updatedWindow = $this->evaluationService->updateEvaluationWindow($payload, $userId);
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse([
+                'authorized' => true,
+                'code' => 'INVALID_EVALUATION_WINDOW_DEADLINE',
+                'message' => $e->getMessage(),
+            ], 422);
+        }
         (new SecurityAuditService())->logEvent(
             $this->pdo,
             'EVALUATION_WINDOW_UPDATED',
