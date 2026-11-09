@@ -320,6 +320,7 @@ function startEvaluation(course) {
     </section>
 
     <ClearancePermitCard
+      v-if="progress.allCleared"
       :student-id="authStore.user?.institutional_id || ''"
       :student-name="authStore.user?.name || ''"
       :active-term="authStore.activeTerm || '1st Semester AY 2026-2027'"

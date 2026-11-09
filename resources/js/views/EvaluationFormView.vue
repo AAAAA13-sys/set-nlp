@@ -13,7 +13,6 @@ import {
   calculateClusterMeans,
   calculateMean,
   calculatePopulationVariance,
-  classifyCommentPreview,
   isStraightLined,
   validateProfessorQuestions,
 } from '../utils/evaluationMath.js';
@@ -35,11 +34,29 @@ const commentText = ref('');
 
 // 4 Structured Questions Regarding the Professor (up to Max of 5 Questions)
 const threeWords = ref(['', '', '']);
-const improvementTopics = ref(['', '']);
+const improvementTopics = ref(['', '', '']);
 const teachingStrengths = ref('');
 const courseRecommendations = ref('');
 const showFifthQuestion = ref(false);
 const additionalObservation = ref('');
+
+const improvementTopicPrompts = [
+  {
+    subItem: 'a.',
+    title: 'a. Teaching Method & Lecture Delivery',
+    placeholder: 'Suggest how the professor can improve teaching pace, clarity, or explanation of complex topics…',
+  },
+  {
+    subItem: 'b.',
+    title: 'b. Assessments, Quizzes & Grading Feedback',
+    placeholder: 'Suggest how the professor can improve exams, assignment clarity, or prompt return of grades…',
+  },
+  {
+    subItem: 'c.',
+    title: 'c. Classroom Management & Student Support',
+    placeholder: 'Suggest how the professor can improve punctuality, student engagement, or consultation support…',
+  },
+];
 
 const showStraightLineModal = ref(false);
 const showDiscardDraftModal = ref(false);
@@ -58,7 +75,7 @@ function resetBlankForm() {
   ratings.value = Array(25).fill(null);
   commentText.value = '';
   threeWords.value = ['', '', ''];
-  improvementTopics.value = ['', ''];
+  improvementTopics.value = ['', '', ''];
   teachingStrengths.value = '';
   courseRecommendations.value = '';
   showFifthQuestion.value = false;
@@ -82,9 +99,9 @@ function hydrateSectionDraft(sectionId) {
   commentText.value = String(saved.commentText || '');
   threeWords.value = Array.isArray(saved.threeWords) && saved.threeWords.length === 3 ? [...saved.threeWords] : ['', '', ''];
   improvementTopics.value =
-    Array.isArray(saved.improvementTopics) && saved.improvementTopics.length >= 2
+    Array.isArray(saved.improvementTopics) && saved.improvementTopics.length === 3
       ? [...saved.improvementTopics]
-      : ['', ''];
+      : ['', '', ''];
   teachingStrengths.value = String(saved.teachingStrengths || '');
   courseRecommendations.value = String(saved.courseRecommendations || '');
   showFifthQuestion.value = Boolean(saved.showFifthQuestion);
@@ -187,7 +204,6 @@ const clusterMeans = computed(() => {
 const straightLined = computed(
   () => allRatingsAnswered.value && isStraightLined(ratings.value),
 );
-const nlpPreview = computed(() => classifyCommentPreview(commentText.value));
 
 const activeProfQuestionCount = computed(() => (showFifthQuestion.value ? 5 : 4));
 
@@ -215,17 +231,6 @@ function getDimensionMean(dimension) {
   return vals.length > 0 ? calculateMean(vals) : null;
 }
 
-function addImprovementTopic() {
-  if (improvementTopics.value.length < 6) {
-    improvementTopics.value.push('');
-  }
-}
-
-function removeImprovementTopic(index) {
-  if (improvementTopics.value.length > 2) {
-    improvementTopics.value.splice(index, 1);
-  }
-}
 
 function toggleFifthQuestion() {
   showFifthQuestion.value = !showFifthQuestion.value;
@@ -563,46 +568,36 @@ function returnToQueue() {
           </div>
         </div>
 
-        <!-- Question 2: Room for improvements of the prof (a. topic 1, b. topic 2, ...) -->
+        <!-- Question 2: Constructive areas for instructional improvement (3 fixed topics) -->
         <div class="prof-question-block" data-testid="prof-question-2">
           <div class="prof-question-subhead">
             <label class="prof-question-label">
               2. Constructive areas for instructional improvement:
             </label>
-            <button
-              v-if="improvementTopics.length < 6"
-              type="button"
-              class="btn-secondary btn-xs"
-              data-testid="add-improvement-topic-btn"
-              @click="addImprovementTopic"
-            >
-              + Add Topic ({{ String.fromCharCode(97 + improvementTopics.length) }}.)
-            </button>
+            <span class="sub-topic-hint" style="font-size: 0.78rem; color: #53665a;">
+              Answer the three key instructional areas below:
+            </span>
           </div>
 
           <div
-            v-for="(_, idx) in improvementTopics"
+            v-for="(topic, idx) in improvementTopicPrompts"
             :key="`imp-topic-${idx}`"
             class="improvement-topic-row"
             :data-testid="`improvement-topic-row-${idx}`"
+            style="display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.75rem;"
           >
-            <span class="sub-topic-badge">{{ String.fromCharCode(97 + idx) }}. Topic {{ idx + 1 }}</span>
+            <label :for="`imp-topic-input-${idx}`" class="sub-topic-badge" style="width: fit-content; margin-bottom: 0.2rem;">
+              {{ topic.title }}
+            </label>
             <input
+              :id="`imp-topic-input-${idx}`"
               v-model="improvementTopics[idx]"
               type="text"
               maxlength="300"
               class="form-input"
-              :placeholder="`${String.fromCharCode(97 + idx)}. Specific topic or instructional area for improvement…`"
-              :aria-label="`Room for improvement topic ${idx + 1}`"
+              :placeholder="topic.placeholder"
+              :aria-label="topic.title"
             />
-            <button
-              v-if="improvementTopics.length > 2"
-              type="button"
-              class="btn-secondary btn-xs"
-              @click="removeImprovementTopic(idx)"
-            >
-              Remove
-            </button>
           </div>
         </div>
 
@@ -680,15 +675,6 @@ function returnToQueue() {
           placeholder="Write constructive feedback in English, Tagalog, or Taglish…"
           data-testid="narrative-comment-input"
         ></textarea>
-
-        <div v-if="commentText.trim().length > 0" class="nlp-live-preview tabular-nums" data-testid="nlp-live-preview">
-          <span>Tone:</span>
-          <span class="badge-valence" :class="`valence-${nlpPreview.valence.toLowerCase()}`">
-            {{ nlpPreview.valence }}
-          </span>
-          <span>Topic:</span>
-          <strong data-testid="nlp-preview-tag">{{ nlpPreview.tag }}</strong>
-        </div>
 
         <div class="form-submit-footer">
           <button

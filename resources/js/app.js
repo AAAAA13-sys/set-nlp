@@ -118,16 +118,6 @@ export const EvaluaTechAppShell = defineComponent({
               h(WorkspaceOnboardingBanner),
               h(RouterView),
             ]),
-            h('footer', { class: 'app-workspace-footer' }, [
-              h(
-                'span',
-                'Pamantasan ng Lungsod ng Pasig · Student Evaluation of Teachers',
-              ),
-              h(
-                'span',
-                'Confidential & Anonymous (RA 10173)',
-              ),
-            ]),
           ]),
           h(CommandPaletteModal, {
             visible: showCommandPalette.value,

@@ -1829,13 +1829,13 @@ class EvaluaTechBackendSuiteTest extends TestCase
 
         // Check active term metrics
         $this->assertArrayHasKey('active_term', $trends);
-        $this->assertSame('FALL-2026', $trends['active_term']['term_code']);
+        $this->assertSame('1SEM-2026', $trends['active_term']['term_code']);
         $this->assertGreaterThan(0.0, $trends['active_term']['mean_score']);
         $this->assertArrayHasKey('cluster_scores', $trends['active_term']);
 
         // Check prior term baseline
         $this->assertArrayHasKey('prior_term', $trends);
-        $this->assertSame('SPRING-2026', $trends['prior_term']['term_code']);
+        $this->assertSame('2SEM-2025', $trends['prior_term']['term_code']);
         $this->assertEqualsWithDelta(4.14, $trends['prior_term']['mean_score'], 0.05);
 
         // Check computed deltas

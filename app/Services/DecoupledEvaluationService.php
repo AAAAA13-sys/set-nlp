@@ -1629,7 +1629,7 @@ class DecoupledEvaluationService
         $historicalSemesters = [
             [
                 'term_code' => 'AY 2024-2025 SEM 2',
-                'term_name' => 'Spring 2025',
+                'term_name' => '2nd Semester AY 2024-2025',
                 'mean_score' => 4.02,
                 'negative_pct' => 17.8,
                 'response_rate_pct' => 84.1,
@@ -1637,7 +1637,7 @@ class DecoupledEvaluationService
             ],
             [
                 'term_code' => 'AY 2025-2026 SEM 1',
-                'term_name' => 'Fall 2025',
+                'term_name' => '1st Semester AY 2025-2026',
                 'mean_score' => 4.12,
                 'negative_pct' => 15.4,
                 'response_rate_pct' => 88.0,
@@ -1645,7 +1645,7 @@ class DecoupledEvaluationService
             ],
             [
                 'term_code' => 'AY 2025-2026 SEM 2',
-                'term_name' => 'Spring 2026 (Baseline)',
+                'term_name' => '2nd Semester AY 2025-2026 (Baseline)',
                 'mean_score' => $priorMean,
                 'negative_pct' => $priorNegPct,
                 'response_rate_pct' => $priorResponseRate,
@@ -1653,7 +1653,7 @@ class DecoupledEvaluationService
             ],
             [
                 'term_code' => 'AY 2026-2027 SEM 1 (Active)',
-                'term_name' => 'Fall 2026 (Active Term)',
+                'term_name' => '1st Semester AY 2026-2027 (Active Term)',
                 'mean_score' => $activeMean,
                 'negative_pct' => $activeNegPct,
                 'response_rate_pct' => $activeResponseRate,
@@ -1666,8 +1666,8 @@ class DecoupledEvaluationService
             'accreditation_standard' => 'AACCUP Area III: Curriculum and Instruction / Faculty Development',
             'institutional_target' => 4.00,
             'active_term' => [
-                'term_code' => 'FALL-2026',
-                'term_name' => 'Fall 2026 (Active Term)',
+                'term_code' => '1SEM-2026',
+                'term_name' => '1st Semester AY 2026-2027 (Active Term)',
                 'mean_score' => $activeMean,
                 'submissions_count' => $submissionsCount,
                 'negative_sentiment_pct' => $activeNegPct,
@@ -1676,8 +1676,8 @@ class DecoupledEvaluationService
                 'cluster_scores' => $clusterAverages,
             ],
             'prior_term' => [
-                'term_code' => 'SPRING-2026',
-                'term_name' => 'Spring 2026 (Baseline)',
+                'term_code' => '2SEM-2025',
+                'term_name' => '2nd Semester AY 2025-2026 (Baseline)',
                 'mean_score' => $priorMean,
                 'submissions_count' => 1840,
                 'negative_sentiment_pct' => $priorNegPct,
@@ -2540,8 +2540,8 @@ class DecoupledEvaluationService
         }
 
         $resolvedTermId = is_array($term) ? (int) $term['id'] : 1;
-        $termCode = is_array($term) ? (string) ($term['code'] ?? 'FALL-2026') : 'FALL-2026';
-        $termName = is_array($term) ? (string) ($term['name'] ?? 'Fall 2026') : 'Fall 2026';
+        $termCode = is_array($term) ? (string) ($term['code'] ?? '1SEM-2026') : '1SEM-2026';
+        $termName = is_array($term) ? (string) ($term['name'] ?? '1st Semester') : '1st Semester';
         $academicYear = is_array($term) ? (string) ($term['academic_year'] ?? '2026-2027') : '2026-2027';
         $isActive = is_array($term) ? (bool) ($term['is_active'] ?? 1) : true;
         $evalOpen = is_array($term) ? (bool) ($term['evaluation_open'] ?? 1) : true;

@@ -48,7 +48,7 @@ export const useEvaluationStore = defineStore('evaluation', () => {
   // Evaluation Window & Period Control State (SOP 1 / Registrar Parameter Console)
   const evaluationWindow = ref({
     academic_term_id: 1,
-    term_code: 'FALL-2026',
+    term_code: '1SEM-2026',
     term_name: '1st Semester AY 2026-2027',
     academic_year: '2026-2027',
     is_active: true,

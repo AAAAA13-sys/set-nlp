@@ -422,7 +422,8 @@ namespace Tests {
                 (2, 'CAS', 'College of Arts and Sciences', 'College of Arts and Sciences');
 
                 INSERT INTO academic_terms (id, code, name, period_label, is_active) VALUES
-                (1, 'FALL-2026', 'Fall', 'Final SET', 1);
+                (1, '1SEM-2026', '1st Semester', 'Final SET', 1),
+                (2, '2SEM-2026', '2nd Semester', 'Final SET', 0);
 
                 INSERT INTO evaluation_window_configs (
                     academic_term_id, status, min_dwell_seconds, straight_line_variance_threshold,

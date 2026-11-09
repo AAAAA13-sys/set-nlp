@@ -304,7 +304,7 @@ async function endorseActionPlan(item) {
       <div class="supervisor-filter-bar" style="display: flex; gap: 0.65rem; flex-wrap: wrap; margin-top: 0.75rem; padding: 0.65rem 0.85rem; background: #fbfcfb; border: 1px solid #e1e7e1; border-radius: 8px;">
         <div style="font-size: 0.8rem;">
           <span style="color: #64748b; font-weight: 600;">Term:</span>
-          <strong style="margin-left: 0.25rem; color: #103c2e;">FALL-2026</strong>
+          <strong style="margin-left: 0.25rem; color: #103c2e;">1st Semester AY 2026-2027</strong>
         </div>
         <div style="font-size: 0.8rem;">
           <span style="color: #64748b; font-weight: 600;">Scope:</span>

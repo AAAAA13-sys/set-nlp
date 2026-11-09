@@ -51,10 +51,12 @@ class EvaluaTechDemoSeeder extends Seeder
                 (2, 'CAS', 'Department of General Education', 'College of Arts and Sciences', '{$now}', '{$now}')
         ");
 
-        // 2. Active Academic Term (Fall)
+        // 2. Academic Terms (1st Semester & 2nd Semester for AY 2026-2027)
         $this->pdo->exec("
             INSERT OR REPLACE INTO academic_terms (id, code, name, academic_year, is_active, evaluation_open, starts_on, ends_on, created_at, updated_at)
-            VALUES (1, 'FALL-2026', 'Fall', '2026-2027', 1, 1, '2026-08-15', '2026-12-15', '{$now}', '{$now}')
+            VALUES 
+                (1, '1SEM-2026', '1st Semester', '2026-2027', 1, 1, '2026-08-15', '2026-12-15', '{$now}', '{$now}'),
+                (2, '2SEM-2026', '2nd Semester', '2026-2027', 0, 0, '2027-01-15', '2027-05-30', '{$now}', '{$now}')
         ");
 
         // 2b. Evaluation Window Configuration (Mandatory Timing Policy: 0s min dwell, schedule in Asia/Manila)
@@ -66,7 +68,7 @@ class EvaluaTechDemoSeeder extends Seeder
                     starts_at, ends_at, timezone, last_window_action, created_at, updated_at
                 ) VALUES (
                     1, 'OPEN', 0, 0.0, 3.50, 35.0,
-                    'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active.',
+                    'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active for 1st Semester AY 2026-2027.',
                     '2026-08-15 08:00:00', '2026-12-20 23:59:59', 'Asia/Manila', 'OPEN',
                     '{$now}', '{$now}'
                 )

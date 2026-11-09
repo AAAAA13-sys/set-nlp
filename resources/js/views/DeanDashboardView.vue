@@ -239,16 +239,16 @@ const selectedDepartmentLabel = computed(() => {
 const longitudinalData = ref({
   accreditation_standard: 'AACCUP Area III: Curriculum & Instruction / Faculty Competence',
   active_term: {
-    term_code: 'FALL-2026',
-    term_name: 'Fall 2026 (Active Term)',
+    term_code: '1SEM-2026',
+    term_name: '1st Semester AY 2026-2027 (Active Term)',
     mean_score: 4.42,
     negative_sentiment_pct: 10.0,
     positive_sentiment_pct: 72.0,
     response_rate_pct: 91.4,
   },
   prior_term: {
-    term_code: 'SPRING-2026',
-    term_name: 'Spring 2026 (Baseline)',
+    term_code: '2SEM-2025',
+    term_name: '2nd Semester AY 2025-2026 (Baseline)',
     mean_score: 4.14,
     negative_sentiment_pct: 15.8,
     positive_sentiment_pct: 68.4,
