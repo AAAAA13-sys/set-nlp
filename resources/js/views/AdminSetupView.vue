@@ -294,23 +294,34 @@ async function executeDeleteSection() {
           </p>
         </div>
 
-        <div class="setup-term-switcher">
-          <label for="active-term-picker" class="term-picker-label">Active Term:</label>
-          <select
-            id="active-term-picker"
-            class="term-picker-select"
-            :value="setupStore.selectedTermId"
-            data-testid="term-selector-dropdown"
-            @change="handleTermSelect(Number($event.target.value))"
-          >
-            <option
-              v-for="t in setupStore.terms"
-              :key="t.id"
-              :value="t.id"
+        <div class="setup-header-controls" style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+          <div class="setup-term-switcher">
+            <label for="active-term-picker" class="term-picker-label">Active Term:</label>
+            <select
+              id="active-term-picker"
+              class="term-picker-select"
+              :value="setupStore.selectedTermId"
+              data-testid="term-selector-dropdown"
+              @change="handleTermSelect(Number($event.target.value))"
             >
-              {{ t.code }} — {{ t.name }} {{ t.is_active ? '(Active Term)' : '' }}
-            </option>
-          </select>
+              <option
+                v-for="t in setupStore.terms"
+                :key="t.id"
+                :value="t.id"
+              >
+                {{ t.code }} — {{ t.name }} {{ t.is_active ? '(Active Term)' : '' }}
+              </option>
+            </select>
+          </div>
+
+          <router-link
+            to="/admin"
+            class="btn-secondary"
+            data-testid="goto-admin-console-btn"
+            style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.85rem; font-size: 0.82rem; font-weight: 600; border-radius: 8px; border: 1px solid #d1d5db; background: #ffffff; color: #374151;"
+          >
+            <span>← Registrar Schedule &amp; Locks</span>
+          </router-link>
         </div>
       </div>
 

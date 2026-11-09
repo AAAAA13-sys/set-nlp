@@ -428,6 +428,17 @@ async function toggleLock(sectionId, field) {
             Administrator: <strong>{{ authStore.user?.name || 'University Registrar Admin' }}</strong><span v-if="authStore.user?.institutional_id"> ({{ authStore.user.institutional_id }})</span>
           </p>
         </div>
+        <div class="header-actions">
+          <router-link
+            to="/admin/setup"
+            class="btn-primary"
+            data-testid="goto-academic-setup-btn"
+            style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;"
+          >
+            <span>Academic Setup &amp; Cycles</span>
+            <span aria-hidden="true">→</span>
+          </router-link>
+        </div>
       </div>
     </section>
 

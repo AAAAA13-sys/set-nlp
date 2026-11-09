@@ -1192,6 +1192,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       const routerSrc = readResourceFile('router/index.js');
       const sidebarSfc = readResourceFile('components/WorkspaceSidebar.vue');
       const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+      const rosterViewSfc = readResourceFile('views/AdminRosterView.vue');
       const setupStoreSrc = readResourceFile('stores/academicSetup.js');
 
       // 1. Router Registration & Admin Role Scoping
@@ -1227,6 +1228,8 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('data-testid="submit-setup-roster-import-btn"'));
       assert.ok(setupViewSfc.includes('toggle-lock-btn-'));
       assert.ok(setupViewSfc.includes('handleToggleRegistrarLock'));
+      assert.ok(rosterViewSfc.includes('data-testid="goto-academic-setup-btn"'));
+      assert.ok(setupViewSfc.includes('data-testid="goto-admin-console-btn"'));
 
       // 4. Academic Setup Pinia Store Methods & Safety Invariants
       assert.ok(setupStoreSrc.includes('fetchOverview'));
