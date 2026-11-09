@@ -26,7 +26,7 @@ class StudentEvaluationController extends Controller
     public function queue(Request $request): JsonResponse
     {
         $user = $request->user();
-        $studentId = (int) ($user->id ?? $request->input('student_id', 0));
+        $studentId = $user !== null ? (int) ($user->id ?? 0) : (int) $request->input('student_id', 0);
         $termId = $request->input('academic_term_id') !== null ? (int) $request->input('academic_term_id') : null;
 
         $queueData = $this->evaluationService->getStudentQueue($studentId, $termId);
@@ -36,7 +36,7 @@ class StudentEvaluationController extends Controller
     public function startSession(Request $request, int $courseSectionId = 0): JsonResponse
     {
         $user = $request->user();
-        $studentId = (int) ($user->id ?? $request->input('student_id', 0));
+        $studentId = $user !== null ? (int) ($user->id ?? 0) : (int) $request->input('student_id', 0);
         $sectionId = $courseSectionId > 0 ? $courseSectionId : (int) $request->input('course_section_id', 0);
 
         $token = $this->validator->issueStartToken($studentId, $sectionId);
@@ -52,12 +52,43 @@ class StudentEvaluationController extends Controller
     public function submit(Request $request): JsonResponse
     {
         $user = $request->user();
-        $payload = $request->all();
-        if ($user !== null && !isset($payload['student_id'])) {
-            $payload['student_id'] = (int) ($user->id ?? 0);
+        $studentId = $user !== null ? (int) ($user->id ?? 0) : (int) $request->input('student_id', 0);
+
+        if ($studentId <= 0) {
+            return new JsonResponse([
+                'accepted' => false,
+                'status' => 'REJECTED',
+                'code' => 'UNAUTHENTICATED',
+                'http_status' => 401,
+                'message' => 'Valid authenticated student identity is required to submit evaluations.',
+            ], 401);
         }
 
-        $result = $this->evaluationService->submitEvaluation($payload);
+        // Explicit allowlist: sanitize and construct safe domain payload.
+        // Strips any client-supplied spoofing attempts (e.g. now_unix, faculty_id, academic_term_id).
+        $sectionId = (int) $request->input('course_section_id', 0);
+        $submissionKey = trim((string) $request->input('submission_key', ''));
+        $rawRatings = $request->input('ratings');
+        $ratings = is_array($rawRatings) ? array_values($rawRatings) : [];
+        $dwellSeconds = (int) $request->input('dwell_time_seconds', 0);
+        $confirmUniform = filter_var($request->input('confirm_uniform', false), FILTER_VALIDATE_BOOLEAN);
+        $commentText = (string) $request->input('comment_text', '');
+        $profQuestions = $request->input('professor_questions');
+        $startToken = $request->input('start_token') !== null ? (string) $request->input('start_token') : null;
+
+        $safePayload = [
+            'student_id' => $studentId,
+            'course_section_id' => $sectionId,
+            'submission_key' => $submissionKey,
+            'ratings' => $ratings,
+            'dwell_time_seconds' => $dwellSeconds,
+            'confirm_uniform' => $confirmUniform,
+            'comment_text' => $commentText,
+            'professor_questions' => is_array($profQuestions) ? $profQuestions : null,
+            'start_token' => $startToken,
+        ];
+
+        $result = $this->evaluationService->submitEvaluation($safePayload);
         $status = (int) ($result['http_status'] ?? 200);
 
         return new JsonResponse($result, $status);
@@ -66,7 +97,7 @@ class StudentEvaluationController extends Controller
     public function permit(Request $request): JsonResponse
     {
         $user = $request->user();
-        $studentId = (int) ($user->id ?? $request->input('student_id', 0));
+        $studentId = $user !== null ? (int) ($user->id ?? 0) : (int) $request->input('student_id', 0);
         $queue = $this->evaluationService->getStudentQueue($studentId);
 
         return new JsonResponse([

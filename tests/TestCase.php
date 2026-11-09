@@ -256,7 +256,8 @@ namespace Tests {
                 CREATE TABLE departments (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     code TEXT NOT NULL UNIQUE,
-                    name TEXT NOT NULL
+                    name TEXT NOT NULL,
+                    college_name TEXT NOT NULL DEFAULT 'College of Computer Studies'
                 );
 
                 CREATE TABLE academic_terms (
@@ -301,6 +302,7 @@ namespace Tests {
                     student_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
                     course_section_id INTEGER NOT NULL REFERENCES course_sections(id) ON DELETE CASCADE,
                     academic_term_id INTEGER NOT NULL REFERENCES academic_terms(id) ON DELETE CASCADE,
+                    enrollment_status TEXT NOT NULL DEFAULT 'ENROLLED',
                     UNIQUE(student_id, course_section_id)
                 );
 
@@ -359,7 +361,9 @@ namespace Tests {
                     usability REAL NOT NULL,
                     reliability REAL NOT NULL,
                     portability REAL NOT NULL,
-                    recorded_date TEXT NOT NULL
+                    recorded_date TEXT NOT NULL,
+                    created_at TEXT NULL,
+                    updated_at TEXT NULL
                 );
 
                 CREATE TABLE evaluation_vault_v2_extensions (
@@ -413,9 +417,9 @@ namespace Tests {
         protected function seedCanonicalInstitution(): void
         {
             $this->pdo->exec("
-                INSERT INTO departments (id, code, name) VALUES
-                (1, 'CCS', 'College of Computer Studies'),
-                (2, 'CAS', 'College of Arts and Sciences');
+                INSERT INTO departments (id, code, name, college_name) VALUES
+                (1, 'CCS', 'College of Computer Studies', 'College of Computer Studies'),
+                (2, 'CAS', 'College of Arts and Sciences', 'College of Arts and Sciences');
 
                 INSERT INTO academic_terms (id, code, name, period_label, is_active) VALUES
                 (1, 'FALL-2026', 'Fall', 'Final SET', 1);

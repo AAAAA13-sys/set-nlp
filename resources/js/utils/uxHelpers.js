@@ -80,16 +80,20 @@ export function sanitizeRedirectPath(rawRedirect, fallback = '/') {
 
 /**
  * Persist an anonymized in-progress survey draft in ephemeral sessionStorage (#6 Autosave).
- * Never persists student_id, institutional_id, or bearer tokens.
+ * Never persists student_id, institutional_id, or bearer tokens inside the survey payload.
+ * Key is scoped to authenticated studentId to prevent cross-account draft leakage on shared lab terminals.
  * @param {number|string} courseSectionId
  * @param {Record<string, any>} draftPayload
+ * @param {number|string|null} [studentId=null]
  */
-export function saveSurveyDraft(courseSectionId, draftPayload) {
+export function saveSurveyDraft(courseSectionId, draftPayload, studentId = null) {
   if (typeof window === 'undefined' || !courseSectionId) {
     return false;
   }
   try {
-    const safeKey = `${DRAFT_PREFIX}${Number(courseSectionId)}`;
+    const safeKey = studentId
+      ? `${DRAFT_PREFIX}u${studentId}_sec${Number(courseSectionId)}`
+      : `${DRAFT_PREFIX}${Number(courseSectionId)}`;
     const record = {
       ratings: Array.isArray(draftPayload.ratings) ? draftPayload.ratings : [],
       commentText: String(draftPayload.commentText || '').slice(0, 2000),
@@ -112,14 +116,22 @@ export function saveSurveyDraft(courseSectionId, draftPayload) {
 
 /**
  * Load a previously autosaved survey draft for `courseSectionId`.
+ * Checks for user-scoped draft key first, falling back to legacy unscoped key.
  * @param {number|string} courseSectionId
+ * @param {number|string|null} [studentId=null]
  */
-export function loadSurveyDraft(courseSectionId) {
+export function loadSurveyDraft(courseSectionId, studentId = null) {
   if (typeof window === 'undefined' || !courseSectionId) {
     return null;
   }
   try {
-    const raw = window.sessionStorage?.getItem(`${DRAFT_PREFIX}${Number(courseSectionId)}`);
+    let raw = null;
+    if (studentId) {
+      raw = window.sessionStorage?.getItem(`${DRAFT_PREFIX}u${studentId}_sec${Number(courseSectionId)}`);
+    }
+    if (!raw) {
+      raw = window.sessionStorage?.getItem(`${DRAFT_PREFIX}${Number(courseSectionId)}`);
+    }
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     return parsed && typeof parsed === 'object' ? parsed : null;
@@ -131,12 +143,16 @@ export function loadSurveyDraft(courseSectionId) {
 /**
  * Clear an autosaved draft for a specific course section upon submission or explicit discard.
  * @param {number|string} courseSectionId
+ * @param {number|string|null} [studentId=null]
  */
-export function clearSurveyDraft(courseSectionId) {
+export function clearSurveyDraft(courseSectionId, studentId = null) {
   if (typeof window === 'undefined' || !courseSectionId) {
     return;
   }
   try {
+    if (studentId) {
+      window.sessionStorage?.removeItem(`${DRAFT_PREFIX}u${studentId}_sec${Number(courseSectionId)}`);
+    }
     window.sessionStorage?.removeItem(`${DRAFT_PREFIX}${Number(courseSectionId)}`);
   } catch (_) {}
 }

@@ -70,7 +70,7 @@ function resetBlankForm() {
 
 function hydrateSectionDraft(sectionId) {
   if (!sectionId) return;
-  const saved = loadSurveyDraft(sectionId);
+  const saved = loadSurveyDraft(sectionId, authStore.user?.id);
   if (!saved) {
     draftSavedLabel.value = 'Autosave ready';
     return;
@@ -106,7 +106,7 @@ const persistDraftDebounced = debounce(() => {
     courseRecommendations: courseRecommendations.value,
     showFifthQuestion: showFifthQuestion.value,
     additionalObservation: additionalObservation.value,
-  });
+  }, authStore.user?.id);
   if (ok) {
     const now = new Date();
     const hh = String(now.getHours()).padStart(2, '0');
@@ -125,7 +125,7 @@ watch(
 
 function confirmDiscardDraft() {
   if (activeSectionId.value) {
-    clearSurveyDraft(activeSectionId.value);
+    clearSurveyDraft(activeSectionId.value, authStore.user?.id);
   }
   resetBlankForm();
   draftSavedLabel.value = 'Draft cleared';
@@ -306,7 +306,7 @@ async function executeSubmission(confirmUniform = false) {
   }
 
   if (activeSectionId.value) {
-    clearSurveyDraft(activeSectionId.value);
+    clearSurveyDraft(activeSectionId.value, authStore.user?.id);
     draftSavedLabel.value = 'Submitted & cleared';
   }
 

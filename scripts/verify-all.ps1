@@ -1,6 +1,6 @@
 # EvaluaTech Unified Multi-Tier Verification Script
 # Executes:
-#   1. Backend PHPUnit Suite (33 tests)
+#   1. Backend PHPUnit Suite (34 tests)
 #   2. Frontend Vue 3 DOM & Domain Suite (40 test groups)
 #   3. Python NLP Analytics Suite (46 tests)
 #   4. PHP Syntax (php -l) & UTF-8 No-BOM Hygiene Checks
@@ -14,11 +14,11 @@ $NodeExe = "node"
 $PythonExe = "python"
 
 Write-Host "========================================================================" -ForegroundColor Cyan
-Write-Host " EvaluaTech Multi-Tier Verification Matrix (119 Automated Test Units)   " -ForegroundColor Cyan
+Write-Host " EvaluaTech Multi-Tier Verification Matrix (120 Automated Test Units)   " -ForegroundColor Cyan
 Write-Host "========================================================================" -ForegroundColor Cyan
 
-# 1. Backend PHPUnit Suite (33 tests)
-Write-Host "`n[1/4] Running Backend PHPUnit Suite (33 Tests)..." -ForegroundColor Yellow
+# 1. Backend PHPUnit Suite (34 tests)
+Write-Host "`n[1/4] Running Backend PHPUnit Suite (34 Tests)..." -ForegroundColor Yellow
 & $PhpExe "scripts/run-backend-tests.php"
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Backend PHPUnit Suite failed with exit code $LASTEXITCODE"
@@ -88,10 +88,10 @@ Write-Host "+-----------------------+--------------------+------------+---------
 Write-Host "| Test Suite            | Layer Target       | Executed   | Pass Rate    |" -ForegroundColor Cyan
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
 Write-Host "| Frontend DOM Suite    | UI, Timers, Forms  | 40 Groups  | 100% (40/40) |" -ForegroundColor Green
-Write-Host "| Backend PHPUnit Suite | Domain Logic, RBAC | 33 Tests   | 100% (33/33) |" -ForegroundColor Green
+Write-Host "| Backend PHPUnit Suite | Domain Logic, RBAC | 34 Tests   | 100% (34/34) |" -ForegroundColor Green
 Write-Host "| Python Analytics Suite| NLP & Clustering   | 46 Tests   | 100% (46/46) |" -ForegroundColor Green
 Write-Host "| Hygiene & Syntax Audit| PHP -l & UTF-8 BOM | Verified   | 100% PASS    |" -ForegroundColor Green
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
-Write-Host "| Consolidated Total    | Complete Platform  | 119 Units  | 100% PASS    |" -ForegroundColor Green
+Write-Host "| Consolidated Total    | Complete Platform  | 120 Units  | 100% PASS    |" -ForegroundColor Green
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
 exit 0

@@ -44,11 +44,11 @@
 
 ## 2. Quick Start & Verification
 
-### Run the Full 119-Unit Multi-Tier Verification Suite
+### Run the Full 120-Unit Multi-Tier Verification Suite
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-all.ps1
 ```
-- **Backend PHPUnit Suite**: `33 / 33 PASS (818 assertions)`
+- **Backend PHPUnit Suite**: `34 / 34 PASS (866 assertions)`
 - **Frontend Vue 3 DOM & Domain Suite**: `40 / 40 Test Groups PASS`
 - **Python `calamanCy` + VADER NLP Suite**: `46 / 46 PASS`
 

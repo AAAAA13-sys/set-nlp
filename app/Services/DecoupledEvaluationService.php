@@ -331,8 +331,66 @@ class DecoupledEvaluationService
             ];
         }
 
-        // 1. FT-02 Idempotency fast-path check by submission_key or existing CLEARED record
-        $existingClearance = $this->findClearanceByKeyOrStudentSection($submissionKey, $studentId, $courseSectionId);
+        // 1. Authoritative Catalog & Enrollment Resolution
+        $section = $this->findSectionById($courseSectionId);
+        if (!is_array($section)) {
+            return [
+                'accepted' => false,
+                'status' => 'REJECTED',
+                'code' => 'COURSE_SECTION_NOT_FOUND',
+                'http_status' => 404,
+                'message' => 'The specified course section does not exist in the institutional catalog.',
+            ];
+        }
+
+        // Authoritatively derive faculty_id and academic_term_id from database catalog
+        $facultyId = (int) ($section['faculty_id'] ?? 1);
+        $academicTermId = (int) ($section['academic_term_id'] ?? 1);
+
+        // Verify active enrollment for this student in this course section
+        $stmtEnr = $this->pdo->prepare('
+            SELECT *
+            FROM enrollments
+            WHERE student_id = :student_id AND course_section_id = :section_id
+            LIMIT 1
+        ');
+        $stmtEnr->execute([':student_id' => $studentId, ':section_id' => $courseSectionId]);
+        $enrollment = $stmtEnr->fetch(PDO::FETCH_ASSOC);
+
+        if (!is_array($enrollment) || (isset($enrollment['enrollment_status']) && strtoupper((string) $enrollment['enrollment_status']) === 'DROPPED')) {
+            return [
+                'accepted' => false,
+                'status' => 'REJECTED',
+                'code' => 'STUDENT_NOT_ENROLLED',
+                'http_status' => 403,
+                'message' => 'Student is not actively enrolled in the specified course section.',
+            ];
+        }
+
+        // 1a. Verify submission_key is not already registered to another student or section
+        $stmtKeyCheck = $this->pdo->prepare('
+            SELECT id, student_id, course_section_id, status, clearance_token, submission_key
+            FROM evaluation_clearances
+            WHERE submission_key = :sub_key
+            LIMIT 1
+        ');
+        $stmtKeyCheck->execute([':sub_key' => $submissionKey]);
+        $existingKeyRow = $stmtKeyCheck->fetch(PDO::FETCH_ASSOC);
+
+        if (is_array($existingKeyRow)) {
+            if ((int) $existingKeyRow['student_id'] !== $studentId || (int) $existingKeyRow['course_section_id'] !== $courseSectionId) {
+                return [
+                    'accepted' => false,
+                    'status' => 'REJECTED',
+                    'code' => 'SUBMISSION_KEY_CONFLICT',
+                    'http_status' => 409,
+                    'message' => 'The provided submission key is already registered to another student or course section.',
+                ];
+            }
+        }
+
+        // 1b. FT-02 Idempotency fast-path check by student and section
+        $existingClearance = $this->findClearanceByStudentSection($studentId, $courseSectionId);
         if ($existingClearance !== null && ($existingClearance['status'] ?? '') === 'CLEARED') {
             return [
                 'accepted' => true,
@@ -371,11 +429,6 @@ class DecoupledEvaluationService
             ];
         }
         $clusterScores = $this->validator->calculateClusterScores($ratings);
-
-        // Resolve section metadata (faculty_id, academic_term_id) early
-        $section = $this->findSectionById($courseSectionId);
-        $facultyId = (int) ($payload['faculty_id'] ?? ($section['faculty_id'] ?? 1));
-        $academicTermId = (int) ($payload['academic_term_id'] ?? ($section['academic_term_id'] ?? 1));
 
         // Window status and schedule boundary check (SOP 1 / Administrator-Controlled Evaluation Period)
         $nowUnix = isset($payload['now_unix']) ? (int) $payload['now_unix'] : time();
@@ -487,10 +540,9 @@ class DecoupledEvaluationService
         $this->pdo->beginTransaction();
         try {
             $lockStmt = $this->pdo->prepare(
-                "SELECT * FROM evaluation_clearances WHERE (submission_key = :sub_key OR (student_id = :student_id AND course_section_id = :section_id)){$lockClause}"
+                "SELECT * FROM evaluation_clearances WHERE student_id = :student_id AND course_section_id = :section_id{$lockClause}"
             );
             $lockStmt->execute([
-                ':sub_key' => $submissionKey,
                 ':student_id' => $studentId,
                 ':section_id' => $courseSectionId,
             ]);
@@ -673,8 +725,8 @@ class DecoupledEvaluationService
                 $this->pdo->rollBack();
             }
 
-            // Handle concurrent race condition where another request committed the same submission_key
-            $raceExisting = $this->findClearanceByKeyOrStudentSection($submissionKey, $studentId, $courseSectionId);
+            // Handle concurrent race condition where another request committed the same clearance
+            $raceExisting = $this->findClearanceByStudentSection($studentId, $courseSectionId);
             if ($raceExisting !== null && ($raceExisting['status'] ?? '') === 'CLEARED') {
                 return [
                     'accepted' => true,
@@ -2428,19 +2480,16 @@ class DecoupledEvaluationService
     /**
      * @return array<string, mixed>|null
      */
-    private function findClearanceByKeyOrStudentSection(
-        string $submissionKey,
+    public function findClearanceByStudentSection(
         int $studentId,
         int $courseSectionId
     ): ?array {
         $stmt = $this->pdo->prepare("
             SELECT * FROM evaluation_clearances
-            WHERE submission_key = :sub_key
-               OR (student_id = :student_id AND course_section_id = :section_id)
+            WHERE student_id = :student_id AND course_section_id = :section_id
             LIMIT 1
         ");
         $stmt->execute([
-            ':sub_key' => $submissionKey,
             ':student_id' => $studentId,
             ':section_id' => $courseSectionId,
         ]);

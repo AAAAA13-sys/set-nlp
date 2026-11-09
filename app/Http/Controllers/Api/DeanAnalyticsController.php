@@ -24,31 +24,127 @@ class DeanAnalyticsController extends Controller
         ?RosterImportService $rosterService = null
     ) {
         $this->evaluationService = $evaluationService ?? new DecoupledEvaluationService();
-        $this->qualityService = $qualityService ?? new QualityMetricsService();
+        $this->qualityService = $qualityService ?? new QualityMetricsService($this->evaluationService->getPdo());
         $this->rosterService = $rosterService ?? new RosterImportService($this->evaluationService->getPdo());
+    }
+
+    /**
+     * Resolves and enforces departmental and college scoping for the authenticated user.
+     *
+     * @param Request $request
+     * @return array{0: ?int, 1: ?JsonResponse} [resolvedDepartmentId, errorResponse]
+     */
+    private function resolveScopedDepartmentId(Request $request): array
+    {
+        $user = $request->user();
+        $rawDept = $request->input('department_id');
+        $requestedDeptId = ($rawDept !== null && trim((string) $rawDept) !== '') ? (int) $rawDept : null;
+
+        if ($user === null) {
+            return [$requestedDeptId, null];
+        }
+
+        $role = is_string($user->role ?? null)
+            ? $user->role
+            : ($user->role instanceof UserRole ? $user->role->value : '');
+
+        // Administrator has unrestricted institutional access
+        if ($role === UserRole::ADMIN->value) {
+            return [$requestedDeptId, null];
+        }
+
+        // Department Chair is strictly scoped to their assigned department_id
+        if ($role === UserRole::CHAIR->value) {
+            $chairDeptId = isset($user->department_id) && $user->department_id !== null ? (int) $user->department_id : null;
+            if ($chairDeptId === null || $chairDeptId <= 0) {
+                return [
+                    null,
+                    new JsonResponse([
+                        'authorized' => false,
+                        'code' => 'UNASSIGNED_DEPARTMENT_SCOPE',
+                        'message' => 'Department Chair has no assigned department; access restricted.',
+                    ], 403),
+                ];
+            }
+
+            if ($requestedDeptId !== null && $requestedDeptId !== $chairDeptId) {
+                return [
+                    null,
+                    new JsonResponse([
+                        'authorized' => false,
+                        'code' => 'FORBIDDEN_DEPARTMENT_SCOPE',
+                        'message' => 'Department Chairs are strictly scoped to their assigned department.',
+                    ], 403),
+                ];
+            }
+
+            return [$chairDeptId, null];
+        }
+
+        // College Dean is scoped to their assigned college
+        if ($role === UserRole::DEAN->value) {
+            $deanCollege = trim((string) ($user->college_name ?? ''));
+            if ($deanCollege === '' && !empty($user->department_id)) {
+                $stmt = $this->evaluationService->getPdo()->prepare('SELECT college_name FROM departments WHERE id = :id');
+                $stmt->execute([':id' => (int) $user->department_id]);
+                $deanCollege = trim((string) ($stmt->fetchColumn() ?: ''));
+            }
+
+            if ($deanCollege !== '') {
+                $collegeDepts = $this->getDepartmentIdsForCollege($deanCollege);
+                if (empty($collegeDepts)) {
+                    return [
+                        null,
+                        new JsonResponse([
+                            'authorized' => false,
+                            'code' => 'UNASSIGNED_COLLEGE_SCOPE',
+                            'message' => 'College Dean has no active departments in their assigned college.',
+                        ], 403),
+                    ];
+                }
+
+                if ($requestedDeptId !== null && !in_array($requestedDeptId, $collegeDepts, true)) {
+                    return [
+                        null,
+                        new JsonResponse([
+                            'authorized' => false,
+                            'code' => 'FORBIDDEN_COLLEGE_SCOPE',
+                            'message' => 'College Deans are strictly scoped to departments within their assigned college.',
+                        ], 403),
+                    ];
+                }
+            }
+
+            return [$requestedDeptId, null];
+        }
+
+        return [
+            null,
+            new JsonResponse([
+                'authorized' => false,
+                'code' => 'FORBIDDEN_ROLE',
+                'message' => 'Access restricted to authorized academic supervisors and administrators.',
+            ], 403),
+        ];
+    }
+
+    /**
+     * @return int[]
+     */
+    private function getDepartmentIdsForCollege(string $collegeName): array
+    {
+        $stmt = $this->evaluationService->getPdo()->prepare(
+            'SELECT id FROM departments WHERE college_name = :college'
+        );
+        $stmt->execute([':college' => $collegeName]);
+        return array_map('intval', $stmt->fetchAll(\PDO::FETCH_COLUMN));
     }
 
     public function overview(Request $request): JsonResponse
     {
-        $user = $request->user();
-        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
-
-        if ($user !== null) {
-            $role = is_string($user->role ?? null)
-                ? $user->role
-                : ($user->role instanceof UserRole ? $user->role->value : '');
-
-            if ($role === UserRole::CHAIR->value) {
-                $chairDeptId = isset($user->department_id) ? (int) $user->department_id : null;
-                if ($requestedDeptId !== null && $requestedDeptId !== $chairDeptId) {
-                    return new JsonResponse([
-                        'authorized' => false,
-                        'code' => 'FORBIDDEN_DEPARTMENT_SCOPE',
-                        'message' => 'Department Chairs are strictly scoped to their assigned department.',
-                    ], 403);
-                }
-                $requestedDeptId = $chairDeptId;
-            }
+        [$requestedDeptId, $scopeError] = $this->resolveScopedDepartmentId($request);
+        if ($scopeError !== null) {
+            return $scopeError;
         }
 
         $metrics = $this->evaluationService->getDeanDashboardMetrics($requestedDeptId);
@@ -90,7 +186,11 @@ class DeanAnalyticsController extends Controller
 
     public function qualitativeSynthesis(Request $request): JsonResponse
     {
-        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
+        [$requestedDeptId, $scopeError] = $this->resolveScopedDepartmentId($request);
+        if ($scopeError !== null) {
+            return $scopeError;
+        }
+
         $overview = $this->evaluationService->getDeanDashboardMetrics($requestedDeptId);
         $synthesis = $overview['qualitative_synthesis'] ?? [];
 
@@ -99,7 +199,11 @@ class DeanAnalyticsController extends Controller
 
     public function exportQualitativeCsv(Request $request): JsonResponse
     {
-        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
+        [$requestedDeptId, $scopeError] = $this->resolveScopedDepartmentId($request);
+        if ($scopeError !== null) {
+            return $scopeError;
+        }
+
         $overview = $this->evaluationService->getDeanDashboardMetrics($requestedDeptId);
         $synthesis = $overview['qualitative_synthesis'] ?? [];
         $csv = $this->rosterService->exportQualitativeSynthesisCsv($synthesis);
@@ -134,6 +238,53 @@ class DeanAnalyticsController extends Controller
             ], 422);
         }
 
+        if ($user !== null) {
+            $role = is_string($user->role ?? null)
+                ? $user->role
+                : ($user->role instanceof UserRole ? $user->role->value : '');
+
+            if ($role === UserRole::CHAIR->value) {
+                $chairDeptId = isset($user->department_id) && $user->department_id !== null ? (int) $user->department_id : null;
+                if ($chairDeptId === null || $chairDeptId <= 0) {
+                    return new JsonResponse([
+                        'updated' => false,
+                        'code' => 'UNASSIGNED_DEPARTMENT_SCOPE',
+                        'message' => 'Department Chair has no assigned department; access restricted.',
+                    ], 403);
+                }
+
+                $existingPlan = $this->evaluationService->getActionPlanStatus($planId, $facultyId);
+                if ($existingPlan !== null && !empty($existingPlan['department_id']) && (int) $existingPlan['department_id'] !== $chairDeptId) {
+                    return new JsonResponse([
+                        'updated' => false,
+                        'code' => 'FORBIDDEN_DEPARTMENT_SCOPE',
+                        'message' => 'Department Chairs can only manage action plans for faculty in their assigned department.',
+                    ], 403);
+                }
+            } elseif ($role === UserRole::DEAN->value) {
+                $deanCollege = trim((string) ($user->college_name ?? ''));
+                if ($deanCollege === '' && !empty($user->department_id)) {
+                    $stmt = $this->evaluationService->getPdo()->prepare('SELECT college_name FROM departments WHERE id = :id');
+                    $stmt->execute([':id' => (int) $user->department_id]);
+                    $deanCollege = trim((string) ($stmt->fetchColumn() ?: ''));
+                }
+
+                if ($deanCollege !== '') {
+                    $collegeDepts = $this->getDepartmentIdsForCollege($deanCollege);
+                    if (!empty($collegeDepts)) {
+                        $existingPlan = $this->evaluationService->getActionPlanStatus($planId, $facultyId);
+                        if ($existingPlan !== null && !empty($existingPlan['department_id']) && !in_array((int) $existingPlan['department_id'], $collegeDepts, true)) {
+                            return new JsonResponse([
+                                'updated' => false,
+                                'code' => 'FORBIDDEN_COLLEGE_SCOPE',
+                                'message' => 'College Deans can only manage action plans for faculty within their assigned college.',
+                            ], 403);
+                        }
+                    }
+                }
+            }
+        }
+
         $result = $this->evaluationService->updateActionPlanStatus(
             $planId,
             $facultyId,
@@ -165,25 +316,9 @@ class DeanAnalyticsController extends Controller
 
     public function longitudinalTrends(Request $request): JsonResponse
     {
-        $user = $request->user();
-        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
-
-        if ($user !== null) {
-            $role = is_string($user->role ?? null)
-                ? $user->role
-                : ($user->role instanceof UserRole ? $user->role->value : '');
-
-            if ($role === UserRole::CHAIR->value) {
-                $chairDeptId = isset($user->department_id) ? (int) $user->department_id : null;
-                if ($requestedDeptId !== null && $requestedDeptId !== $chairDeptId) {
-                    return new JsonResponse([
-                        'authorized' => false,
-                        'code' => 'FORBIDDEN_DEPARTMENT_SCOPE',
-                        'message' => 'Department Chairs are strictly scoped to their assigned department.',
-                    ], 403);
-                }
-                $requestedDeptId = $chairDeptId;
-            }
+        [$requestedDeptId, $scopeError] = $this->resolveScopedDepartmentId($request);
+        if ($scopeError !== null) {
+            return $scopeError;
         }
 
         $trends = $this->evaluationService->getLongitudinalSemesterTrends($requestedDeptId);
@@ -192,7 +327,11 @@ class DeanAnalyticsController extends Controller
 
     public function exportAccreditationDossier(Request $request): JsonResponse
     {
-        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
+        [$requestedDeptId, $scopeError] = $this->resolveScopedDepartmentId($request);
+        if ($scopeError !== null) {
+            return $scopeError;
+        }
+
         $trends = $this->evaluationService->getLongitudinalSemesterTrends($requestedDeptId);
 
         $csvRows = [];
@@ -241,25 +380,9 @@ class DeanAnalyticsController extends Controller
 
     public function completionHeatmap(Request $request): JsonResponse
     {
-        $user = $request->user();
-        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
-
-        if ($user !== null) {
-            $role = is_string($user->role ?? null)
-                ? $user->role
-                : ($user->role instanceof UserRole ? $user->role->value : '');
-
-            if ($role === UserRole::CHAIR->value) {
-                $chairDeptId = isset($user->department_id) ? (int) $user->department_id : null;
-                if ($requestedDeptId !== null && $requestedDeptId !== $chairDeptId) {
-                    return new JsonResponse([
-                        'authorized' => false,
-                        'code' => 'FORBIDDEN_DEPARTMENT_SCOPE',
-                        'message' => 'Department Chairs are strictly scoped to their assigned department.',
-                    ], 403);
-                }
-                $requestedDeptId = $chairDeptId;
-            }
+        [$requestedDeptId, $scopeError] = $this->resolveScopedDepartmentId($request);
+        if ($scopeError !== null) {
+            return $scopeError;
         }
 
         $heatmap = $this->evaluationService->getDepartmentCompletionHeatmap($requestedDeptId);
@@ -268,32 +391,20 @@ class DeanAnalyticsController extends Controller
 
     public function complianceAudit(Request $request): JsonResponse
     {
-        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
+        [$requestedDeptId, $scopeError] = $this->resolveScopedDepartmentId($request);
+        if ($scopeError !== null) {
+            return $scopeError;
+        }
+
         $audit = $this->evaluationService->getAccreditationComplianceAudit($requestedDeptId);
         return new JsonResponse($audit, 200);
     }
 
     public function evidenceDossier(Request $request): JsonResponse
     {
-        $user = $request->user();
-        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
-
-        if ($user !== null) {
-            $role = is_string($user->role ?? null)
-                ? $user->role
-                : ($user->role instanceof UserRole ? $user->role->value : '');
-
-            if ($role === UserRole::CHAIR->value) {
-                $chairDeptId = isset($user->department_id) ? (int) $user->department_id : null;
-                if ($requestedDeptId !== null && $requestedDeptId !== $chairDeptId) {
-                    return new JsonResponse([
-                        'authorized' => false,
-                        'code' => 'FORBIDDEN_DEPARTMENT_SCOPE',
-                        'message' => 'Department Chairs are strictly scoped to their assigned department.',
-                    ], 403);
-                }
-                $requestedDeptId = $chairDeptId;
-            }
+        [$requestedDeptId, $scopeError] = $this->resolveScopedDepartmentId($request);
+        if ($scopeError !== null) {
+            return $scopeError;
         }
 
         $dossier = $this->evaluationService->getAccreditationEvidenceDossier($requestedDeptId);
@@ -302,25 +413,9 @@ class DeanAnalyticsController extends Controller
 
     public function performanceQuartiles(Request $request): JsonResponse
     {
-        $user = $request->user();
-        $requestedDeptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
-
-        if ($user !== null) {
-            $role = is_string($user->role ?? null)
-                ? $user->role
-                : ($user->role instanceof UserRole ? $user->role->value : '');
-
-            if ($role === UserRole::CHAIR->value) {
-                $chairDeptId = isset($user->department_id) ? (int) $user->department_id : null;
-                if ($requestedDeptId !== null && $requestedDeptId !== $chairDeptId) {
-                    return new JsonResponse([
-                        'authorized' => false,
-                        'code' => 'FORBIDDEN_DEPARTMENT_SCOPE',
-                        'message' => 'Department Chairs are strictly scoped to their assigned department.',
-                    ], 403);
-                }
-                $requestedDeptId = $chairDeptId;
-            }
+        [$requestedDeptId, $scopeError] = $this->resolveScopedDepartmentId($request);
+        if ($scopeError !== null) {
+            return $scopeError;
         }
 
         $quartiles = $this->evaluationService->getFacultyPerformanceQuartiles($requestedDeptId);
@@ -329,27 +424,9 @@ class DeanAnalyticsController extends Controller
 
     public function insightsSearch(Request $request): JsonResponse
     {
-        $user = $request->user();
-        $requestedDeptId = $request->input('department_id') !== null && $request->input('department_id') !== ''
-            ? (int) $request->input('department_id')
-            : null;
-
-        if ($user !== null) {
-            $role = is_string($user->role ?? null)
-                ? $user->role
-                : ($user->role instanceof UserRole ? $user->role->value : '');
-
-            if ($role === UserRole::CHAIR->value) {
-                $chairDeptId = isset($user->department_id) ? (int) $user->department_id : null;
-                if ($requestedDeptId !== null && $requestedDeptId !== $chairDeptId) {
-                    return new JsonResponse([
-                        'authorized' => false,
-                        'code' => 'FORBIDDEN_DEPARTMENT_SCOPE',
-                        'message' => 'Department Chairs are strictly scoped to their assigned department for AI insight queries.',
-                    ], 403);
-                }
-                $requestedDeptId = $chairDeptId;
-            }
+        [$requestedDeptId, $scopeError] = $this->resolveScopedDepartmentId($request);
+        if ($scopeError !== null) {
+            return $scopeError;
         }
 
         $query = (string) ($request->input('q') ?? $request->input('query') ?? '');

@@ -2457,4 +2457,178 @@ class EvaluaTechBackendSuiteTest extends TestCase
             $this->assertArrayNotHasKey('clearance_id', $item);
         }
     }
+
+    /**
+     * Test 34: Authoritative submission boundaries, Chair IDOR containment across all analytics endpoints,
+     * Dean college scoping, and empirical database quality metrics with sample-weighted consolidation.
+     */
+    public function test_34_submission_authority_idor_containment_and_empirical_quality_provenance(): void
+    {
+        $service = new \App\Services\DecoupledEvaluationService($this->pdo);
+        $studentController = new \App\Http\Controllers\Api\StudentEvaluationController($service);
+        $deanController = new \App\Http\Controllers\Api\DeanAnalyticsController($service);
+        $qualityService = new \App\Services\QualityMetricsService($this->pdo);
+
+        // 1. Student Identity Spoofing Rejection:
+        // Authenticated as student 11, but request attempts to inject student_id=12, faculty_id=99, academic_term_id=99, now_unix=12345
+        $studentUser = new class {
+            public int $id = 11;
+            public string $institutional_id = '2024-10892';
+            public string $name = 'Student 2024-10892';
+            public string $role = 'student';
+            public int $department_id = 1;
+        };
+
+        $spoofedReq = new \Illuminate\Http\Request([
+            'student_id' => 12,
+            'course_section_id' => 4,
+            'submission_key' => 'FT02-SPOOF-TEST-' . time(),
+            'dwell_time_seconds' => 10,
+            'ratings' => [5, 5, 4, 4, 5, 4, 5, 4, 5, 4, 5, 5, 4, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5],
+            'comment_text' => 'Authorized submission test',
+            'faculty_id' => 99,
+            'academic_term_id' => 99,
+            'now_unix' => 12345,
+            'confirm_uniform' => false,
+        ]);
+        $spoofedReq->setUserResolver(fn () => $studentUser);
+
+        $submitRes = $studentController->submit($spoofedReq);
+        $this->assertSame(201, $submitRes->getStatusCode());
+        $submitData = $submitRes->getData(true);
+        $this->assertTrue($submitData['accepted']);
+        $this->assertSame('CLEARED', $submitData['status']);
+
+        // Verify that the clearance was issued to student 11 (the authenticated user), NOT student 12
+        $stmtClear = $this->pdo->prepare('SELECT student_id, course_section_id FROM evaluation_clearances WHERE submission_key = :key');
+        $stmtClear->execute([':key' => $spoofedReq->input('submission_key')]);
+        $clearanceRow = $stmtClear->fetch(\PDO::FETCH_ASSOC);
+        $this->assertSame(11, (int) $clearanceRow['student_id']);
+
+        // 2. Unenrolled Student Rejection:
+        // Student 12 attempts to evaluate Section 4 (only Student 11 is enrolled)
+        $unauthStudent = new class {
+            public int $id = 12;
+            public string $role = 'student';
+        };
+        $unenrolledReq = new \Illuminate\Http\Request([
+            'course_section_id' => 4,
+            'submission_key' => 'FT02-UNENROLLED-' . time(),
+            'dwell_time_seconds' => 10,
+            'ratings' => [5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5],
+            'comment_text' => 'Unenrolled student attempt',
+        ]);
+        $unenrolledReq->setUserResolver(fn () => $unauthStudent);
+        $unenrolledRes = $studentController->submit($unenrolledReq);
+        $this->assertSame(403, $unenrolledRes->getStatusCode());
+        $unenrolledData = $unenrolledRes->getData(true);
+        $this->assertFalse($unenrolledData['accepted']);
+        $this->assertSame('STUDENT_NOT_ENROLLED', $unenrolledData['code']);
+
+        // 3. Submission Key Anti-Hijacking / Collision Rejection:
+        // Re-using the clearance key from step 1 for a different section/student returns 409 Conflict
+        $conflictReq = new \Illuminate\Http\Request([
+            'course_section_id' => 5,
+            'submission_key' => $spoofedReq->input('submission_key'),
+            'dwell_time_seconds' => 10,
+            'ratings' => [5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5],
+        ]);
+        $conflictReq->setUserResolver(fn () => $studentUser);
+        $conflictRes = $studentController->submit($conflictReq);
+        $this->assertSame(409, $conflictRes->getStatusCode());
+        $conflictData = $conflictRes->getData(true);
+        $this->assertSame('SUBMISSION_KEY_CONFLICT', $conflictData['code']);
+
+        // 4. Department Chair Cross-Department IDOR Probes Blocked Across All Analytics Endpoints:
+        $chairUser = new class {
+            public int $id = 3;
+            public string $role = 'chair';
+            public int $department_id = 1;
+        };
+        $probeEndpoints = [
+            'qualitativeSynthesis' => fn ($r) => $deanController->qualitativeSynthesis($r),
+            'exportQualitativeCsv' => fn ($r) => $deanController->exportQualitativeCsv($r),
+            'longitudinalTrends' => fn ($r) => $deanController->longitudinalTrends($r),
+            'exportAccreditationDossier' => fn ($r) => $deanController->exportAccreditationDossier($r),
+            'completionHeatmap' => fn ($r) => $deanController->completionHeatmap($r),
+            'complianceAudit' => fn ($r) => $deanController->complianceAudit($r),
+            'evidenceDossier' => fn ($r) => $deanController->evidenceDossier($r),
+            'performanceQuartiles' => fn ($r) => $deanController->performanceQuartiles($r),
+            'insightsSearch' => fn ($r) => $deanController->insightsSearch($r),
+        ];
+
+        foreach ($probeEndpoints as $methodName => $caller) {
+            $crossProbeReq = new \Illuminate\Http\Request(['department_id' => 2]);
+            $crossProbeReq->setUserResolver(fn () => $chairUser);
+            $probeRes = $caller($crossProbeReq);
+            $this->assertSame(403, $probeRes->getStatusCode(), "Endpoint {$methodName} failed to reject cross-department probe with 403.");
+            $probeData = $probeRes->getData(true);
+            $this->assertSame('FORBIDDEN_DEPARTMENT_SCOPE', $probeData['code'], "Endpoint {$methodName} returned unexpected error code.");
+        }
+
+        // Unassigned Chair is rejected with 403 UNASSIGNED_DEPARTMENT_SCOPE
+        $unassignedChair = new class {
+            public int $id = 99;
+            public string $role = 'chair';
+            public ?int $department_id = null;
+        };
+        $unassignedReq = new \Illuminate\Http\Request(['department_id' => 1]);
+        $unassignedReq->setUserResolver(fn () => $unassignedChair);
+        $unassignedRes = $deanController->overview($unassignedReq);
+        $this->assertSame(403, $unassignedRes->getStatusCode());
+        $this->assertSame('UNASSIGNED_DEPARTMENT_SCOPE', $unassignedRes->getData(true)['code']);
+
+        // 5. College Dean Scoping:
+        // Dean assigned to 'College of Computer Studies' (contains Dept 1) probing Dept 2 ('College of Arts and Sciences')
+        $scopedDean = new class {
+            public int $id = 2;
+            public string $role = 'dean';
+            public string $college_name = 'College of Computer Studies';
+            public int $department_id = 1;
+        };
+        $deanCrossReq = new \Illuminate\Http\Request(['department_id' => 2]);
+        $deanCrossReq->setUserResolver(fn () => $scopedDean);
+        $deanCrossRes = $deanController->overview($deanCrossReq);
+        $this->assertSame(403, $deanCrossRes->getStatusCode());
+        $this->assertSame('FORBIDDEN_COLLEGE_SCOPE', $deanCrossRes->getData(true)['code']);
+
+        // Authorized access to Dept 1 for same scoped dean
+        $deanOwnReq = new \Illuminate\Http\Request(['department_id' => 1]);
+        $deanOwnReq->setUserResolver(fn () => $scopedDean);
+        $deanOwnRes = $deanController->overview($deanOwnReq);
+        $this->assertSame(200, $deanOwnRes->getStatusCode());
+
+        // 6. Empirical Quality Metrics Provenance & Sample-Weighted Consolidation:
+        // Baseline before entries
+        $baselineSus = $qualityService->getSusCohortBreakdown();
+        $this->assertFalse($baselineSus['is_empirical_study']);
+        $this->assertSame('REFERENCE_RESEARCH_BENCHMARK', $baselineSus['provenance']);
+
+        // Record live evaluations for different cohorts
+        $studentSus = $qualityService->evaluateLiveSusSubmission([5, 1, 5, 1, 5, 1, 5, 1, 5, 1], 'Students'); // 100.0
+        $this->assertTrue($studentSus['recorded_in_database']);
+        $this->assertEqualsWithDelta(100.0, $studentSus['sus_score'], 0.1);
+
+        $facultySus = $qualityService->evaluateLiveSusSubmission([4, 2, 4, 2, 4, 2, 4, 2, 4, 2], 'Faculty Members'); // 75.0
+        $this->assertTrue($facultySus['recorded_in_database']);
+        $this->assertEqualsWithDelta(75.0, $facultySus['sus_score'], 0.1);
+
+        $deanSus = $qualityService->evaluateLiveSusSubmission([5, 2, 5, 2, 5, 2, 5, 2, 5, 2], 'Deans & Chairs'); // 87.5
+        $this->assertTrue($deanSus['recorded_in_database']);
+        $this->assertEqualsWithDelta(87.5, $deanSus['sus_score'], 0.1);
+
+        // Verify empirical breakdown is now active
+        $empiricalSus = $qualityService->getSusCohortBreakdown();
+        $this->assertTrue($empiricalSus['is_empirical_study']);
+        $this->assertSame('EMPIRICAL_LIVE_DATABASE', $empiricalSus['provenance']);
+        $this->assertSame(3, $empiricalSus['total_sample_size']);
+        $this->assertEqualsWithDelta(87.50, $empiricalSus['consolidated_mean_sus'], 0.1); // (100 + 75 + 87.5) / 3 = 87.50
+        $this->assertEqualsWithDelta(87.50, $empiricalSus['weighted_consolidated_mean_sus'], 0.1);
+
+        // Verify ISO/IEC 25010 empirical results
+        $empiricalIso = $qualityService->getIso25010EvaluationResults();
+        $this->assertTrue($empiricalIso['is_empirical_study']);
+        $this->assertSame('EMPIRICAL_LIVE_DATABASE', $empiricalIso['provenance']);
+        $this->assertSame(3, $empiricalIso['sample_size']);
+    }
 }
