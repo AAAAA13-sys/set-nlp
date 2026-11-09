@@ -483,7 +483,7 @@ function returnToQueue() {
     <!-- Removed enrolled-subjects-switcher per user request -->
 
     <section class="card eval-header-card">
-      <div class="eval-top-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line-soft);">
+      <div class="eval-top-bar" style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 0.85rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line-soft);">
         <button
           type="button"
           class="btn-secondary btn-sm"
@@ -492,18 +492,6 @@ function returnToQueue() {
         >
           ← Back to My Courses
         </button>
-
-        <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <button
-            type="button"
-            class="fullscreen-toggle-btn"
-            :title="isFullscreen ? 'Exit Fullscreen' : 'Enter Focused Fullscreen'"
-            @click="toggleFullscreen"
-          >
-            <span aria-hidden="true">{{ isFullscreen ? '🗗' : '⛶' }}</span>
-            <span>{{ isFullscreen ? 'Exit Fullscreen' : 'Focused Fullscreen' }}</span>
-          </button>
-        </div>
       </div>
 
       <div class="eval-course-banner">
@@ -1051,25 +1039,6 @@ function returnToQueue() {
   }
 }
 
-.fullscreen-toggle-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  background: #ffffff;
-  border: 1px solid #cfd9d0;
-  color: #103c2e;
-  font-size: 0.76rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.fullscreen-toggle-btn:hover {
-  background: #f0fdf4;
-  border-color: #103c2e;
-}
 
 .step-indicator-bar {
   display: flex;
