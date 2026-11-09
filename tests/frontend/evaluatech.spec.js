@@ -1086,12 +1086,16 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       // 3. ReusableDataTable, SkeletonLoader, Autosave, Bulk Actions, Destructive Modal & Graceful Error Recovery
       assert.ok(tableSfc.includes('data-testid="reusable-data-table"'));
       assert.ok(tableSfc.includes('data-testid="table-bulk-action-bar"'));
+      assert.ok(tableSfc.includes('class="ui-badge-count"'));
       assert.ok(skeletonSfc.includes('data-testid="skeleton-loader"'));
       assert.ok(evalFormSfc.includes('data-testid="draft-autosave-badge"'));
       assert.ok(adminViewSfc.includes('data-testid="admin-bulk-lock-bar"'));
       assert.ok(destructiveSfc.includes('data-testid="destructive-confirm-modal"'));
+      assert.ok(destructiveSfc.includes('class="ui-hint"'));
       assert.ok(errorRecoverySfc.includes("Couldn't save changes"));
       assert.ok(errorRecoverySfc.includes('Your work is safe. Check your connection.'));
+      assert.ok(errorRecoverySfc.includes('class="ui-hint"'));
+      assert.ok(sidebarSfc.includes('pendingCourseCount'));
 
       // 4. Verify getRoleTierBadge & throttle behavior
       assert.equal(uxHelpers.getRoleTierBadge('dean').tierCode, 'TIER 1');
