@@ -1186,4 +1186,54 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(bladeHtml.includes('class="skip-link" href="#main-workspace"'));
     });
   });
+
+  describe('Group 41: Academic Setup Workspace, Term Cycle Management, Faculty Assignment Matrix & Questionnaire Preview', () => {
+    it('verifies route registration, sidebar link, view SFC structure, and academic setup store workflows', () => {
+      const routerSrc = readResourceFile('router/index.js');
+      const sidebarSfc = readResourceFile('components/WorkspaceSidebar.vue');
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+      const setupStoreSrc = readResourceFile('stores/academicSetup.js');
+
+      // 1. Router Registration & Admin Role Scoping
+      assert.ok(routerSrc.includes("path: '/admin/setup'"));
+      assert.ok(routerSrc.includes("name: 'admin-setup'"));
+      assert.ok(routerSrc.includes("AdminSetupView"));
+      assert.ok(routerSrc.includes("roles: ['admin']"));
+
+      // 2. Sidebar Navigation Link
+      assert.ok(sidebarSfc.includes("sidebar-link-admin-setup"));
+      assert.ok(sidebarSfc.includes("to: '/admin/setup'"));
+      assert.ok(sidebarSfc.includes("label: 'Academic Setup'"));
+      assert.ok(sidebarSfc.includes("item.icon === 'academic'"));
+
+      // 3. AdminSetupView SFC Components & Test IDs
+      assert.ok(setupViewSfc.includes('data-testid="admin-setup-view"'));
+      assert.ok(setupViewSfc.includes('data-testid="term-selector-dropdown"'));
+      assert.ok(setupViewSfc.includes('data-testid="cycle-readiness-bar"'));
+      assert.ok(setupViewSfc.includes('data-testid="readiness-chip"'));
+      assert.ok(setupViewSfc.includes('data-testid="tab-assignments-btn"'));
+      assert.ok(setupViewSfc.includes('data-testid="tab-terms-btn"'));
+      assert.ok(setupViewSfc.includes('data-testid="tab-questionnaire-btn"'));
+      assert.ok(setupViewSfc.includes('data-testid="sections-table"'));
+      assert.ok(setupViewSfc.includes('data-testid="terms-table"'));
+      assert.ok(setupViewSfc.includes('data-testid="pane-questionnaire"'));
+      assert.ok(setupViewSfc.includes('data-testid="new-term-modal"'));
+      assert.ok(setupViewSfc.includes('data-testid="new-section-modal"'));
+      assert.ok(setupViewSfc.includes('data-testid="new-course-modal"'));
+      assert.ok(setupViewSfc.includes('data-testid="delete-section-modal"'));
+
+      // 4. Academic Setup Pinia Store Methods & Safety Invariants
+      assert.ok(setupStoreSrc.includes('fetchOverview'));
+      assert.ok(setupStoreSrc.includes('createOrUpdateTerm'));
+      assert.ok(setupStoreSrc.includes('setActiveTerm'));
+      assert.ok(setupStoreSrc.includes('createCourse'));
+      assert.ok(setupStoreSrc.includes('createSection'));
+      assert.ok(setupStoreSrc.includes('assignFaculty'));
+      assert.ok(setupStoreSrc.includes('deleteSection'));
+      assert.ok(setupStoreSrc.includes('fetchQuestionnaire'));
+      assert.ok(setupStoreSrc.includes('/api/admin/setup/overview'));
+      assert.ok(setupStoreSrc.includes('/api/admin/setup/terms/set-active'));
+      assert.ok(setupStoreSrc.includes('/api/admin/setup/sections/assign-faculty'));
+    });
+  });
 });

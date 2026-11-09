@@ -2655,4 +2655,137 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertSame('EMPIRICAL_LIVE_DATABASE', $empiricalIso['provenance']);
         $this->assertSame(3, $empiricalIso['sample_size']);
     }
+
+    /**
+     * Test 35: Academic Setup workspace: term lifecycle management, course/section configuration, faculty assignment, and questionnaire preview.
+     */
+    public function test_35_academic_setup_workspace_term_cycle_management_faculty_assignment_and_questionnaire_preview(): void
+    {
+        $setupService = new \App\Services\AcademicSetupService($this->pdo);
+        $setupController = new \App\Http\Controllers\Api\AdminSetupController($setupService);
+
+        $adminUser = new class {
+            public int $id = 1;
+            public string $role = 'admin';
+        };
+        $facultyUser = new class {
+            public int $id = 4;
+            public string $role = 'faculty';
+        };
+
+        // 1. Authorization: Non-admin rejected with 403 FORBIDDEN_ROLE
+        $nonAdminReq = new \Illuminate\Http\Request();
+        $nonAdminReq->setUserResolver(fn () => $facultyUser);
+        $nonAdminRes = $setupController->overview($nonAdminReq);
+        $this->assertSame(403, $nonAdminRes->getStatusCode());
+        $this->assertSame('FORBIDDEN_ROLE', $nonAdminRes->getData(true)['code']);
+
+        // 2. Overview for active term
+        $adminReq = new \Illuminate\Http\Request();
+        $adminReq->setUserResolver(fn () => $adminUser);
+        $overviewRes = $setupController->overview($adminReq);
+        $this->assertSame(200, $overviewRes->getStatusCode());
+        $overview = $overviewRes->getData(true);
+        $this->assertArrayHasKey('terms', $overview);
+        $this->assertArrayHasKey('sections', $overview);
+        $this->assertArrayHasKey('readiness_summary', $overview);
+        $this->assertArrayHasKey('questionnaire_preview', $overview);
+        $this->assertGreaterThanOrEqual(1, count($overview['terms']));
+        $this->assertGreaterThanOrEqual(6, count($overview['sections']));
+        $this->assertTrue($overview['readiness_summary']['is_cycle_ready']);
+
+        // 3. Questionnaire Preview: Exactly 5 clusters, 25 items, 4 qualitative questions
+        $qPreview = $overview['questionnaire_preview'];
+        $this->assertSame(5, count($qPreview['clusters']));
+        $totalItems = 0;
+        foreach ($qPreview['clusters'] as $cluster) {
+            $totalItems += count($cluster['items']);
+        }
+        $this->assertSame(25, $totalItems);
+        $this->assertSame(4, count($qPreview['professor_qualitative_questions']));
+
+        // 4. Term Creation & Validation
+        $invalidTermReq = new \Illuminate\Http\Request(['academic_year' => 'INVALID_YEAR', 'name' => 'Summer Term', 'code' => 'SUM-2027']);
+        $invalidTermReq->setUserResolver(fn () => $adminUser);
+        $invalidTermRes = $setupController->createOrUpdateTerm($invalidTermReq);
+        $this->assertSame(422, $invalidTermRes->getStatusCode());
+        $this->assertSame('INVALID_TERM_PAYLOAD', $invalidTermRes->getData(true)['code']);
+
+        $validTermReq = new \Illuminate\Http\Request([
+            'academic_year' => '2027-2028',
+            'name' => '1st Semester AY 2027-2028',
+            'code' => '1SEM-2027',
+            'is_active' => true,
+            'starts_on' => '2027-08-15',
+            'ends_on' => '2027-12-15',
+        ]);
+        $validTermReq->setUserResolver(fn () => $adminUser);
+        $validTermRes = $setupController->createOrUpdateTerm($validTermReq);
+        $this->assertSame(200, $validTermRes->getStatusCode());
+        $termData = $validTermRes->getData(true);
+        $this->assertTrue($termData['success']);
+        $newTermId = (int) $termData['term_id'];
+
+        // 5. Course Creation
+        $courseReq = new \Illuminate\Http\Request([
+            'department_id' => 1,
+            'code' => 'CS-501',
+            'title' => 'Advanced Machine Learning & Neural Systems',
+            'units' => 3,
+        ]);
+        $courseReq->setUserResolver(fn () => $adminUser);
+        $courseRes = $setupController->createCourse($courseReq);
+        $this->assertSame(201, $courseRes->getStatusCode());
+        $newCourseId = (int) $courseRes->getData(true)['course_id'];
+
+        // 6. Section Creation & Unassigned State
+        $sectionReq = new \Illuminate\Http\Request([
+            'course_id' => $newCourseId,
+            'academic_term_id' => $newTermId,
+            'section_code' => 'SEC-ADV',
+            'faculty_id' => null, // unassigned
+            'enrolled_count' => 0,
+        ]);
+        $sectionReq->setUserResolver(fn () => $adminUser);
+        $sectionRes = $setupController->createSection($sectionReq);
+        $this->assertSame(201, $sectionRes->getStatusCode());
+        $newSecId = (int) $sectionRes->getData(true)['course_section_id'];
+
+        // 7. Check unassigned readiness warning on new term
+        $newTermOverviewReq = new \Illuminate\Http\Request(['academic_term_id' => $newTermId]);
+        $newTermOverviewReq->setUserResolver(fn () => $adminUser);
+        $newTermOverviewRes = $setupController->overview($newTermOverviewReq);
+        $this->assertSame(200, $newTermOverviewRes->getStatusCode());
+        $newOverview = $newTermOverviewRes->getData(true);
+        $this->assertSame(1, $newOverview['readiness_summary']['total_sections']);
+        $this->assertSame(1, $newOverview['readiness_summary']['unassigned_sections']);
+        $this->assertFalse($newOverview['readiness_summary']['is_cycle_ready']);
+        $this->assertNotEmpty($newOverview['readiness_summary']['validation_warnings']);
+
+        // 8. Assign Faculty to Section
+        $assignReq = new \Illuminate\Http\Request([
+            'course_section_id' => $newSecId,
+            'faculty_id' => 5, // Prof. A. Dela Cruz
+        ]);
+        $assignReq->setUserResolver(fn () => $adminUser);
+        $assignRes = $setupController->assignFaculty($assignReq);
+        $this->assertSame(200, $assignRes->getStatusCode());
+        $this->assertTrue($assignRes->getData(true)['is_assigned']);
+        $this->assertSame('Prof. A. Dela Cruz', $assignRes->getData(true)['instructor_name']);
+
+        // 9. Safety Guard: Can delete un-evaluated section, cannot delete evaluated section
+        $this->pdo->exec("INSERT INTO evaluation_clearances (student_id, course_section_id, academic_term_id, submission_key, status, clearance_token, cleared_at) VALUES (7, 1, 1, 'TEST-CLEARANCE-SEC-1', 'CLEARED', 'EVT-TEST-TOKEN', '2026-11-09 12:00:00')");
+        $delEvaluatedReq = new \Illuminate\Http\Request();
+        $delEvaluatedReq->setUserResolver(fn () => $adminUser);
+        $delEvaluatedRes = $setupController->deleteSection($delEvaluatedReq, 1);
+        $this->assertSame(422, $delEvaluatedRes->getStatusCode());
+        $this->assertSame('CANNOT_DELETE_EVALUATED_SECTION', $delEvaluatedRes->getData(true)['code']);
+
+        // Delete the new unevaluated section safely
+        $delNewReq = new \Illuminate\Http\Request();
+        $delNewReq->setUserResolver(fn () => $adminUser);
+        $delNewRes = $setupController->deleteSection($delNewReq, $newSecId);
+        $this->assertSame(200, $delNewRes->getStatusCode());
+        $this->assertTrue($delNewRes->getData(true)['success']);
+    }
 }

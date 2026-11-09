@@ -264,8 +264,14 @@ namespace Tests {
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     code TEXT NOT NULL UNIQUE,
                     name TEXT NOT NULL,
+                    academic_year TEXT NOT NULL DEFAULT '2026-2027',
                     period_label TEXT NOT NULL DEFAULT 'Final SET',
-                    is_active INTEGER NOT NULL DEFAULT 1
+                    is_active INTEGER NOT NULL DEFAULT 1,
+                    evaluation_open INTEGER NOT NULL DEFAULT 1,
+                    starts_on TEXT NULL,
+                    ends_on TEXT NULL,
+                    created_at TEXT NULL,
+                    updated_at TEXT NULL
                 );
 
                 CREATE TABLE users (
@@ -275,7 +281,8 @@ namespace Tests {
                     email TEXT NOT NULL UNIQUE,
                     password_hash TEXT NOT NULL,
                     role TEXT NOT NULL CHECK(role IN ('admin', 'dean', 'chair', 'faculty', 'student')),
-                    department_id INTEGER NULL REFERENCES departments(id) ON DELETE SET NULL
+                    department_id INTEGER NULL REFERENCES departments(id) ON DELETE SET NULL,
+                    is_active INTEGER NOT NULL DEFAULT 1
                 );
 
                 CREATE TABLE courses (
@@ -283,17 +290,22 @@ namespace Tests {
                     department_id INTEGER NOT NULL REFERENCES departments(id) ON DELETE CASCADE,
                     code TEXT NOT NULL UNIQUE,
                     title TEXT NOT NULL,
-                    units INTEGER NOT NULL DEFAULT 3
+                    units INTEGER NOT NULL DEFAULT 3,
+                    created_at TEXT NULL,
+                    updated_at TEXT NULL
                 );
 
                 CREATE TABLE course_sections (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     course_id INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
-                    faculty_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    faculty_id INTEGER NULL REFERENCES users(id) ON DELETE CASCADE,
                     academic_term_id INTEGER NOT NULL REFERENCES academic_terms(id) ON DELETE CASCADE,
                     section_code TEXT NOT NULL,
                     term_grades_submitted INTEGER NOT NULL DEFAULT 0,
                     registrar_lock INTEGER NOT NULL DEFAULT 0,
+                    enrolled_count INTEGER NOT NULL DEFAULT 0,
+                    created_at TEXT NULL,
+                    updated_at TEXT NULL,
                     UNIQUE(course_id, academic_term_id, section_code)
                 );
 
@@ -421,9 +433,9 @@ namespace Tests {
                 (1, 'CCS', 'College of Computer Studies', 'College of Computer Studies'),
                 (2, 'CAS', 'College of Arts and Sciences', 'College of Arts and Sciences');
 
-                INSERT INTO academic_terms (id, code, name, period_label, is_active) VALUES
-                (1, '1SEM-2026', '1st Semester', 'Final SET', 1),
-                (2, '2SEM-2026', '2nd Semester', 'Final SET', 0);
+                INSERT INTO academic_terms (id, code, name, academic_year, period_label, is_active, evaluation_open) VALUES
+                (1, '1SEM-2026', '1st Semester', '2026-2027', 'Final SET', 1, 1),
+                (2, '2SEM-2026', '2nd Semester', '2026-2027', 'Final SET', 0, 0);
 
                 INSERT INTO evaluation_window_configs (
                     academic_term_id, status, min_dwell_seconds, straight_line_variance_threshold,

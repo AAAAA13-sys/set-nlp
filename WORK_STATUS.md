@@ -87,6 +87,7 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 - [x] **Checkpoint 9:** Top-positioned navigation (`← Back to My Courses` in evaluation header), hidden automatic autosave pill, enlarged global typography (`16.5px` root, +10% scaling across tables, inputs, buttons, Likert items), and fixed GitHub Actions CI dependencies (`composer install`, `pip install -r analytics/requirements.txt`, `php scripts/run-backend-tests.php`) (`commit 284f07f`).
 - [x] **Checkpoint 10:** UI element removals (`Focused Fullscreen` button removed from `EvaluationFormView.vue`, header kicker visually hidden in `NavbarHeader.vue` via `.sr-only` class to preserve accessibility and test assertions, zero-source-map production build) (`commit e8256d6`).
 - [x] **Checkpoint 11:** Top-right jQuery UI DOM error notification (`ui-widget`, `ui-state-error`, `ui-corner-all`, `ui-icon-alert`) with animated 4-second countdown progress bar and dismiss timer, non-invasive replacement for form-pushing inline error banners in `EvaluationFormView.vue`, mounted globally in `EvaluaTechAppShell`, verified in multi-tier suite (`120 / 120 PASS`) (`commit 83fd2a0`).
+- [x] **Checkpoint 12:** Academic Setup Workspace, Term Cycle Management, Faculty Assignment Matrix & Questionnaire Preview (`NEW_GOAL.md`, inspired by `SaiyamTuteja/Faculty_Evaluation_System`): Added `/admin/setup` route and sidebar destination for `admin` role, academic term lifecycle management (`academic_list.php` workflow), faculty-to-section teaching assignment matrix with inline instructor dropdowns (`manage_restriction.php` workflow), 25-item 5-cluster Likert + 4 qualitative question read-only preview (`questionnaire.php` workflow), cycle readiness summary bar with actionable validation warnings, safe deletion guarding evaluated sections (`CANNOT_DELETE_EVALUATED_SECTION`), and 122 automated test units passing (`122 / 122 PASS`, 901 assertions).
 
 
 ---
@@ -95,10 +96,10 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 
 | Verification Tier | Command Executed | Executed Units | Pass Count | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 34 tests (870 assertions) | 34 / 34 | **100% PASS** |
-| **Frontend DOM & UX Suite** | `npm.cmd test` | 40 test groups | 40 / 40 | **100% PASS** |
+| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (901 assertions) | 35 / 35 | **100% PASS** |
+| **Frontend DOM & UX Suite** | `npm.cmd test` | 41 test groups | 41 / 41 | **100% PASS** |
 | **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 46 unit tests | 46 / 46 | **100% PASS** |
-| **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 48 PHP files, 192 sources | 100% clean | **100% PASS** |
-| **Vite Production Bundle** | `npm.cmd run build` | 71 modules | Zero `.map` files | **100% PASS** |
-| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 120 automated units | 120 / 120 | **100% PASS** |
+| **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 50 PHP files, 201 sources | 100% clean | **100% PASS** |
+| **Vite Production Bundle** | `npm.cmd run build` | 78 modules | Zero `.map` files | **100% PASS** |
+| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 122 automated units | 122 / 122 | **100% PASS** |
 

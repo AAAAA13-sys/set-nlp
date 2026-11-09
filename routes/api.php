@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\AdminRosterController;
+use App\Http\Controllers\Api\AdminSetupController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DeanAnalyticsController;
 use App\Http\Controllers\Api\FacultyPortalController;
@@ -76,4 +77,14 @@ Route::middleware(['role:admin'])->group(function (): void {
     Route::get('/admin/security-posture', [AdminRosterController::class, 'securityPosture']);
     Route::get('/admin/evaluation-window', [AdminRosterController::class, 'getEvaluationWindow']);
     Route::post('/admin/evaluation-window', [AdminRosterController::class, 'updateEvaluationWindow']);
+
+    // Academic Setup & Evaluation Cycle Configuration Workspace
+    Route::get('/admin/setup/overview', [AdminSetupController::class, 'overview']);
+    Route::post('/admin/setup/terms', [AdminSetupController::class, 'createOrUpdateTerm']);
+    Route::post('/admin/setup/terms/{id}/set-active', [AdminSetupController::class, 'setActiveTerm']);
+    Route::post('/admin/setup/courses', [AdminSetupController::class, 'createCourse']);
+    Route::post('/admin/setup/sections', [AdminSetupController::class, 'createSection']);
+    Route::post('/admin/setup/assign-faculty', [AdminSetupController::class, 'assignFaculty']);
+    Route::match(['DELETE', 'POST'], '/admin/setup/sections/{id}/delete', [AdminSetupController::class, 'deleteSection']);
+    Route::get('/admin/setup/questionnaire', [AdminSetupController::class, 'questionnaire']);
 });

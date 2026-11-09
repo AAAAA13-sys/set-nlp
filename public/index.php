@@ -309,6 +309,24 @@ if ($isApiRoute) {
             $response = $withRoles('student,faculty,chair,dean,admin', static fn (Request $req) => (new AdminRosterController(null, $service))->getEvaluationWindow($req));
         } elseif ($uriPath === '/api/admin/evaluation-window' && $method === 'POST') {
             $response = $withRoles('admin', static fn (Request $req) => (new AdminRosterController(null, $service))->updateEvaluationWindow($req));
+        } elseif ($uriPath === '/api/admin/setup/overview' && $method === 'GET') {
+            $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->overview($req));
+        } elseif ($uriPath === '/api/admin/setup/terms' && $method === 'POST') {
+            $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->createOrUpdateTerm($req));
+        } elseif (preg_match('#^/api/admin/setup/terms/(\d+)/set-active$#', $uriPath, $m) === 1 && $method === 'POST') {
+            $tId = (int) $m[1];
+            $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->setActiveTerm($req, $tId));
+        } elseif ($uriPath === '/api/admin/setup/courses' && $method === 'POST') {
+            $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->createCourse($req));
+        } elseif ($uriPath === '/api/admin/setup/sections' && $method === 'POST') {
+            $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->createSection($req));
+        } elseif ($uriPath === '/api/admin/setup/assign-faculty' && $method === 'POST') {
+            $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->assignFaculty($req));
+        } elseif (preg_match('#^/api/admin/setup/sections/(\d+)/delete$#', $uriPath, $m) === 1 && in_array($method, ['POST', 'DELETE'], true)) {
+            $secId = (int) $m[1];
+            $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->deleteSection($req, $secId));
+        } elseif ($uriPath === '/api/admin/setup/questionnaire' && $method === 'GET') {
+            $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->questionnaire($req));
         }
         // Security & Zero-Knowledge Vault Audit Endpoints (Role: admin, dean)
         elseif ($uriPath === '/api/security/vault-audit' && $method === 'GET') {
