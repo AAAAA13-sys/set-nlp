@@ -176,3 +176,4 @@ In the event of a student station malfunction, network disconnection, or physica
 * **Data Privacy Act (RA 10173):** Physical laboratory workstations clear session storage, cookies, and cache upon user sign-out or session reset.
 * **Accessibility (WCAG 2.2 AA):** High-contrast mode, standard font sizing (`16px` body), and keyboard navigation (`Tab`, `Space`, `Enter`, Arrow keys) function identically in kiosk mode as in desktop browsers.
 * **Academic Integrity:** Prevents casual desktop multitasking in proctored laboratories while maintaining respectful student ergonomics on personal mobile and home devices.
+

@@ -35,9 +35,13 @@ function goHome() {
       </p>
 
       <div class="notfound-guidance">
-        <div class="guidance-item">
+        <div v-if="authStore.currentRole !== 'student'" class="guidance-item">
           <strong>Use the sidebar menu</strong>
           <span>Select a page from the left sidebar or press <kbd>Ctrl + K</kbd> to jump to a section.</span>
+        </div>
+        <div v-else class="guidance-item">
+          <strong>Return to course evaluations</strong>
+          <span>Use the button below to return directly to your course evaluation queue.</span>
         </div>
         <div class="guidance-item">
           <strong>Your progress is saved</strong>
