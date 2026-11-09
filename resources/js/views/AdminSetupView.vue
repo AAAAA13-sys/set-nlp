@@ -142,12 +142,26 @@ async function handleSetActiveTerm(termId) {
 
 function openNewTermModal() {
   termForm.value = {
+    id: null,
     academic_year: '2026-2027',
     name: '',
     code: '',
     starts_on: '',
     ends_on: '',
     is_active: false,
+  };
+  showNewTermModal.value = true;
+}
+
+function openEditTermModal(t) {
+  termForm.value = {
+    id: t.id,
+    academic_year: t.academic_year || '2026-2027',
+    name: t.name || '',
+    code: t.code || '',
+    starts_on: t.starts_on || '',
+    ends_on: t.ends_on || '',
+    is_active: Boolean(t.is_active),
   };
   showNewTermModal.value = true;
 }
@@ -162,7 +176,7 @@ async function submitNewTerm() {
     showNewTermModal.value = false;
     flashSuccess(`Academic Term "${res.code}" saved successfully.`);
   } catch (err) {
-    flashError(err.message || 'Failed to create academic term.');
+    flashError(err.message || 'Failed to save academic term.');
   }
 }
 
@@ -699,16 +713,26 @@ async function executeDeleteSection() {
                 </span>
               </td>
               <td class="text-right">
-                <button
-                  v-if="!t.is_active"
-                  type="button"
-                  class="btn-secondary-sm"
-                  :data-testid="`set-active-term-btn-${t.id}`"
-                  @click="handleSetActiveTerm(t.id)"
-                >
-                  Set as Active
-                </button>
-                <span v-else class="text-active-label">Current Active</span>
+                <div style="display: flex; gap: 0.4rem; justify-content: flex-end; align-items: center;">
+                  <button
+                    type="button"
+                    class="btn-secondary-sm"
+                    :data-testid="`edit-term-btn-${t.id}`"
+                    @click="openEditTermModal(t)"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    v-if="!t.is_active"
+                    type="button"
+                    class="btn-secondary-sm"
+                    :data-testid="`set-active-term-btn-${t.id}`"
+                    @click="handleSetActiveTerm(t.id)"
+                  >
+                    Set as Active
+                  </button>
+                  <span v-else class="text-active-label">Current Active</span>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -798,7 +822,7 @@ async function executeDeleteSection() {
     >
       <div class="setup-modal-box">
         <header class="setup-modal-header">
-          <h2 id="new-term-modal-title">Create Academic Term</h2>
+          <h2 id="new-term-modal-title">{{ termForm.id ? 'Edit Academic Term' : 'Create Academic Term' }}</h2>
           <button type="button" class="modal-close-btn" @click="showNewTermModal = false">&times;</button>
         </header>
 

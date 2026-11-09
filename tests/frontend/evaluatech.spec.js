@@ -1228,6 +1228,8 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('data-testid="submit-setup-roster-import-btn"'));
       assert.ok(setupViewSfc.includes('toggle-lock-btn-'));
       assert.ok(setupViewSfc.includes('handleToggleRegistrarLock'));
+      assert.ok(setupViewSfc.includes('edit-term-btn-'));
+      assert.ok(setupViewSfc.includes('openEditTermModal'));
       assert.ok(rosterViewSfc.includes('data-testid="goto-academic-setup-btn"'));
       assert.ok(setupViewSfc.includes('data-testid="goto-admin-console-btn"'));
 
