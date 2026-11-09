@@ -295,6 +295,14 @@ defineExpose({
         >
           {{ density === 'compact' ? 'Compact' : 'Comfortable' }}
         </button>
+
+        <span
+          class="ui-hint"
+          tabindex="0"
+          role="note"
+          aria-label="Table shortcuts"
+          data-hint="Press / to focus search or click column headers to sort."
+        >?</span>
       </div>
     </div>
 
@@ -382,7 +390,7 @@ defineExpose({
       <div v-if="totalPages > 1" class="pro-pagination tabular-nums" data-testid="table-pagination">
         <span class="pro-page-summary">
           Showing {{ (currentPage - 1) * pageSize + 1 }}–{{ Math.min(currentPage * pageSize, filteredAndSortedRows.length) }}
-          of {{ filteredAndSortedRows.length }}
+          of <span class="ui-badge-count">{{ filteredAndSortedRows.length }}</span>
         </span>
         <div class="pro-page-buttons">
           <button

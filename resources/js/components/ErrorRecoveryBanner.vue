@@ -54,7 +54,16 @@ const handleRetry = throttle(() => {
         </svg>
       </span>
       <div class="error-recovery-copy">
-        <strong class="error-recovery-title">{{ title }}</strong>
+        <strong class="error-recovery-title">
+          {{ title }}
+          <span
+            class="ui-hint"
+            tabindex="0"
+            role="note"
+            aria-label="Recovery details"
+            data-hint="Local evaluation drafts remain safely stored in your browser while the connection retries."
+          >?</span>
+        </strong>
         <span class="error-recovery-sub">
           {{ message }}
           <template v-if="detail"> — {{ detail }}</template>

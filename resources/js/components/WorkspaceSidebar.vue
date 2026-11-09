@@ -41,6 +41,10 @@ const firstPendingSectionId = computed(() => {
   return pending?.course_section_id || evaluationStore.activeCourse?.course_section_id || null;
 });
 
+const pendingCourseCount = computed(
+  () => evaluationStore.courses.filter((c) => c.status === 'PENDING').length,
+);
+
 const primaryLinks = computed(() => {
   const role = currentRole.value;
   const items = [];
@@ -52,6 +56,7 @@ const primaryLinks = computed(() => {
       icon: 'queue',
       testId: 'sidebar-link-queue',
       matchPrefix: '/queue',
+      badgeCount: pendingCourseCount.value,
     });
     items.push({
       to: firstPendingSectionId.value ? `/evaluate/${firstPendingSectionId.value}` : '/evaluate',
@@ -231,6 +236,13 @@ async function handleSignOut() {
             </svg>
           </span>
           <span v-if="!collapsed" class="sidebar-label">{{ item.label }}</span>
+          <span
+            v-if="!collapsed && item.badgeCount > 0"
+            class="sidebar-ai-tag tabular-nums"
+            :title="`${item.badgeCount} pending course evaluations`"
+          >
+            {{ item.badgeCount }}
+          </span>
         </router-link>
       </nav>
 

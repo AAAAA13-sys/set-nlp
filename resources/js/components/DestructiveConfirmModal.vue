@@ -74,7 +74,16 @@ onUnmounted(() => {
           </svg>
         </span>
         <div>
-          <span class="destructive-kicker">DESTRUCTIVE ACTION SAFEGUARD</span>
+          <span class="destructive-kicker">
+            DESTRUCTIVE ACTION SAFEGUARD
+            <span
+              class="ui-hint"
+              tabindex="0"
+              role="note"
+              aria-label="Safeguard details"
+              data-hint="Confirming applies this institutional change immediately and records a zero-PII audit entry."
+            >?</span>
+          </span>
           <h3 id="destructive-modal-title" class="destructive-title">{{ title }}</h3>
         </div>
       </div>
