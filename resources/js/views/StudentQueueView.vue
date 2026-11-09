@@ -16,6 +16,25 @@ const searchInput = ref('');
 const debouncedSearch = ref('');
 const statusFilter = ref('ALL');
 
+const showQueueReceiptModal = ref(false);
+const selectedQueueReceiptCourse = ref(null);
+
+function openCourseReceiptModal(course) {
+  selectedQueueReceiptCourse.value = course;
+  showQueueReceiptModal.value = true;
+}
+
+function closeQueueReceiptModal() {
+  showQueueReceiptModal.value = false;
+  selectedQueueReceiptCourse.value = null;
+}
+
+function printQueueReceipt() {
+  if (typeof window !== 'undefined' && typeof window.print === 'function') {
+    window.print();
+  }
+}
+
 const progress = computed(() => evaluationStore.queueProgress);
 
 const formattedDeadline = computed(() => {
@@ -236,14 +255,24 @@ function startEvaluation(course) {
                 </span>
               </td>
               <td>
-                <span
-                  v-if="course.status === 'COMPLETED'"
-                  class="badge-evaluated-locked"
-                  data-testid="evaluated-locked-badge"
-                  :title="course.clearance_token || 'Evaluation submitted and permanently locked.'"
-                >
-                  ✓ Evaluated
-                </span>
+                <div v-if="course.status === 'COMPLETED'" style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                  <span
+                    class="badge-evaluated-locked"
+                    data-testid="evaluated-locked-badge"
+                    :title="course.clearance_token || 'Evaluation submitted and permanently locked.'"
+                  >
+                    ✓ Evaluated
+                  </span>
+                  <button
+                    type="button"
+                    class="btn-secondary btn-xs"
+                    :data-testid="`queue-view-receipt-btn-${course.course_code}`"
+                    title="View & Print Official Course Clearance Receipt"
+                    @click="openCourseReceiptModal(course)"
+                  >
+                    Receipt 🧾
+                  </button>
+                </div>
                 <button
                   v-else
                   type="button"
@@ -302,6 +331,115 @@ function startEvaluation(course) {
         :exam-permit-token="evaluationStore.lastReceipt?.clearance_token || null"
         :courses="evaluationStore.courses"
       />
+    </div>
+
+    <!-- Student Course Clearance Receipt Modal -->
+    <div
+      v-if="showQueueReceiptModal && selectedQueueReceiptCourse"
+      class="receipt-modal-overlay"
+      style="position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 1rem;"
+      data-testid="student-queue-clearance-receipt-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="queue-receipt-title"
+      @click.self="closeQueueReceiptModal"
+    >
+      <div
+        class="modal-card print-receipt-card"
+        style="background: #ffffff; border-radius: 12px; max-width: 620px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 2px solid #103c2e;"
+      >
+        <!-- Institutional Header -->
+        <div style="text-align: center; border-bottom: 2px solid #103c2e; padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
+          <div style="font-size: 0.8rem; font-weight: 700; color: #103c2e; letter-spacing: 0.08em; text-transform: uppercase;">
+            Pamantasan ng Lungsod ng Pasig
+          </div>
+          <div style="font-size: 0.72rem; color: #4b5563; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.15rem;">
+            Office of Academic Affairs &amp; Office of the University Registrar
+          </div>
+          <h3 id="queue-receipt-title" style="font-size: 1.2rem; font-weight: 800; color: #103c2e; margin: 0.75rem 0 0; text-transform: uppercase; letter-spacing: 0.04em;">
+            Student Evaluation Clearance Receipt
+          </h3>
+          <div style="font-size: 0.78rem; color: #6b7280; margin-top: 0.25rem;">
+            Official Electronic Proof of Evaluation Completion
+          </div>
+        </div>
+
+        <!-- Clearance Details Grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; font-size: 0.85rem;">
+          <div>
+            <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase;">Course Offering</span>
+            <strong style="color: #111827; font-size: 0.95rem;">{{ selectedQueueReceiptCourse.course_code }}</strong>
+            <div style="color: #4b5563; font-size: 0.8rem;">{{ selectedQueueReceiptCourse.course_title }}</div>
+          </div>
+          <div>
+            <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase;">Instructor</span>
+            <strong style="color: #111827; font-size: 0.95rem;">{{ selectedQueueReceiptCourse.instructor_name }}</strong>
+            <div style="color: #4b5563; font-size: 0.8rem;">Section: {{ selectedQueueReceiptCourse.section_code || 'SEC-A' }}</div>
+          </div>
+          <div>
+            <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase;">Academic Term</span>
+            <span style="color: #111827; font-weight: 600;">{{ evaluationStore.evaluationWindow?.term_name || authStore.activeTerm || '1st Semester AY 2026-2027' }}</span>
+          </div>
+          <div>
+            <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase;">Clearance Status</span>
+            <span class="status-badge status-completed" style="font-size: 0.75rem; padding: 0.2rem 0.6rem;">
+              ✓ OFFICIALLY CLEARED
+            </span>
+          </div>
+        </div>
+
+        <!-- Cryptographic Token Strip -->
+        <div style="background: #f7faf8; border: 1px solid #c8e6c9; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+          <div style="font-size: 0.75rem; font-weight: 700; color: #1b5e20; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">
+            Cryptographic Clearance Signature Token
+          </div>
+          <code
+            style="display: block; font-family: monospace; font-size: 0.85rem; font-weight: 700; color: #103c2e; word-break: break-all; background: #ffffff; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid #dce7dc;"
+            data-testid="queue-receipt-clearance-token"
+          >
+            {{ selectedQueueReceiptCourse.clearance_token || `CLR-2026-${selectedQueueReceiptCourse.course_code}-PASSED` }}
+          </code>
+          <div style="font-size: 0.72rem; color: #4b5563; margin-top: 0.5rem; line-height: 1.4;">
+            🔒 <strong>Dual-Token Anonymity Guaranteed:</strong> This token proves your evaluation requirement has been satisfied without linking your student identity to specific rating scores or written comments.
+          </div>
+        </div>
+
+        <!-- Verification Signature Block -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed #d1d5db; padding-top: 1.25rem; margin-bottom: 1.5rem; font-size: 0.78rem;">
+          <div>
+            <div style="font-weight: 700; color: #103c2e;">PAMANTASAN NG LUNGSOD NG PASIG</div>
+            <div style="color: #6b7280;">Alcalde Jose St., Kapasigan, Pasig City</div>
+            <div style="color: #6b7280; margin-top: 0.2rem;">Issued to: {{ authStore.user?.name || 'Verified Student' }}</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-weight: 700; color: #111827; border-bottom: 1px solid #111827; padding-bottom: 0.2rem; min-width: 170px; text-align: center;">
+              OFFICE OF THE REGISTRAR
+            </div>
+            <div style="color: #6b7280; font-size: 0.72rem; margin-top: 0.2rem; text-align: center;">
+              Electronic Validation Stamp
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="no-print" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 1.25rem; gap: 0.5rem; flex-wrap: wrap;">
+          <button
+            type="button"
+            class="btn-secondary btn-sm"
+            @click="closeQueueReceiptModal"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            class="btn-primary btn-sm"
+            data-testid="print-queue-receipt-action-btn"
+            @click="printQueueReceipt"
+          >
+            🖨 Print / Save as PDF
+          </button>
+        </div>
+      </div>
     </div>
   </main>
 </template>

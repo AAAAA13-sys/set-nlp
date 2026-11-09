@@ -1363,4 +1363,35 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupStoreSrc.includes('overview.value.students'), 'Computed students from overview');
     });
   });
+
+  describe('Group 46: Student Queue Clearance Receipt & Administrator Master Evaluation Report Modal', () => {
+    it('verifies student queue course clearance receipt modal and direct receipt printing action', () => {
+      const studentQueueSfc = readResourceFile('views/StudentQueueView.vue');
+
+      // 1. Student Queue Clearance Receipt Modal & Receipt Trigger Button
+      assert.ok(studentQueueSfc.includes('queue-view-receipt-btn-'), 'Student queue receipt action button');
+      assert.ok(studentQueueSfc.includes('data-testid="student-queue-clearance-receipt-modal"'), 'Student queue clearance receipt modal');
+      assert.ok(studentQueueSfc.includes('data-testid="queue-receipt-clearance-token"'), 'Queue clearance signature token proof');
+      assert.ok(studentQueueSfc.includes('data-testid="print-queue-receipt-action-btn"'), 'Print queue clearance receipt button');
+      assert.ok(studentQueueSfc.includes('openCourseReceiptModal'), 'Open course receipt modal handler');
+      assert.ok(studentQueueSfc.includes('closeQueueReceiptModal'), 'Close course receipt modal handler');
+    });
+
+    it('verifies administrator section evaluation report breakdown modal and institutional CSV export', () => {
+      const adminRosterSfc = readResourceFile('views/AdminRosterView.vue');
+
+      // 2. Administrator Master Summary Export Button & Formula-Injection Neutralization
+      assert.ok(adminRosterSfc.includes('data-testid="export-master-summary-btn"'), 'Export master summary CSV button');
+      assert.ok(adminRosterSfc.includes('exportMasterEvaluationSummaryCsv'), 'Export master summary CSV function');
+      assert.ok(adminRosterSfc.includes('PLP_Evaluation_Master_Summary_'), 'Filename pattern for institutional summary');
+
+      // 3. Section Locks Table View Report Action & Administrator Report Modal
+      assert.ok(adminRosterSfc.includes('admin-view-report-btn-'), 'Admin section locks View Report button');
+      assert.ok(adminRosterSfc.includes('data-testid="admin-section-eval-modal"'), 'Admin section evaluation report modal');
+      assert.ok(adminRosterSfc.includes('data-testid="admin-report-target-status"'), 'Admin report target status badge');
+      assert.ok(adminRosterSfc.includes('data-testid="admin-print-report-btn"'), 'Admin print report button');
+      assert.ok(adminRosterSfc.includes('openAdminSectionReport'), 'Open admin section report function');
+      assert.ok(adminRosterSfc.includes('closeAdminSectionReport'), 'Close admin section report function');
+    });
+  });
 });
