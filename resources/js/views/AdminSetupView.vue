@@ -244,6 +244,28 @@ async function submitNewCourse() {
   }
 }
 
+const facultySearchInput = ref('');
+
+const filteredFacultyDirectory = computed(() => {
+  const query = facultySearchInput.value.trim().toLowerCase();
+  const list = setupStore.facultyList || [];
+  if (!query) return list;
+  return list.filter((f) => {
+    const text = `${f.name || ''} ${f.institutional_id || ''} ${f.email || ''} ${f.department_name || ''} ${f.department_code || ''}`.toLowerCase();
+    return text.includes(query);
+  });
+});
+
+function getFacultyAssignedSectionsCount(facultyId) {
+  return (setupStore.sections || []).filter((s) => Number(s.faculty_id) === Number(facultyId)).length;
+}
+
+function quickAssignFaculty(faculty) {
+  setupStore.filterAssignment = 'ALL';
+  setupStore.filterSearch = faculty.name || '';
+  activeTab.value = 'assignments';
+}
+
 async function handleFacultyAssignmentChange(sectionId, event) {
   const newFacultyId = event.target.value ? Number(event.target.value) : null;
   try {
@@ -478,6 +500,22 @@ async function executeDeleteSection() {
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
           </svg>
           <span>Course Catalog ({{ setupStore.courses.length }})</span>
+        </button>
+
+        <button
+          type="button"
+          class="setup-tab-btn"
+          :class="{ active: activeTab === 'faculty' }"
+          data-testid="tab-faculty-btn"
+          @click="activeTab = 'faculty'"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span>Faculty Directory ({{ setupStore.facultyList.length }})</span>
         </button>
 
         <button
@@ -831,7 +869,82 @@ async function executeDeleteSection() {
       </div>
     </section>
 
-    <!-- TAB 4: QUESTIONNAIRE PREVIEW (Inspired by questionnaire.php) -->
+    <!-- TAB 4: FACULTY DIRECTORY (Inspired by admin/faculty_list.php) -->
+    <section v-if="activeTab === 'faculty'" class="tab-pane" data-testid="pane-faculty">
+      <div class="pane-controls-bar">
+        <div class="search-filter-group">
+          <input
+            v-model="facultySearchInput"
+            type="search"
+            class="form-input search-input"
+            placeholder="Search faculty by name, employee ID, or department…"
+            data-testid="faculty-search-input"
+          />
+        </div>
+        <div class="actions-group">
+          <span class="token-chip chip-signed">
+            Total Instructors: {{ setupStore.facultyList.length }}
+          </span>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="institutional-table tabular-nums" data-testid="faculty-directory-table">
+          <thead>
+            <tr>
+              <th scope="col">Institutional ID</th>
+              <th scope="col">Faculty Member Name</th>
+              <th scope="col">Department</th>
+              <th scope="col">Institutional Email</th>
+              <th scope="col">Academic Role</th>
+              <th scope="col">Assigned Sections</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="fac in filteredFacultyDirectory" :key="fac.id" :data-testid="`faculty-row-${fac.id}`">
+              <td><code>{{ fac.institutional_id }}</code></td>
+              <td><strong>{{ fac.name }}</strong></td>
+              <td>
+                <span class="dept-badge">{{ fac.department_code || 'CCS' }}</span>
+                <span style="margin-left: 0.35rem; font-size: 0.8rem; color: #4b5563;">{{ fac.department_name }}</span>
+              </td>
+              <td>{{ fac.email }}</td>
+              <td>
+                <span class="role-pill" style="font-size: 0.75rem; text-transform: uppercase;">
+                  {{ fac.role }}
+                </span>
+              </td>
+              <td>
+                <span
+                  class="token-chip"
+                  :class="getFacultyAssignedSectionsCount(fac.id) > 0 ? 'chip-signed' : 'chip-unsigned'"
+                >
+                  {{ getFacultyAssignedSectionsCount(fac.id) }} Sections
+                </span>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="btn-secondary btn-xs"
+                  :data-testid="`assign-faculty-shortcut-btn-${fac.id}`"
+                  @click="quickAssignFaculty(fac)"
+                >
+                  View Teaching Sections →
+                </button>
+              </td>
+            </tr>
+            <tr v-if="filteredFacultyDirectory.length === 0">
+              <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                No faculty members match your search criteria.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 5: QUESTIONNAIRE PREVIEW (Inspired by questionnaire.php) -->
     <section v-if="activeTab === 'questionnaire'" class="tab-pane" data-testid="pane-questionnaire">
       <div class="questionnaire-header-banner">
         <div class="questionnaire-badge-row">

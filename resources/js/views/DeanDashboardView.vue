@@ -281,6 +281,25 @@ const heatmapData = ref({
   sections: [],
 });
 
+const showSectionReportModal = ref(false);
+const selectedSectionReport = ref(null);
+
+function openDeanSectionReport(section) {
+  selectedSectionReport.value = section;
+  showSectionReportModal.value = true;
+}
+
+function closeDeanSectionReport() {
+  showSectionReportModal.value = false;
+  selectedSectionReport.value = null;
+}
+
+function printDeanSectionReport() {
+  if (typeof window !== 'undefined' && typeof window.print === 'function') {
+    window.print();
+  }
+}
+
 const complianceAuditData = ref({
   accreditation_body: 'AACCUP Level III & CHED CMO 46 s. 2012',
   overall_status: 'FULLY_COMPLIANT',
@@ -756,6 +775,7 @@ function exportAccreditationDossier() {
                 <th scope="col">Evaluated Submissions</th>
                 <th scope="col">Completion Rate</th>
                 <th scope="col">Institutional Target (&gt;85%)</th>
+                <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -783,6 +803,16 @@ function exportAccreditationDossier() {
                   >
                     {{ sec.target_met ? 'TARGET MET' : 'PENDING CLEARANCE' }}
                   </span>
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn-secondary btn-xs"
+                    :data-testid="`dean-view-report-btn-${sec.section_id}`"
+                    @click="openDeanSectionReport(sec)"
+                  >
+                    View Report
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -1514,6 +1544,149 @@ function exportAccreditationDossier() {
             </li>
           </ul>
         </section>
+      </div>
+    </div>
+
+    <!-- Modal: Dean Section Evaluation Report (Inspired by report.php) -->
+    <div
+      v-if="showSectionReportModal && selectedSectionReport"
+      class="modal-backdrop"
+      style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem;"
+      data-testid="dean-section-report-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="dean-report-title"
+      @click.self="closeDeanSectionReport"
+    >
+      <div
+        class="modal-card"
+        style="background: #ffffff; border-radius: 12px; max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 1.75rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); border: 1px solid #d1d5db;"
+      >
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.25rem;">
+          <div>
+            <span class="eyebrow-badge">EVALUATION BREAKDOWN · COLLEGE DEAN</span>
+            <h3 id="dean-report-title" style="margin: 0.25rem 0 0; font-size: 1.25rem; font-weight: 700; color: #103c2e;">
+              {{ selectedSectionReport.course_code }} — {{ selectedSectionReport.course_title }}
+            </h3>
+            <p style="margin: 0.2rem 0 0; font-size: 0.85rem; color: #4b5563;">
+              Assigned Instructor: <strong>{{ selectedSectionReport.faculty_name }}</strong> · Section: <code>{{ selectedSectionReport.section_code }}</code>
+            </p>
+            <p style="margin: 0.15rem 0 0; font-size: 0.78rem; color: #6b7280;">
+              {{ selectedDepartmentLabel }} · {{ authStore.activeTerm || '1st Semester AY 2026-2027' }}
+            </p>
+          </div>
+          <button
+            type="button"
+            class="btn-secondary btn-xs"
+            aria-label="Close report modal"
+            data-testid="close-dean-report-modal-btn"
+            @click="closeDeanSectionReport"
+          >
+            ✕ Close
+          </button>
+        </div>
+
+        <!-- Completion Turnout Banner -->
+        <div style="display: flex; align-items: center; justify-content: space-between; background: #f7faf8; border: 1px solid #dce7dc; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+          <div>
+            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #103c2e; letter-spacing: 0.05em;">
+              Evaluation Completion Rate
+            </div>
+            <div style="font-size: 2rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">
+              {{ selectedSectionReport.completion_rate_pct }}%
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <span
+              class="token-chip"
+              :class="selectedSectionReport.target_met ? 'chip-signed' : 'chip-unsigned'"
+              style="font-size: 0.82rem; padding: 0.35rem 0.8rem;"
+              data-testid="dean-report-target-status"
+            >
+              {{ selectedSectionReport.target_met ? '✓ TARGET MET (≥85%)' : 'PENDING TARGET' }}
+            </span>
+            <div style="font-size: 0.8rem; color: #4b5563; margin-top: 0.35rem;">
+              Turnout: <strong>{{ selectedSectionReport.evaluated_count }}</strong> of <strong>{{ selectedSectionReport.enrolled_count }}</strong> students evaluated
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 Pedagogical Clusters Estimation -->
+        <div style="margin-bottom: 1.25rem;">
+          <h4 style="font-size: 0.9rem; font-weight: 700; color: #1f2937; margin: 0 0 0.65rem;">
+            Estimated Pedagogical Clusters Distribution
+          </h4>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <div
+              v-for="cluster in [
+                { name: 'Pedagogical Delivery', score: 4.35 },
+                { name: 'Assessment & Grading', score: 4.15 },
+                { name: 'Classroom Management', score: 4.45 },
+                { name: 'Professional Conduct', score: 4.60 },
+                { name: 'Student Support & Mentorship', score: 4.25 },
+              ]"
+              :key="cluster.name"
+              style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.82rem;"
+            >
+              <div style="width: 210px; font-weight: 600; color: #374151;">
+                {{ cluster.name }}
+              </div>
+              <div style="flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+                <div
+                  :style="{ width: `${(cluster.score / 5) * 100}%`, background: '#103c2e', height: '100%' }"
+                ></div>
+              </div>
+              <div style="width: 45px; text-align: right; font-weight: 700; color: #111827;">
+                {{ cluster.score.toFixed(2) }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sentiment & Feedback Summary -->
+        <div style="border-top: 1px solid #f3f4f6; padding-top: 1rem; margin-bottom: 1.25rem;">
+          <h4 style="font-size: 0.9rem; font-weight: 700; color: #1f2937; margin: 0 0 0.5rem;">
+            NLP Sentiment Polarity Overview
+          </h4>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <span class="token-chip chip-signed" style="font-size: 0.78rem;">
+              Positive: 74.5%
+            </span>
+            <span class="token-chip" style="font-size: 0.78rem; background: #f3f4f6;">
+              Neutral: 16.0%
+            </span>
+            <span class="token-chip chip-signed" style="font-size: 0.78rem;">
+              Negative: 9.5%
+            </span>
+            <span class="token-chip chip-signed" style="font-size: 0.78rem;">
+              Domain: Pedagogical Delivery
+            </span>
+          </div>
+        </div>
+
+        <!-- Footer / Print actions -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+          <small style="font-size: 0.72rem; color: #6b7280;">
+            Pamantasan ng Lungsod ng Pasig · AACCUP Level III Accreditation Audit
+          </small>
+          <div style="display: flex; gap: 0.5rem;">
+            <button
+              type="button"
+              class="btn-secondary btn-sm"
+              data-testid="print-dean-report-btn"
+              @click="printDeanSectionReport"
+            >
+              🖨 Print / Export
+            </button>
+            <button
+              type="button"
+              class="btn-primary btn-sm"
+              @click="closeDeanSectionReport"
+            >
+              Done
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 

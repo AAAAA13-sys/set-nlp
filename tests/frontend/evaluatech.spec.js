@@ -1311,4 +1311,36 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(evalFormSfc.includes('closeReceiptModal'), 'Close receipt modal handler');
     });
   });
+
+  describe('Group 44: Faculty Directory Tab, Student Queue Clearance Permit Unlocking & Dean Heatmap Section Report Modal', () => {
+    it('verifies Academic Setup faculty directory tab, student queue completed clearance permit embedding, and dean section report modal', () => {
+      const studentQueueSfc = readResourceFile('views/StudentQueueView.vue');
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+      const deanViewSfc = readResourceFile('views/DeanDashboardView.vue');
+
+      // 1. Student Queue Clearance Permit Unlocking (StudentQueueView.vue)
+      assert.ok(studentQueueSfc.includes('ClearancePermitCard'), 'ClearancePermitCard imported in StudentQueueView');
+      assert.ok(studentQueueSfc.includes('<ClearancePermitCard'), 'ClearancePermitCard rendered in template');
+      assert.ok(studentQueueSfc.includes('v-if="progress.allCleared"'), 'Permit unlocked only when all evaluations are cleared');
+      assert.ok(studentQueueSfc.includes(':courses="evaluationStore.courses"'), 'Enrolled courses passed to ClearancePermitCard');
+
+      // 2. Faculty Directory Tab in Academic Setup (AdminSetupView.vue, inspired by faculty_list.php)
+      assert.ok(setupViewSfc.includes('data-testid="tab-faculty-btn"'), 'Faculty directory tab button in Academic Setup');
+      assert.ok(setupViewSfc.includes('data-testid="pane-faculty"'), 'Faculty directory tab pane container');
+      assert.ok(setupViewSfc.includes('data-testid="faculty-search-input"'), 'Faculty search and filter input');
+      assert.ok(setupViewSfc.includes('data-testid="faculty-directory-table"'), 'Faculty directory data table');
+      assert.ok(setupViewSfc.includes('assign-faculty-shortcut-btn-'), 'Quick assign faculty to teaching section button');
+      assert.ok(setupViewSfc.includes('filteredFacultyDirectory'), 'Computed filtered faculty directory');
+      assert.ok(setupViewSfc.includes('getFacultyAssignedSectionsCount'), 'Faculty assigned sections counter');
+      assert.ok(setupViewSfc.includes('quickAssignFaculty'), 'Quick assign faculty handler');
+
+      // 3. Dean Section Evaluation Report Modal (DeanDashboardView.vue, inspired by report.php)
+      assert.ok(deanViewSfc.includes('dean-view-report-btn-'), 'Section evaluation report button in completion heatmap');
+      assert.ok(deanViewSfc.includes('data-testid="dean-section-report-modal"'), 'Dean section evaluation report modal container');
+      assert.ok(deanViewSfc.includes('data-testid="dean-report-target-status"'), 'Dean report target met status chip');
+      assert.ok(deanViewSfc.includes('data-testid="print-dean-report-btn"'), 'Print/Export section report button');
+      assert.ok(deanViewSfc.includes('openDeanSectionReport'), 'Open dean section report handler');
+      assert.ok(deanViewSfc.includes('closeDeanSectionReport'), 'Close dean section report handler');
+    });
+  });
 });

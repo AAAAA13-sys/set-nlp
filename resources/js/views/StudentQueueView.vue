@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import ClearancePermitCard from '../components/ClearancePermitCard.vue';
 import ErrorRecoveryBanner from '../components/ErrorRecoveryBanner.vue';
 import SkeletonLoader from '../components/SkeletonLoader.vue';
 import { useAuthStore } from '../stores/auth.js';
@@ -291,6 +292,17 @@ function startEvaluation(course) {
         Thank you for your valuable feedback to the faculty of Pamantasan ng Lungsod ng Pasig.
       </p>
     </section>
+
+    <!-- Digital Examination Clearance Permit (Unlocked on 100% Completion) -->
+    <div v-if="progress.allCleared" style="margin-top: 1.25rem;">
+      <ClearancePermitCard
+        :student-id="authStore.user?.institutional_id || String(authStore.user?.id || 'PLP-STD-2026')"
+        :student-name="authStore.user?.name || 'PLP Student'"
+        :active-term="evaluationStore.evaluationWindow?.term_name || authStore.activeTerm || '1st Semester AY 2026-2027'"
+        :exam-permit-token="evaluationStore.lastReceipt?.clearance_token || null"
+        :courses="evaluationStore.courses"
+      />
+    </div>
   </main>
 </template>
 
