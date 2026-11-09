@@ -300,22 +300,22 @@
     "semantic_hash": "1233050e48c78ff384d2bdea541934b8"
   },
   "resources/js/app.js": {
-    "mtime": 1794148550.4284396,
-    "seen": 1794181399.985279,
-    "ast_hash": "ebef3431ac824184ffd2f8293260ad90",
-    "semantic_hash": "ebef3431ac824184ffd2f8293260ad90"
+    "mtime": 1794186751.9350367,
+    "seen": 1794192973.553646,
+    "ast_hash": "70550fc8138177ad339c79de8db96b3b",
+    "semantic_hash": "70550fc8138177ad339c79de8db96b3b"
   },
   "resources/js/components/ClearancePermitCard.vue": {
-    "mtime": 1794145464.6841214,
-    "seen": 1794181399.9852805,
-    "ast_hash": "c46f5a5387ff2fb08f881475b778279f",
-    "semantic_hash": "c46f5a5387ff2fb08f881475b778279f"
+    "mtime": 1794191517.603611,
+    "seen": 1794192973.5536482,
+    "ast_hash": "a1702b323f221c322ab8b21953ad271d",
+    "semantic_hash": "a1702b323f221c322ab8b21953ad271d"
   },
   "resources/js/components/CommandPaletteModal.vue": {
-    "mtime": 1794148314.5805767,
-    "seen": 1794181399.9852817,
-    "ast_hash": "29eacf27a276f2e51449f4dbc29ca75f",
-    "semantic_hash": "29eacf27a276f2e51449f4dbc29ca75f"
+    "mtime": 1794192145.7120223,
+    "seen": 1794192973.5536497,
+    "ast_hash": "90b20f2be17af0d79de74487cb4c1569",
+    "semantic_hash": "90b20f2be17af0d79de74487cb4c1569"
   },
   "resources/js/components/DestructiveConfirmModal.vue": {
     "mtime": 1794148314.889597,
@@ -324,10 +324,10 @@
     "semantic_hash": "68c2c85f52e953acf3f4dc3a4d126c3f"
   },
   "resources/js/components/DwellTimerBadge.vue": {
-    "mtime": 1794145464.8208108,
-    "seen": 1794181399.9852846,
-    "ast_hash": "ad11d586a78eb4f87884e2d0d0e1c94d",
-    "semantic_hash": "ad11d586a78eb4f87884e2d0d0e1c94d"
+    "mtime": 1794192426.4601543,
+    "seen": 1794192973.553653,
+    "ast_hash": "c6286f41ec583913a7dbfcc107a65bd6",
+    "semantic_hash": "c6286f41ec583913a7dbfcc107a65bd6"
   },
   "resources/js/components/ErrorRecoveryBanner.vue": {
     "mtime": 1794148315.254114,
@@ -336,22 +336,22 @@
     "semantic_hash": "86a75625cc18ee9c724955ad5cba5b00"
   },
   "resources/js/components/NavbarHeader.vue": {
-    "mtime": 1794148346.731998,
-    "seen": 1794181399.9852874,
-    "ast_hash": "9872ef0b5d5b331b4cd15494174454e6",
-    "semantic_hash": "9872ef0b5d5b331b4cd15494174454e6"
+    "mtime": 1794192770.5906827,
+    "seen": 1794192973.5536563,
+    "ast_hash": "4c591645e9c672d5758e12e27a245957",
+    "semantic_hash": "4c591645e9c672d5758e12e27a245957"
   },
   "resources/js/components/PlpAnalyticsLabModal.vue": {
-    "mtime": 1794145465.0850265,
-    "seen": 1794181399.9852886,
-    "ast_hash": "8882b02e4ff4f9e669f859c6cb62e26c",
-    "semantic_hash": "8882b02e4ff4f9e669f859c6cb62e26c"
+    "mtime": 1794191042.923298,
+    "seen": 1794192973.5536575,
+    "ast_hash": "33998accf9d6ac2ddec01fb3bfc34261",
+    "semantic_hash": "33998accf9d6ac2ddec01fb3bfc34261"
   },
   "resources/js/components/QuivrNlpBrainDrawer.vue": {
-    "mtime": 1794148316.9002562,
-    "seen": 1794181399.98529,
-    "ast_hash": "64ffb019c63fdf819547b8ab20ec6560",
-    "semantic_hash": "64ffb019c63fdf819547b8ab20ec6560"
+    "mtime": 1794191043.0170984,
+    "seen": 1794192973.553659,
+    "ast_hash": "42274c4008b6b11fc5c2125f583c3902",
+    "semantic_hash": "42274c4008b6b11fc5c2125f583c3902"
   },
   "resources/js/components/ReusableDataTable.vue": {
     "mtime": 1794148317.138939,
@@ -360,10 +360,10 @@
     "semantic_hash": "07c1e7a44eae91c5b87c2052e13b2a05"
   },
   "resources/js/components/ShortcutsCheatsheetModal.vue": {
-    "mtime": 1794148317.4654193,
-    "seen": 1794181399.9852931,
-    "ast_hash": "54b6c482f3ecca4b757deb1eb16f38f4",
-    "semantic_hash": "54b6c482f3ecca4b757deb1eb16f38f4"
+    "mtime": 1794192147.1358478,
+    "seen": 1794192973.5536623,
+    "ast_hash": "9cd74f897da0ccf7eda3884f0a6d7107",
+    "semantic_hash": "9cd74f897da0ccf7eda3884f0a6d7107"
   },
   "resources/js/components/SkeletonLoader.vue": {
     "mtime": 1794148317.6639764,
@@ -372,22 +372,22 @@
     "semantic_hash": "79bf3e0ed6ef2c9d2ece0b4895e9449a"
   },
   "resources/js/components/StraightLineModal.vue": {
-    "mtime": 1794145465.2138405,
-    "seen": 1794181399.9852958,
-    "ast_hash": "8a0feba1aa01e8bfb0041a00fd466cca",
-    "semantic_hash": "8a0feba1aa01e8bfb0041a00fd466cca"
+    "mtime": 1794191519.1213627,
+    "seen": 1794192973.553665,
+    "ast_hash": "758680f2891c518362b539e108b5979e",
+    "semantic_hash": "758680f2891c518362b539e108b5979e"
   },
   "resources/js/components/WorkspaceOnboardingBanner.vue": {
-    "mtime": 1794148317.843418,
-    "seen": 1794181399.9852974,
-    "ast_hash": "4198fab8f0c60292b7b4baa1f8d00f27",
-    "semantic_hash": "4198fab8f0c60292b7b4baa1f8d00f27"
+    "mtime": 1794192424.9247525,
+    "seen": 1794192973.5536666,
+    "ast_hash": "f7af8834b2b5ffbeb8e375d314f2f8aa",
+    "semantic_hash": "f7af8834b2b5ffbeb8e375d314f2f8aa"
   },
   "resources/js/components/WorkspaceSidebar.vue": {
-    "mtime": 1794148554.2765017,
-    "seen": 1794181399.9852986,
-    "ast_hash": "b103ebd36c244801dde57729579356a6",
-    "semantic_hash": "b103ebd36c244801dde57729579356a6"
+    "mtime": 1794191043.1135964,
+    "seen": 1794192973.5536678,
+    "ast_hash": "de5408a075793be93a30c5c4a943a831",
+    "semantic_hash": "de5408a075793be93a30c5c4a943a831"
   },
   "resources/js/router/index.js": {
     "mtime": 1794148347.6458552,
@@ -414,70 +414,70 @@
     "semantic_hash": "2c7e6844e12f250348e49494c082df16"
   },
   "resources/js/utils/uxHelpers.js": {
-    "mtime": 1794148318.7815516,
-    "seen": 1794181399.9853055,
-    "ast_hash": "cc97c5084af0b323a60815e2476d3ade",
-    "semantic_hash": "cc97c5084af0b323a60815e2476d3ade"
+    "mtime": 1794186753.50098,
+    "seen": 1794192973.5536764,
+    "ast_hash": "ef9a9c8215789c45ea3eae29e7cdd164",
+    "semantic_hash": "ef9a9c8215789c45ea3eae29e7cdd164"
   },
   "resources/js/views/AccessDeniedView.vue": {
-    "mtime": 1794145470.0924704,
-    "seen": 1794181399.985307,
-    "ast_hash": "4c89b277b91715dfe4ce88f034340221",
-    "semantic_hash": "4c89b277b91715dfe4ce88f034340221"
+    "mtime": 1794192148.2361875,
+    "seen": 1794192973.5536778,
+    "ast_hash": "fc42e012f070ca9332e8456118859d7c",
+    "semantic_hash": "fc42e012f070ca9332e8456118859d7c"
   },
   "resources/js/views/AdminRosterView.vue": {
-    "mtime": 1794148556.4754927,
-    "seen": 1794181399.9853084,
-    "ast_hash": "95f6a23eef7d3c9e581b8139832bdfd1",
-    "semantic_hash": "95f6a23eef7d3c9e581b8139832bdfd1"
+    "mtime": 1794192440.8430305,
+    "seen": 1794192973.5536795,
+    "ast_hash": "1a4d2843e982051a6dc269fb1744b98d",
+    "semantic_hash": "1a4d2843e982051a6dc269fb1744b98d"
   },
   "resources/js/views/ChairDashboardView.vue": {
-    "mtime": 1794148348.547459,
-    "seen": 1794181399.9853096,
-    "ast_hash": "d1c5122d8a052756eecf85810ccffa78",
-    "semantic_hash": "d1c5122d8a052756eecf85810ccffa78"
+    "mtime": 1794192427.899608,
+    "seen": 1794192973.5536807,
+    "ast_hash": "5cff3463745175da4eaa7e48e9ec0f6a",
+    "semantic_hash": "5cff3463745175da4eaa7e48e9ec0f6a"
   },
   "resources/js/views/DeanDashboardView.vue": {
-    "mtime": 1794148348.7243686,
-    "seen": 1794181399.985311,
-    "ast_hash": "568dc45b9329fda47551e03ae465fb13",
-    "semantic_hash": "568dc45b9329fda47551e03ae465fb13"
+    "mtime": 1794192437.0947022,
+    "seen": 1794192973.5536819,
+    "ast_hash": "1e399315b82f13a4155fc0d18d88129e",
+    "semantic_hash": "1e399315b82f13a4155fc0d18d88129e"
   },
   "resources/js/views/EvaluationAdvocacyView.vue": {
-    "mtime": 1794148319.8457763,
-    "seen": 1794181399.9853125,
-    "ast_hash": "1eec1de821e9a4a6f1d0acab795b3b2b",
-    "semantic_hash": "1eec1de821e9a4a6f1d0acab795b3b2b"
+    "mtime": 1794191828.4706347,
+    "seen": 1794192973.5536833,
+    "ast_hash": "43b537ecd265384ab94afb5045c25cb7",
+    "semantic_hash": "43b537ecd265384ab94afb5045c25cb7"
   },
   "resources/js/views/EvaluationFormView.vue": {
-    "mtime": 1794148348.9691548,
-    "seen": 1794181399.985314,
-    "ast_hash": "0d9216543a33a1d5d1a5d47ba94f982c",
-    "semantic_hash": "0d9216543a33a1d5d1a5d47ba94f982c"
+    "mtime": 1794191824.2343764,
+    "seen": 1794192973.5536847,
+    "ast_hash": "5bb6dc2bca276d85900f3d533f24ae99",
+    "semantic_hash": "5bb6dc2bca276d85900f3d533f24ae99"
   },
   "resources/js/views/FacultyDashboardView.vue": {
-    "mtime": 1794147254.2927501,
-    "seen": 1794181399.9853153,
-    "ast_hash": "70bd30e03a902976c3d39705ae5980ef",
-    "semantic_hash": "70bd30e03a902976c3d39705ae5980ef"
+    "mtime": 1794191516.236559,
+    "seen": 1794192973.553686,
+    "ast_hash": "6190c1056611971214b7dfbe5a3eff87",
+    "semantic_hash": "6190c1056611971214b7dfbe5a3eff87"
   },
   "resources/js/views/LoginView.vue": {
-    "mtime": 1794149170.5367975,
-    "seen": 1794181399.9853165,
-    "ast_hash": "e8162f5680ef8b3876363808177e1254",
-    "semantic_hash": "e8162f5680ef8b3876363808177e1254"
+    "mtime": 1794191829.9689274,
+    "seen": 1794192973.5536876,
+    "ast_hash": "3802f38725f20bcea8f321e172353ba1",
+    "semantic_hash": "3802f38725f20bcea8f321e172353ba1"
   },
   "resources/js/views/NotFoundView.vue": {
-    "mtime": 1794148321.1452181,
-    "seen": 1794181399.985318,
-    "ast_hash": "6df461b09553255dee07432b60fdc7de",
-    "semantic_hash": "6df461b09553255dee07432b60fdc7de"
+    "mtime": 1794192149.5903032,
+    "seen": 1794192973.5536888,
+    "ast_hash": "9c8f4deeccc1aa7d9408172bdf5ddf75",
+    "semantic_hash": "9c8f4deeccc1aa7d9408172bdf5ddf75"
   },
   "resources/js/views/StudentQueueView.vue": {
-    "mtime": 1794148349.5471253,
-    "seen": 1794181399.9853194,
-    "ast_hash": "d5614e515b5f8029bee6d94d5f0d6949",
-    "semantic_hash": "d5614e515b5f8029bee6d94d5f0d6949"
+    "mtime": 1794191820.7629907,
+    "seen": 1794192973.5536904,
+    "ast_hash": "e38b96f4adf6e292e7a8329fa1768136",
+    "semantic_hash": "e38b96f4adf6e292e7a8329fa1768136"
   },
   "resources/views/app.blade.php": {
     "mtime": 1794148349.6358929,
@@ -510,10 +510,10 @@
     "semantic_hash": "b8c3c2627bc9f447d416f14b8b6e743d"
   },
   "tests/Feature/EvaluaTechBackendSuiteTest.php": {
-    "mtime": 1794148094.1396506,
-    "seen": 1794181399.9853282,
-    "ast_hash": "e84effbd6eacf22cb3183f50da24ae5e",
-    "semantic_hash": "e84effbd6eacf22cb3183f50da24ae5e"
+    "mtime": 1794191993.889431,
+    "seen": 1794192973.5537007,
+    "ast_hash": "a146a70b0c1a9e227e695132b59a21d1",
+    "semantic_hash": "a146a70b0c1a9e227e695132b59a21d1"
   },
   "tests/TestCase.php": {
     "mtime": 1794132149.0321438,
@@ -522,10 +522,10 @@
     "semantic_hash": "96edeef732d47747cfd55f55b1197358"
   },
   "tests/frontend/evaluatech.spec.js": {
-    "mtime": 1794149170.7761364,
-    "seen": 1794181399.985332,
-    "ast_hash": "0d21e9e82048ab27de9d3f5d9d80b968",
-    "semantic_hash": "0d21e9e82048ab27de9d3f5d9d80b968"
+    "mtime": 1794192151.383469,
+    "seen": 1794192973.5537038,
+    "ast_hash": "050f5cca9991e457407ec25b5d6c6eca",
+    "semantic_hash": "050f5cca9991e457407ec25b5d6c6eca"
   },
   "tests/load/run_concurrent_benchmark.py": {
     "mtime": 1794129764.4747207,
@@ -612,10 +612,10 @@
     "semantic_hash": "960b292962647e96ea9029ec50b60f0a"
   },
   "AGENTS.md": {
-    "mtime": 1794149170.4143386,
-    "seen": 1794181399.9853559,
-    "ast_hash": "58f1f66f35e624dbe00c4015806a7076",
-    "semantic_hash": "58f1f66f35e624dbe00c4015806a7076"
+    "mtime": 1794181461.3915842,
+    "seen": 1794192973.5537274,
+    "ast_hash": "0cfb3e5684d4e455caf4bd08821d4be4",
+    "semantic_hash": "0cfb3e5684d4e455caf4bd08821d4be4"
   },
   "NLP-SET Online.txt": {
     "mtime": 1794085459.643861,
@@ -648,9 +648,15 @@
     "semantic_hash": "45842b571442d1fdbd85b7bf5e1c3f5e"
   },
   "implementation plan.md": {
-    "mtime": 1794148345.6885507,
-    "seen": 1794181399.9853642,
-    "ast_hash": "3039bb8cb7f6a97547055acb066c7913",
-    "semantic_hash": "3039bb8cb7f6a97547055acb066c7913"
+    "mtime": 1794192260.8485472,
+    "seen": 1794192973.5537388,
+    "ast_hash": "1abc186ca7e1e0ea29d9fe9a0d822a8e",
+    "semantic_hash": "1abc186ca7e1e0ea29d9fe9a0d822a8e"
+  },
+  "USER_WALKTHROUGH.md": {
+    "mtime": 1794191951.1201317,
+    "seen": 1794192973.5537324,
+    "ast_hash": "03836d51cbb7cd40e5f343455dd61f07",
+    "semantic_hash": "03836d51cbb7cd40e5f343455dd61f07"
   }
 }

@@ -146,6 +146,13 @@ async function handleLogout() {
                   : authStore.user?.role_label || String(authStore.currentRole || '').toUpperCase()
               }}
             </strong>
+            <span
+              v-if="authStore.currentRole === 'student'"
+              class="ui-hint"
+              tabindex="0"
+              aria-label="Clearance requirement"
+              data-hint="Clears automatically when all enrolled courses are evaluated."
+            >?</span>
           </div>
 
           <div class="sch-signed-in" data-testid="logged-in-user">
