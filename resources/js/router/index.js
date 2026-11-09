@@ -92,7 +92,7 @@ export const routes = [
     name: 'campus-advocacy',
     component: EvaluationAdvocacyView,
     meta: {
-      roles: ['student', 'faculty', 'chair', 'dean', 'admin'],
+      roles: ['faculty', 'chair', 'dean', 'admin'],
       title: 'Campus SET Advocacy & Permit Verification Hub — PLP',
     },
   },
@@ -164,6 +164,9 @@ export function createEvaluaTechRouter(history) {
 
       const allowedRoles = to.meta?.roles || [];
       if (allowedRoles.length > 0 && !canAccessRoute(authStore.currentRole, allowedRoles)) {
+        if (authStore.currentRole === 'student') {
+          return { path: '/queue' };
+        }
         return {
           path: '/access-denied',
           query: {

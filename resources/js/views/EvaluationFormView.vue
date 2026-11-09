@@ -569,10 +569,10 @@ function returnToQueue() {
     >
       <div class="completion-icon-badge" aria-hidden="true">✓</div>
       <h3 class="section-title">
-        Evaluation Completed for {{ evaluationStore.activeCourse?.course_code }}
+        Evaluation Completed & Locked for {{ evaluationStore.activeCourse?.course_code }}
       </h3>
       <p class="section-subtitle">
-        Your evaluation for <strong>{{ evaluationStore.activeCourse?.instructor_name }}</strong> has been recorded and cryptographically decoupled.
+        Your evaluation for <strong>{{ evaluationStore.activeCourse?.instructor_name }}</strong> has been submitted and cryptographically decoupled. Once submitted, evaluations cannot be modified or re-opened.
       </p>
       <div v-if="evaluationStore.activeCourse?.clearance_token" class="clearance-token-strip">
         <span>Clearance Token:</span>

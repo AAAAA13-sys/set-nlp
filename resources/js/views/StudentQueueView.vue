@@ -30,16 +30,7 @@ const formattedDeadline = computed(() => {
   }
 });
 
-const selectedDropdownSectionId = ref('');
 
-function onDropdownSelect(event) {
-  const secId = Number(event.target.value);
-  if (!secId) return;
-  const target = (evaluationStore.courses || []).find((c) => Number(c.course_section_id) === secId);
-  if (target && target.status !== 'COMPLETED') {
-    startEvaluation(target);
-  }
-}
 
 const updateDebouncedSearch = debounce((val) => {
   debouncedSearch.value = String(val || '').trim().toLowerCase();
@@ -161,32 +152,6 @@ function startEvaluation(course) {
     </section>
 
     <section class="card queue-table-card" aria-label="Enrolled Course Evaluations">
-      <!-- Enrolled Subject-Section Selector Dropdown -->
-      <div class="queue-selector-dropdown-row" style="margin-bottom: 0.85rem; padding: 0.65rem 0.85rem; background: #fbfcfb; border: 1px solid #e1e7e1; border-radius: 8px;">
-        <label for="queue-section-dropdown" style="display: block; font-size: 0.8rem; font-weight: 700; color: #103c2e; margin-bottom: 0.35rem;">
-          Select Enrolled Subject to Evaluate:
-        </label>
-        <select
-          id="queue-section-dropdown"
-          v-model="selectedDropdownSectionId"
-          class="form-input form-select"
-          data-testid="queue-section-dropdown"
-          aria-label="Select Enrolled Subject"
-          @change="onDropdownSelect"
-          style="width: 100%; font-size: 0.85rem; padding: 0.45rem 0.65rem; border-radius: 6px; border: 1px solid #cbd5e1;"
-        >
-          <option value="">-- Choose Enrolled Course Section to Evaluate --</option>
-          <option
-            v-for="c in evaluationStore.courses"
-            :key="c.course_section_id"
-            :value="c.course_section_id"
-            :disabled="c.status === 'COMPLETED' || evaluationStore.evaluationWindow?.status !== 'OPEN'"
-          >
-            {{ c.course_code }} — {{ c.course_title }} — {{ c.instructor_name }} — Section {{ c.section_code || 'SEC-A' }} ({{ c.status === 'COMPLETED' ? 'Clearance Issued' : 'Pending' }})
-          </option>
-        </select>
-      </div>
-
       <div class="queue-filter-toolbar">
         <input
           :value="searchInput"
@@ -226,13 +191,6 @@ function startEvaluation(course) {
           >
             Completed ({{ progress.completed }})
           </button>
-          <router-link
-            to="/advocacy"
-            class="btn-secondary btn-xs"
-            data-testid="queue-advocacy-link"
-          >
-            Share Class Link
-          </router-link>
         </div>
       </div>
 
@@ -279,10 +237,11 @@ function startEvaluation(course) {
               <td>
                 <span
                   v-if="course.status === 'COMPLETED'"
-                  class="btn-signed-badge"
-                  :title="course.clearance_token || 'Cryptographic clearance token issued'"
+                  class="badge-evaluated-locked"
+                  data-testid="evaluated-locked-badge"
+                  :title="course.clearance_token || 'Evaluation submitted and permanently locked.'"
                 >
-                  Clearance Signed
+                  ✓ Evaluated
                 </span>
                 <button
                   v-else
@@ -373,5 +332,20 @@ function startEvaluation(course) {
   background: #103c2e;
   border-color: #103c2e;
   color: #f4cd42;
+}
+
+.badge-evaluated-locked {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: #e8f5e9;
+  color: #1b5e20;
+  border: 1px solid #c8e6c9;
+  cursor: default;
+  user-select: none;
 }
 </style>
