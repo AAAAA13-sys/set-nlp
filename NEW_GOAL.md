@@ -96,3 +96,18 @@ If the unified runner omits a required tier, run its dedicated backend, frontend
 ## Completion outcome
 
 Every role uses one Vue single-page website with button/link navigation through a responsive top bar and no sidebars. Administrators can also prepare and inspect a complete evaluation cycle through Academic Setup, with persisted data, clear readiness feedback, and the existing security and anonymity guarantees intact.
+
+## Verified Results & Handoff Evidence (10 November 2026)
+
+- **Backend PHPUnit Suite:** 35 feature & domain tests, 901 assertions (`100% PASS` in 3.3s via SQLite in-memory PDO).
+- **Frontend DOM & Domain Suite:** 42 test groups covering all role workspaces, single-page top-bar navigation, timing policies, and security guards (`100% PASS` in 0.3s).
+- **Python NLP Microservice Suite:** 46 unit tests verifying VADER compound bounds, 5 pedagogical clusters, multi-questionnaire synthesis, and PII scrubbing (`100% PASS` in 1.4s).
+- **Hygiene & Syntax Audit:** 50 PHP files clean (`php -l`), 203 source files UTF-8 No-BOM, 0 git diff warnings.
+- **Consolidated Total:** **123 Automated Test Units (100% PASS)** via `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1`.
+- **Production Bundle:** `npm run build` compiled in 2.73s with zero `.map` files in `public/build/`.
+- **Live Playwright Browser Captures:**
+  - `live_student_eval_desktop.png` & `live_student_eval_mobile.png`: Verified top back button pill (`← Back to My Courses`), clean header branding, zero autosave text, zero fullscreen toggle, and enlarged root typography (`17.5px; line-height: 1.62;`).
+  - `live_jquery_ui_notification.png`: Verified fixed top-right DOM error notification with jQuery UI styling and 4-second animated countdown timer.
+  - `live_admin_setup_verified.png`: Verified Academic Setup workspace with term cycle controls, faculty assignment matrix, and integrated `+ Import Roster` modal.
+  - `live_dean_verified.png`: Verified Dean college analytics with single-page top-bar navigation.
+- **Git State:** All commits committed and pushed to `origin/main` (`https://github.com/AAAAA13-sys/set-nlp.git`).
