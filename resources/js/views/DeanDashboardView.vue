@@ -1099,9 +1099,9 @@ function exportAccreditationDossier() {
       <section class="card sus-card">
         <div class="iso-header">
           <h3 class="section-title">
-            System Usability Scale (SUS) Score Breakdown<span class="sr-only"> (N = 50)</span>
-            <span class="ui-badge-count">N = 50</span>
-            <span class="ui-hint" tabindex="0" role="note" aria-label="SUS sample size" data-hint="Empirical usability evaluation across N = 50 respondents (Students, Faculty, Chairs, Deans, Registrar).">?</span>
+            System Usability Scale (SUS) Score Breakdown<span class="sr-only"> (N = {{ overview.sus?.totalSampleSize || 50 }})</span>
+            <span class="ui-badge-count">N = {{ overview.sus?.totalSampleSize || 50 }}</span>
+            <span class="ui-hint" tabindex="0" role="note" aria-label="SUS sample size" :data-hint="`Empirical usability evaluation across N = ${overview.sus?.totalSampleSize || 50} respondents (Students, Faculty, Chairs, Deans, Registrar).`">?</span>
           </h3>
           <span class="badge-unlocked tabular-nums">
             Consolidated Mean SUS: {{ overview.sus.consolidatedMean }} ({{ overview.sus.grade }})

@@ -99,16 +99,6 @@ const primaryLinks = computed(() => {
     });
   }
 
-  if (role !== 'student') {
-    items.push({
-      to: '/advocacy',
-      label: 'Exam Permit & Share',
-      icon: 'share',
-      testId: 'sidebar-link-advocacy',
-      matchPrefix: '/advocacy',
-    });
-  }
-
   return items;
 });
 

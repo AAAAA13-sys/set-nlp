@@ -461,15 +461,15 @@ async function toggleLock(sectionId, field) {
       <div class="window-participation-strip tabular-nums" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.85rem; padding: 0.65rem 0.85rem; background: #fbfcfb; border: 1px solid #e2e8f0; border-radius: 8px;">
         <div>
           <span style="font-size: 0.75rem; color: #64748b;">Total Enrollments:</span>
-          <strong style="margin-left: 0.35rem; color: #103c2e;">{{ evaluationStore.adminStats?.total_enrollments || 1500 }}</strong>
+          <strong style="margin-left: 0.35rem; color: #103c2e;">{{ evaluationStore.adminStats?.total_enrollments ?? '—' }}</strong>
         </div>
         <div>
           <span style="font-size: 0.75rem; color: #64748b;">Total Clearances:</span>
-          <strong style="margin-left: 0.35rem; color: #103c2e;">{{ evaluationStore.adminStats?.total_clearances || 750 }}</strong>
+          <strong style="margin-left: 0.35rem; color: #103c2e;">{{ evaluationStore.adminStats?.total_clearances ?? '—' }}</strong>
         </div>
         <div>
           <span style="font-size: 0.75rem; color: #64748b;">Vault Submissions:</span>
-          <strong style="margin-left: 0.35rem; color: #103c2e;">{{ evaluationStore.adminStats?.total_vault_records || 750 }}</strong>
+          <strong style="margin-left: 0.35rem; color: #103c2e;">{{ evaluationStore.adminStats?.total_vault_records ?? '—' }}</strong>
         </div>
         <div>
           <span style="font-size: 0.75rem; color: #64748b;">Timezone:</span>

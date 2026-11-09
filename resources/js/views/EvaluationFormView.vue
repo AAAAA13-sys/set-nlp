@@ -66,6 +66,69 @@ const statusBanner = ref(null);
 const networkFailureDetail = ref('');
 const draftSavedLabel = ref('Autosave ready');
 
+const currentStep = ref(1);
+const stepValidationMessage = ref('');
+const isFullscreen = ref(false);
+
+function scrollToFirstUnanswered() {
+  const firstUnansweredIndex = ratings.value.findIndex(
+    (val) => !Number.isInteger(val) || val < 1 || val > 5,
+  );
+  if (firstUnansweredIndex !== -1 && typeof document !== 'undefined') {
+    setTimeout(() => {
+      const el = document.querySelector(`[data-testid="likert-row-${firstUnansweredIndex + 1}"]`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.classList.add('pulse-unanswered');
+        setTimeout(() => el.classList.remove('pulse-unanswered'), 2500);
+      }
+    }, 50);
+  }
+}
+
+function proceedToStep2() {
+  stepValidationMessage.value = '';
+  if (!allRatingsAnswered.value) {
+    const remaining = 25 - answeredCount.value;
+    stepValidationMessage.value = `Please rate all 25 pedagogical items across the 5 clusters (${remaining} remaining) before proceeding to written feedback.`;
+    scrollToFirstUnanswered();
+    return;
+  }
+  currentStep.value = 2;
+  if (typeof window !== 'undefined') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function returnToStep1() {
+  currentStep.value = 1;
+  stepValidationMessage.value = '';
+  if (typeof window !== 'undefined') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function toggleFullscreen() {
+  if (typeof document === 'undefined') return;
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().then(() => {
+      isFullscreen.value = true;
+    }).catch(() => {
+      isFullscreen.value = false;
+    });
+  } else {
+    document.exitFullscreen().then(() => {
+      isFullscreen.value = false;
+    }).catch(() => {});
+  }
+}
+
+function handleFullscreenChange() {
+  if (typeof document !== 'undefined') {
+    isFullscreen.value = Boolean(document.fullscreenElement);
+  }
+}
+
 const formOpenedAt = ref(Date.now());
 let hydratingDraft = false;
 
@@ -192,6 +255,9 @@ function confirmDiscardDraft() {
 }
 
 onMounted(async () => {
+  if (typeof document !== 'undefined') {
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+  }
   await evaluationStore.fetchEvaluationWindow();
   if (!evaluationStore.courses || evaluationStore.courses.length === 0) {
     await evaluationStore.fetchQueue();
@@ -207,6 +273,12 @@ onMounted(async () => {
   await evaluationStore.selectCourseForEvaluation(targetId);
   hydrateSectionDraft(activeSectionId.value);
   formOpenedAt.value = Date.now();
+});
+
+onUnmounted(() => {
+  if (typeof document !== 'undefined') {
+    document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }
 });
 
 watch(
@@ -292,14 +364,18 @@ function toggleFifthQuestion() {
 async function performInitialSubmit() {
   statusBanner.value = null;
   networkFailureDetail.value = '';
+  stepValidationMessage.value = '';
 
   if (!allRatingsAnswered.value) {
+    currentStep.value = 1;
     const remaining = 25 - answeredCount.value;
+    stepValidationMessage.value = `Please rate all 25 pedagogical items across the five clusters (${remaining} remaining) before submitting.`;
     statusBanner.value = {
       type: 'error',
       code: 'INCOMPLETE_RATINGS',
-      message: `Please rate all 25 pedagogical items across the five clusters (${remaining} item${remaining === 1 ? '' : 's'} remaining) before submitting.`,
+      message: stepValidationMessage.value,
     };
+    scrollToFirstUnanswered();
     return;
   }
 
@@ -324,6 +400,7 @@ async function confirmStraightLineSubmit() {
 
 async function executeSubmission(confirmUniform = false) {
   networkFailureDetail.value = '';
+  stepValidationMessage.value = '';
   const elapsed = Math.max(0, Math.floor((Date.now() - formOpenedAt.value) / 1000));
   const response = await evaluationStore.submitEvaluation({
     courseSectionId: activeSectionId.value || evaluationStore.activeCourse?.course_section_id,
@@ -350,8 +427,10 @@ async function executeSubmission(confirmUniform = false) {
     }
     if (response.code === 'NETWORK_ERROR' || response.status === 503) {
       networkFailureDetail.value = response.message || 'Server temporarily unreachable.';
+      stepValidationMessage.value = networkFailureDetail.value;
       return;
     }
+    stepValidationMessage.value = response.message || 'Submission was rejected by the server.';
     statusBanner.value = {
       type: 'error',
       code: response.code || 'SUBMISSION_REJECTED',
@@ -365,6 +444,10 @@ async function executeSubmission(confirmUniform = false) {
     draftSavedLabel.value = 'Submitted & cleared';
   }
 
+  if (typeof document !== 'undefined' && document.fullscreenElement) {
+    document.exitFullscreen().catch(() => {});
+  }
+
   statusBanner.value = {
     type: 'success',
     code: 'CLEARANCE_ISSUED',
@@ -372,6 +455,10 @@ async function executeSubmission(confirmUniform = false) {
       'Your anonymized evaluation has been recorded in the decoupled vault and your course clearance token has been signed.',
     token: response.clearance_token,
   };
+
+  if (typeof window !== 'undefined') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }
 
 function returnToQueue() {
@@ -393,54 +480,7 @@ function returnToQueue() {
       @dismiss="networkFailureDetail = ''"
     />
 
-    <!-- Unified Enrolled Course & Professor Switcher Bar -->
-    <nav
-      v-if="courses.length > 0"
-      class="card enrolled-subjects-bar"
-      aria-label="Enrolled Courses Switcher"
-      data-testid="enrolled-subjects-switcher"
-    >
-      <div class="subjects-bar-header">
-        <div class="subjects-bar-title-group">
-          <span class="eyebrow-badge">ENROLLED COURSES</span>
-          <h2 class="subjects-bar-title">Select Professor to Evaluate</h2>
-        </div>
-        <div class="subjects-bar-progress-pill tabular-nums">
-          <span>Evaluated: <strong>{{ progress.completed }} of {{ progress.total }} Courses</strong> ({{ progress.percentage }}%)</span>
-        </div>
-      </div>
-
-      <div class="subjects-pill-list" role="tablist" aria-label="Course Sections">
-        <button
-          v-for="course in courses"
-          :key="course.course_section_id"
-          type="button"
-          role="tab"
-          :aria-selected="Number(course.course_section_id) === Number(activeSectionId)"
-          class="subject-tab-pill"
-          :class="{
-            'is-active': Number(course.course_section_id) === Number(activeSectionId),
-            'is-completed': course.status === 'COMPLETED',
-            'is-pending': course.status === 'PENDING',
-          }"
-          :data-testid="`subject-tab-${course.course_code}`"
-          @click="switchCourseSection(course.course_section_id)"
-        >
-          <span class="subject-status-icon" aria-hidden="true">
-            <svg v-if="course.status === 'COMPLETED'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <span v-else class="pending-dot"></span>
-          </span>
-          <span class="subject-code">{{ course.course_code }}</span>
-          <span class="subject-sep">·</span>
-          <span class="subject-instructor">{{ course.instructor_name }}</span>
-          <span class="subject-badge">
-            {{ course.status === 'COMPLETED' ? 'Done' : (Number(course.course_section_id) === Number(activeSectionId) ? 'Evaluating' : 'Pending') }}
-          </span>
-        </button>
-      </div>
-    </nav>
+    <!-- Removed enrolled-subjects-switcher per user request -->
 
     <section class="card eval-header-card">
       <div class="eval-course-banner">
@@ -477,6 +517,16 @@ function returnToQueue() {
             </button>
           </div>
 
+          <button
+            type="button"
+            class="fullscreen-toggle-btn"
+            :title="isFullscreen ? 'Exit Fullscreen' : 'Enter Focused Fullscreen'"
+            @click="toggleFullscreen"
+          >
+            <span aria-hidden="true">{{ isFullscreen ? '🗗' : '⛶' }}</span>
+            <span>{{ isFullscreen ? 'Exit Fullscreen' : 'Focused Fullscreen' }}</span>
+          </button>
+
           <div v-show="false" class="idempotency-box">
             <span class="token-label">FT-02 Submission Key:</span>
             <code data-testid="submission-key-code">{{ evaluationStore.submissionKey || 'Initializing…' }}</code>
@@ -484,47 +534,31 @@ function returnToQueue() {
         </div>
       </div>
 
-      <!-- Visible 5-Point Rating Scale Legend -->
-      <div class="rating-scale-legend-card" role="region" aria-label="Rating Scale Legend" style="margin: 0.85rem 0; padding: 0.65rem 0.85rem; background: #f9fbf9; border: 1px solid #dce7dc; border-radius: 8px;">
-        <span class="legend-title" style="font-size: 0.8rem; font-weight: 700; color: #103c2e; margin-right: 0.75rem;">Rating Scale Legend:</span>
-        <span class="legend-items" style="display: inline-flex; gap: 0.6rem; flex-wrap: wrap; font-size: 0.78rem; color: #374151;">
-          <span><strong>1</strong>: Strongly Disagree</span>
-          <span>·</span>
-          <span><strong>2</strong>: Disagree</span>
-          <span>·</span>
-          <span><strong>3</strong>: Neutral</span>
-          <span>·</span>
-          <span><strong>4</strong>: Agree</span>
-          <span>·</span>
-          <span><strong>5</strong>: Strongly Agree</span>
-        </span>
-      </div>
-
-      <div class="live-metrics-strip tabular-nums" aria-label="Evaluation Progress">
-        <div>
-          <span>Answered:</span>
-          <strong data-testid="live-answered-count"> {{ answeredCount }} / 25</strong>
-        </div>
-        <div>
-          <span>Average:</span>
-          <strong data-testid="live-mean-score">
-            {{ answeredCount > 0 ? ` ${currentMean.toFixed(2)} / 5.00` : ' —' }}
-          </strong>
-        </div>
-        <div class="sr-only">
-          <span>Variance (σ²):</span>
-          <strong data-testid="live-variance-score">
-            {{ allRatingsAnswered ? ` ${currentVariance.toFixed(4)}` : ' —' }}
-          </strong>
-        </div>
-        <div>
-          <span>Status:</span>
-          <strong :class="allRatingsAnswered ? 'text-success' : ''">
-            {{ !allRatingsAnswered ? ` ${25 - answeredCount} remaining` : ' All 25 items rated' }}
-          </strong>
-        </div>
+      <!-- Step Indicator Bar -->
+      <div v-if="!isCurrentCourseCompleted" class="step-indicator-bar" role="navigation" aria-label="Evaluation Steps">
+        <button
+          type="button"
+          class="step-tab-btn"
+          :class="{ 'is-active': currentStep === 1 }"
+          @click="currentStep = 1"
+        >
+          <span class="step-number">1</span>
+          <span class="step-label">Part I: Performance Ratings ({{ answeredCount }}/25)</span>
+        </button>
+        <span class="step-connector" aria-hidden="true">→</span>
+        <button
+          type="button"
+          class="step-tab-btn"
+          :class="{ 'is-active': currentStep === 2 }"
+          @click="proceedToStep2"
+        >
+          <span class="step-number">2</span>
+          <span class="step-label">Part II: Written Feedback</span>
+        </button>
       </div>
     </section>
+
+
 
     <div
       v-if="statusBanner"
@@ -598,251 +632,308 @@ function returnToQueue() {
     </section>
 
     <form v-if="!isCurrentCourseCompleted" class="evaluation-survey-form" @submit.prevent="handleInitialSubmit">
-      <!-- Part I: 5 Clusters of 5-Point Likert Scale Questionnaire -->
-      <section
-        v-for="dimension in PEDAGOGICAL_DIMENSIONS"
-        :key="dimension.id"
-        class="card dimension-card"
-        :data-testid="`likert-cluster-${dimension.clusterNumber}`"
-      >
-        <fieldset class="dimension-fieldset">
-          <legend class="dimension-legend">
-            <span class="dimension-name tabular-nums">
-              {{ dimension.clusterNumber }}. {{ dimension.name }}
-              <span class="ui-badge-count">{{ getDimensionAnsweredCount(dimension) }} / 5</span>
-              <span class="sr-only">({{ getDimensionAnsweredCount(dimension) }}/5)</span>
-            </span>
-            <small class="dimension-desc">1 = Strongly Disagree · 2 = Disagree · 3 = Neutral · 4 = Agree · 5 = Strongly Agree</small>
-          </legend>
+      <!-- Part I: 5 Clusters of 5-Point Likert Scale Questionnaire (Step 1) -->
+      <div v-show="currentStep === 1" class="step-1-container">
+        <section
+          v-for="dimension in PEDAGOGICAL_DIMENSIONS"
+          :key="dimension.id"
+          class="card dimension-card"
+          :data-testid="`likert-cluster-${dimension.clusterNumber}`"
+        >
+          <fieldset class="dimension-fieldset">
+            <legend class="dimension-legend">
+              <span class="dimension-name tabular-nums">
+                {{ dimension.clusterNumber }}. {{ dimension.name }}
+                <span class="ui-badge-count">{{ getDimensionAnsweredCount(dimension) }} / 5</span>
+                <span class="sr-only">({{ getDimensionAnsweredCount(dimension) }}/5)</span>
+              </span>
+              <small class="dimension-desc">1 = Strongly Disagree · 2 = Disagree · 3 = Neutral · 4 = Agree · 5 = Strongly Agree</small>
+            </legend>
 
+            <div
+              v-for="item in dimension.items"
+              :key="item.id"
+              class="likert-item-row"
+              :data-testid="`likert-row-${item.id}`"
+            >
+              <div class="likert-question">
+                <span class="item-code">{{ item.code }}</span>
+                <span class="item-text">{{ item.text }}</span>
+              </div>
+
+              <div
+                class="likert-scale-group"
+                role="radiogroup"
+                :aria-label="`Question ${item.id}: ${item.text}`"
+              >
+                <label
+                  v-for="option in LIKERT_SCALE_OPTIONS"
+                  :key="option.value"
+                  class="likert-radio-label"
+                  :class="{ selected: ratings[item.id - 1] === option.value }"
+                  :title="`${option.value} — ${option.label}`"
+                >
+                  <input
+                    v-model.number="ratings[item.id - 1]"
+                    type="radio"
+                    :name="`item-${item.id}`"
+                    :value="option.value"
+                    :aria-label="`Rate ${option.value} (${option.label}) out of 5 for ${item.code}`"
+                  />
+                  <span>{{ option.value }}</span>
+                </label>
+              </div>
+            </div>
+          </fieldset>
+        </section>
+
+        <!-- Step 1 Bottom Action Row -->
+        <div class="step-navigation-bar" style="margin-top: 1.25rem;">
           <div
-            v-for="item in dimension.items"
-            :key="item.id"
-            class="likert-item-row"
-            :data-testid="`likert-row-${item.id}`"
+            v-if="stepValidationMessage && currentStep === 1"
+            class="alert-banner alert-error"
+            style="margin-bottom: 0.85rem;"
+            data-testid="step-1-validation-error"
           >
-            <div class="likert-question">
-              <span class="item-code">{{ item.code }}</span>
-              <span class="item-text">{{ item.text }}</span>
+            {{ stepValidationMessage }}
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <button
+              type="button"
+              class="btn-secondary"
+              @click="returnToQueue"
+            >
+              ← Back to My Courses
+            </button>
+
+            <button
+              type="button"
+              class="btn-primary"
+              style="padding: 0.65rem 1.45rem; font-weight: 700;"
+              data-testid="proceed-to-feedback-btn"
+              @click="proceedToStep2"
+            >
+              Proceed to Written Feedback (Step 2 of 2) →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Part II: 4 Structured Questions Regarding the Professor & Additional Comments (Step 2 - "this should be a different page") -->
+      <div v-show="currentStep === 2" class="step-2-container">
+        <section class="card prof-questions-card" data-testid="professor-questions-section" style="text-align: left;">
+          <div class="prof-questions-header" style="text-align: left;">
+            <div>
+              <span class="eyebrow-badge">WRITTEN FEEDBACK</span>
+              <h3 class="section-title" style="text-align: left;">
+                Questions About Your Professor
+                <span class="ui-hint" tabindex="0" aria-label="Language options" data-hint="Share honest, constructive feedback in English, Tagalog, or Taglish.">?</span>
+              </h3>
+            </div>
+            <button
+              type="button"
+              class="btn-secondary btn-xs"
+              data-testid="toggle-fifth-question-btn"
+              @click="toggleFifthQuestion"
+            >
+              {{
+                showFifthQuestion
+                  ? 'Hide 5th Question'
+                  : '+ Optional 5th Question'
+              }}
+            </button>
+          </div>
+
+          <!-- Question 1: 3 words that describe the experience with the prof -->
+          <div class="prof-question-block" data-testid="prof-question-1" style="text-align: left;">
+            <label class="prof-question-label" style="text-align: left; display: block; font-weight: 700; margin-bottom: 0.4rem;">
+              1. Three words that describe your learning experience with the professor:
+            </label>
+            <div class="three-words-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.65rem;">
+              <input
+                v-model="threeWords[0]"
+                type="text"
+                maxlength="60"
+                class="form-input"
+                placeholder="Word 1 (e.g., Malinaw / Clear)"
+                aria-label="Descriptor Word 1"
+                data-testid="three-word-1"
+                style="text-align: left;"
+              />
+              <input
+                v-model="threeWords[1]"
+                type="text"
+                maxlength="60"
+                class="form-input"
+                placeholder="Word 2 (e.g., Approachable)"
+                aria-label="Descriptor Word 2"
+                data-testid="three-word-2"
+                style="text-align: left;"
+              />
+              <input
+                v-model="threeWords[2]"
+                type="text"
+                maxlength="60"
+                class="form-input"
+                placeholder="Word 3 (e.g., Organized)"
+                aria-label="Descriptor Word 3"
+                data-testid="three-word-3"
+                style="text-align: left;"
+              />
+            </div>
+          </div>
+
+          <!-- Question 2: Constructive areas for instructional improvement (3 fixed topics) ALL LEFT ALIGNED -->
+          <div class="prof-question-block" data-testid="prof-question-2" style="text-align: left; margin-top: 1.25rem;">
+            <div class="prof-question-subhead" style="text-align: left; margin-bottom: 0.65rem;">
+              <label class="prof-question-label" style="text-align: left; display: block; font-weight: 700;">
+                2. Constructive areas for instructional improvement:
+              </label>
+              <span class="sub-topic-hint" style="font-size: 0.78rem; color: #53665a; text-align: left; display: block;">
+                Answer the three key instructional areas below:
+              </span>
             </div>
 
             <div
-              class="likert-scale-group"
-              role="radiogroup"
-              :aria-label="`Question ${item.id}: ${item.text}`"
+              v-for="(topic, idx) in improvementTopicPrompts"
+              :key="`imp-topic-${idx}`"
+              class="improvement-topic-row"
+              :data-testid="`improvement-topic-row-${idx}`"
+              style="display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 0.35rem; margin-bottom: 0.85rem;"
             >
-              <label
-                v-for="option in LIKERT_SCALE_OPTIONS"
-                :key="option.value"
-                class="likert-radio-label"
-                :class="{ selected: ratings[item.id - 1] === option.value }"
-                :title="`${option.value} — ${option.label}`"
-              >
-                <input
-                  v-model.number="ratings[item.id - 1]"
-                  type="radio"
-                  :name="`item-${item.id}`"
-                  :value="option.value"
-                  :aria-label="`Rate ${option.value} (${option.label}) out of 5 for ${item.code}`"
-                />
-                <span>{{ option.value }}</span>
+              <label :for="`imp-topic-input-${idx}`" class="sub-topic-badge" style="width: fit-content; margin: 0 0 0.2rem 0; text-align: left; align-self: flex-start;">
+                {{ topic.title }}
               </label>
+              <input
+                :id="`imp-topic-input-${idx}`"
+                v-model="improvementTopics[idx]"
+                type="text"
+                maxlength="300"
+                class="form-input"
+                :placeholder="topic.placeholder"
+                :aria-label="topic.title"
+                style="text-align: left; width: 100%;"
+              />
             </div>
           </div>
-        </fieldset>
-      </section>
 
-      <!-- Part II: 4 Structured Questions Regarding the Professor (Max of 5 Questions) -->
-      <section class="card prof-questions-card" data-testid="professor-questions-section">
-        <div class="prof-questions-header">
-          <div>
-            <span class="eyebrow-badge">WRITTEN FEEDBACK</span>
-            <h3 class="section-title">
-              Questions About Your Professor
-              <span class="ui-hint" tabindex="0" aria-label="Language options" data-hint="Share honest, constructive feedback in English, Tagalog, or Taglish.">?</span>
-            </h3>
-          </div>
-          <button
-            type="button"
-            class="btn-secondary btn-xs"
-            data-testid="toggle-fifth-question-btn"
-            @click="toggleFifthQuestion"
-          >
-            {{
-              showFifthQuestion
-                ? 'Hide 5th Question'
-                : '+ Optional 5th Question'
-            }}
-          </button>
-        </div>
-
-        <!-- Question 1: 3 words that describe the experience with the prof -->
-        <div class="prof-question-block" data-testid="prof-question-1">
-          <label class="prof-question-label">
-            1. Three words that describe your learning experience with the professor:
-          </label>
-          <div class="three-words-grid">
-            <input
-              v-model="threeWords[0]"
-              type="text"
-              maxlength="60"
-              class="form-input"
-              placeholder="Word 1 (e.g., Malinaw / Clear)"
-              aria-label="Descriptor Word 1"
-              data-testid="three-word-1"
-            />
-            <input
-              v-model="threeWords[1]"
-              type="text"
-              maxlength="60"
-              class="form-input"
-              placeholder="Word 2 (e.g., Approachable)"
-              aria-label="Descriptor Word 2"
-              data-testid="three-word-2"
-            />
-            <input
-              v-model="threeWords[2]"
-              type="text"
-              maxlength="60"
-              class="form-input"
-              placeholder="Word 3 (e.g., Organized)"
-              aria-label="Descriptor Word 3"
-              data-testid="three-word-3"
-            />
-          </div>
-        </div>
-
-        <!-- Question 2: Constructive areas for instructional improvement (3 fixed topics) -->
-        <div class="prof-question-block" data-testid="prof-question-2">
-          <div class="prof-question-subhead">
-            <label class="prof-question-label">
-              2. Constructive areas for instructional improvement:
+          <!-- Question 3: Key teaching strengths of the prof -->
+          <div class="prof-question-block" data-testid="prof-question-3" style="text-align: left; margin-top: 1.25rem;">
+            <label class="prof-question-label" for="prof-q3-input" style="text-align: left; display: block; font-weight: 700; margin-bottom: 0.4rem;">
+              3. Most effective teaching strategies or strengths of the professor:
             </label>
-            <span class="sub-topic-hint" style="font-size: 0.78rem; color: #53665a;">
-              Answer the three key instructional areas below:
+            <input
+              id="prof-q3-input"
+              v-model="teachingStrengths"
+              type="text"
+              maxlength="500"
+              class="form-input"
+              placeholder="Describe what the professor does well during lectures or laboratory sessions…"
+              style="text-align: left; width: 100%;"
+            />
+          </div>
+
+          <!-- Question 4: Actionable recommendations for the prof -->
+          <div class="prof-question-block" data-testid="prof-question-4" style="text-align: left; margin-top: 1.25rem;">
+            <label class="prof-question-label" for="prof-q4-input" style="text-align: left; display: block; font-weight: 700; margin-bottom: 0.4rem;">
+              4. Actionable recommendations for future offerings of this course:
+            </label>
+            <input
+              id="prof-q4-input"
+              v-model="courseRecommendations"
+              type="text"
+              maxlength="500"
+              class="form-input"
+              placeholder="Share constructive suggestions for syllabus pacing, assessments, or resources…"
+              style="text-align: left; width: 100%;"
+            />
+          </div>
+
+          <!-- Optional Question 5 (Capped at Max 5 Questions) -->
+          <div
+            v-if="showFifthQuestion"
+            class="prof-question-block"
+            data-testid="prof-question-5"
+            style="text-align: left; margin-top: 1.25rem;"
+          >
+            <label class="prof-question-label" for="prof-q5-input" style="text-align: left; display: block; font-weight: 700; margin-bottom: 0.4rem;">
+              5. Additional observation on consultation &amp; mentorship support:
+            </label>
+            <input
+              id="prof-q5-input"
+              v-model="additionalObservation"
+              type="text"
+              maxlength="500"
+              class="form-input"
+              placeholder="Optional observation regarding consultation hours, advising, or student mentorship…"
+              style="text-align: left; width: 100%;"
+            />
+          </div>
+        </section>
+
+        <!-- Part III: Overall Narrative Synthesis -->
+        <section class="card narrative-card" style="text-align: left; margin-top: 1.25rem;">
+          <div class="narrative-head-row" style="text-align: left;">
+            <div>
+              <h3 class="section-title" style="text-align: left;">
+                Additional Comments
+                <span class="ui-hint" tabindex="0" aria-label="Anonymity note" data-hint="Optional overall remarks about this course. Your name is never attached to your comments.">?</span>
+              </h3>
+            </div>
+            <span class="char-counter tabular-nums" data-testid="narrative-char-counter">
+              {{ commentText.length }} / 2000
             </span>
           </div>
 
-          <div
-            v-for="(topic, idx) in improvementTopicPrompts"
-            :key="`imp-topic-${idx}`"
-            class="improvement-topic-row"
-            :data-testid="`improvement-topic-row-${idx}`"
-            style="display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.75rem;"
-          >
-            <label :for="`imp-topic-input-${idx}`" class="sub-topic-badge" style="width: fit-content; margin-bottom: 0.2rem;">
-              {{ topic.title }}
-            </label>
-            <input
-              :id="`imp-topic-input-${idx}`"
-              v-model="improvementTopics[idx]"
-              type="text"
-              maxlength="300"
-              class="form-input"
-              :placeholder="topic.placeholder"
-              :aria-label="topic.title"
-            />
+          <label class="sr-only" for="narrative-comment-textarea">Narrative Evaluation Feedback</label>
+          <textarea
+            id="narrative-comment-textarea"
+            v-model="commentText"
+            rows="4"
+            maxlength="2000"
+            class="narrative-textarea"
+            placeholder="Write constructive feedback in English, Tagalog, or Taglish…"
+            data-testid="narrative-comment-input"
+            style="text-align: left; width: 100%;"
+          ></textarea>
+
+          <div class="form-submit-footer" style="margin-top: 1.25rem;">
+            <div
+              v-if="stepValidationMessage && currentStep === 2"
+              class="alert-banner alert-error"
+              style="width: 100%; margin-bottom: 0.85rem;"
+              data-testid="submit-bottom-alert"
+            >
+              {{ stepValidationMessage }}
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 0.75rem;">
+              <button
+                type="button"
+                class="btn-secondary"
+                @click="returnToStep1"
+              >
+                ← Back to Rating Questions
+              </button>
+
+              <button
+                type="submit"
+                class="btn-primary"
+                style="padding: 0.65rem 1.65rem; font-weight: 700; background: #103c2e; border-color: #103c2e;"
+                :disabled="evaluationStore.submitting"
+                data-testid="submit-evaluation-btn"
+              >
+                {{
+                  evaluationStore.submitting
+                    ? 'Submitting to Vault…'
+                    : 'Submit Evaluation'
+                }}
+              </button>
+            </div>
           </div>
-        </div>
-
-        <!-- Question 3: Key teaching strengths of the prof -->
-        <div class="prof-question-block" data-testid="prof-question-3">
-          <label class="prof-question-label" for="prof-q3-input">
-            3. Most effective teaching strategies or strengths of the professor:
-          </label>
-          <input
-            id="prof-q3-input"
-            v-model="teachingStrengths"
-            type="text"
-            maxlength="500"
-            class="form-input"
-            placeholder="Describe what the professor does well during lectures or laboratory sessions…"
-          />
-        </div>
-
-        <!-- Question 4: Actionable recommendations for the prof -->
-        <div class="prof-question-block" data-testid="prof-question-4">
-          <label class="prof-question-label" for="prof-q4-input">
-            4. Actionable recommendations for future offerings of this course:
-          </label>
-          <input
-            id="prof-q4-input"
-            v-model="courseRecommendations"
-            type="text"
-            maxlength="500"
-            class="form-input"
-            placeholder="Share constructive suggestions for syllabus pacing, assessments, or resources…"
-          />
-        </div>
-
-        <!-- Optional Question 5 (Capped at Max 5 Questions) -->
-        <div
-          v-if="showFifthQuestion"
-          class="prof-question-block"
-          data-testid="prof-question-5"
-        >
-          <label class="prof-question-label" for="prof-q5-input">
-            5. Additional observation on consultation &amp; mentorship support:
-          </label>
-          <input
-            id="prof-q5-input"
-            v-model="additionalObservation"
-            type="text"
-            maxlength="500"
-            class="form-input"
-            placeholder="Optional observation regarding consultation hours, advising, or student mentorship…"
-          />
-        </div>
-      </section>
-
-      <!-- Part III: Overall Narrative Synthesis -->
-      <section class="card narrative-card">
-        <div class="narrative-head-row">
-          <div>
-            <h3 class="section-title">
-              Additional Comments
-              <span class="ui-hint" tabindex="0" aria-label="Anonymity note" data-hint="Optional overall remarks about this course. Your name is never attached to your comments.">?</span>
-            </h3>
-          </div>
-          <span class="char-counter tabular-nums" data-testid="narrative-char-counter">
-            {{ commentText.length }} / 2000
-          </span>
-        </div>
-
-        <label class="sr-only" for="narrative-comment-textarea">Narrative Evaluation Feedback</label>
-        <textarea
-          id="narrative-comment-textarea"
-          v-model="commentText"
-          rows="4"
-          maxlength="2000"
-          class="narrative-textarea"
-          placeholder="Write constructive feedback in English, Tagalog, or Taglish…"
-          data-testid="narrative-comment-input"
-        ></textarea>
-
-        <div class="form-submit-footer">
-          <button
-            type="button"
-            class="btn-secondary"
-            @click="returnToQueue"
-          >
-            Back to Courses
-          </button>
-
-          <button
-            type="submit"
-            class="btn-primary"
-            :disabled="evaluationStore.submitting"
-            data-testid="submit-evaluation-btn"
-          >
-            {{
-              evaluationStore.submitting
-                ? 'Submitting…'
-                : 'Submit Evaluation'
-            }}
-          </button>
-        </div>
-      </section>
+        </section>
+      </div>
     </form>
 
     <!-- All Courses Evaluated Completion Notice -->
@@ -947,165 +1038,129 @@ function returnToQueue() {
   }
 }
 
-.enrolled-subjects-bar {
-  margin-bottom: 1rem;
-  padding: 0.85rem 1.15rem;
-  background: #ffffff;
-  border: 1px solid #dce7dc;
-  border-radius: 12px;
-}
-
-.subjects-bar-header {
-  display: flex;
+.fullscreen-toggle-btn {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.65rem;
-  border-bottom: 1px solid #edf2ed;
-}
-
-.subjects-bar-title-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.subjects-bar-title {
-  font-size: 0.96rem;
-  font-weight: 700;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #cfd9d0;
   color: #103c2e;
-  margin: 0;
-}
-
-.subjects-bar-progress-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  font-size: 0.78rem;
-  color: #374151;
-}
-
-.progress-status-chip {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.68rem;
+  font-size: 0.76rem;
   font-weight: 700;
-  padding: 0.12rem 0.45rem;
-  border-radius: 4px;
-}
-
-.progress-status-chip.is-cleared {
-  background: #ecfdf5;
-  color: #047857;
-  border: 1px solid #a7f3d0;
-}
-
-.progress-status-chip.is-pending {
-  background: #fffbeb;
-  color: #b45309;
-  border: 1px solid #fde68a;
-}
-
-.subjects-pill-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.subject-tab-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.42rem;
-  padding: 0.45rem 0.75rem;
-  border-radius: 8px;
-  border: 1px solid #dce7dc;
-  background: #ffffff;
-  color: #374151;
-  font-size: 0.8rem;
-  font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
-  text-align: left;
 }
 
-.subject-tab-pill:hover {
-  background: #f8faf7;
-  border-color: #103c2e;
-}
-
-.subject-tab-pill.is-active {
-  background: #103c2e;
-  color: #ffffff;
-  border-color: #103c2e;
-  font-weight: 700;
-}
-
-.subject-tab-pill.is-completed {
+.fullscreen-toggle-btn:hover {
   background: #f0fdf4;
-  border-color: #bbf7d0;
-  color: #166534;
+  border-color: #103c2e;
 }
 
-.subject-tab-pill.is-active.is-completed {
+.step-indicator-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #e5ebe5;
+  flex-wrap: wrap;
+}
+
+.step-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 8px;
+  background: #f6f8f6;
+  border: 1px solid #dce4dc;
+  color: #4b5563;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.step-tab-btn.is-active {
   background: #103c2e;
   color: #ffffff;
   border-color: #103c2e;
 }
 
-.subject-status-icon {
+.step-tab-btn .step-number {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-}
-
-.pending-dot {
-  width: 7px;
-  height: 7px;
+  width: 20px;
+  height: 20px;
   border-radius: 999px;
-  background: #eab308;
-}
-
-.subject-tab-pill.is-active .pending-dot {
-  background: #f4cd42;
-}
-
-.subject-code {
+  background: #e2e8e2;
+  color: #1f2937;
+  font-size: 0.75rem;
   font-weight: 800;
 }
 
-.subject-sep {
-  opacity: 0.5;
+.step-tab-btn.is-active .step-number {
+  background: #f4cd42;
+  color: #103c2e;
 }
 
-.subject-instructor {
-  font-size: 0.78rem;
-  opacity: 0.9;
-}
-
-.subject-badge {
-  font-size: 0.68rem;
+.step-connector {
+  color: #9ca3af;
   font-weight: 700;
-  padding: 0.1rem 0.35rem;
-  border-radius: 4px;
-  background: #f3f4f6;
-  color: #4b5563;
+  font-size: 0.85rem;
 }
 
-.subject-tab-pill.is-active .subject-badge {
-  background: #f4cd42;
-  color: #103c2e;
+.step-navigation-bar {
+  padding: 1rem 0;
+  border-top: 1px solid #edf2ed;
 }
 
-.subject-tab-pill.is-completed .subject-badge {
-  background: #dcfce7;
-  color: #15803d;
+.improvement-topic-row {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  text-align: left !important;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
 }
 
-.subject-tab-pill.is-active.is-completed .subject-badge {
-  background: #f4cd42;
-  color: #103c2e;
+.sub-topic-badge {
+  display: inline-flex !important;
+  align-self: flex-start !important;
+  margin: 0 0 0.25rem 0 !important;
+  text-align: left !important;
+}
+
+.prof-question-block {
+  text-align: left !important;
+}
+
+.prof-question-label {
+  text-align: left !important;
+  display: block;
+}
+
+.prof-question-subhead {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-bottom: 0.65rem;
+  text-align: left;
+}
+
+@keyframes pulseUnanswered {
+  0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); border-color: #dc2626; }
+  70% { box-shadow: 0 0 0 8px rgba(220, 38, 38, 0); border-color: #dc2626; }
+  100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+}
+
+.pulse-unanswered {
+  animation: pulseUnanswered 1.5s infinite;
+  border-radius: 8px;
 }
 
 .submission-success-actions {

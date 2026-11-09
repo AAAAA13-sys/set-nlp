@@ -105,7 +105,7 @@ const handleLogin = throttle(() => {
         </h1>
 
         <p class="brand-lead-copy">
-          Evaluate your professors honestly each semester and unlock your examination permit automatically.
+          Evaluate your professors honestly each semester to complete your academic clearance.
         </p>
 
         <div class="feature-tags-stack" role="list" aria-label="Student Privacy Guarantees">
@@ -121,7 +121,7 @@ const handleLogin = throttle(() => {
 
           <div class="feature-tag-item" role="listitem">
             <span class="feature-tag-dot" aria-hidden="true"></span>
-            <span><strong>Exam clearance</strong> · Finish your assigned courses to unlock your exam permit</span>
+            <span><strong>Academic clearance</strong> · Complete evaluations for all enrolled courses seamlessly</span>
           </div>
         </div>
       </div>

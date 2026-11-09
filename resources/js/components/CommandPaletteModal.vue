@@ -51,7 +51,6 @@ const baseCommands = computed(() => {
   }
 
   cmds.push(
-    { id: 'nav-advocacy', group: 'Campus Hub', label: 'Open Exam Permit & Share', hint: '/advocacy', action: () => router.push('/advocacy') },
     { id: 'toggle-sidebar', group: 'Layout', label: 'Collapse or Expand Sidebar', hint: 'Ctrl + B', action: () => emit('toggle-sidebar') },
     {
       id: 'toggle-density',

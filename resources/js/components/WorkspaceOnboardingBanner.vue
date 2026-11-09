@@ -57,7 +57,7 @@ function dismissOnboarding() {
         <select v-model="selectedFocus" class="onboarding-select" data-testid="onboarding-focus-select">
           <option value="analytics">Sentiment &amp; Watchlist</option>
           <option value="accreditation">AACCUP Area III Evidence</option>
-          <option value="clearance">Queue &amp; Exam Permits</option>
+          <option value="clearance">Evaluation Queue</option>
         </select>
       </label>
 
