@@ -79,7 +79,7 @@ async function submitRosterImport() {
       });
     }
 
-    const res = await evaluationStore.ingestRosterRows(
+    const res = await evalStore.ingestRosterRows(
       parsedRows,
       rosterImportFormat.value,
       rosterImportContent.value,
@@ -231,6 +231,35 @@ async function handleFacultyAssignmentChange(sectionId, event) {
     }
   } catch (err) {
     flashError(err.message || 'Failed to update faculty assignment.');
+  }
+}
+
+async function handleToggleRegistrarLock(sec) {
+  const nextLock = !sec.registrar_lock;
+  const previousLock = sec.registrar_lock;
+  const previousUnlocked = sec.double_blind_unlocked;
+
+  // Optimistic UI update
+  sec.registrar_lock = nextLock;
+  sec.double_blind_unlocked = Boolean(sec.term_grades_submitted && nextLock);
+
+  try {
+    const res = await evalStore.toggleSectionLock(sec.course_section_id, 'registrar_lock', nextLock);
+    if (res) {
+      sec.registrar_lock = Boolean(res.registrar_lock);
+      sec.double_blind_unlocked = Boolean(res.double_blind_unlocked);
+      flashSuccess(
+        `Registrar Lock for ${sec.course_code} (${sec.section_code}) updated to ${sec.registrar_lock ? 'LOCKED' : 'UNLOCKED'}.`
+      );
+    } else {
+      sec.registrar_lock = previousLock;
+      sec.double_blind_unlocked = previousUnlocked;
+      flashError('Server did not confirm registrar lock change.');
+    }
+  } catch (err) {
+    sec.registrar_lock = previousLock;
+    sec.double_blind_unlocked = previousUnlocked;
+    flashError(err.message || 'Failed to toggle registrar lock.');
   }
 }
 
@@ -553,13 +582,25 @@ async function executeDeleteSection() {
                 </span>
               </td>
               <td class="text-center">
-                <span
-                  class="lock-badge"
-                  :class="sec.double_blind_unlocked ? 'unlocked' : 'locked'"
-                  :title="sec.double_blind_unlocked ? 'Both term grades and registrar locks confirmed' : 'Awaiting instructor grade submission or registrar approval'"
-                >
-                  {{ sec.double_blind_unlocked ? 'Unlocked' : 'Locked' }}
-                </span>
+                <div class="lock-cell-action">
+                  <span
+                    class="lock-badge"
+                    :class="sec.double_blind_unlocked ? 'unlocked' : 'locked'"
+                    :title="sec.double_blind_unlocked ? 'Both term grades and registrar locks confirmed' : 'Awaiting instructor grade submission or registrar approval'"
+                  >
+                    {{ sec.double_blind_unlocked ? 'Unlocked' : 'Locked' }}
+                  </span>
+                  <button
+                    type="button"
+                    class="btn-lock-toggle"
+                    :class="sec.registrar_lock ? 'locked' : 'unlocked'"
+                    :title="sec.registrar_lock ? 'Registrar Lock Active — Click to unlock' : 'Registrar Lock Inactive — Click to lock'"
+                    :data-testid="`toggle-lock-btn-${sec.course_section_id}`"
+                    @click="handleToggleRegistrarLock(sec)"
+                  >
+                    {{ sec.registrar_lock ? '🔒 Locked' : '🔓 Inactive' }}
+                  </button>
+                </div>
               </td>
               <td class="text-right">
                 <button
@@ -1524,6 +1565,48 @@ async function executeDeleteSection() {
 .lock-badge.unlocked {
   background: #ecfdf5;
   color: #065f46;
+}
+
+.lock-cell-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.btn-lock-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-lock-toggle.locked {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+.btn-lock-toggle.locked:hover {
+  background: #fee2e2;
+  border-color: #f87171;
+}
+
+.btn-lock-toggle.unlocked {
+  background: #f3f4f6;
+  color: #4b5563;
+  border-color: #d1d5db;
+}
+
+.btn-lock-toggle.unlocked:hover {
+  background: #e5e7eb;
+  color: #1f2937;
 }
 
 .active-status-badge {
