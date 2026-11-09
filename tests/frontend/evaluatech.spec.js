@@ -1221,6 +1221,10 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('data-testid="new-section-modal"'));
       assert.ok(setupViewSfc.includes('data-testid="new-course-modal"'));
       assert.ok(setupViewSfc.includes('data-testid="delete-section-modal"'));
+      assert.ok(setupViewSfc.includes('data-testid="import-roster-btn"'));
+      assert.ok(setupViewSfc.includes('data-testid="import-roster-modal"'));
+      assert.ok(setupViewSfc.includes('data-testid="academic-setup-roster-textarea"'));
+      assert.ok(setupViewSfc.includes('data-testid="submit-setup-roster-import-btn"'));
 
       // 4. Academic Setup Pinia Store Methods & Safety Invariants
       assert.ok(setupStoreSrc.includes('fetchOverview'));
