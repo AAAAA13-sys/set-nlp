@@ -67,7 +67,7 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
      - Rejects when `status === 'CLOSED'` with HTTP `422` (`code: 'EVALUATION_WINDOW_CLOSED'`, `window_status: 'CLOSED'`).
      - Accepts valid completed evaluations immediately (`0s+`) when `evaluation_open === true`.
 2. **Four User Groups / Five Permission Roles Contract:**
-   - Group 1: **Students** (`student` role -> `/queue`, `/evaluate/:sectionId`, `/advocacy`)
+   - Group 1: **Students** (`student` role -> `/queue`, `/evaluate/:sectionId`)
    - Group 2: **Faculty / Professors** (`faculty` role -> `/faculty`)
    - Group 3: **Academic Supervisors** (`chair` role -> `/chair` scoped strictly to assigned `department_id`; `dean` role -> `/dean` scoped to college and its departments)
    - Group 4: **University Registrar / Administrators** (`admin` role -> `/admin`)

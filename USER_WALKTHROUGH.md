@@ -43,88 +43,74 @@ All seeded accounts use the password **`evaluatech123`**:
 
 ## 2. Global Navigation Shell (`WorkspaceSidebar.vue` & `NavbarHeader.vue`)
 
-Every authenticated screen shares the deep-emerald left sidebar (`#103c2e`) and white top bar:
+Authenticated institutional staff (Faculty, Chair, Dean, Admin) navigate using the collapsible deep-emerald sidebar (`#103c2e`) and top bar. Students receive a dedicated, distraction-free workspace without sidebars or permit banners.
 
 | Control / Button | Location | What Happens When Clicked |
 | :--- | :--- | :--- |
-| **Collapse Sidebar Button** (`[data-testid="sidebar-collapse-toggle"]`) | Top-right of emerald sidebar (`[‖]`) or `Ctrl + B` | Toggles the left sidebar between full width (`248px`) and compact icon rail (`68px`). |
-| **Workspace Links** (`My Courses`, `Evaluate Professor`, `Exam Permit & Share`, etc.) | Left sidebar under `WORKSPACE` | Navigates directly to the selected page; active route is highlighted with a warm gold pill (`#f4cd42`), and `My Courses` displays a live pending course count pill (e.g., `3`). |
-| **Clearance Status Badge (`Clearance: PENDING ?`)** (`[data-testid="navbar-clearance-badge"]`) | Top navbar right strip (Student role) | Displays overall clearance status (`PENDING` vs `CLEARED`) with an interactive `?` `.ui-hint` tooltip explaining examination permit requirements. |
-| **`Command Palette` (`Ctrl K`)** (`[data-testid="sidebar-cmdk-btn"]` / `[data-testid="navbar-cmdk-btn"]`) | Left sidebar under `QUICK TOOLS` & top navbar search bar | Opens the keyboard-driven **Command Palette Modal** (`Ctrl + K`) to jump to any page or toggle table density. |
+| **Collapse Sidebar Button** (`[data-testid="sidebar-collapse-toggle"]`) | Top-right of emerald sidebar (`[‖]`) or `Ctrl + B` (Staff) | Toggles the left sidebar between full width (`248px`) and compact icon rail (`68px`). |
+| **Workspace Links** (`Faculty Portal`, `Chair Portal`, `Dean Analytics`, `Registrar Console`) | Left sidebar under `WORKSPACE` (Staff) | Navigates directly to the selected role portal; active route is highlighted with a warm gold pill (`#f4cd42`). |
+| **Active Term Indicator** | Top navbar right strip | Displays the active institutional academic term (`Term: 1st Semester AY 2026-2027`). |
+| **`Command Palette` (`Ctrl K`)** (`[data-testid="sidebar-cmdk-btn"]` / `[data-testid="navbar-cmdk-btn"]`) | Left sidebar under `QUICK TOOLS` & top navbar (Staff) | Opens the keyboard-driven **Command Palette Modal** (`Ctrl + K`) to jump to any page or toggle table density. |
 | **`Evaluation Analysis` (`AI`)** (`[data-testid="sidebar-quivr-btn"]`) | Left sidebar under `QUICK TOOLS` (Chair, Dean, Registrar) | Opens the **Professor's Evaluation Analysis** slide-over drawer to search anonymized student comments. |
-| **`Shortcuts & Rules` (`?`)** (`[data-testid="sidebar-shortcuts-btn"]`) | Left sidebar under `QUICK TOOLS` | Opens the **Keyboard Shortcuts & Evaluation Rules** reference modal. |
-| **`Sign Out` Button** (`[data-testid="sidebar-logout-btn"]` / `[data-testid="navbar-logout-btn"]`) | Bottom of left sidebar & top-right of navbar | Revokes your Bearer token (`POST /api/auth/logout`), clears session state, and returns to `/login`. |
+| **`Shortcuts & Rules` (`?`)** (`[data-testid="sidebar-shortcuts-btn"]`) | Left sidebar under `QUICK TOOLS` (Staff) | Opens the **Keyboard Shortcuts & Evaluation Rules** reference modal. |
+| **`Sign Out` Button** (`[data-testid="sidebar-logout-btn"]` / `[data-testid="navbar-logout-btn"]`) | Bottom of left sidebar (Staff) & top-right of navbar (All Roles) | Revokes your Bearer token (`POST /api/auth/logout`), clears session state, and returns to `/login`. |
 
 ---
 
-## 3. Student Walkthrough (`/queue`, `/evaluate/:id`, `/advocacy`)
+## 3. Student Walkthrough (`/queue`, `/evaluate/:id`)
 
-### Step 3A: My Courses & Examination Permit (`/queue` — `StudentQueueView.vue`)
+### Step 3A: My Courses Evaluation Queue (`/queue` — `StudentQueueView.vue`)
 
 - **Queue Screenshot**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/03_student_queue.png`
-- **Permit Card Screenshot**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/20_student_queue_permit_card.png`
 
-#### Interactive Controls & Buttons on `/queue`
-- **Course Counter Pill (`3 / 6` `.ui-badge-count`) & Tooltip Hint (`?` `.ui-hint`)**: The `My Courses` header displays a compact `3 / 6` completion counter pill and a `?` tooltip (`"Complete all enrolled course evaluations to unlock your examination permit."`).
+#### Interactive Controls & Elements on `/queue`
+- **Course Counter Pill (`3 / 6` `.ui-badge-count`) & Tooltip Hint (`?` `.ui-hint`)**: The `My Courses` header displays a compact `3 / 6` completion counter pill and a `?` tooltip (`"Complete evaluations for all enrolled courses."`).
+- **Deadline Indicator**: The header displays the administrator-controlled submission deadline (e.g., `Asia/Manila` time) without artificial countdown pressure.
 1. **`Search course or professor...` Input (`[data-testid="queue-search-input"]`)**:
-   - Filters your enrolled course rows in real time (debounced `220ms`) by course code (`CS-401`), title (`Discrete Mathematics`), or professor name (`Dr. R. Garcia`).
+   - Filters your enrolled course rows in real time (debounced `250ms`) by course code (`CS-401`), title (`Discrete Mathematics`), or professor name (`Dr. R. Garcia`).
 2. **Status Filter Pills (`All (6)`, `Pending (3)`, `Completed (3)`)**:
    - `[data-testid="queue-filter-all"]`: Shows all enrolled courses.
    - `[data-testid="queue-filter-pending"]`: Filters to courses you still need to evaluate.
    - `[data-testid="queue-filter-completed"]`: Filters to courses you have already evaluated.
-3. **`Share Class Link` Button (`[data-testid="queue-advocacy-link"]`)**:
-   - Navigates to `/advocacy` (`Exam Permit & Share`) so you can copy the portal link for classmates or verify your permit code.
-4. **`Start Evaluation` Button (`[data-testid="evaluate-btn-4"]`, etc.)**:
-   - Appears on `PENDING` courses (`MATH-201`, `CS-408`, `PHYS-101`). Clicking it opens the 25-item evaluation form for that professor (`/evaluate/:courseSectionId`).
-5. **`Clearance Signed` Badge**:
-   - Appears on `COMPLETED` courses (`CS-401`, `CS-405`, `ENG-102`). These courses are locked so duplicate evaluations cannot be submitted.
-6. **`Digital Examination Permit` Card (`[data-testid="clearance-permit-card"]`)**:
-   - Displays your per-course clearance codes (`CLR-...`) and overall permit status (`PENDING` until all 6 courses are evaluated, then unlocks to `CLEARED` with a `Print / Save Official PDF Permit` button and a `Verify Permit` proctor checker).
+3. **`Start Evaluation` Button (`[data-testid="evaluate-btn-4"]`, etc.)**:
+   - Appears on `PENDING` courses (`MATH-201`, `CS-408`, `PHYS-101`). Clicking it opens the focused evaluation stepper for that professor (`/evaluate/:courseSectionId`).
+4. **`✓ Evaluated` Locked Badge (`[data-testid="evaluated-locked-badge"]`)**:
+   - Appears on `COMPLETED` courses (`CS-401`, `CS-405`, `ENG-102`). Completed evaluations are cryptographically sealed and permanently locked against re-entry.
 
 ---
 
-### Step 3B: Evaluating a Professor (`/evaluate/:id` — `EvaluationFormView.vue`)
+### Step 3B: Focused Evaluation Stepper (`/evaluate/:id` — `EvaluationFormView.vue`)
 
-- **Top Likert Screenshot**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/04_student_evaluate_top.png`
-- **Written Feedback & Submit Screenshot**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/21_student_evaluate_written_submit.png`
+- **Part I Likert Rating Screenshot**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/eval_step1_rating_questions.png`
+- **Incomplete Alert & Auto-Scroll Screenshot**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/eval_step1_validation_alert.png`
+- **Part II Left-Aligned Feedback Screenshot**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/eval_step2_written_feedback_left_aligned.png`
+- **Submission Receipt & Lock Screenshot**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/eval_submission_success.png`
 
-#### Interactive Controls & Buttons on `/evaluate/:id`
-1. **Mandatory Timing Policy & Rating Progress**:
-   - The active evaluation form provides immediate submission readiness as soon as all 25 Likert items are rated, with zero artificial waiting timers. Elapsed answering duration is recorded as metadata and validated non-negative (`>= 0`).
-2. **Autosave Indicator (`[data-testid="survey-autosave-indicator"]`)**:
-   - Automatically saves your in-progress ratings and comments locally (`Autosave ready` / `Draft saved`) with zero personal identifiers so you don't lose work if you refresh.
-3. **25 Likert Rating Pills (`1` to `5`) across 5 Teaching Areas**:
-   - Each teaching cluster header includes a compact `X / 5` `.ui-badge-count` progress pill, and the `Questions About Your Professor` and `Additional Comments` headers include `?` `.ui-hint` tooltips so the evaluation form stays focused on the questions.
-   - Click `1` (*Strongly Disagree*), `2` (*Disagree*), `3` (*Neutral*), `4` (*Agree*), or `5` (*Strongly Agree*) for each of the 25 items (`PD-1`..`PD-5`, `AG-1`..`AG-5`, `CM-1`..`CM-5`, `PC-1`..`PC-5`, `SS-1`..`SS-5`).
-   - The progress bar updates live (`Answered: X / 25`, `Average: X.XX / 5.00`).
-4. **Written Feedback Inputs (`Q1`–`Q4` & Optional `Q5`)**:
-   - **Q1 (`[data-testid="prof-q1-three-words"]`)**: Enter three words describing the professor (e.g., `patient, clear, fair`).
-   - **Q2 (`[data-testid="prof-q2-topic-0"]`, `[data-testid="prof-q2-topic-1"]`)**: List specific topics or areas for improvement (`a.`, `b.`).
-   - **`+ Add Another Topic` Button (`[data-testid="add-improvement-topic-btn"]`)**: Adds up to 6 lettered topic fields (`c.`, `d.`, `e.`, `f.`); each extra row has a `Remove` button.
-   - **Q3 (`[data-testid="prof-q3-strengths"]`)**: Describe the professor's teaching strengths.
-   - **Q4 (`[data-testid="prof-q4-recommendations"]`)**: Share recommendations for future offerings of the course.
-   - **`+ Include Optional 5th Observation` Button (`[data-testid="toggle-fifth-question-btn"]`)**: Toggles an optional 5th input field for laboratory/facilities remarks.
-5. **Additional Comments Textarea (`[data-testid="narrative-comment-input"]`)**:
-   - Optional open-ended comment box (up to `2000` characters, supports English, Tagalog, and Taglish). Shows a live sentiment preview tag below as you type.
-6. **`Back to Courses` / `Reset Form` Button**:
-   - Clears your current draft or returns to `/queue`.
-7. **`Submit Evaluation` Button (`[data-testid="submit-evaluation-btn"]`)**:
-   - Validates that all 25 Likert items and required qualitative questions are answered, and submits immediately without waiting delays.
-   - **Uniform Rating Check**: If you selected the exact same number for all 25 items (e.g., all `5`s, variance $\sigma^2 = 0$), a confirmation modal (**`Confirm Uniform Ratings`**) opens with **`Review My Ratings`** and **`Confirm & Submit`** buttons.
-   - On submission, issues your signed `CLR-*` clearance token and decouples your identity from the rating vault.
-
----
-
-### Step 3C: Exam Permit & Share (`/advocacy` — `EvaluationAdvocacyView.vue`)
-
-- **Screenshot**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/06_student_advocacy_permit.png`
-
-#### Interactive Controls & Buttons on `/advocacy`
-- **Tooltip Hints (`?` `.ui-hint`)**: `Share Portal Link & Check Permit Status`, `Invite Classmates`, and `Your Clearance Code` use `?` hover/focus tooltip badges instead of long explanatory paragraphs.
-1. **`Copy Link` Button (`[data-testid="copy-advocacy-link-btn"]`)**:
-   - Copies the portal share URL (`http://.../login?utm_source=plp_campus_advocacy`) to your clipboard and switches button text to `Copied!`.
-2. **`Copy Code` Button (`[data-testid="copy-clearance-token-btn"]`)**:
-   - Copies your signed examination clearance code (`CLR-...`) so you can present it to your exam proctor.
+#### Interactive Stepper Controls & Answering Flow
+1. **`[⛶ Focused Fullscreen]` Toggle (`[data-testid="toggle-fullscreen-btn"]`)**:
+   - Requests native browser fullscreen (`document.documentElement.requestFullscreen()`) to minimize desktop distractions. Degrades gracefully if unsupported or dismissed; does not trap the user.
+2. **2-Step Progress Indicator**:
+   - **Step 1: Part I — Rating Questions** (25 Likert items across 5 pedagogical clusters: *Pedagogical Delivery*, *Assessment & Grading*, *Classroom Management*, *Professional Conduct*, *Student Support & Mentorship*).
+   - **Step 2: Part II — Written Feedback** (left-aligned qualitative responses and instant submit).
+3. **Incomplete Rating Detection & Auto-Scroll**:
+   - Clicking `[Continue to Written Feedback →]` before rating all 25 items blocks transition, displays a clear warning (`"Please complete all 25 ratings before proceeding (X remaining)."`), and smoothly scrolls directly to the first unrated question with an animated pulsing border (`.pulse-unanswered`).
+4. **Mandatory Timing Policy**:
+   - Students may advance and submit whenever ready with zero artificial dwell timers or countdown locks (`dwell_time_seconds >= 0`).
+5. **Autosave Draft (`[data-testid="survey-autosave-indicator"]`)**:
+   - Periodically preserves your in-progress selections locally with zero PII (`Draft saved`).
+6. **Part II: Left-Aligned Qualitative Feedback**:
+   - All questions, helper badges, and input textareas are strictly **left-aligned** for optimal reading flow:
+     - **Q1 (`[data-testid="prof-q1-three-words"]`)**: Three words describing the professor.
+     - **Q2 (`[data-testid="prof-q2-topic-0"]`, `[data-testid="prof-q2-topic-1"]`, `[data-testid="prof-q2-topic-2"]`)**: Exactly 3 pedagogical room-for-improvement prompts (`a. Pedagogical Delivery`, `b. Assessment & Grading`, `c. Classroom Management`).
+     - **Q3 (`[data-testid="prof-q3-strengths"]`)**: Teaching strengths.
+     - **Q4 (`[data-testid="prof-q4-recommendations"]`)**: Constructive recommendations for future offerings.
+     - **Additional Narrative Remarks (`[data-testid="narrative-comment-input"]`)**: Optional open-ended comment (up to 2,000 characters, Tagalog/English/Taglish supported).
+7. **`[Submit Evaluation]` Action (`[data-testid="submit-evaluation-btn"]`)**:
+   - Displays a live loading indicator (`Submitting to Vault…`).
+   - **Uniform Rating Safeguard**: If population variance is zero ($\sigma^2 = 0$, e.g., all 5s), a confirmation challenge modal prompts the student to confirm before setting `is_straight_lined = true`.
+   - **Atomic Dual-Token Transaction**: Decouples student clearance from the anonymous evaluation vault, exits fullscreen, displays an official clearance receipt (`CLR-...`), and permanently locks the course evaluation.
+8. **`[← Back to Rating Questions]` Button (`[data-testid="back-to-step1-btn"]`)**:
+   - Allows students to freely review and revise their Likert ratings prior to final submission.
 
 ---
 

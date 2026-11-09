@@ -245,22 +245,22 @@ To ensure high-quality and unmanipulated responses, the evaluation engine enforc
 
 ```
 +-------------------------------------------------------------------------+
-| [EduMetrics] Institutional Evaluation Portal        [Active Term: Fall] |
-| Logged in as: 2024-10892 (Student)                 Clearance: PENDING   |
+| PAMANTASAN NG LUNGSOD NG PASIG · plpasig.edu.ph    [Term: 1st Sem 2026] |
+| Student Evaluation of Teachers                     2024-10892  Sign Out |
 +-------------------------------------------------------------------------+
-| My Evaluation Queue (3 of 6 Completed)                                  |
+| My Courses (3 / 6)                                                      |
+| Progress: 50% · Status: 3 Remaining                                     |
 | [=======================================>                             ] |
 +-------------------------------------------------------------------------+
-| Course Code | Instructor          | Status       | Action               |
-|-------------+---------------------+--------------+----------------------|
-| CS-401      | Prof. A. Dela Cruz  | COMPLETED    | [Clearance Signed]   |
-| CS-405      | Dr. M. Santos       | COMPLETED    | [Clearance Signed]   |
-| ENG-102     | Prof. E. Rivera     | COMPLETED    | [Clearance Signed]   |
-| MATH-201    | Dr. R. Garcia       | PENDING      | [Start Evaluation]   |
-| CS-408      | Prof. K. Gomez      | PENDING      | [Start Evaluation]   |
-| PHYS-101    | Engr. J. Luna       | PENDING      | [Start Evaluation]   |
+| Subject ID  | Subject Name        | Professor     | Status    | Action  |
+|-------------+---------------------+---------------+-----------+---------|
+| CS-401      | Software Eng.       | Prof. Dela Cruz| COMPLETED| Locked  |
+| CS-405      | Network Systems     | Dr. M. Santos | COMPLETED | Locked  |
+| ENG-102     | Tech Communication  | Prof. Rivera  | COMPLETED | Locked  |
+| MATH-201    | Discrete Math       | Dr. R. Garcia | PENDING   | [Start] |
+| CS-408      | Operating Systems   | Prof. Gomez   | PENDING   | [Start] |
+| PHYS-101    | University Physics  | Engr. J. Luna | PENDING   | [Start] |
 +-------------------------------------------------------------------------+
-
 ```
 
 ```
