@@ -1343,7 +1343,7 @@ class DecoupledEvaluationService
      *
      * @return array<string, mixed>
      */
-    public function getActionPlansSummary(?int $departmentId = null): array
+    public function getActionPlansSummary(int|array|null $departmentId = null): array
     {
         try {
             $sql = 'SELECT status, count(*) as count FROM faculty_action_plans GROUP BY status';
@@ -1386,10 +1386,12 @@ class DecoupledEvaluationService
 
     /**
      * Compute Dean / Department Chair analytical overview metrics and Faculty Exception Watchlist.
+     * Supports single department_id (int), multiple college departments (int[]), or global (null).
      *
+     * @param int|int[]|null $departmentId
      * @return array<string, mixed>
      */
-    public function getDeanDashboardMetrics(?int $departmentId = null): array
+    public function getDeanDashboardMetrics(int|array|null $departmentId = null): array
     {
         $sql = "
             SELECT
@@ -1414,8 +1416,15 @@ class DecoupledEvaluationService
         ";
         $params = [];
         if ($departmentId !== null) {
-            $sql .= ' WHERE COALESCE(c.department_id, u.department_id) = CAST(:dept_id AS INTEGER)';
-            $params[':dept_id'] = $departmentId;
+            if (is_array($departmentId)) {
+                $ids = array_values(array_filter(array_map('intval', $departmentId)));
+                if (!empty($ids)) {
+                    $sql .= ' WHERE COALESCE(c.department_id, u.department_id) IN (' . implode(',', $ids) . ')';
+                }
+            } else {
+                $sql .= ' WHERE COALESCE(c.department_id, u.department_id) = CAST(:dept_id AS INTEGER)';
+                $params[':dept_id'] = $departmentId;
+            }
         }
 
         $stmt = $this->pdo->prepare($sql);
@@ -1429,7 +1438,7 @@ class DecoupledEvaluationService
         $totalSubmissions = count($rows);
         if ($totalSubmissions === 0) {
             return [
-                'department_id' => $departmentId,
+                'department_id' => is_array($departmentId) ? null : $departmentId,
                 'response_rate_pct' => $effectiveResponseRate,
                 'target_response_rate_pct' => 85.0,
                 'submissions_logged' => 0,
@@ -1538,7 +1547,7 @@ class DecoupledEvaluationService
         $qualitativeSynthesis = $this->analytics->synthesizeQuestionnaires($allQuestionnaires);
 
         return [
-            'department_id' => $departmentId,
+            'department_id' => is_array($departmentId) ? null : $departmentId,
             'response_rate_pct' => $effectiveResponseRate,
             'target_response_rate_pct' => 85.0,
             'submissions_logged' => $totalSubmissions,
@@ -1565,7 +1574,7 @@ class DecoupledEvaluationService
      *
      * @return array<string, mixed>
      */
-    public function getLongitudinalSemesterTrends(?int $departmentId = null): array
+    public function getLongitudinalSemesterTrends(int|array|null $departmentId = null): array
     {
         $overview = $this->getDeanDashboardMetrics($departmentId);
         $submissionsCount = (int) ($overview['submissions_logged'] ?? 0);
@@ -1662,7 +1671,7 @@ class DecoupledEvaluationService
         ];
 
         return [
-            'department_id' => $departmentId,
+            'department_id' => is_array($departmentId) ? null : $departmentId,
             'accreditation_standard' => 'AACCUP Area III: Curriculum and Instruction / Faculty Development',
             'institutional_target' => 4.00,
             'active_term' => [
@@ -1709,7 +1718,7 @@ class DecoupledEvaluationService
      *
      * @return array<string, mixed>
      */
-    public function getDepartmentCompletionHeatmap(?int $departmentId = null): array
+    public function getDepartmentCompletionHeatmap(int|array|null $departmentId = null): array
     {
         $sql = "
             SELECT
@@ -1729,8 +1738,15 @@ class DecoupledEvaluationService
         ";
         $params = [];
         if ($departmentId !== null) {
-            $sql .= ' WHERE c.department_id = :dept_id';
-            $params[':dept_id'] = $departmentId;
+            if (is_array($departmentId)) {
+                $ids = array_values(array_filter(array_map('intval', $departmentId)));
+                if (!empty($ids)) {
+                    $sql .= ' WHERE c.department_id IN (' . implode(',', $ids) . ')';
+                }
+            } else {
+                $sql .= ' WHERE c.department_id = :dept_id';
+                $params[':dept_id'] = $departmentId;
+            }
         }
         $sql .= ' ORDER BY cs.id ASC';
 
@@ -1816,7 +1832,7 @@ class DecoupledEvaluationService
         $overallPct = $totalEnrolled > 0 ? round(($totalEvaluated / $totalEnrolled) * 100, 1) : 0.0;
 
         return [
-            'department_id' => $departmentId,
+            'department_id' => is_array($departmentId) ? null : $departmentId,
             'institutional_target_pct' => 85.0,
             'overall_completion_rate_pct' => $overallPct,
             'total_sections' => count($heatmapItems),
@@ -1836,7 +1852,7 @@ class DecoupledEvaluationService
      *
      * @return array<string, mixed>
      */
-    public function getAccreditationComplianceAudit(?int $departmentId = null): array
+    public function getAccreditationComplianceAudit(int|array|null $departmentId = null): array
     {
         $overview = $this->getDeanDashboardMetrics($departmentId);
         $trends = $this->getLongitudinalSemesterTrends($departmentId);
@@ -1921,7 +1937,7 @@ class DecoupledEvaluationService
         $compliancePct = round(($compliantCount / count($checkpoints)) * 100, 1);
 
         return [
-            'department_id' => $departmentId,
+            'department_id' => is_array($departmentId) ? null : $departmentId,
             'accreditation_body' => 'AACCUP Level III & CHED CMO 46 s. 2012',
             'overall_status' => $compliancePct === 100.0 ? 'FULLY_COMPLIANT' : 'PROVISIONAL',
             'accreditation_grade' => 'GRADE A (EXCELLENT)',
@@ -1944,7 +1960,7 @@ class DecoupledEvaluationService
      *
      * @return array<string, mixed>
      */
-    public function getAccreditationEvidenceDossier(?int $departmentId = null): array
+    public function getAccreditationEvidenceDossier(int|array|null $departmentId = null): array
     {
         $heatmap = $this->getDepartmentCompletionHeatmap($departmentId);
         $totalEnrolled = (int) $heatmap['total_enrolled'];
@@ -2251,7 +2267,7 @@ class DecoupledEvaluationService
      *
      * @return array<string, mixed>
      */
-    public function getFacultyPerformanceQuartiles(?int $departmentId = null): array
+    public function getFacultyPerformanceQuartiles(int|array|null $departmentId = null): array
     {
         $sql = "
             SELECT
@@ -2269,8 +2285,15 @@ class DecoupledEvaluationService
         ";
         $params = [];
         if ($departmentId !== null) {
-            $sql .= ' AND COALESCE(c.department_id, u.department_id, 1) = CAST(:dept_id AS INTEGER)';
-            $params[':dept_id'] = $departmentId;
+            if (is_array($departmentId)) {
+                $ids = array_values(array_filter(array_map('intval', $departmentId)));
+                if (!empty($ids)) {
+                    $sql .= ' AND COALESCE(c.department_id, u.department_id, 1) IN (' . implode(',', $ids) . ')';
+                }
+            } else {
+                $sql .= ' AND COALESCE(c.department_id, u.department_id, 1) = CAST(:dept_id AS INTEGER)';
+                $params[':dept_id'] = $departmentId;
+            }
         }
         $sql .= ' ORDER BY u.id ASC, cs.id ASC';
 
@@ -2408,7 +2431,7 @@ class DecoupledEvaluationService
         ];
 
         return [
-            'department_id' => $departmentId,
+            'department_id' => is_array($departmentId) ? null : $departmentId,
             'total_faculty_evaluated' => array_sum($tierCounts),
             'tier_counts' => $tierCounts,
             'tiers' => $tiers,
@@ -2936,7 +2959,7 @@ class DecoupledEvaluationService
      */
     public function searchAnonymizedInsights(
         string $query = '',
-        ?int $departmentId = null,
+        int|array|null $departmentId = null,
         ?string $valence = null,
         ?string $cluster = null
     ): array {
@@ -2970,9 +2993,16 @@ class DecoupledEvaluationService
         ';
 
         $params = [];
-        if ($departmentId !== null && $departmentId > 0) {
-            $sql .= ' AND c.department_id = :dept_id';
-            $params[':dept_id'] = $departmentId;
+        if ($departmentId !== null) {
+            if (is_array($departmentId)) {
+                $ids = array_values(array_filter(array_map('intval', $departmentId)));
+                if (!empty($ids)) {
+                    $sql .= ' AND c.department_id IN (' . implode(',', $ids) . ')';
+                }
+            } elseif ($departmentId > 0) {
+                $sql .= ' AND c.department_id = :dept_id';
+                $params[':dept_id'] = $departmentId;
+            }
         }
         if ($valence !== null && trim($valence) !== '' && strtoupper(trim($valence)) !== 'ALL') {
             $sql .= ' AND LOWER(v.sentiment_valence) = LOWER(:valence)';

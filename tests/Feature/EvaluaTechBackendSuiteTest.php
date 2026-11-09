@@ -2598,6 +2598,30 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $deanOwnRes = $deanController->overview($deanOwnReq);
         $this->assertSame(200, $deanOwnRes->getStatusCode());
 
+        // Dean querying with omitted department_id defaults strictly to their assigned college departments
+        $deanOmittedReq = new \Illuminate\Http\Request();
+        $deanOmittedReq->setUserResolver(fn () => $scopedDean);
+        $deanOmittedRes = $deanController->overview($deanOmittedReq);
+        $this->assertSame(200, $deanOmittedRes->getStatusCode());
+        $omittedData = $deanOmittedRes->getData(true);
+        $this->assertNull($omittedData['department_id']);
+        foreach ($omittedData['instructor_summaries'] ?? [] as $inst) {
+            $this->assertSame(1, (int) $inst['department_id'], 'College Dean overview must not contain cross-college instructors');
+        }
+
+        // Dean with completely unassigned college is blocked with 403 UNASSIGNED_COLLEGE_SCOPE
+        $unassignedDean = new class {
+            public int $id = 998;
+            public string $role = 'dean';
+            public ?string $college_name = null;
+            public ?int $department_id = null;
+        };
+        $unassignedDeanReq = new \Illuminate\Http\Request();
+        $unassignedDeanReq->setUserResolver(fn () => $unassignedDean);
+        $unassignedDeanRes = $deanController->overview($unassignedDeanReq);
+        $this->assertSame(403, $unassignedDeanRes->getStatusCode());
+        $this->assertSame('UNASSIGNED_COLLEGE_SCOPE', $unassignedDeanRes->getData(true)['code']);
+
         // 6. Empirical Quality Metrics Provenance & Sample-Weighted Consolidation:
         // Baseline before entries
         $baselineSus = $qualityService->getSusCohortBreakdown();

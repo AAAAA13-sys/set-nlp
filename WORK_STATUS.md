@@ -83,6 +83,7 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 - [x] **Checkpoint 5:** All 119 automated tests, repository hygiene & syntax audit, and Playwright desktop/mobile visual verification completed (`100% PASS`).
 - [x] **Checkpoint 6:** Configurable administrator deadline management modal (`EXTEND` / `REOPEN`), strict boundary validation, zero hidden dwell input, and full documentation synchronization verified.
 - [x] **Checkpoint 7:** Authoritative submission boundaries (session-derived `student_id`, catalog-authoritative `faculty_id`/`academic_term_id`, active enrollment gate, anti-hijacking submission key), Department Chair IDOR scoping containment across all 9 reporting/export endpoints, Dean college scoping, empirical database quality metrics with sample-weighted consolidation (`120 / 120 PASS`, 866 assertions), and ephemeral sessionStorage draft isolation (`evaluatech_draft_sec_u{id}_sec{id}`).
+- [x] **Checkpoint 8:** Global UI consistency, 2-step student evaluation stepper (Part I: 25 rating questions with inline remaining-count alert and pulse auto-scroll; Part II: left-aligned written feedback with instant submit), full removal of all permit artifacts and advocacy routes from student experience, College Dean automatic college scoping when `department_id` is omitted, hardened staff presentation (removal of hardcoded `1500`/`750` placeholders, dynamic SUS `N = 50` sample size), and Managed Kiosk deployment documentation (`docs/MANAGED_KIOSK_DEPLOYMENT.md`) (`120 / 120 PASS`, 870 assertions).
 
 ---
 
@@ -90,10 +91,10 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 
 | Verification Tier | Command Executed | Executed Units | Pass Count | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 34 tests (866 assertions) | 34 / 34 | **100% PASS** |
+| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 34 tests (870 assertions) | 34 / 34 | **100% PASS** |
 | **Frontend DOM & UX Suite** | `npm.cmd test` | 40 test groups | 40 / 40 | **100% PASS** |
 | **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 46 unit tests | 46 / 46 | **100% PASS** |
 | **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 48 PHP files, 192 sources | 100% clean | **100% PASS** |
-| **Vite Production Bundle** | `npm.cmd run build` | 72 modules | Zero `.map` files | **100% PASS** |
+| **Vite Production Bundle** | `npm.cmd run build` | 71 modules | Zero `.map` files | **100% PASS** |
 | **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 120 automated units | 120 / 120 | **100% PASS** |
 
