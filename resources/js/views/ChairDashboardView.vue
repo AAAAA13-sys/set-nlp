@@ -359,10 +359,10 @@ async function endorseActionPlan(item) {
           <span class="eyebrow-badge">
             WATCHLIST &amp; SUPPORT
           </span>
-          <h3 class="section-title">Faculty Watchlist &amp; Support Plans</h3>
-          <p class="section-subtitle">
-            Review and endorse action plans for instructors below 3.50 mean rating or above 35% negative comments.
-          </p>
+          <h3 class="section-title">
+            Faculty Watchlist &amp; Support Plans
+            <span class="ui-hint" tabindex="0" data-hint="Review and endorse action plans for instructors below 3.50 mean rating or above 35% negative comments.">?</span>
+          </h3>
         </div>
       </div>
 
@@ -447,10 +447,10 @@ async function endorseActionPlan(item) {
           <span class="eyebrow-badge">
             SEMESTER TRENDS
           </span>
-          <h3 class="section-title">Department Longitudinal Quality Trends</h3>
-          <p class="section-subtitle">
-            Comparison of current semester evaluation ratings against the prior semester baseline.
-          </p>
+          <h3 class="section-title">
+            Department Longitudinal Quality Trends
+            <span class="ui-hint" tabindex="0" data-hint="Comparison of current semester evaluation ratings against the prior semester baseline.">?</span>
+          </h3>
         </div>
         <span class="token-chip chip-signed tabular-nums" style="font-size:0.8rem;">
           Δμ: {{ departmentLongitudinal.deltas.mean_delta >= 0 ? '+' : '' }}{{ departmentLongitudinal.deltas.mean_delta.toFixed(2) }}
@@ -525,10 +525,10 @@ async function endorseActionPlan(item) {
           <span class="eyebrow-badge">
             COMPLETION HEATMAP
           </span>
-          <h3 class="section-title">{{ departmentName }} Section Completion Heatmap</h3>
-          <p class="section-subtitle">
-            Section-by-section evaluation completion rates compared against the 85% target.
-          </p>
+          <h3 class="section-title">
+            {{ departmentName }} Section Completion Heatmap
+            <span class="ui-hint" tabindex="0" data-hint="Section-by-section evaluation completion rates compared against the 85% target.">?</span>
+          </h3>
         </div>
         <span class="token-chip chip-signed tabular-nums" style="font-size:0.8rem;">
           Completion Velocity: {{ chairHeatmapData.overall_completion_rate_pct ?? chairHeatmapData.overall_completion_rate ?? 0 }}%

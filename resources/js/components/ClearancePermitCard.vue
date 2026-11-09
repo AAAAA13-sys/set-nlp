@@ -85,6 +85,7 @@ function printPermit() {
         <span class="permit-eyebrow">EXAMINATION CLEARANCE</span>
         <h3 class="permit-title">
           {{ progress.allCleared ? 'Digital Examination Permit — CLEARED' : 'Digital Examination Permit — GATED (PENDING)' }}
+          <span class="ui-hint" tabindex="0" data-hint="Complete all assigned course evaluations to unlock your official examination permit.">?</span>
         </h3>
       </div>
 

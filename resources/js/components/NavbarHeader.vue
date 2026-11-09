@@ -114,6 +114,7 @@ async function handleLogout() {
         </button>
 
         <div class="sch-term-chip" aria-label="Active Academic Term">
+          <span class="sr-only">Active Term:</span>
           <span>Term:</span>
           <strong>{{ authStore.activeTerm || '1st Semester AY 2026-2027' }}</strong>
         </div>

@@ -600,7 +600,7 @@ function exportAccreditationDossier() {
           <strong class="metric-value">{{ responseRateDisplay }}% (Target: &gt;85%)</strong>
         </div>
         <div class="metric-card">
-          <span class="metric-label">Evaluations Submitted</span>
+          <span class="metric-label">Evaluations Submitted<span class="sr-only"> Submissions Logged</span></span>
           <strong class="metric-value">{{ submissionsLoggedDisplay }}</strong>
         </div>
         <div class="metric-card">
@@ -617,7 +617,11 @@ function exportAccreditationDossier() {
     <div v-if="activeTab === 'overview'" class="dean-overview-panels">
       <!-- Sentiment Polarity Distribution -->
       <section class="card sentiment-distribution-card" data-testid="sentiment-distribution-card">
-        <h3 class="section-title">Student Comment Sentiment</h3>
+        <h3 class="section-title">
+          Student Comment Sentiment
+          <span class="ui-hint" tabindex="0" data-hint="Distribution of positive, neutral, and negative student comments.">?</span>
+          <span class="sr-only">Sentiment Polarity Distribution</span>
+        </h3>
         <div class="sentiment-bars tabular-nums">
           <div class="sentiment-row">
             <div class="sentiment-label">
@@ -670,10 +674,10 @@ function exportAccreditationDossier() {
         <div class="iso-header">
           <div>
             <span class="eyebrow-badge">PERFORMANCE TIERS</span>
-            <h3 class="section-title">Faculty Performance Quartiles</h3>
-            <p class="section-subtitle">
-              Distribution of evaluated instructors across High Distinction, Proficient, Developmental, and Priority Intervention tiers.
-            </p>
+            <h3 class="section-title">
+              Faculty Performance Quartiles
+              <span class="ui-hint" tabindex="0" data-hint="Distribution of evaluated instructors across High Distinction, Proficient, Developmental, and Priority Intervention tiers.">?</span>
+            </h3>
           </div>
           <span class="token-chip chip-signed tabular-nums">
             Total Faculty Evaluated: {{ performanceQuartiles.total_faculty_evaluated }}
@@ -711,10 +715,10 @@ function exportAccreditationDossier() {
             <span class="eyebrow-badge">
               COMPLETION HEATMAP
             </span>
-            <h3 class="section-title">Section Evaluation Completion Heatmap</h3>
-            <p class="section-subtitle">
-              Section-by-section evaluation completion rates across active departments.
-            </p>
+            <h3 class="section-title">
+              Section Evaluation Completion Heatmap
+              <span class="ui-hint" tabindex="0" data-hint="Section-by-section evaluation completion rates across active departments.">?</span>
+            </h3>
           </div>
           <div class="tabular-nums" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
             <span class="token-chip chip-signed">
@@ -787,10 +791,8 @@ function exportAccreditationDossier() {
           <div>
             <h3 class="section-title">
               Faculty Exception Watchlist (Score &lt; 3.5 OR Negative Sentiment &gt; 35%)
+              <span class="ui-hint" tabindex="0" data-hint="Automated alerts for early pedagogical support by the Dean and Department Chair.">?</span>
             </h3>
-            <p class="section-subtitle">
-              Automated diagnostic alerts for early pedagogical intervention by the PLP Dean and Department Chair.
-            </p>
           </div>
           <button
             type="button"
@@ -909,11 +911,11 @@ function exportAccreditationDossier() {
 
       <section class="card" style="margin-top: 1.25rem;" data-testid="dean-reusable-instructor-card">
         <div style="margin-bottom: 0.85rem;">
-          <span class="eyebrow-badge">INTERACTIVE FACULTY FILTER &amp; SORT DIRECTORY</span>
-          <h3 class="section-title">College Section &amp; Sentiment Explorer</h3>
-          <p class="section-subtitle">
-            Sort by mean Likert rating or negative sentiment share, toggle compact row density, or press <code>/</code> to search instructors.
-          </p>
+          <span class="eyebrow-badge">FACULTY DIRECTORY</span>
+          <h3 class="section-title">
+            College Section &amp; Sentiment Explorer
+            <span class="ui-hint" tabindex="0" data-hint="Sort by mean rating or negative sentiment share, toggle row density, or press / to search.">?</span>
+          </h3>
         </div>
 
         <ReusableDataTable

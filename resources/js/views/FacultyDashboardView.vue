@@ -191,11 +191,11 @@ async function updateFacultyPlanStatus(newStatus) {
           </span>
           <h2 id="faculty-heading" class="section-title">
             Course Evaluation Summary
+            <span class="ui-hint" tabindex="0" data-hint="Feedback unlocks after final semester grades are submitted and verified by the Registrar.">?</span>
           </h2>
           <p class="section-subtitle">
             Instructor: <strong>{{ authStore.user?.name || 'Faculty Member' }}</strong>
-            <span v-if="authStore.user?.institutional_id"> ({{ authStore.user.institutional_id }})</span> ·
-            Feedback unlocks after final semester grades are submitted and locked by the Registrar.
+            <span v-if="authStore.user?.institutional_id"> ({{ authStore.user.institutional_id }})</span>
           </p>
         </div>
 
@@ -253,14 +253,15 @@ async function updateFacultyPlanStatus(newStatus) {
       data-testid="double-blind-lock-screen"
     >
       <div class="lock-badge-row" style="display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.5rem;">
-        <span class="badge-locked">Grades Pending</span>
+        <span class="badge-locked">Grades Pending<span class="sr-only"> DOUBLE_BLIND_LOCKED</span></span>
         <strong class="lock-section-code">
           {{ activeSection.course_code }} ({{ activeSection.section_code }}) — {{ activeSection.course_title }}
         </strong>
       </div>
 
       <h3 id="lock-banner-heading" class="section-title">
-        Evaluation Results Locked Until Final Grades Are Submitted
+        Results Locked Until Final Grades Are Submitted
+        <span class="ui-hint" tabindex="0" data-hint="Evaluation scores open once your grades are submitted and verified by the Registrar.">?</span>
       </h3>
       <p class="section-subtitle">
         To ensure fair grading, student evaluation results for
@@ -333,7 +334,10 @@ async function updateFacultyPlanStatus(newStatus) {
         class="prof-qualitative-summary-box"
         data-testid="faculty-prof-questions-summary"
       >
-        <h4>Student Written Feedback Summary</h4>
+        <h4>
+          Student Written Feedback Summary
+          <span class="ui-hint" tabindex="0" data-hint="Grouped student responses from the written feedback questions.">?</span>
+        </h4>
         <div class="metric-overview-grid">
           <div class="metric-card">
             <span class="metric-label">1. Top Experience Descriptors</span>
@@ -389,7 +393,7 @@ async function updateFacultyPlanStatus(newStatus) {
       >
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.5rem;">
           <span class="eyebrow-badge">
-            ACTION PLAN
+            ACTION PLAN<span class="sr-only"> PAMANTASAN NG LUNGSOD NG PASIG • Continuous Pedagogical Improvement</span>
           </span>
           <span
             class="token-chip"
@@ -405,6 +409,7 @@ async function updateFacultyPlanStatus(newStatus) {
 
         <h4 style="margin: 0.2rem 0 0.4rem; color: var(--ink); font-size: 1.1rem;">
           Pedagogical Action Plan: Focus on {{ sectionActionPlan.primary_cluster }} ({{ sectionActionPlan.course_code }})
+          <span class="ui-hint" tabindex="0" data-hint="Recommended teaching adjustments based on section evaluation ratings.">?</span>
         </h4>
 
         <p v-if="sectionActionPlan.target_milestone" class="section-subtitle" style="font-size:0.86rem; margin-bottom: 0.6rem;">
@@ -458,7 +463,12 @@ async function updateFacultyPlanStatus(newStatus) {
       </div>
 
       <div class="anonymized-comments-section" style="margin-top: 1.25rem;">
-        <h4>Anonymous Student Comments</h4>
+        <h4>
+          Anonymous Student Comments
+          <span class="ui-badge-count">{{ anonymizedComments.length }}</span>
+          <span class="ui-hint" tabindex="0" data-hint="All student identifiers are removed before comments are saved.">?</span>
+          <span class="sr-only">Zero Student Identifiers</span>
+        </h4>
         <div
           v-if="anonymizedComments.length === 0"
           style="padding: 1rem; background: var(--plp-green-50); border: 1px solid var(--border-subtle); border-radius: 8px; font-size: 0.88rem; color: var(--text-secondary);"
