@@ -90,6 +90,8 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 - [x] **Checkpoint 12:** Academic Setup Workspace, Term Cycle Management, Faculty Assignment Matrix & Questionnaire Preview (`NEW_GOAL.md`, inspired by `SaiyamTuteja/Faculty_Evaluation_System`): Added `/admin/setup` route and top-bar navigation for `admin` role, academic term lifecycle management (`academic_list.php` workflow), faculty-to-section teaching assignment matrix with inline instructor dropdowns (`manage_restriction.php` workflow), 25-item 5-cluster Likert + 4 qualitative question read-only preview (`questionnaire.php` workflow), cycle readiness summary bar with actionable validation warnings, safe deletion guarding evaluated sections (`CANNOT_DELETE_EVALUATED_SECTION`), and 122 automated test units passing (`122 / 122 PASS`, 901 assertions).
 - [x] **Checkpoint 13:** Single-Page Universal Top-Bar Navigation & Ergonomic Typography (`NEW_GOAL.md`): Converted all workspaces to single-page top-bar navigation without any sidebars or side drawers, added responsive expandable mobile menu, styled top back button (`← Back to My Courses`) as an ergonomic pill button, visually purged autosave indicator and fullscreen controls, enlarged global typography to `17.5px; line-height: 1.62;`, and decoupled backend test harness (`\Tests\Harness\BaseTestCase`) to guarantee 100% CI pass rate across PHPUnit 11 and Composer environments.
 - [x] **Checkpoint 14:** Integrated Atomic Roster Ingestion & Inline Registrar Grade-Lock Controls: Added `+ Import Roster` modal with JSON/CSV parser directly inside Academic Setup workspace (`AdminSetupView.vue`), added inline interactive Registrar Grade-Lock toggle (`🔒 Locked` / `🔓 Inactive`) to the section assignment table with optimistic UI updates and server synchronization, and verified 123 automated test units (`123 / 123 PASS`, 901 assertions).
+- [x] **Checkpoint 15:** Course Catalog Tab & Add-Section Shortcut (`AdminSetupView.vue`, inspired by `subject_list.php`): Added Course Catalog management tab listing course codes, course titles, assigned departments, and academic units, with an inline `+ Add Section` modal shortcut directly bound to each course offering.
+- [x] **Checkpoint 16:** Academic Supervisor Evaluation Report Modal & Student Course Clearance Receipt Certificate (`ChairDashboardView.vue`, `EvaluationFormView.vue`, inspired by `report.php`): Added Department Chair evaluation report breakdown modal with overall rating, descriptive qualitative performance badge (`Outstanding`, `Very Satisfactory`, etc.), 5 pedagogical cluster score bars, and NLP sentiment polarity metrics; added student course evaluation clearance receipt certificate modal with cryptographic clearance token proof and print/save actions (`124 / 124 PASS`).
 
 ---
 
@@ -98,9 +100,9 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 | Verification Tier | Command Executed | Executed Units | Pass Count | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (901 assertions) | 35 / 35 | **100% PASS** |
-| **Frontend DOM & UX Suite** | `npm.cmd test` | 42 test groups | 42 / 42 | **100% PASS** |
+| **Frontend DOM & UX Suite** | `npm.cmd test` | 43 test groups | 43 / 43 | **100% PASS** |
 | **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 46 unit tests | 46 / 46 | **100% PASS** |
 | **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 50 PHP files, 203 sources | 100% clean | **100% PASS** |
 | **Vite Production Bundle** | `npm.cmd run build` | 78 modules | Zero `.map` files | **100% PASS** |
-| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 123 automated units | 123 / 123 | **100% PASS** |
+| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 124 automated units | 124 / 124 | **100% PASS** |
 
