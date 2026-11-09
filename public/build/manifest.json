@@ -1,16 +1,25 @@
 {
+  "node_modules/jquery/dist-module/jquery.module.js": {
+    "file": "assets/jquery.module-Ndjzesc5.js",
+    "name": "jquery.module",
+    "src": "node_modules/jquery/dist-module/jquery.module.js",
+    "isDynamicEntry": true
+  },
   "resources/css/app.css": {
-    "file": "assets/app-bIMP9toz.css",
+    "file": "assets/app-Du0w5DFN.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-BvHxJeSR.js",
+    "file": "assets/app-eZ3wkhme.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
+    "dynamicImports": [
+      "node_modules/jquery/dist-module/jquery.module.js"
+    ],
     "css": [
-      "assets/app-DFrsUYRL.css"
+      "assets/app-BrDYNmeY.css"
     ]
   }
 }

@@ -6,6 +6,7 @@ import ErrorRecoveryBanner from '../components/ErrorRecoveryBanner.vue';
 import StraightLineModal from '../components/StraightLineModal.vue';
 import { useAuthStore } from '../stores/auth.js';
 import { useEvaluationStore } from '../stores/evaluation.js';
+import { showJQueryUiError } from '../utils/jqueryUiNotification.js';
 import {
   CALAMANCY_CONFIG,
   LIKERT_SCALE_OPTIONS,
@@ -91,6 +92,7 @@ function proceedToStep2() {
   if (!allRatingsAnswered.value) {
     const remaining = 25 - answeredCount.value;
     stepValidationMessage.value = `Please rate all 25 pedagogical items across the 5 clusters (${remaining} remaining) before proceeding to written feedback.`;
+    showJQueryUiError(stepValidationMessage.value, 'Incomplete Ratings', 4000);
     scrollToFirstUnanswered();
     return;
   }
@@ -375,6 +377,7 @@ async function performInitialSubmit() {
       code: 'INCOMPLETE_RATINGS',
       message: stepValidationMessage.value,
     };
+    showJQueryUiError(stepValidationMessage.value, 'Incomplete Ratings', 4000);
     scrollToFirstUnanswered();
     return;
   }
@@ -428,6 +431,7 @@ async function executeSubmission(confirmUniform = false) {
     if (response.code === 'NETWORK_ERROR' || response.status === 503) {
       networkFailureDetail.value = response.message || 'Server temporarily unreachable.';
       stepValidationMessage.value = networkFailureDetail.value;
+      showJQueryUiError(networkFailureDetail.value, 'Network Error', 4000);
       return;
     }
     stepValidationMessage.value = response.message || 'Submission was rejected by the server.';
@@ -436,6 +440,7 @@ async function executeSubmission(confirmUniform = false) {
       code: response.code || 'SUBMISSION_REJECTED',
       message: response.message,
     };
+    showJQueryUiError(stepValidationMessage.value, 'Submission Error', 4000);
     return;
   }
 
@@ -562,9 +567,8 @@ function returnToQueue() {
 
 
     <div
-      v-if="statusBanner"
-      class="alert-banner"
-      :class="statusBanner.type === 'success' ? 'alert-success' : 'alert-error'"
+      v-if="statusBanner && statusBanner.type === 'success'"
+      class="alert-banner alert-success"
       role="alert"
       data-testid="submission-status-banner"
     >
@@ -692,8 +696,7 @@ function returnToQueue() {
         <div class="step-navigation-bar" style="margin-top: 1.25rem;">
           <div
             v-if="stepValidationMessage && currentStep === 1"
-            class="alert-banner alert-error"
-            style="margin-bottom: 0.85rem;"
+            class="sr-only"
             data-testid="step-1-validation-error"
           >
             {{ stepValidationMessage }}
@@ -902,8 +905,7 @@ function returnToQueue() {
           <div class="form-submit-footer" style="margin-top: 1.25rem;">
             <div
               v-if="stepValidationMessage && currentStep === 2"
-              class="alert-banner alert-error"
-              style="width: 100%; margin-bottom: 0.85rem;"
+              class="sr-only"
               data-testid="submit-bottom-alert"
             >
               {{ stepValidationMessage }}

@@ -3,6 +3,7 @@ import { computed, createApp, defineComponent, h, onMounted, onUnmounted, ref } 
 import { RouterView, useRoute } from 'vue-router';
 import '../css/app.css';
 import CommandPaletteModal from './components/CommandPaletteModal.vue';
+import JQueryUiNotification from './components/JQueryUiNotification.vue';
 import NavbarHeader from './components/NavbarHeader.vue';
 import QuivrNlpBrainDrawer from './components/QuivrNlpBrainDrawer.vue';
 import ShortcutsCheatsheetModal from './components/ShortcutsCheatsheetModal.vue';
@@ -155,6 +156,7 @@ export const EvaluaTechAppShell = defineComponent({
               showQuivrBrain.value = false;
             },
           }),
+          h(JQueryUiNotification),
         ]);
       }
 
@@ -166,6 +168,7 @@ export const EvaluaTechAppShell = defineComponent({
         h('div', { id: 'main-workspace', class: 'evaluatech-view-container' }, [
           canRenderUnauthenticatedView ? h(RouterView) : null,
         ]),
+        h(JQueryUiNotification),
       ]);
     };
   },

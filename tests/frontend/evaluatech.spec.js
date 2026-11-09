@@ -1103,7 +1103,30 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(errorRecoverySfc.includes('class="ui-hint"'));
       assert.ok(sidebarSfc.includes('pendingCourseCount'));
 
-      // 4. Verify getRoleTierBadge & throttle behavior
+      // 4. jQuery UI Top-Right Error DOM Notification with 4-second timer
+      const jqueryUiNotifySfc = readResourceFile('components/JQueryUiNotification.vue');
+      const jqueryUiUtilSrc = readResourceFile('utils/jqueryUiNotification.js');
+      assert.ok(jqueryUiNotifySfc.includes('data-testid="jquery-ui-error-notification"'));
+      assert.ok(jqueryUiNotifySfc.includes('ui-widget ui-notification-container'));
+      assert.ok(jqueryUiNotifySfc.includes('ui-state-error ui-corner-all'));
+      assert.ok(jqueryUiNotifySfc.includes('ui-icon ui-icon-alert'));
+      assert.ok(jqueryUiNotifySfc.includes('jqueryUiNotificationState.timerDuration'));
+      assert.ok(appCss.includes('.ui-notification-container {'));
+      assert.ok(appCss.includes('.jquery-ui-error-box.ui-state-error {'));
+      assert.ok(evalFormSfc.includes('showJQueryUiError'));
+      assert.ok(jqueryUiUtilSrc.includes('showJQueryUiError'));
+      assert.ok(jqueryUiUtilSrc.includes('dismissJQueryUiError'));
+
+      const jqueryUiUtil = await import('../../resources/js/utils/jqueryUiNotification.js');
+      jqueryUiUtil.showJQueryUiError('Sample validation incomplete alert', 'Incomplete Ratings', 4000);
+      assert.equal(jqueryUiUtil.jqueryUiNotificationState.visible, true);
+      assert.equal(jqueryUiUtil.jqueryUiNotificationState.title, 'Incomplete Ratings');
+      assert.equal(jqueryUiUtil.jqueryUiNotificationState.message, 'Sample validation incomplete alert');
+      assert.equal(jqueryUiUtil.jqueryUiNotificationState.timerDuration, 4000);
+      jqueryUiUtil.dismissJQueryUiError();
+      assert.equal(jqueryUiUtil.jqueryUiNotificationState.visible, false);
+
+      // 5. Verify getRoleTierBadge & throttle behavior
       assert.equal(uxHelpers.getRoleTierBadge('dean').tierCode, 'TIER 1');
       assert.equal(uxHelpers.getRoleTierBadge('chair').tierCode, 'TIER 2');
       assert.equal(uxHelpers.getRoleTierBadge('student').tierCode, 'SET PASS');

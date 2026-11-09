@@ -2004,6 +2004,112 @@ textarea:focus-visible,
 /* =========================================================================
    Bootstrap / jQuery-UI Tooltip Hints & Minimal-Text Utilities
    ========================================================================= */
+.ui-notification-container {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 999999;
+  max-width: 440px;
+  width: calc(100vw - 2.5rem);
+  pointer-events: auto;
+  box-shadow: 0 10px 30px -5px rgba(205, 10, 10, 0.28), 0 4px 12px rgba(0, 0, 0, 0.12);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.jquery-ui-error-box.ui-state-error {
+  border: 1px solid #cd0a0a !important;
+  background: #fef1ec !important;
+  color: #cd0a0a !important;
+  border-radius: 6px;
+  padding: 0.85rem 1rem 0 1rem;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.jquery-ui-content-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.ui-state-error .ui-icon-alert {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  color: #cd0a0a;
+  margin-top: 1px;
+}
+
+.jquery-ui-text-stack {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.jquery-ui-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #cd0a0a;
+  line-height: 1.3;
+}
+
+.jquery-ui-message {
+  font-size: 0.88rem;
+  color: #8c0606;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.jquery-ui-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.35rem;
+  line-height: 1;
+  color: #cd0a0a;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  border-radius: 4px;
+  opacity: 0.75;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+
+.jquery-ui-close-btn:hover {
+  opacity: 1;
+  background-color: rgba(205, 10, 10, 0.1);
+}
+
+.jquery-ui-progress-track {
+  width: calc(100% + 2rem);
+  margin-left: -1rem;
+  margin-right: -1rem;
+  height: 3px;
+  background: rgba(205, 10, 10, 0.15);
+  overflow: hidden;
+}
+
+.jquery-ui-progress-bar {
+  height: 100%;
+  background: #cd0a0a;
+  width: 100%;
+  animation: jqueryUiTimerProgress 4s linear forwards;
+}
+
+@keyframes jqueryUiTimerProgress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
 .ui-hint {
   position: relative;
   display: inline-flex;
