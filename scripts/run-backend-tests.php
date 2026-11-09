@@ -53,7 +53,7 @@ if ($invokedDirectly) {
             echo sprintf("  [PASS] %s::%s\n", $ref->getShortName(), $name);
             $passed++;
         } catch (\Throwable $e) {
-            echo sprintf("  [FAIL] %s::%s -> %s\n", $ref->getShortName(), $name, $e->getMessage());
+            echo sprintf("  [FAIL] %s::%s -> %s\n%s\n", $ref->getShortName(), $name, $e->getMessage(), $e->getTraceAsString());
             $failed++;
         }
     }

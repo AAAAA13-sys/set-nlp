@@ -67,5 +67,15 @@ jobs:
         run: python -m unittest discover -s analytics/tests -p "test_*.py"
 
       - name: Run Backend PHPUnit Verification Suite
-        run: php scripts/run-backend-tests.php
+        run: |
+          php scripts/run-backend-tests.php 2>&1 | tee backend-test-results.txt
+          echo "### Backend PHPUnit Results" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat backend-test-results.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          if grep -q "0 failed" backend-test-results.txt; then
+            exit 0
+          else
+            exit 1
+          fi
 
