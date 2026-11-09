@@ -483,6 +483,29 @@ function returnToQueue() {
     <!-- Removed enrolled-subjects-switcher per user request -->
 
     <section class="card eval-header-card">
+      <div class="eval-top-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line-soft);">
+        <button
+          type="button"
+          class="btn-secondary btn-sm"
+          data-testid="top-back-to-courses-btn"
+          @click="returnToQueue"
+        >
+          ← Back to My Courses
+        </button>
+
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <button
+            type="button"
+            class="fullscreen-toggle-btn"
+            :title="isFullscreen ? 'Exit Fullscreen' : 'Enter Focused Fullscreen'"
+            @click="toggleFullscreen"
+          >
+            <span aria-hidden="true">{{ isFullscreen ? '🗗' : '⛶' }}</span>
+            <span>{{ isFullscreen ? 'Exit Fullscreen' : 'Focused Fullscreen' }}</span>
+          </button>
+        </div>
+      </div>
+
       <div class="eval-course-banner">
         <div>
           <span class="eyebrow-badge">COURSE EVALUATION</span>
@@ -497,13 +520,13 @@ function returnToQueue() {
             </span>
             · Term: {{ evaluationStore.evaluationWindow?.term_name || '1st Semester AY 2026-2027' }}
           </p>
-          <div class="eval-meta-deadline" style="font-size: 0.8rem; color: #4b5563; margin-top: 0.25rem;">
+          <div class="eval-meta-deadline" style="font-size: 0.82rem; color: #4b5563; margin-top: 0.25rem;">
             <span>Submission Deadline: <strong>{{ formattedDeadline }}</strong></span>
           </div>
         </div>
 
         <div class="eval-header-tools">
-          <div class="autosave-pill tabular-nums" data-testid="draft-autosave-badge">
+          <div v-show="false" class="autosave-pill tabular-nums" data-testid="draft-autosave-badge">
             <span class="autosave-dot" aria-hidden="true"></span>
             <span>{{ draftSavedLabel }}</span>
             <button
@@ -516,16 +539,6 @@ function returnToQueue() {
               Clear
             </button>
           </div>
-
-          <button
-            type="button"
-            class="fullscreen-toggle-btn"
-            :title="isFullscreen ? 'Exit Fullscreen' : 'Enter Focused Fullscreen'"
-            @click="toggleFullscreen"
-          >
-            <span aria-hidden="true">{{ isFullscreen ? '🗗' : '⛶' }}</span>
-            <span>{{ isFullscreen ? 'Exit Fullscreen' : 'Focused Fullscreen' }}</span>
-          </button>
 
           <div v-show="false" class="idempotency-box">
             <span class="token-label">FT-02 Submission Key:</span>

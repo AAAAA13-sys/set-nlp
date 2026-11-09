@@ -38,6 +38,12 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install Composer Dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Install Python Dependencies
+        run: pip install -r analytics/requirements.txt
+
       - name: Install Frontend Dependencies (deterministic lockfile)
         run: npm ci --ignore-scripts=false
 
@@ -56,5 +62,5 @@ jobs:
         run: python -m unittest discover -s analytics/tests -p "test_*.py"
 
       - name: Run Backend PHPUnit Verification Suite
-        run: php vendor/bin/phpunit
+        run: php scripts/run-backend-tests.php
 
