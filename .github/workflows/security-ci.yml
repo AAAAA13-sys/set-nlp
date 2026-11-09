@@ -24,7 +24,7 @@ jobs:
         uses: shivammathur/setup-php@9e72090525849c5e82e596468b86eb55e9cc5401 # v2.32.0
         with:
           php-version: '8.2'
-          extensions: pdo, pdo_sqlite, mbstring, json, curl, openssl, tokenizer, xml, ctype, fileinfo
+          extensions: pdo, pdo_sqlite, sqlite3, mbstring, json, curl, openssl, tokenizer, xml, ctype, fileinfo
           coverage: none
 
       - name: Setup Node.js 20
@@ -68,14 +68,21 @@ jobs:
 
       - name: Run Backend PHPUnit Verification Suite
         run: |
-          php scripts/run-backend-tests.php 2>&1 | tee backend-test-results.txt
+          set +e
+          php scripts/run-backend-tests.php > backend-test-results.txt 2>&1
+          TEST_EXIT_CODE=$?
+          set -e
+          cat backend-test-results.txt
           echo "### Backend PHPUnit Results" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           cat backend-test-results.txt >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
-          if grep -q "0 failed" backend-test-results.txt; then
-            exit 0
-          else
-            exit 1
+          FAIL_SUMMARY=$(grep "FAIL" backend-test-results.txt | head -n 5 | tr '\n' ' | ')
+          if [ -z "$FAIL_SUMMARY" ]; then
+            FAIL_SUMMARY=$(head -n 10 backend-test-results.txt | tr '\n' ' | ')
+          fi
+          if [ $TEST_EXIT_CODE -ne 0 ]; then
+            echo "::error file=scripts/run-backend-tests.php,title=PHPUnitTestFailure::$FAIL_SUMMARY"
+            exit $TEST_EXIT_CODE
           fi
 

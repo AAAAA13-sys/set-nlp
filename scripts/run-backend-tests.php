@@ -12,8 +12,9 @@ require_once $rootDir . '/tests/TestCase.php';
 require_once $rootDir . '/tests/Feature/EvaluaTechBackendSuiteTest.php';
 
 // Only run the CLI test harness when invoked directly as the main script
-$invokedDirectly = isset($_SERVER['SCRIPT_FILENAME'])
-    && realpath((string) $_SERVER['SCRIPT_FILENAME']) === realpath(__FILE__);
+$invokedDirectly = PHP_SAPI === 'cli' || (
+    isset($_SERVER['SCRIPT_FILENAME']) && realpath((string) $_SERVER['SCRIPT_FILENAME']) === realpath(__FILE__)
+);
 
 if ($invokedDirectly) {
     $filter = null;
