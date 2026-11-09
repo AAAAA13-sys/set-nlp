@@ -1394,4 +1394,24 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(adminRosterSfc.includes('closeAdminSectionReport'), 'Close admin section report function');
     });
   });
+
+  describe('Group 47: System User Accounts & Staff Directory in Academic Setup', () => {
+    it('verifies Academic Setup system user accounts tab, role filter, and store integration', () => {
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+      const setupStoreSrc = readResourceFile('stores/academicSetup.js');
+
+      // 1. System Accounts Tab & Table (AdminSetupView.vue, inspired by admin/user_list.php)
+      assert.ok(setupViewSfc.includes('data-testid="tab-users-btn"'), 'System users directory tab button');
+      assert.ok(setupViewSfc.includes('data-testid="pane-users"'), 'System users directory tab pane');
+      assert.ok(setupViewSfc.includes('data-testid="users-search-input"'), 'Users search input');
+      assert.ok(setupViewSfc.includes('data-testid="users-role-filter-select"'), 'Users role filter select');
+      assert.ok(setupViewSfc.includes('data-testid="system-users-table"'), 'System users directory table');
+      assert.ok(setupViewSfc.includes('user-role-badge-'), 'User role badge in table');
+      assert.ok(setupViewSfc.includes('filteredSystemUsers'), 'Computed filtered system users');
+
+      // 2. Academic Setup Pinia Store System Users Integration
+      assert.ok(setupStoreSrc.includes('systemUsers'), 'Academic setup store exposes systemUsers');
+      assert.ok(setupStoreSrc.includes('overview.value.system_users'), 'Computed system users from overview');
+    });
+  });
 });

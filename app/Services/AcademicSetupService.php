@@ -297,7 +297,49 @@ class AcademicSetupService
             ];
         }
 
-        // 8. Readiness analysis & actionable validation warnings
+        // 8. Fetch all institutional system users (Inspired by admin/user_list.php)
+        $userStmt = $this->pdo->query("
+            SELECT
+                u.id,
+                u.institutional_id,
+                u.name,
+                u.email,
+                u.role,
+                u.department_id,
+                u.is_active,
+                d.code AS department_code,
+                d.name AS department_name
+            FROM users u
+            LEFT JOIN departments d ON d.id = u.department_id
+            ORDER BY
+                CASE u.role
+                    WHEN 'admin' THEN 1
+                    WHEN 'dean' THEN 2
+                    WHEN 'chair' THEN 3
+                    WHEN 'faculty' THEN 4
+                    WHEN 'student' THEN 5
+                    ELSE 6
+                END,
+                u.name ASC
+        ");
+        $rawUsers = $userStmt ? $userStmt->fetchAll(PDO::FETCH_ASSOC) : [];
+        $systemUsers = [];
+        foreach ($rawUsers as $u) {
+            $systemUsers[] = [
+                'id' => (int) $u['id'],
+                'institutional_id' => (string) ($u['institutional_id'] ?? ''),
+                'name' => (string) $u['name'],
+                'email' => (string) $u['email'],
+                'role' => (string) $u['role'],
+                'department_id' => $u['department_id'] !== null ? (int) $u['department_id'] : null,
+                'department_code' => (string) ($u['department_code'] ?? 'CCS'),
+                'department_name' => (string) ($u['department_name'] ?? 'College of Computer Studies'),
+                'is_active' => (bool) $u['is_active'],
+                'created_at' => (string) ($u['created_at'] ?? '2026-01-01'),
+            ];
+        }
+
+        // 9. Readiness analysis & actionable validation warnings
         $validationWarnings = [];
         $totalSectionsCount = count($sections);
 
@@ -341,6 +383,7 @@ class AcademicSetupService
             'courses' => $courses,
             'faculty' => $faculty,
             'students' => $students,
+            'system_users' => $systemUsers,
             'sections' => $sections,
             'readiness_summary' => $readinessSummary,
             'window_config' => $windowConfig,
