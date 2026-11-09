@@ -1217,9 +1217,14 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('data-testid="readiness-chip"'));
       assert.ok(setupViewSfc.includes('data-testid="tab-assignments-btn"'));
       assert.ok(setupViewSfc.includes('data-testid="tab-terms-btn"'));
+      assert.ok(setupViewSfc.includes('data-testid="tab-courses-btn"'));
       assert.ok(setupViewSfc.includes('data-testid="tab-questionnaire-btn"'));
       assert.ok(setupViewSfc.includes('data-testid="sections-table"'));
       assert.ok(setupViewSfc.includes('data-testid="terms-table"'));
+      assert.ok(setupViewSfc.includes('data-testid="courses-table"'));
+      assert.ok(setupViewSfc.includes('data-testid="pane-courses"'));
+      assert.ok(setupViewSfc.includes('data-testid="catalog-new-course-btn"'));
+      assert.ok(setupViewSfc.includes('openNewSectionModalForCourse'));
       assert.ok(setupViewSfc.includes('data-testid="pane-questionnaire"'));
       assert.ok(setupViewSfc.includes('data-testid="new-term-modal"'));
       assert.ok(setupViewSfc.includes('data-testid="new-section-modal"'));

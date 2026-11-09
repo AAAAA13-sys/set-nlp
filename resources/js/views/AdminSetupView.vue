@@ -190,6 +190,16 @@ function openNewSectionModal() {
   showNewSectionModal.value = true;
 }
 
+function openNewSectionModalForCourse(c) {
+  sectionForm.value = {
+    course_id: c.id,
+    section_code: '',
+    faculty_id: '',
+    enrolled_count: 35,
+  };
+  showNewSectionModal.value = true;
+}
+
 async function submitNewSection() {
   if (!sectionForm.value.course_id || !sectionForm.value.section_code) {
     flashError('Course offering and Section Code are required.');
@@ -454,6 +464,20 @@ async function executeDeleteSection() {
             <line x1="3" y1="10" x2="21" y2="10"></line>
           </svg>
           <span>Academic Terms ({{ setupStore.terms.length }})</span>
+        </button>
+
+        <button
+          type="button"
+          class="setup-tab-btn"
+          :class="{ active: activeTab === 'courses' }"
+          data-testid="tab-courses-btn"
+          @click="activeTab = 'courses'"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <span>Course Catalog ({{ setupStore.courses.length }})</span>
         </button>
 
         <button
@@ -740,7 +764,74 @@ async function executeDeleteSection() {
       </div>
     </section>
 
-    <!-- TAB 3: QUESTIONNAIRE PREVIEW (Inspired by questionnaire.php) -->
+    <!-- TAB 3: COURSE CATALOG (Inspired by subject_list.php) -->
+    <section v-if="activeTab === 'courses'" class="tab-pane" data-testid="pane-courses">
+      <div class="pane-controls-bar">
+        <div class="pane-description">
+          <p>
+            University course offerings, academic departments, and credit unit weights.
+          </p>
+        </div>
+        <button
+          type="button"
+          class="btn-primary"
+          data-testid="catalog-new-course-btn"
+          @click="openNewCourseModal"
+        >
+          + New Course Offering
+        </button>
+      </div>
+
+      <div class="table-responsive-wrapper">
+        <table class="setup-data-table" data-testid="courses-table">
+          <thead>
+            <tr>
+              <th scope="col">Code</th>
+              <th scope="col">Course Title</th>
+              <th scope="col">Academic Department</th>
+              <th scope="col" class="text-center">Units</th>
+              <th scope="col" class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="c in setupStore.courses"
+              :key="c.id"
+              :data-testid="`course-row-${c.id}`"
+            >
+              <td>
+                <strong class="font-mono text-emerald">{{ c.code }}</strong>
+              </td>
+              <td>{{ c.title }}</td>
+              <td>
+                <span class="dept-badge">{{ c.department_code || 'CCS' }}</span>
+                <span style="font-size: 0.82rem; color: #6b7280; margin-left: 0.4rem;">{{ c.department_name }}</span>
+              </td>
+              <td class="text-center">
+                <span class="enrolled-badge">{{ c.units }} Units</span>
+              </td>
+              <td class="text-right">
+                <button
+                  type="button"
+                  class="btn-secondary-sm"
+                  :data-testid="`add-section-for-course-btn-${c.id}`"
+                  @click="openNewSectionModalForCourse(c)"
+                >
+                  + Add Section
+                </button>
+              </td>
+            </tr>
+            <tr v-if="setupStore.courses.length === 0">
+              <td colspan="5" class="empty-state-cell">
+                No course offerings cataloged.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 4: QUESTIONNAIRE PREVIEW (Inspired by questionnaire.php) -->
     <section v-if="activeTab === 'questionnaire'" class="tab-pane" data-testid="pane-questionnaire">
       <div class="questionnaire-header-banner">
         <div class="questionnaire-badge-row">
