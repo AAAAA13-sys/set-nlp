@@ -98,7 +98,7 @@ async function handleLogout() {
 
       <div class="sch-topbar-right">
         <button
-          v-if="showAuthenticatedBar"
+          v-if="showAuthenticatedBar && authStore.currentRole !== 'student'"
           type="button"
           class="sch-cmdk-trigger"
           data-testid="navbar-cmdk-btn"

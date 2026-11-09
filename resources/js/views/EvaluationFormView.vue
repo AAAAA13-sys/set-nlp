@@ -1,9 +1,11 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import ClearancePermitCard from '../components/ClearancePermitCard.vue';
 import DestructiveConfirmModal from '../components/DestructiveConfirmModal.vue';
 import ErrorRecoveryBanner from '../components/ErrorRecoveryBanner.vue';
 import StraightLineModal from '../components/StraightLineModal.vue';
+import { useAuthStore } from '../stores/auth.js';
 import { useEvaluationStore } from '../stores/evaluation.js';
 import {
   CALAMANCY_CONFIG,
@@ -26,6 +28,7 @@ import {
 
 const route = useRoute();
 const router = useRouter();
+const authStore = useAuthStore();
 const evaluationStore = useEvaluationStore();
 
 // Genuine blank student inputs across 5 clusters x 5 items = 25 items (1..5 Likert scale)
@@ -70,6 +73,46 @@ let hydratingDraft = false;
 const activeSectionId = computed(
   () => evaluationStore.activeCourse?.course_section_id || Number(route?.params?.courseSectionId) || null,
 );
+
+const courses = computed(() => evaluationStore.courses || []);
+const progress = computed(() => evaluationStore.queueProgress);
+const isCurrentCourseCompleted = computed(() => evaluationStore.activeCourse?.status === 'COMPLETED');
+
+const nextPendingCourse = computed(() => {
+  const currentId = activeSectionId.value;
+  return (evaluationStore.courses || []).find(
+    (c) => c.status === 'PENDING' && Number(c.course_section_id) !== Number(currentId),
+  );
+});
+
+async function switchCourseSection(sectionId) {
+  const targetId = Number(sectionId);
+  if (!targetId || targetId === activeSectionId.value) return;
+  if (activeSectionId.value) {
+    saveSurveyDraft(
+      activeSectionId.value,
+      {
+        ratings: ratings.value,
+        commentText: commentText.value,
+        threeWords: threeWords.value,
+        improvementTopics: improvementTopics.value,
+        teachingStrengths: teachingStrengths.value,
+        courseRecommendations: courseRecommendations.value,
+        showFifthQuestion: showFifthQuestion.value,
+        additionalObservation: additionalObservation.value,
+      },
+      authStore.user?.id,
+    );
+  }
+  resetBlankForm();
+  if (router) {
+    router.push(`/evaluate/${targetId}`).catch(() => {});
+  } else {
+    await evaluationStore.selectCourseForEvaluation(targetId);
+    hydrateSectionDraft(targetId);
+    formOpenedAt.value = Date.now();
+  }
+}
 
 function resetBlankForm() {
   ratings.value = Array(25).fill(null);
@@ -151,10 +194,18 @@ function confirmDiscardDraft() {
 
 onMounted(async () => {
   await evaluationStore.fetchEvaluationWindow();
+  if (!evaluationStore.courses || evaluationStore.courses.length === 0) {
+    await evaluationStore.fetchQueue();
+  }
   const sectionParam = Number(route?.params?.courseSectionId);
-  await evaluationStore.selectCourseForEvaluation(
-    Number.isFinite(sectionParam) && sectionParam > 0 ? sectionParam : null,
-  );
+  const targetId =
+    Number.isFinite(sectionParam) && sectionParam > 0
+      ? sectionParam
+      : evaluationStore.courses.find((c) => c.status === 'PENDING')?.course_section_id ||
+        evaluationStore.courses[0]?.course_section_id ||
+        null;
+
+  await evaluationStore.selectCourseForEvaluation(targetId);
   hydrateSectionDraft(activeSectionId.value);
   formOpenedAt.value = Date.now();
 });
@@ -276,7 +327,7 @@ async function executeSubmission(confirmUniform = false) {
   networkFailureDetail.value = '';
   const elapsed = Math.max(0, Math.floor((Date.now() - formOpenedAt.value) / 1000));
   const response = await evaluationStore.submitEvaluation({
-    courseSectionId: evaluationStore.activeCourse?.course_section_id,
+    courseSectionId: activeSectionId.value || evaluationStore.activeCourse?.course_section_id,
     ratings: ratings.value,
     commentText: commentText.value,
     professorQuestions: {
@@ -342,6 +393,61 @@ function returnToQueue() {
       @retry="executeSubmission(straightLined)"
       @dismiss="networkFailureDetail = ''"
     />
+
+    <!-- Unified Enrolled Course & Professor Switcher Bar -->
+    <nav
+      v-if="courses.length > 0"
+      class="card enrolled-subjects-bar"
+      aria-label="Enrolled Courses Switcher"
+      data-testid="enrolled-subjects-switcher"
+    >
+      <div class="subjects-bar-header">
+        <div class="subjects-bar-title-group">
+          <span class="eyebrow-badge">ENROLLED COURSES</span>
+          <h2 class="subjects-bar-title">Select Professor to Evaluate</h2>
+        </div>
+        <div class="subjects-bar-progress-pill tabular-nums">
+          <span>Progress: <strong>{{ progress.completed }} of {{ progress.total }} Completed</strong> ({{ progress.percentage }}%)</span>
+          <span
+            class="progress-status-chip"
+            :class="progress.allCleared ? 'is-cleared' : 'is-pending'"
+          >
+            {{ progress.allCleared ? 'PERMIT UNLOCKED' : 'PERMIT PENDING' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="subjects-pill-list" role="tablist" aria-label="Course Sections">
+        <button
+          v-for="course in courses"
+          :key="course.course_section_id"
+          type="button"
+          role="tab"
+          :aria-selected="Number(course.course_section_id) === Number(activeSectionId)"
+          class="subject-tab-pill"
+          :class="{
+            'is-active': Number(course.course_section_id) === Number(activeSectionId),
+            'is-completed': course.status === 'COMPLETED',
+            'is-pending': course.status === 'PENDING',
+          }"
+          :data-testid="`subject-tab-${course.course_code}`"
+          @click="switchCourseSection(course.course_section_id)"
+        >
+          <span class="subject-status-icon" aria-hidden="true">
+            <svg v-if="course.status === 'COMPLETED'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span v-else class="pending-dot"></span>
+          </span>
+          <span class="subject-code">{{ course.course_code }}</span>
+          <span class="subject-sep">·</span>
+          <span class="subject-instructor">{{ course.instructor_name }}</span>
+          <span class="subject-badge">
+            {{ course.status === 'COMPLETED' ? 'Done' : (Number(course.course_section_id) === Number(activeSectionId) ? 'Evaluating' : 'Pending') }}
+          </span>
+        </button>
+      </div>
+    </nav>
 
     <section class="card eval-header-card">
       <div class="eval-course-banner">
@@ -441,10 +547,19 @@ function returnToQueue() {
           <code class="clearance-token-code" data-testid="issued-clearance-token">{{ statusBanner.token }}</code>
         </div>
       </div>
-      <div v-if="statusBanner.type === 'success'">
+      <div v-if="statusBanner.type === 'success'" class="submission-success-actions">
         <button
+          v-if="nextPendingCourse"
           type="button"
           class="btn-primary btn-sm"
+          data-testid="proceed-next-professor-btn"
+          @click="switchCourseSection(nextPendingCourse.course_section_id)"
+        >
+          Proceed to Next Professor ({{ nextPendingCourse.course_code }} — {{ nextPendingCourse.instructor_name }}) →
+        </button>
+        <button
+          type="button"
+          class="btn-secondary btn-sm"
           data-testid="return-queue-success-btn"
           @click="returnToQueue"
         >
@@ -453,7 +568,43 @@ function returnToQueue() {
       </div>
     </div>
 
-    <form class="evaluation-survey-form" @submit.prevent="handleInitialSubmit">
+    <!-- Already Completed State Card -->
+    <section
+      v-if="isCurrentCourseCompleted && !statusBanner"
+      class="card course-already-completed-card"
+      data-testid="course-already-completed"
+    >
+      <div class="completion-icon-badge" aria-hidden="true">✓</div>
+      <h3 class="section-title">
+        Evaluation Completed for {{ evaluationStore.activeCourse?.course_code }}
+      </h3>
+      <p class="section-subtitle">
+        Your evaluation for <strong>{{ evaluationStore.activeCourse?.instructor_name }}</strong> has been recorded and cryptographically decoupled.
+      </p>
+      <div v-if="evaluationStore.activeCourse?.clearance_token" class="clearance-token-strip">
+        <span>Clearance Token:</span>
+        <code class="clearance-token-code">{{ evaluationStore.activeCourse.clearance_token }}</code>
+      </div>
+      <div class="completion-actions">
+        <button
+          v-if="nextPendingCourse"
+          type="button"
+          class="btn-primary"
+          @click="switchCourseSection(nextPendingCourse.course_section_id)"
+        >
+          Evaluate Next Professor ({{ nextPendingCourse.course_code }} — {{ nextPendingCourse.instructor_name }}) →
+        </button>
+        <button
+          type="button"
+          class="btn-secondary"
+          @click="returnToQueue"
+        >
+          View All Courses
+        </button>
+      </div>
+    </section>
+
+    <form v-if="!isCurrentCourseCompleted" class="evaluation-survey-form" @submit.prevent="handleInitialSubmit">
       <!-- Part I: 5 Clusters of 5-Point Likert Scale Questionnaire -->
       <section
         v-for="dimension in PEDAGOGICAL_DIMENSIONS"
@@ -701,6 +852,17 @@ function returnToQueue() {
       </section>
     </form>
 
+    <!-- Master Examination Permit when 100% Cleared -->
+    <div v-if="progress.allCleared" style="margin-top: 1.25rem;">
+      <ClearancePermitCard
+        :student-id="authStore.user?.institutional_id || '2024-10892'"
+        :student-name="authStore.user?.name || authStore.user?.full_name || 'Student'"
+        :active-term="evaluationStore.evaluationWindow?.term_name || authStore.activeTerm || '1st Semester AY 2026-2027'"
+        :exam-permit-token="evaluationStore.examPermitToken"
+        :courses="evaluationStore.courses"
+      />
+    </div>
+
     <StraightLineModal
       :visible="showStraightLineModal"
       :uniform-rating="ratings[0] || 5"
@@ -784,5 +946,218 @@ function returnToQueue() {
   .eval-header-tools {
     align-items: flex-start;
   }
+}
+
+.enrolled-subjects-bar {
+  margin-bottom: 1rem;
+  padding: 0.85rem 1.15rem;
+  background: #ffffff;
+  border: 1px solid #dce7dc;
+  border-radius: 12px;
+}
+
+.subjects-bar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid #edf2ed;
+}
+
+.subjects-bar-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.subjects-bar-title {
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: #103c2e;
+  margin: 0;
+}
+
+.subjects-bar-progress-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.78rem;
+  color: #374151;
+}
+
+.progress-status-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.12rem 0.45rem;
+  border-radius: 4px;
+}
+
+.progress-status-chip.is-cleared {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.progress-status-chip.is-pending {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.subjects-pill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.subject-tab-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #dce7dc;
+  background: #ffffff;
+  color: #374151;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.subject-tab-pill:hover {
+  background: #f8faf7;
+  border-color: #103c2e;
+}
+
+.subject-tab-pill.is-active {
+  background: #103c2e;
+  color: #ffffff;
+  border-color: #103c2e;
+  font-weight: 700;
+}
+
+.subject-tab-pill.is-completed {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #166534;
+}
+
+.subject-tab-pill.is-active.is-completed {
+  background: #103c2e;
+  color: #ffffff;
+  border-color: #103c2e;
+}
+
+.subject-status-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pending-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #eab308;
+}
+
+.subject-tab-pill.is-active .pending-dot {
+  background: #f4cd42;
+}
+
+.subject-code {
+  font-weight: 800;
+}
+
+.subject-sep {
+  opacity: 0.5;
+}
+
+.subject-instructor {
+  font-size: 0.78rem;
+  opacity: 0.9;
+}
+
+.subject-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.subject-tab-pill.is-active .subject-badge {
+  background: #f4cd42;
+  color: #103c2e;
+}
+
+.subject-tab-pill.is-completed .subject-badge {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.subject-tab-pill.is-active.is-completed .subject-badge {
+  background: #f4cd42;
+  color: #103c2e;
+}
+
+.submission-success-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+.course-already-completed-card {
+  text-align: center;
+  padding: 2.25rem 1.5rem;
+  margin-top: 1rem;
+  background: #ffffff;
+  border: 1px solid #dce7dc;
+  border-radius: 12px;
+}
+
+.completion-icon-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #047857;
+  font-size: 1.4rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.85rem;
+}
+
+.clearance-token-strip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.85rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  margin: 0.75rem 0 1.35rem;
+  font-size: 0.82rem;
+  color: #166534;
+}
+
+.completion-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 </style>

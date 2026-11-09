@@ -99,13 +99,15 @@ const primaryLinks = computed(() => {
     });
   }
 
-  items.push({
-    to: '/advocacy',
-    label: 'Exam Permit & Share',
-    icon: 'share',
-    testId: 'sidebar-link-advocacy',
-    matchPrefix: '/advocacy',
-  });
+  if (role !== 'student') {
+    items.push({
+      to: '/advocacy',
+      label: 'Exam Permit & Share',
+      icon: 'share',
+      testId: 'sidebar-link-advocacy',
+      matchPrefix: '/advocacy',
+    });
+  }
 
   return items;
 });
@@ -246,7 +248,7 @@ async function handleSignOut() {
         </router-link>
       </nav>
 
-      <div class="sidebar-nav-section sidebar-tools-section">
+      <div v-if="currentRole !== 'student'" class="sidebar-nav-section sidebar-tools-section">
         <span v-if="!collapsed" class="sidebar-section-heading">QUICK TOOLS</span>
 
         <button
