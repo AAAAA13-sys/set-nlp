@@ -394,13 +394,15 @@ namespace Tests {
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     academic_term_id INTEGER NOT NULL UNIQUE REFERENCES academic_terms(id) ON DELETE CASCADE,
                     status TEXT NOT NULL DEFAULT 'OPEN' CHECK(status IN ('OPEN', 'SUSPENDED', 'CLOSED')),
-                    min_dwell_seconds INTEGER NOT NULL DEFAULT 45,
+                    min_dwell_seconds INTEGER NOT NULL DEFAULT 0,
                     straight_line_variance_threshold REAL NOT NULL DEFAULT 0.0,
                     watchlist_mean_threshold REAL NOT NULL DEFAULT 3.50,
                     watchlist_negative_sentiment_pct REAL NOT NULL DEFAULT 35.0,
                     announcement_message TEXT NULL,
                     starts_at TEXT NULL,
                     ends_at TEXT NULL,
+                    timezone TEXT NOT NULL DEFAULT 'Asia/Manila',
+                    last_window_action TEXT NOT NULL DEFAULT 'OPEN',
                     updated_by_user_id INTEGER NULL REFERENCES users(id) ON DELETE SET NULL,
                     created_at TEXT NOT NULL,
                     updated_at TEXT NOT NULL
@@ -421,10 +423,12 @@ namespace Tests {
                 INSERT INTO evaluation_window_configs (
                     academic_term_id, status, min_dwell_seconds, straight_line_variance_threshold,
                     watchlist_mean_threshold, watchlist_negative_sentiment_pct, announcement_message,
+                    starts_at, ends_at, timezone, last_window_action,
                     created_at, updated_at
                 ) VALUES (
-                    1, 'OPEN', 45, 0.0, 3.50, 35.0,
+                    1, 'OPEN', 0, 0.0, 3.50, 35.0,
                     'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active.',
+                    '2026-01-01 08:00:00', '2026-12-31 23:59:59', 'Asia/Manila', 'OPEN',
                     datetime('now'), datetime('now')
                 );
             ");

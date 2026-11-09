@@ -265,12 +265,12 @@ class EvaluaTechBackendSuiteTest extends TestCase
                 return ['status' => 403, 'code' => 'NOT_ENROLLED_IN_SECTION'];
             }
 
-            // 2. Speed-Run Guard (< 45s rejected for >= 20 items)
-            if (count($ratings) >= 20 && $dwellSeconds < 45) {
+            // 2. Mandatory Timing Policy: Negative answering duration rejected (< 0s)
+            if ($dwellSeconds < 0) {
                 $this->pdo->rollBack();
                 return [
                     'status' => 422,
-                    'code' => 'SPEED_RUN_DETECTED',
+                    'code' => 'INVALID_ELAPSED_DURATION',
                     'dwell_time_seconds' => $dwellSeconds,
                 ];
             }
@@ -628,7 +628,7 @@ class EvaluaTechBackendSuiteTest extends TestCase
     }
 
     /**
-     * Test 07: HMAC-SHA256 signed server start token detects client timer spoofing and tampering.
+     * Test 07: HMAC-SHA256 signed server start token verifies token integrity and rejects tampering.
      */
     public function test_07_hmac_signed_server_start_token_and_tamper_detection(): void
     {
@@ -636,24 +636,24 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $submittedOnly12SecondsLater = $openedAt + 12;
         $validStartToken = $this->issueSignedStartToken(11, 1, $openedAt);
 
-        // Client spoofs dwell_time_seconds = 120, but server start token proves only 12 seconds elapsed
-        $spoofedAttempt = $this->executeAtomicEvaluationSubmission([
+        // Valid start token with immediate submission (12 seconds) is accepted immediately under Mandatory Timing Policy
+        $immediateAttempt = $this->executeAtomicEvaluationSubmission([
             'student_id' => 11,
             'course_section_id' => 1,
-            'submission_key' => 'FT02-SPOOFED-DWELL-01',
+            'submission_key' => 'FT02-VALID-START-01',
             'ratings' => [5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4],
-            'dwell_time_seconds' => 120,
+            'dwell_time_seconds' => 12,
             'start_token' => $validStartToken,
             'now_unix' => $submittedOnly12SecondsLater,
         ]);
-        $this->assertSame(422, $spoofedAttempt['status']);
-        $this->assertSame('SPEED_RUN_DETECTED', $spoofedAttempt['code']);
+        $this->assertSame(201, $immediateAttempt['status']);
+        $this->assertSame('EVALUATION_CLEARED', $immediateAttempt['code']);
 
         // Forged signature must be rejected with INVALID_START_TOKEN
         $tamperedToken = $validStartToken . 'forged';
         $tamperedAttempt = $this->executeAtomicEvaluationSubmission([
             'student_id' => 11,
-            'course_section_id' => 1,
+            'course_section_id' => 2,
             'submission_key' => 'FT02-TAMPERED-TOKEN-01',
             'ratings' => [5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4, 5, 4],
             'dwell_time_seconds' => 90,
@@ -665,30 +665,48 @@ class EvaluaTechBackendSuiteTest extends TestCase
     }
 
     /**
-     * Test 08: Speed-Run Guard rejects all 150 simulated sub-45-second submissions (100% accuracy benchmark).
+     * Test 08: Mandatory Timing Policy accepts all 150 simulated submissions immediately without artificial waiting delays.
      */
-    public function test_08_speed_run_guard_rejects_all_150_simulated_sub_45s_submissions(): void
+    public function test_08_mandatory_timing_policy_accepts_all_150_immediate_submissions(): void
     {
-        $rejectedCount = 0;
+        $stmtInsertStudent = $this->pdo->prepare("
+            INSERT INTO users (id, institutional_id, name, email, password_hash, role, department_id)
+            VALUES (:id, :inst, :name, :email, 'hash', 'student', 1)
+        ");
+        $stmtEnroll = $this->pdo->prepare("
+            INSERT INTO enrollments (student_id, course_section_id, academic_term_id)
+            VALUES (:student_id, 3, 1)
+        ");
+
+        $acceptedCount = 0;
         $variedRatings = [5, 4, 5, 4, 3, 5, 4, 5, 4, 3, 5, 4, 5, 4, 3, 5, 4, 5, 4, 3];
 
         for ($i = 1; $i <= 150; $i++) {
-            $dwell = ($i % 44) + 1; // 1..44 seconds (strictly < 45s)
+            $simStudentId = 500 + $i;
+            $stmtInsertStudent->execute([
+                ':id' => $simStudentId,
+                ':inst' => sprintf('2026-IMM-%04d', $i),
+                ':name' => "Immediate Student {$i}",
+                ':email' => "imm{$i}@evaluatech.edu",
+            ]);
+            $stmtEnroll->execute([':student_id' => $simStudentId]);
+
+            $dwell = ($i % 44); // 0..43 seconds (all accepted immediately whenever student is ready)
             $res = $this->executeAtomicEvaluationSubmission([
-                'student_id' => 11,
-                'course_section_id' => 1,
-                'submission_key' => "FT02-SPEEDRUN-SIM-{$i}",
+                'student_id' => $simStudentId,
+                'course_section_id' => 3,
+                'submission_key' => "FT02-IMMEDIATE-SIM-{$i}",
                 'ratings' => $variedRatings,
                 'dwell_time_seconds' => $dwell,
             ]);
-            if ($res['status'] === 422 && $res['code'] === 'SPEED_RUN_DETECTED') {
-                $rejectedCount++;
+            if ($res['status'] === 201 && $res['code'] === 'EVALUATION_CLEARED') {
+                $acceptedCount++;
             }
         }
 
-        $this->assertSame(150, $rejectedCount);
-        $vaultCount = (int) $this->pdo->query("SELECT COUNT(*) FROM evaluation_vault")->fetchColumn();
-        $this->assertSame(0, $vaultCount);
+        $this->assertSame(150, $acceptedCount);
+        $vaultCount = (int) $this->pdo->query("SELECT COUNT(*) FROM evaluation_vault WHERE course_section_id = 3")->fetchColumn();
+        $this->assertSame(150, $vaultCount);
     }
 
     /**
@@ -1418,12 +1436,16 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $service = new \App\Services\DecoupledEvaluationService($this->pdo, null, new \App\Services\AnalyticsClientService(null, 1.5, true));
         $adminController = new \App\Http\Controllers\Api\AdminRosterController(null, $service);
 
-        // 1. Initial State: Window is OPEN for Academic Term 1
+        // 1. Initial State: Window is OPEN for Academic Term 1 with zero minimum waiting requirement
         $initialWindow = $service->getEvaluationWindow(1);
         $this->assertSame(1, $initialWindow['academic_term_id']);
         $this->assertSame('OPEN', $initialWindow['status']);
         $this->assertTrue($initialWindow['evaluation_open']);
-        $this->assertSame(45, $initialWindow['min_dwell_seconds']);
+        $this->assertSame(0, $initialWindow['min_dwell_seconds']);
+        $this->assertSame('Asia/Manila', $initialWindow['timezone']);
+        $this->assertArrayHasKey('starts_at', $initialWindow);
+        $this->assertArrayHasKey('ends_at', $initialWindow);
+        $this->assertArrayHasKey('participation_summary', $initialWindow);
         $this->assertEqualsWithDelta(0.0, $initialWindow['straight_line_variance_threshold'], 0.001);
         $this->assertEqualsWithDelta(3.50, $initialWindow['watchlist_mean_threshold'], 0.001);
         $this->assertEqualsWithDelta(35.0, $initialWindow['watchlist_negative_sentiment_pct'], 0.001);
@@ -1436,13 +1458,14 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $getData = $getResponse->getData(true);
         $this->assertSame('OPEN', $getData['status']);
         $this->assertTrue($getData['evaluation_open']);
+        $this->assertSame('Asia/Manila', $getData['timezone']);
 
-        // 3. Admin updates window to SUSPENDED with customized 60s dwell requirement
+        // 3. Admin updates window to SUSPENDED with customized thresholds
         $adminUser = (object) ['id' => 1, 'role' => 'admin'];
         $updateRequest = new \Illuminate\Http\Request([
             'academic_term_id' => 1,
             'status' => 'SUSPENDED',
-            'min_dwell_seconds' => 60,
+            'window_action' => 'SUSPEND',
             'straight_line_variance_threshold' => 0.02,
             'watchlist_mean_threshold' => 3.60,
             'watchlist_negative_sentiment_pct' => 30.0,
@@ -1455,7 +1478,7 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $updatedData = $updateResponse->getData(true);
         $this->assertSame('SUSPENDED', $updatedData['status']);
         $this->assertFalse($updatedData['evaluation_open']);
-        $this->assertSame(60, $updatedData['min_dwell_seconds']);
+        $this->assertSame(0, $updatedData['min_dwell_seconds']);
         $this->assertEqualsWithDelta(0.02, $updatedData['straight_line_variance_threshold'], 0.001);
         $this->assertEqualsWithDelta(3.60, $updatedData['watchlist_mean_threshold'], 0.001);
         $this->assertEqualsWithDelta(30.0, $updatedData['watchlist_negative_sentiment_pct'], 0.001);
@@ -1470,7 +1493,7 @@ class EvaluaTechBackendSuiteTest extends TestCase
             'course_section_id' => 1,
             'submission_key' => 'SUB-WINDOW-TEST-001',
             'ratings' => $ratings,
-            'dwell_time_seconds' => 75,
+            'dwell_time_seconds' => 10,
             'comment_text' => 'Good lectures and structured syllabus.',
         ]);
         $this->assertFalse($submissionWhileSuspended['accepted']);
@@ -1483,40 +1506,67 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $service->updateEvaluationWindow([
             'academic_term_id' => 1,
             'status' => 'CLOSED',
+            'window_action' => 'CLOSE',
         ], 1);
         $submissionWhileClosed = $service->submitEvaluation([
             'student_id' => 11,
             'course_section_id' => 1,
             'submission_key' => 'SUB-WINDOW-TEST-002',
             'ratings' => $ratings,
-            'dwell_time_seconds' => 75,
+            'dwell_time_seconds' => 10,
             'comment_text' => 'Good lectures and structured syllabus.',
         ]);
         $this->assertFalse($submissionWhileClosed['accepted']);
         $this->assertSame('EVALUATION_WINDOW_CLOSED', $submissionWhileClosed['code']);
         $this->assertSame('CLOSED', $submissionWhileClosed['window_status']);
 
-        // 6. Reopen Window (status: OPEN, min_dwell_seconds: 45) and verify submission succeeds
+        // 6. Test schedule boundaries (NOT_YET_OPEN before starts_at, EXPIRED after ends_at)
         $service->updateEvaluationWindow([
             'academic_term_id' => 1,
             'status' => 'OPEN',
-            'min_dwell_seconds' => 45,
-            'straight_line_variance_threshold' => 0.0,
+            'starts_at' => '2026-12-01 08:00:00',
+            'ends_at' => '2026-12-31 23:59:59',
+            'timezone' => 'Asia/Manila',
         ], 1);
+        $earlySubmission = $service->submitEvaluation([
+            'student_id' => 11,
+            'course_section_id' => 1,
+            'submission_key' => 'SUB-WINDOW-EARLY-01',
+            'ratings' => $ratings,
+            'dwell_time_seconds' => 5,
+            'now_unix' => strtotime('2026-11-09 10:00:00'),
+        ]);
+        $this->assertFalse($earlySubmission['accepted']);
+        $this->assertSame('EVALUATION_WINDOW_NOT_YET_OPEN', $earlySubmission['code']);
+
+        // 7. Test Admin EXTEND Deadline action & immediate submission (0s+ accepted)
+        $extendReq = new \Illuminate\Http\Request([
+            'academic_term_id' => 1,
+            'window_action' => 'EXTEND',
+            'starts_at' => '2026-08-01 08:00:00',
+            'ends_at' => '2026-12-31 23:59:59',
+        ]);
+        $extendReq->setUserResolver(fn () => $adminUser);
+        $extendRes = $adminController->updateEvaluationWindow($extendReq);
+        $this->assertSame(200, $extendRes->getStatusCode());
+        $extendData = $extendRes->getData(true);
+        $this->assertSame('EXTEND', $extendData['last_window_action']);
+        $this->assertTrue($extendData['evaluation_open']);
 
         $submissionReopened = $service->submitEvaluation([
             'student_id' => 11,
             'course_section_id' => 1,
             'submission_key' => 'SUB-WINDOW-TEST-003',
             'ratings' => $ratings,
-            'dwell_time_seconds' => 50,
+            'dwell_time_seconds' => 0, // Immediate submission without waiting delay
             'comment_text' => 'Good lectures and structured syllabus.',
+            'now_unix' => strtotime('2026-11-09 12:00:00'),
         ]);
         $this->assertTrue($submissionReopened['accepted']);
         $this->assertSame('CLEARED', $submissionReopened['status']);
         $this->assertNotEmpty($submissionReopened['clearance_token']);
 
-        // 7. Non-admin role security guard: Faculty or Student cannot modify evaluation window
+        // 8. Non-admin role security guard: Faculty or Student cannot modify evaluation window
         $facultyUser = (object) ['id' => 5, 'role' => 'faculty'];
         $unauthorizedRequest = new \Illuminate\Http\Request([
             'academic_term_id' => 1,
@@ -1569,28 +1619,28 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertNotEmpty($startData['start_token']);
         $startToken = $startData['start_token'];
 
-        // 3. Submitting speed run (<45s) is rejected with HTTP 422
-        $speedRunPayload = [
+        // 3. Negative answering duration is rejected with HTTP 422 (Mandatory Timing Policy)
+        $invalidDurationPayload = [
             'student_id' => 11,
             'course_section_id' => 4,
-            'submission_key' => 'FT02-SPEEDRUN-SEC4-' . time(),
+            'submission_key' => 'FT02-INVALID-SEC4-' . time(),
             'start_token' => $startToken,
-            'dwell_time_seconds' => 15,
+            'dwell_time_seconds' => -1,
             'ratings' => [5, 4, 5, 5, 4, 4, 5, 4, 4, 5, 5, 5, 4, 5, 4, 5, 4, 5, 5, 5, 5, 4, 5, 4, 5],
             'comment_text' => 'Good instructor',
         ];
-        $speedRunRes = $controller->submit(new \Illuminate\Http\Request($speedRunPayload));
-        $this->assertSame(422, $speedRunRes->getStatusCode());
-        $speedRunData = $speedRunRes->getData(true);
-        $this->assertFalse($speedRunData['accepted']);
-        $this->assertSame('SPEED_RUN_DETECTED', $speedRunData['code']);
+        $invalidRes = $controller->submit(new \Illuminate\Http\Request($invalidDurationPayload));
+        $this->assertSame(422, $invalidRes->getStatusCode());
+        $invalidData = $invalidRes->getData(true);
+        $this->assertFalse($invalidData['accepted']);
+        $this->assertSame('INVALID_ELAPSED_DURATION', $invalidData['code']);
 
-        // 4. Genuine submission for Section 4 (MATH-201) with >= 45s dwell
+        // 4. Immediate submission for Section 4 (MATH-201) accepted without waiting delay (e.g. 15s dwell)
         $genuineSec4Payload = [
             'student_id' => 11,
             'course_section_id' => 4,
             'submission_key' => 'FT02-GENUINE-SEC4-' . time(),
-            'dwell_time_seconds' => 55,
+            'dwell_time_seconds' => 15,
             'ratings' => [5, 4, 5, 5, 4, 4, 5, 4, 4, 5, 5, 5, 4, 5, 4, 5, 4, 5, 5, 5, 5, 4, 5, 4, 5],
             'comment_text' => 'Explains linear algebra and matrix computations very clearly with rigorous proofs.',
             'professor_questions' => [

@@ -300,32 +300,51 @@ async function endorseActionPlan(item) {
         </div>
       </div>
 
+      <!-- Academic Supervisor Scope Filters -->
+      <div class="supervisor-filter-bar" style="display: flex; gap: 0.65rem; flex-wrap: wrap; margin-top: 0.75rem; padding: 0.65rem 0.85rem; background: #fbfcfb; border: 1px solid #e1e7e1; border-radius: 8px;">
+        <div style="font-size: 0.8rem;">
+          <span style="color: #64748b; font-weight: 600;">Term:</span>
+          <strong style="margin-left: 0.25rem; color: #103c2e;">FALL-2026</strong>
+        </div>
+        <div style="font-size: 0.8rem;">
+          <span style="color: #64748b; font-weight: 600;">Scope:</span>
+          <strong style="margin-left: 0.25rem; color: #103c2e;">{{ departmentName }} (Assigned Scope)</strong>
+        </div>
+      </div>
+
+      <!-- Contextual Interpretation Notice -->
+      <div class="alert-banner alert-neutral" style="margin-top: 0.65rem; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 0.78rem; color: #475569;" data-testid="chair-nlp-contextual-note">
+        <strong>Contextual Interpretation Notice:</strong> Natural Language Processing (NLP) sentiment classifications and topic summaries provide supporting diagnostic context to inform developmental conversations and faculty growth plans. They do not constitute a definitive or punitive judgment of teaching quality.
+      </div>
+
       <div class="table-responsive" style="margin-top:0.75rem;">
         <table class="institutional-table tabular-nums" data-testid="chair-faculty-table">
           <thead>
             <tr>
-              <th scope="col">Course Code</th>
-              <th scope="col">Faculty Member</th>
-              <th scope="col">Vault Responses</th>
-              <th scope="col">Mean Rating (μ)</th>
+              <th scope="col">Professor / Faculty Member</th>
+              <th scope="col">Subject ID and Name / Course Code</th>
+              <th scope="col">Section</th>
+              <th scope="col">Aggregate Rating (Mean μ)</th>
+              <th scope="col">Response Count / Vault Responses</th>
               <th scope="col">Negative Sentiment %</th>
               <th scope="col">Primary Domain</th>
-              <th scope="col">Standing</th>
+              <th scope="col">Support-Plan Status / Standing</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="f in departmentFaculty" :key="f.id" :data-testid="`chair-row-${f.course_code}`">
+              <td><strong>{{ f.faculty_name }}</strong></td>
               <td>
                 <strong class="course-code-cell">{{ f.course_code }}</strong>
                 <div class="course-title-sub">{{ f.course_title }}</div>
               </td>
-              <td><strong>{{ f.faculty_name }}</strong></td>
-              <td>{{ f.evaluated_count }}</td>
+              <td>{{ f.section_code || 'SEC-A' }}</td>
               <td>
                 <span :style="{ color: f.mean_score < 3.5 ? '#dc2626' : 'var(--plp-green-900)', fontWeight: '700' }">
                   {{ f.mean_score.toFixed(2) }}
                 </span>
               </td>
+              <td>{{ f.evaluated_count }}</td>
               <td>
                 <span :style="{ color: f.negative_sentiment_pct > 35.0 ? '#dc2626' : '#1f2937', fontWeight: '700' }">
                   {{ f.negative_sentiment_pct.toFixed(1) }}%

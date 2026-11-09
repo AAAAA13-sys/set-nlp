@@ -107,19 +107,21 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
     });
   });
 
-  // 4. Dwell timer 45-second lock enforcement
-  describe('Group 04: Dwell timer 45-second lock enforcement (< 45s blocked, >= 45s allowed)', () => {
-    it('blocks 20-item survey submissions under 45 seconds and unlocks at >= 45 seconds', () => {
+  // 4. Mandatory Timing Policy & Non-Negative Duration Validation
+  describe('Group 04: Mandatory Timing Policy & Non-Negative Duration Validation (0s+ allowed, negative blocked)', () => {
+    it('accepts completed evaluation submissions whenever students are ready (0s+) and rejects negative durations', () => {
       const dwellBadgeSfc = readResourceFile('components/DwellTimerBadge.vue');
       assert.ok(dwellBadgeSfc.includes('data-testid="dwell-timer-badge"'));
       assert.ok(dwellBadgeSfc.includes('role="timer"'));
 
-      for (let sec = 0; sec < 45; sec += 1) {
-        assert.equal(isDwellTimeValid(sec, 20, 45), false, `Expected ${sec}s to be rejected`);
-      }
-      assert.equal(isDwellTimeValid(45, 20, 45), true);
-      assert.equal(isDwellTimeValid(120, 20, 45), true);
-      assert.equal(isDwellTimeValid(-5, 20, 45), false);
+      // Under Mandatory Timing Policy: minSeconds = 0, immediate submissions are valid
+      assert.equal(isDwellTimeValid(0, 25, 0), true);
+      assert.equal(isDwellTimeValid(12, 25, 0), true);
+      assert.equal(isDwellTimeValid(45, 25, 0), true);
+      assert.equal(isDwellTimeValid(120, 25, 0), true);
+      // Negative durations rejected
+      assert.equal(isDwellTimeValid(-1, 25, 0), false);
+      assert.equal(isDwellTimeValid(-5, 25, 0), false);
     });
   });
 
@@ -610,9 +612,14 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(adminViewSfc.includes('data-testid="admin-evaluation-window-card"'));
       assert.ok(adminViewSfc.includes('data-testid="admin-window-status-badge"'));
       assert.ok(adminViewSfc.includes('data-testid="btn-set-window-open"'));
+      assert.ok(adminViewSfc.includes('data-testid="btn-set-window-extend"'));
+      assert.ok(adminViewSfc.includes('data-testid="btn-set-window-reopen"'));
       assert.ok(adminViewSfc.includes('data-testid="btn-set-window-suspended"'));
       assert.ok(adminViewSfc.includes('data-testid="btn-set-window-closed"'));
       assert.ok(adminViewSfc.includes('data-testid="admin-dwell-input"'));
+      assert.ok(adminViewSfc.includes('data-testid="admin-starts-at-input"'));
+      assert.ok(adminViewSfc.includes('data-testid="admin-ends-at-input"'));
+      assert.ok(adminViewSfc.includes('data-testid="admin-timezone-badge"'));
       assert.ok(adminViewSfc.includes('data-testid="admin-variance-input"'));
       assert.ok(adminViewSfc.includes('data-testid="admin-watchlist-mean-input"'));
       assert.ok(adminViewSfc.includes('data-testid="admin-watchlist-neg-input"'));

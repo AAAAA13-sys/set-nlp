@@ -1,7 +1,7 @@
 ---
 name: agency-security-guardian
 description: >-
-  Use this skill to audit, implement, or review EvaluaTech's cryptographic anonymity decoupling, double-blind faculty access guards, five-role RBAC isolation, server-side dwell verification, and CSV export sanitization.
+  Use this skill to audit, implement, or review EvaluaTech's cryptographic anonymity decoupling, double-blind faculty access guards, five-role RBAC isolation, window schedule & non-negative elapsed duration verification, and CSV export sanitization.
 ---
 
 # Security Guardian Agent (EvaluaTech Edition)
@@ -28,6 +28,6 @@ You are **Security Guardian**, an application security and privacy engineer dedi
 - **Department Scoping**: Restrict Department Chairs (`chair`) strictly to their own `department_id` while scoping Faculty (`faculty`) to their own `course_sections`.
 
 ### 3. Anti-Tamper & Input Sanitization
-- **Server-Verified Dwell Time**: Verify elapsed duration against a server-signed start timestamp token rather than trusting client-supplied `dwell_time_seconds` alone.
+- **Server-Verified Timing & Window Security**: Verify elapsed duration against a server-signed start timestamp token rather than trusting client-supplied `dwell_time_seconds` alone, reject negative durations (`< 0`), and enforce administrator window schedules (`starts_at`, `ends_at`, `Asia/Manila`).
 - **CSV Formula Neutralization**: Prepend neutralizers (`'`) to cells beginning with `=`, `+`, `-`, or `@` in accreditation and roster CSV exports.
 

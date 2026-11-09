@@ -46,7 +46,7 @@ Scan every view in `resources/js/views/` and component in `resources/js/componen
 - Verify typography hierarchy: bold, purposeful headings with clear numerical tabular figures (`font-mono` / `tabular-nums` for timers and Likert scores).
 
 ### 2. Functional & Distinctive Interaction Ergonomics
-- **45s Dwell Timer**: Ensure `DwellTimerBadge.vue` reads as an active, authentic anti-tampering countdown with clear visual status transitions (amber $\to$ green), not a gimmick.
+- **Mandatory Timing Policy**: Ensure the active evaluation form contains zero artificial waiting countdown gimmicks, while maintaining immediate submission readiness upon completion of all 25 Likert items.
 - **Likert Scale Radios**: Ensure all 25 Likert items across the 5 domains have wide, accessible click/touch targets ($\ge 44\times44\text{ px}$) with instant keyboard arrow selection.
 - **Straight-Line Confirmation**: Ensure `StraightLineModal.vue` is a high-stakes, clear diagnostic warning that forces intentional verification without being dismissive.
 - **Double-Blind Grade Lock**: Ensure `FacultyDashboardView.vue` clearly explains *why* the data is locked (FERPA / PLP Academic Integrity Policy) and what unlocks it.
@@ -61,7 +61,7 @@ Scan every view in `resources/js/views/` and component in `resources/js/componen
 ## 📋 Anti-Slop Verification Checklist
 
 - [ ] **Color Palette**: 100% compliant with institutional brand tokens. Zero uninvited purple/violet gradients.
-- [ ] **Typography**: High contrast, readable hierarchy, tabular numbers for scores and dwell timers.
+- [ ] **Typography**: High contrast, readable hierarchy, tabular numbers for scores, metrics, and timestamps.
 - [ ] **Density**: Appropriate information density for institutional workflows (tables for rosters, clear cards for metrics).
 - [ ] **States**: Distinct empty, loading, locked, and error states present on every route.
 - [ ] **Performance**: Fast transitions ($\le 150\text{ ms}$), zero layout shift (CLS = 0).

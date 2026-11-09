@@ -89,8 +89,8 @@ Every authenticated screen shares the deep-emerald left sidebar (`#103c2e`) and 
 - **Written Feedback & Submit Screenshot**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/21_student_evaluate_written_submit.png`
 
 #### Interactive Controls & Buttons on `/evaluate/:id`
-1. **45-Second Dwell Timer Banner (`[data-testid="dwell-timer-badge"]`)**:
-   - Counts up from `0s` to `45s` (`43s remaining before you can submit`). Once 45 seconds have elapsed, the badge turns green (`Ready to submit`).
+1. **Mandatory Timing Policy & Rating Progress**:
+   - The active evaluation form provides immediate submission readiness as soon as all 25 Likert items are rated, with zero artificial waiting timers. Elapsed answering duration is recorded as metadata and validated non-negative (`>= 0`).
 2. **Autosave Indicator (`[data-testid="survey-autosave-indicator"]`)**:
    - Automatically saves your in-progress ratings and comments locally (`Autosave ready` / `Draft saved`) with zero personal identifiers so you don't lose work if you refresh.
 3. **25 Likert Rating Pills (`1` to `5`) across 5 Teaching Areas**:
@@ -109,7 +109,7 @@ Every authenticated screen shares the deep-emerald left sidebar (`#103c2e`) and 
 6. **`Back to Courses` / `Reset Form` Button**:
    - Clears your current draft or returns to `/queue`.
 7. **`Submit Evaluation` Button (`[data-testid="submit-evaluation-btn"]`)**:
-   - Validates that all 25 Likert items and Q1–Q4 are answered and that at least 45 seconds have passed.
+   - Validates that all 25 Likert items and required qualitative questions are answered, and submits immediately without waiting delays.
    - **Uniform Rating Check**: If you selected the exact same number for all 25 items (e.g., all `5`s, variance $\sigma^2 = 0$), a confirmation modal (**`Confirm Uniform Ratings`**) opens with **`Review My Ratings`** and **`Confirm & Submit`** buttons.
    - On submission, issues your signed `CLR-*` clearance token and decouples your identity from the rating vault.
 
@@ -187,11 +187,13 @@ Every authenticated screen shares the deep-emerald left sidebar (`#103c2e`) and 
 - **Class Roster Import & System Security Status**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/25_admin_security_posture.png`
 
 ### Interactive Controls & Buttons on `/admin`
-1. **Evaluation Window Status Buttons (`OPEN`, `SUSPENDED`, `CLOSED`)**:
+1. **Evaluation Window Actions (`OPEN`, `EXTEND DEADLINE`, `REOPEN CLOSED PERIOD`, `SUSPEND`, `CLOSE`)**:
    - **`OPEN (Evaluations Active)` (`[data-testid="btn-set-window-open"]`)**: Opens student evaluations immediately.
-   - **`SUSPENDED (Temporary Hold)` (`[data-testid="btn-set-window-suspended"]`)** & **`CLOSED (Term Concluded)` (`[data-testid="btn-set-window-closed"]`)**: Open a **Destructive Action Confirmation Modal** where you type `SUSPENDED` or `CLOSED` to confirm pausing/closing the evaluation period.
-2. **Threshold Inputs with `?` Tooltip Hints & `Save Settings` Button (`[data-testid="save-evaluation-window-btn"]`)**:
-   - Adjust `Min Dwell Time (s)`, `Uniform Rating Cutoff`, `Watchlist Mean (<)`, `Watchlist Negative (> %)`, and `Student Banner Notice` (hover over any `?` badge for details), then click **`Save Settings`**.
+   - **`EXTEND DEADLINE (+7 Days)` (`[data-testid="btn-set-window-extend"]`)**: Extends closing deadline during active periods.
+   - **`REOPEN CLOSED PERIOD` (`[data-testid="btn-set-window-reopen"]`)**: Reopens an expired/closed window with 7-day extension.
+   - **`SUSPEND (Temporary Hold)` (`[data-testid="btn-set-window-suspended"]`)** & **`CLOSE (Term Concluded)` (`[data-testid="btn-set-window-closed"]`)**: Pause or conclude the evaluation period with audit confirmation.
+2. **Schedule Controls & Threshold Inputs with `?` Tooltip Hints & `Save Settings` Button (`[data-testid="save-evaluation-window-btn"]`)**:
+   - Adjust `Opening Date & Time` (`starts_at`), `Closing Date & Time` (`ends_at`), `Asia/Manila` timezone, `Uniform Rating Cutoff`, `Watchlist Mean (<)`, `Watchlist Negative (> %)`, and `Student Banner Notice` (hover over any `?` badge for details), then click **`Save Settings`**.
 3. **Course Grade Locks Table (`[data-testid="registrar-locks-table"]`)**:
    - **Row Checkboxes & Select-All Checkbox**: Selecting one or more course sections reveals the **Bulk Actions Bar** (`Lock Selected`, `Unlock Selected`, `Mark Grades Submitted`) to update multiple sections in one click.
    - **Individual `Submitted` / `Pending` & `Locked` / `Open` Toggle Buttons**: Click any section's `Grades Submitted` or `Registrar Lock` button to toggle its state with instant optimistic UI updates. When both are active, `Report Status` changes to `Available`.

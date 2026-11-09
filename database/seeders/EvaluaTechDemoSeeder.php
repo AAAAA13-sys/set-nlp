@@ -57,6 +57,24 @@ class EvaluaTechDemoSeeder extends Seeder
             VALUES (1, 'FALL-2026', 'Fall', '2026-2027', 1, 1, '2026-08-15', '2026-12-15', '{$now}', '{$now}')
         ");
 
+        // 2b. Evaluation Window Configuration (Mandatory Timing Policy: 0s min dwell, schedule in Asia/Manila)
+        try {
+            $this->pdo->exec("
+                INSERT OR REPLACE INTO evaluation_window_configs (
+                    academic_term_id, status, min_dwell_seconds, straight_line_variance_threshold,
+                    watchlist_mean_threshold, watchlist_negative_sentiment_pct, announcement_message,
+                    starts_at, ends_at, timezone, last_window_action, created_at, updated_at
+                ) VALUES (
+                    1, 'OPEN', 0, 0.0, 3.50, 35.0,
+                    'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active.',
+                    '2026-08-15 08:00:00', '2026-12-20 23:59:59', 'Asia/Manila', 'OPEN',
+                    '{$now}', '{$now}'
+                )
+            ");
+        } catch (\Throwable) {
+            // column or table compatibility
+        }
+
         $passwordHash = password_hash('evaluatech123', PASSWORD_BCRYPT);
 
         // 3. Canonical Five-Role Institutional Users + 6 Course Instructors + 2 Students

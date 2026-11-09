@@ -54,13 +54,16 @@ export const useEvaluationStore = defineStore('evaluation', () => {
     is_active: true,
     evaluation_open: true,
     status: 'OPEN',
-    min_dwell_seconds: 45,
+    min_dwell_seconds: 0,
     straight_line_variance_threshold: 0.0,
     watchlist_mean_threshold: 3.5,
     watchlist_negative_sentiment_pct: 35.0,
     announcement_message: '',
     starts_at: null,
     ends_at: null,
+    timezone: 'Asia/Manila',
+    last_window_action: 'OPEN',
+    participation_summary: null,
     updated_at: null,
   });
 
@@ -231,16 +234,14 @@ export const useEvaluationStore = defineStore('evaluation', () => {
 
     const numericRatings = ratings.map((r) => Number(r));
 
-    // 1. Speed-run guard (< min_dwell_seconds, default 45 seconds for >= 20 items)
-    const minDwellRequired = Number(evaluationWindow.value.min_dwell_seconds || 45);
-    if (!isDwellTimeValid(elapsed, numericRatings.length, minDwellRequired)) {
+    // 1. Mandatory Timing Policy: Non-negative elapsed answering duration validation
+    if (!isDwellTimeValid(elapsed, numericRatings.length, 0)) {
       const errPayload = {
         ok: false,
         status: 422,
-        code: 'SPEED_RUN_DETECTED',
+        code: 'INVALID_ELAPSED_DURATION',
         dwell_time_seconds: elapsed,
-        minimum_required_seconds: minDwellRequired,
-        message: `Minimum reading dwell time not met (${minDwellRequired} seconds required for the 25-item SET instrument). Please review your responses carefully.`,
+        message: 'Elapsed answering duration cannot be negative.',
       };
       submissionError.value = errPayload.message;
       return errPayload;

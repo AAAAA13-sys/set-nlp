@@ -289,9 +289,18 @@ async function updateFacultyPlanStatus(newStatus) {
           data-testid="submit-term-grades-btn"
           @click="markInstructorGradesSubmitted"
         >
-          {{ submittingGrades ? 'Recording Final Grades…' : 'Confirm Final Grades Submitted' }}
+          {{ submittingGrades ? 'Recording Grade Status…' : 'Confirm Grade Submission Status' }}
         </button>
       </div>
+
+      <details class="double-blind-help-details" style="margin-top: 1rem; padding: 0.75rem; background: #fdfefe; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.82rem; color: #475569;">
+        <summary style="font-weight: 600; cursor: pointer; color: #103c2e;">
+          Why are evaluation results locked? (Double-Blind Governance Policy)
+        </summary>
+        <p style="margin: 0.5rem 0 0 0; line-height: 1.45;">
+          Under PLP academic governance guidelines and AACCUP accreditation standards, student evaluation ratings and qualitative comments remain confidential until the instructor has submitted final course grades and the Office of the University Registrar verifies the grade lock. This double-blind protocol protects students from grading retaliation and ensures honest, objective feedback.
+        </p>
+      </details>
     </section>
 
     <!-- Unlocked Aggregated Evaluation Report -->

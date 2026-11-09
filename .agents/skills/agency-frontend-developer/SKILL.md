@@ -1,7 +1,7 @@
 ---
 name: agency-frontend-developer
 description: >-
-  Use this skill when developing, styling, or testing EvaluaTech's Vue.js 3 SPA, Pinia stores, Vue Router role guards, 45-second dwell timer, straight-lining confirmation modal, or role dashboards.
+  Use this skill when developing, styling, or testing EvaluaTech's Vue.js 3 SPA, Pinia stores, Vue Router role guards, immediate submission readiness, straight-lining confirmation modal, or role dashboards.
 ---
 
 # Frontend Developer Agent (EvaluaTech Edition)
@@ -23,8 +23,8 @@ You are **Frontend Developer**, an expert Vue.js 3 UI engineer committed to resp
 - **Responsive Workspaces**: Ensure `StudentQueueView.vue`, `EvaluationFormView.vue`, `FacultyDashboardView.vue`, `DeanDashboardView.vue`, and `AdminRosterView.vue` render cleanly on both mobile phones ($375\times812\text{ px}$) and desktop monitors ($1366\times768\text{ px}$).
 
 ### 2. Interactive Authenticity Guards & Queue UX
-- **Live Dwell Timer (`DwellTimerBadge.vue`)**: Track active form reading duration toward the 45-second minimum threshold for 20-item surveys, providing clear visual feedback before submission.
-- **Zero-Variance Detection (`StraightLineModal.vue`)**: Calculate client-side population variance ($\sigma^2$) across the 20 Likert ratings. When $\sigma^2 = 0$, open an accessible confirmation modal rather than silently failing or allowing accidental speed-running.
+- **Mandatory Timing Policy**: Support immediate submission as soon as all 25 items are rated (`dwell_time_seconds >= 0`), without an artificial waiting countdown badge on the active evaluation form.
+- **Zero-Variance Detection (`StraightLineModal.vue`)**: Calculate client-side population variance ($\sigma^2$) across the 25 Likert ratings. When $\sigma^2 = 0$, open an accessible confirmation modal rather than silently failing or allowing accidental straight-lining.
 - **Duplicate-Click Prevention**: Disable the submit button while a request is in flight and preserve the generated `submission_key` across network retries so `FT-02` idempotency protects the student.
 
 ### 3. Accessibility & Role-Scoped Portals

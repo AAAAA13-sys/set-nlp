@@ -23,14 +23,15 @@ Every change touching EvaluaTech must pass its respective verification tier befo
 
 | Tier | Target Scope | Verification Command | Benchmark Standard |
 | :--- | :--- | :--- | :--- |
-| **Frontend DOM Suite** | Vue 3 Views, Dwell Timer, Variance Modal | `npm test` | 25 Test Groups, 100% Pass |
-| **Frontend Build** | Vite Bundle & Asset Integrity | `npm run build` | Zero warnings/errors |
-| **Backend PHPUnit Suite** | RBAC, Decoupling, Guards, Watchlist | `php artisan test` | 20 Tests, 100% Pass |
-| **Python Analytics Suite** | VADER Polarity & 4 Pedagogical Tags | `python -m pytest analytics/tests -q` | 40 Tests, 100% Pass |
+| **Frontend DOM Suite** | Vue 3 Views, Timing Policy, Variance Modal | `npm test` | 40 Test Groups, 100% Pass |
+| **Frontend Build** | Vite Bundle & Asset Integrity | `npm run build` | Zero warnings/errors, zero .map files |
+| **Backend PHPUnit Suite** | RBAC, Decoupling, Timing Policy, Watchlist | `php scripts/run-backend-tests.php` | 33 Tests, 100% Pass |
+| **Python Analytics Suite** | VADER Polarity & 5 Pedagogical Clusters | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 46 Tests, 100% Pass |
 | **Concurrency Stress** | 1,000 Simulated Submissions | `tests/load/evaluatech_1000_concurrent.jmx` | $<248\text{ ms}$ mean latency, $0\%$ 5xx |
 
 ### 2. Authenticity & Anonymity Audit Checks
-- Verify that 100% of simulated speed-runs ($<45\text{ s}$) are rejected (`422 SPEED_RUN_DETECTED`).
+- Verify that 100% of simulated immediate submissions ($0\text{--}43\text{ s}$) are accepted whenever students are ready within active schedule windows.
+- Verify that 100% of negative duration submissions ($< 0\text{ s}$) are rejected (`422 INVALID_ELAPSED_DURATION`).
 - Verify that 100% of unconfirmed straight-line submissions ($\sigma^2 = 0$) trigger `ZERO_VARIANCE_CONFIRMATION_REQUIRED`.
 - Inspect `evaluation_vault` schema and query logs to confirm zero foreign keys or identifying columns link back to `users`.
 

@@ -8,7 +8,7 @@ use InvalidArgumentException;
 
 class IntegrityValidatorService
 {
-    public const MIN_DWELL_SECONDS_20_ITEMS = 45;
+    public const MIN_DWELL_SECONDS_20_ITEMS = 0;
     public const DEFAULT_QUESTION_COUNT = 20;
     public const FIVE_CLUSTER_QUESTION_COUNT = 25;
     public const LIKERT_CLUSTERS_COUNT = 5;
@@ -87,20 +87,17 @@ class IntegrityValidatorService
     }
 
     /**
-     * Validate dwell time against minimum reading threshold (>= 45s for >= 20 items).
+     * Validate interaction duration under the Mandatory Timing Policy:
+     * Students may submit a complete evaluation whenever they are ready (zero minimum waiting period
+     * and zero maximum answering duration). Only negative durations are invalid.
      */
     public function validateDwellTime(int $dwellSeconds, int $questionCount = self::DEFAULT_QUESTION_COUNT): bool
     {
-        if ($dwellSeconds < 0) {
+        if ($questionCount <= 0) {
             return false;
         }
 
-        if ($questionCount >= self::DEFAULT_QUESTION_COUNT) {
-            return $dwellSeconds >= self::MIN_DWELL_SECONDS_20_ITEMS;
-        }
-
-        $proportionalMin = (int) ceil(($questionCount / self::DEFAULT_QUESTION_COUNT) * self::MIN_DWELL_SECONDS_20_ITEMS);
-        return $dwellSeconds >= max(1, $proportionalMin);
+        return $dwellSeconds >= 0;
     }
 
     /**

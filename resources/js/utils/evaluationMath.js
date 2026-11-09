@@ -425,21 +425,19 @@ export function isStraightLined(ratings) {
 }
 
 /**
- * Verifies minimum reading dwell time (45 seconds for >= 20 items).
+ * Verifies answering duration under the Mandatory Timing Policy (0s+ non-negative).
+ * Students may submit completed evaluations whenever ready, without artificial waiting delays.
  * @param {number} dwellSeconds
  * @param {number} [questionCount=20]
- * @param {number} [minSeconds=45]
+ * @param {number} [minSeconds=0]
  * @returns {boolean}
  */
-export function isDwellTimeValid(dwellSeconds, questionCount = 20, minSeconds = 45) {
+export function isDwellTimeValid(dwellSeconds, questionCount = 20, minSeconds = 0) {
   const elapsed = Number(dwellSeconds);
   if (!Number.isFinite(elapsed) || elapsed < 0) {
     return false;
   }
-  if (Number(questionCount) >= 20) {
-    return elapsed >= Number(minSeconds);
-  }
-  return true;
+  return elapsed >= Number(minSeconds);
 }
 
 /**

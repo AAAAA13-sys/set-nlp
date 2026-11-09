@@ -28,7 +28,7 @@ Categorize review findings into three levels:
   - Any leak of `student_id`, IP address, or correlation timestamp into `evaluation_vault` or faculty/dean API responses
   - Missing row locking (`SELECT ... FOR UPDATE`) or broken `FT-02` submission idempotency
   - Bypass of the Double-Blind faculty viewing lock (`term_grades_submitted && registrar_lock`)
-  - Bypass of the 45-second speed-run guard or $\sigma^2 = 0$ straight-line check
+  - Violation of the Mandatory Timing Policy (negative duration acceptance, or blocking immediate student submission when ready) or $\sigma^2 = 0$ straight-line confirmation bypass
 - 🟡 **Suggestions (Should Fix)**:
   - Missing error state handling in Vue views (`StudentQueueView.vue`, `EvaluationFormView.vue`)
   - Missing database indexes on high-concurrency lookup columns

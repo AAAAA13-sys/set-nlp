@@ -33,7 +33,7 @@ class SubmitEvaluationRequest extends FormRequest
             'submission_key' => ['required', 'string', 'min:6', 'max:96'],
             'ratings' => ['required', 'array', 'min:20', 'max:25'],
             'ratings.*' => ['required', 'integer', 'min:1', 'max:5'],
-            'dwell_time_seconds' => ['required', 'integer', 'min:45'],
+            'dwell_time_seconds' => ['nullable', 'integer', 'min:0'],
             'confirm_uniform' => ['sometimes', 'boolean'],
             'comment_text' => ['nullable', 'string', 'max:2000'],
             'professor_questions' => ['nullable', 'array', 'max:5'],

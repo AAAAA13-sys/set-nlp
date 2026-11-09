@@ -33,7 +33,7 @@
      4. `4. Actionable recommendations for the prof in future semesters.` (`recommendations`)
      5. Optional `5th Question` (`additional_observation`, enforcing `max: 5` questions).
    - **Response Authenticity Guards**:
-     - **45-Second Dwell-Time Speed-Run Guard**: Rejects any evaluation submitted in $< 45\text{ seconds}$ (`HTTP 422`).
+     - **Mandatory Timing Policy**: Enables immediate evaluation submission whenever students are ready (`dwell_time_seconds >= 0`) within administrator-defined evaluation windows, rejecting negative durations (`< 0`) with `HTTP 422`.
      - **Zero-Variance ($\sigma^2 = 0$) Straight-Lining Modal**: Prompts confirmation when all Likert items receive identical ratings and records `is_straight_lined = true` upon confirmation.
 
 3. **Python / Flask `calamanCy` + VADER NLP Microservice (`analytics/`)**:

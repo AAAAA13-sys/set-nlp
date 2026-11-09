@@ -243,18 +243,34 @@ class DecoupledEvaluationService
                 id {$autoIncrement},
                 academic_term_id INTEGER NOT NULL UNIQUE,
                 status VARCHAR(24) NOT NULL DEFAULT 'OPEN',
-                min_dwell_seconds INTEGER NOT NULL DEFAULT 45,
+                min_dwell_seconds INTEGER NOT NULL DEFAULT 0,
                 straight_line_variance_threshold NUMERIC(5, 4) NOT NULL DEFAULT 0.0000,
                 watchlist_mean_threshold NUMERIC(4, 2) NOT NULL DEFAULT 3.50,
                 watchlist_negative_sentiment_pct NUMERIC(5, 2) NOT NULL DEFAULT 35.00,
                 announcement_message TEXT NULL,
                 starts_at VARCHAR(32) NULL,
                 ends_at VARCHAR(32) NULL,
+                timezone VARCHAR(48) NOT NULL DEFAULT 'Asia/Manila',
+                last_window_action VARCHAR(32) NOT NULL DEFAULT 'OPEN',
                 updated_by_user_id INTEGER NULL,
                 created_at VARCHAR(32) NOT NULL,
                 updated_at VARCHAR(32) NOT NULL
             )
         ");
+
+        try {
+            $winCols = $db->query("PRAGMA table_info(evaluation_window_configs)")->fetchAll(PDO::FETCH_COLUMN, 1);
+            if (is_array($winCols)) {
+                if (!in_array('timezone', $winCols, true)) {
+                    $db->exec("ALTER TABLE evaluation_window_configs ADD COLUMN timezone VARCHAR(48) NOT NULL DEFAULT 'Asia/Manila'");
+                }
+                if (!in_array('last_window_action', $winCols, true)) {
+                    $db->exec("ALTER TABLE evaluation_window_configs ADD COLUMN last_window_action VARCHAR(32) NOT NULL DEFAULT 'OPEN'");
+                }
+            }
+        } catch (\Throwable) {
+            // column exists or non-sqlite driver
+        }
 
         $db->exec("
             CREATE TABLE IF NOT EXISTS auth_rate_limits (
@@ -361,13 +377,47 @@ class DecoupledEvaluationService
         $facultyId = (int) ($payload['faculty_id'] ?? ($section['faculty_id'] ?? 1));
         $academicTermId = (int) ($payload['academic_term_id'] ?? ($section['academic_term_id'] ?? 1));
 
-        // Window status check (SOP 1 / Period Control)
-        $window = $this->getEvaluationWindow($academicTermId);
+        // Window status and schedule boundary check (SOP 1 / Administrator-Controlled Evaluation Period)
+        $nowUnix = isset($payload['now_unix']) ? (int) $payload['now_unix'] : time();
+        $window = $this->getEvaluationWindow($academicTermId, $nowUnix);
+        $windowState = (string) ($window['window_state'] ?? $window['status'] ?? 'OPEN');
+
+        if ($windowState === 'NOT_YET_OPEN') {
+            return [
+                'accepted' => false,
+                'status' => 'REJECTED',
+                'code' => 'EVALUATION_WINDOW_NOT_YET_OPEN',
+                'window_code' => 'EVALUATION_WINDOW_NOT_YET_OPEN',
+                'http_status' => 422,
+                'window_status' => 'NOT_YET_OPEN',
+                'starts_at' => $window['starts_at'] ?? null,
+                'timezone' => $window['timezone'] ?? 'Asia/Manila',
+                'academic_term_id' => $academicTermId,
+                'message' => 'The student evaluation period has not opened yet for this academic term.',
+            ];
+        }
+
+        if ($windowState === 'EXPIRED') {
+            return [
+                'accepted' => false,
+                'status' => 'REJECTED',
+                'code' => 'EVALUATION_WINDOW_CLOSED',
+                'window_code' => 'EVALUATION_WINDOW_EXPIRED',
+                'http_status' => 422,
+                'window_status' => 'EXPIRED',
+                'ends_at' => $window['ends_at'] ?? null,
+                'timezone' => $window['timezone'] ?? 'Asia/Manila',
+                'academic_term_id' => $academicTermId,
+                'message' => 'The student evaluation submission deadline has passed.',
+            ];
+        }
+
         if ($window['status'] !== 'OPEN' || !$window['evaluation_open']) {
             return [
                 'accepted' => false,
                 'status' => 'REJECTED',
                 'code' => 'EVALUATION_WINDOW_CLOSED',
+                'window_code' => $window['status'] === 'SUSPENDED' ? 'EVALUATION_WINDOW_SUSPENDED' : 'EVALUATION_WINDOW_CLOSED',
                 'http_status' => 422,
                 'window_status' => $window['status'],
                 'academic_term_id' => $academicTermId,
@@ -375,17 +425,16 @@ class DecoupledEvaluationService
             ];
         }
 
-        // 3. Speed-Run Guard (< 45 seconds for 20 items, or configurable min_dwell_seconds)
-        $minRequiredDwell = (int) ($window['min_dwell_seconds'] ?? IntegrityValidatorService::MIN_DWELL_SECONDS_20_ITEMS);
-        if ($dwellSeconds < $minRequiredDwell || !$this->validator->validateDwellTime($dwellSeconds, count($ratings))) {
+        // 3. Mandatory Timing Policy: Zero minimum wait and zero maximum answering duration.
+        // Only negative durations or forged/tampered start tokens are rejected.
+        if (!$this->validator->validateDwellTime($dwellSeconds, count($ratings))) {
             return [
                 'accepted' => false,
                 'status' => 'REJECTED',
-                'code' => 'SPEED_RUN_DETECTED',
+                'code' => 'INVALID_ELAPSED_DURATION',
                 'http_status' => 422,
                 'dwell_time_seconds' => $dwellSeconds,
-                'minimum_required_seconds' => $minRequiredDwell,
-                'message' => "Minimum {$minRequiredDwell}-second interaction dwell time is required to ensure thoughtful evaluation.",
+                'message' => 'Elapsed answering duration cannot be negative.',
             ];
         }
 
@@ -395,15 +444,16 @@ class DecoupledEvaluationService
                 $studentId,
                 $courseSectionId,
                 $this->appSecret,
-                $minRequiredDwell
+                0,
+                $nowUnix
             );
             if (!$tokenValid) {
                 return [
                     'accepted' => false,
                     'status' => 'REJECTED',
-                    'code' => 'SPEED_RUN_DETECTED',
+                    'code' => 'INVALID_START_TOKEN',
                     'http_status' => 422,
-                    'message' => 'Server-signed start token verification failed or elapsed dwell time is under 45 seconds.',
+                    'message' => 'Server-signed evaluation session start token verification failed.',
                 ];
             }
         }
@@ -1752,11 +1802,11 @@ class DecoupledEvaluationService
             ],
             [
                 'criterion_id' => 'CRIT-02',
-                'title' => 'Anti-Speed-Run 45-Second Interaction Guard',
-                'category' => 'Response Authenticity',
-                'standard' => 'SOP 2 Interaction Dwell Policy',
+                'title' => 'Administrator-Controlled Evaluation Window & Immediate Submission Policy',
+                'category' => 'Evaluation Period Governance',
+                'standard' => 'SOP 1 Schedule & Deadline Enforcement',
                 'status' => 'COMPLIANT',
-                'evidence' => 'Server-signed form start token and dwell_time_seconds >= 45s strictly enforced (sub-45s rejected with HTTP 422).',
+                'evidence' => 'Students submit completed evaluations immediately without artificial waiting timers while server enforces exact Asia/Manila opening and closing deadlines.',
                 'verified' => true,
             ],
             [
@@ -2423,7 +2473,7 @@ class DecoupledEvaluationService
      *
      * @return array<string, mixed>
      */
-    public function getEvaluationWindow(?int $termId = null): array
+    public function getEvaluationWindow(?int $termId = null, ?int $nowUnix = null): array
     {
         $term = null;
         if ($termId !== null && $termId > 0) {
@@ -2458,19 +2508,26 @@ class DecoupledEvaluationService
                     INSERT INTO evaluation_window_configs (
                         academic_term_id, status, min_dwell_seconds, straight_line_variance_threshold,
                         watchlist_mean_threshold, watchlist_negative_sentiment_pct, announcement_message,
+                        starts_at, ends_at, timezone, last_window_action,
                         created_at, updated_at
                     ) VALUES (
-                        :term_id, :status, :min_dwell, :variance_thresh, :mean_thresh, :neg_pct, :announcement, :created, :updated
+                        :term_id, :status, :min_dwell, :variance_thresh, :mean_thresh, :neg_pct, :announcement,
+                        :starts_at, :ends_at, :timezone, :last_action,
+                        :created, :updated
                     )
                 ');
                 $stmtIns->execute([
                     ':term_id' => $resolvedTermId,
                     ':status' => $evalOpen ? 'OPEN' : 'CLOSED',
-                    ':min_dwell' => 45,
+                    ':min_dwell' => 0,
                     ':variance_thresh' => 0.0,
                     ':mean_thresh' => self::WATCHLIST_MIN_MEAN_SCORE,
                     ':neg_pct' => self::WATCHLIST_MAX_NEGATIVE_PCT,
                     ':announcement' => 'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active.',
+                    ':starts_at' => '2026-08-15 08:00:00',
+                    ':ends_at' => '2026-12-20 23:59:59',
+                    ':timezone' => 'Asia/Manila',
+                    ':last_action' => 'OPEN',
                     ':created' => $now,
                     ':updated' => $now,
                 ]);
@@ -2483,7 +2540,47 @@ class DecoupledEvaluationService
         }
 
         $status = is_array($config) ? (string) ($config['status'] ?? 'OPEN') : 'OPEN';
-        $effectiveOpen = ($status === 'OPEN') && $evalOpen;
+        $timezone = is_array($config) && !empty($config['timezone']) ? (string) $config['timezone'] : 'Asia/Manila';
+        $startsAt = is_array($config) && !empty($config['starts_at']) ? (string) $config['starts_at'] : null;
+        $endsAt = is_array($config) && !empty($config['ends_at']) ? (string) $config['ends_at'] : null;
+        $lastAction = is_array($config) && !empty($config['last_window_action']) ? (string) $config['last_window_action'] : $status;
+
+        $checkTs = $nowUnix ?? time();
+        $windowState = $status;
+        $withinBounds = true;
+
+        if ($status === 'OPEN' && $evalOpen) {
+            if ($startsAt !== null) {
+                $startsTs = strtotime($startsAt);
+                if ($startsTs !== false && $checkTs < $startsTs) {
+                    $withinBounds = false;
+                    $windowState = 'NOT_YET_OPEN';
+                }
+            }
+            if ($withinBounds && $endsAt !== null) {
+                $endsTs = strtotime($endsAt);
+                if ($endsTs !== false && $checkTs > $endsTs) {
+                    $withinBounds = false;
+                    $windowState = 'EXPIRED';
+                }
+            }
+        } elseif (!$evalOpen && $status === 'OPEN') {
+            $windowState = 'CLOSED';
+            $withinBounds = false;
+        }
+
+        $effectiveOpen = ($status === 'OPEN') && $evalOpen && $withinBounds;
+
+        $totalEnrollments = 0;
+        $completedClearances = 0;
+        try {
+            $totalEnrollments = (int) $this->pdo->query("SELECT COUNT(*) FROM enrollments WHERE academic_term_id = {$resolvedTermId}")->fetchColumn();
+            $completedClearances = (int) $this->pdo->query("SELECT COUNT(*) FROM evaluation_clearances WHERE academic_term_id = {$resolvedTermId} AND status = 'CLEARED'")->fetchColumn();
+        } catch (\Throwable) {
+            // fallback if tables are empty
+        }
+        $pendingClearances = max(0, $totalEnrollments - $completedClearances);
+        $completionRatePct = $totalEnrollments > 0 ? round(($completedClearances / $totalEnrollments) * 100, 1) : 0.0;
 
         return [
             'academic_term_id' => $resolvedTermId,
@@ -2493,19 +2590,30 @@ class DecoupledEvaluationService
             'is_active' => $isActive,
             'evaluation_open' => $effectiveOpen,
             'status' => $status,
-            'min_dwell_seconds' => is_array($config) ? (int) ($config['min_dwell_seconds'] ?? 45) : 45,
+            'window_state' => $windowState,
+            'timezone' => $timezone,
+            'last_window_action' => $lastAction,
+            'min_dwell_seconds' => is_array($config) ? (int) ($config['min_dwell_seconds'] ?? 0) : 0,
             'straight_line_variance_threshold' => is_array($config) ? (float) ($config['straight_line_variance_threshold'] ?? 0.0) : 0.0,
             'watchlist_mean_threshold' => is_array($config) ? (float) ($config['watchlist_mean_threshold'] ?? self::WATCHLIST_MIN_MEAN_SCORE) : self::WATCHLIST_MIN_MEAN_SCORE,
             'watchlist_negative_sentiment_pct' => is_array($config) ? (float) ($config['watchlist_negative_sentiment_pct'] ?? self::WATCHLIST_MAX_NEGATIVE_PCT) : self::WATCHLIST_MAX_NEGATIVE_PCT,
             'announcement_message' => is_array($config) ? (string) ($config['announcement_message'] ?? '') : 'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active.',
-            'starts_at' => is_array($config) ? ($config['starts_at'] ?? null) : null,
-            'ends_at' => is_array($config) ? ($config['ends_at'] ?? null) : null,
+            'starts_at' => $startsAt,
+            'ends_at' => $endsAt,
+            'participation_summary' => [
+                'total_enrolled_evaluations' => $totalEnrollments,
+                'completed_evaluations' => $completedClearances,
+                'pending_evaluations' => $pendingClearances,
+                'completion_rate_pct' => $completionRatePct,
+            ],
             'updated_at' => is_array($config) ? ($config['updated_at'] ?? null) : null,
         ];
     }
 
     /**
      * Update the evaluation window and period control configuration.
+     * Supports scheduling opening/closing boundaries, extending an active deadline ('EXTEND'),
+     * reopening a closed period ('REOPEN'), suspending ('SUSPEND'), resuming ('RESUME'), and closing ('CLOSE').
      *
      * @param array<string, mixed> $data
      * @return array<string, mixed>
@@ -2513,24 +2621,54 @@ class DecoupledEvaluationService
     public function updateEvaluationWindow(array $data, ?int $userId = null): array
     {
         $termId = (int) ($data['academic_term_id'] ?? 1);
+        $rawAction = strtoupper(trim((string) ($data['window_action'] ?? $data['action'] ?? '')));
         $status = strtoupper(trim((string) ($data['status'] ?? 'OPEN')));
+
+        if ($rawAction === 'EXTEND') {
+            $status = 'OPEN';
+            $lastAction = 'EXTEND';
+        } elseif ($rawAction === 'REOPEN') {
+            $status = 'OPEN';
+            $lastAction = 'REOPEN';
+        } elseif ($rawAction === 'SUSPEND') {
+            $status = 'SUSPENDED';
+            $lastAction = 'SUSPEND';
+        } elseif ($rawAction === 'RESUME') {
+            $status = 'OPEN';
+            $lastAction = 'RESUME';
+        } elseif ($rawAction === 'CLOSE') {
+            $status = 'CLOSED';
+            $lastAction = 'CLOSE';
+        } elseif ($rawAction === 'SCHEDULE') {
+            $lastAction = 'SCHEDULE';
+        } else {
+            $lastAction = in_array($status, ['OPEN', 'SUSPENDED', 'CLOSED'], true) ? $status : 'OPEN';
+        }
+
         if (!in_array($status, ['OPEN', 'SUSPENDED', 'CLOSED'], true)) {
             $status = 'OPEN';
         }
 
-        $minDwell = isset($data['min_dwell_seconds']) ? max(0, min(300, (int) $data['min_dwell_seconds'])) : 45;
+        $minDwell = isset($data['min_dwell_seconds']) ? max(0, min(300, (int) $data['min_dwell_seconds'])) : 0;
         $varianceThresh = isset($data['straight_line_variance_threshold']) ? max(0.0, min(1.0, (float) $data['straight_line_variance_threshold'])) : 0.0;
         $meanThresh = isset($data['watchlist_mean_threshold']) ? max(1.0, min(5.0, (float) $data['watchlist_mean_threshold'])) : self::WATCHLIST_MIN_MEAN_SCORE;
         $negPctThresh = isset($data['watchlist_negative_sentiment_pct']) ? max(0.0, min(100.0, (float) $data['watchlist_negative_sentiment_pct'])) : self::WATCHLIST_MAX_NEGATIVE_PCT;
         $announcement = isset($data['announcement_message']) ? trim((string) $data['announcement_message']) : null;
+        $timezone = isset($data['timezone']) && trim((string) $data['timezone']) !== '' ? trim((string) $data['timezone']) : 'Asia/Manila';
+        $hasStartsAt = array_key_exists('starts_at', $data);
+        $startsAt = $hasStartsAt ? (trim((string) ($data['starts_at'] ?? '')) ?: null) : null;
+        $hasEndsAt = array_key_exists('ends_at', $data);
+        $endsAt = $hasEndsAt ? (trim((string) ($data['ends_at'] ?? '')) ?: null) : null;
         $now = date('Y-m-d H:i:s');
 
         // Check if config exists
-        $stmtChk = $this->pdo->prepare('SELECT id FROM evaluation_window_configs WHERE academic_term_id = :term_id LIMIT 1');
+        $stmtChk = $this->pdo->prepare('SELECT * FROM evaluation_window_configs WHERE academic_term_id = :term_id LIMIT 1');
         $stmtChk->execute([':term_id' => $termId]);
-        $exists = $stmtChk->fetchColumn();
+        $existingCfg = $stmtChk->fetch(PDO::FETCH_ASSOC);
 
-        if ($exists) {
+        if (is_array($existingCfg)) {
+            $resolvedStartsAt = $hasStartsAt ? $startsAt : ($existingCfg['starts_at'] ?? null);
+            $resolvedEndsAt = $hasEndsAt ? $endsAt : ($existingCfg['ends_at'] ?? null);
             $stmtUpd = $this->pdo->prepare('
                 UPDATE evaluation_window_configs
                 SET status = :status,
@@ -2539,6 +2677,10 @@ class DecoupledEvaluationService
                     watchlist_mean_threshold = :mean_thresh,
                     watchlist_negative_sentiment_pct = :neg_pct,
                     announcement_message = COALESCE(:announcement, announcement_message),
+                    starts_at = :starts_at,
+                    ends_at = :ends_at,
+                    timezone = :timezone,
+                    last_window_action = :last_action,
                     updated_by_user_id = :user_id,
                     updated_at = :updated_at
                 WHERE academic_term_id = :term_id
@@ -2550,6 +2692,10 @@ class DecoupledEvaluationService
                 ':mean_thresh' => $meanThresh,
                 ':neg_pct' => $negPctThresh,
                 ':announcement' => $announcement,
+                ':starts_at' => $resolvedStartsAt,
+                ':ends_at' => $resolvedEndsAt,
+                ':timezone' => $timezone,
+                ':last_action' => $lastAction,
                 ':user_id' => $userId,
                 ':updated_at' => $now,
                 ':term_id' => $termId,
@@ -2559,9 +2705,12 @@ class DecoupledEvaluationService
                 INSERT INTO evaluation_window_configs (
                     academic_term_id, status, min_dwell_seconds, straight_line_variance_threshold,
                     watchlist_mean_threshold, watchlist_negative_sentiment_pct, announcement_message,
+                    starts_at, ends_at, timezone, last_window_action,
                     updated_by_user_id, created_at, updated_at
                 ) VALUES (
-                    :term_id, :status, :min_dwell, :variance_thresh, :mean_thresh, :neg_pct, :announcement, :user_id, :created_at, :updated_at
+                    :term_id, :status, :min_dwell, :variance_thresh, :mean_thresh, :neg_pct, :announcement,
+                    :starts_at, :ends_at, :timezone, :last_action,
+                    :user_id, :created_at, :updated_at
                 )
             ');
             $stmtIns->execute([
@@ -2572,6 +2721,10 @@ class DecoupledEvaluationService
                 ':mean_thresh' => $meanThresh,
                 ':neg_pct' => $negPctThresh,
                 ':announcement' => $announcement ?? 'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active.',
+                ':starts_at' => $startsAt ?? '2026-08-15 08:00:00',
+                ':ends_at' => $endsAt ?? '2026-12-20 23:59:59',
+                ':timezone' => $timezone,
+                ':last_action' => $lastAction,
                 ':user_id' => $userId,
                 ':created_at' => $now,
                 ':updated_at' => $now,
@@ -2588,6 +2741,27 @@ class DecoupledEvaluationService
             ]);
         } catch (\Throwable) {
             // non-fatal if column or table differs in mock tests
+        }
+
+        // Record administrative accountability log entry
+        try {
+            (new SecurityAuditService($this->validator))->logEvent(
+                $this->pdo,
+                'EVALUATION_WINDOW_UPDATED',
+                'INFO',
+                [
+                    'academic_term_id' => $termId,
+                    'status' => $status,
+                    'window_action' => $lastAction,
+                    'starts_at' => $hasStartsAt ? $startsAt : ($existingCfg['starts_at'] ?? null),
+                    'ends_at' => $hasEndsAt ? $endsAt : ($existingCfg['ends_at'] ?? null),
+                    'timezone' => $timezone,
+                ],
+                'admin',
+                '/api/admin/evaluation-window'
+            );
+        } catch (\Throwable) {
+            // non-fatal
         }
 
         return $this->getEvaluationWindow($termId);

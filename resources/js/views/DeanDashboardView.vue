@@ -524,6 +524,11 @@ function exportAccreditationDossier() {
               </select>
             </label>
           </div>
+
+          <!-- Contextual Interpretation Notice -->
+          <div class="alert-banner alert-neutral" style="margin-top: 0.65rem; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 0.78rem; color: #475569;" data-testid="dean-nlp-contextual-note">
+            <strong>Contextual Interpretation Notice:</strong> Natural Language Processing (NLP) sentiment classifications and topic summaries provide supporting diagnostic context to inform developmental conversations and faculty growth plans. They do not constitute a definitive or punitive judgment of teaching quality.
+          </div>
         </div>
 
         <div class="tab-switcher" role="tablist" aria-label="Dean Analytical Views">

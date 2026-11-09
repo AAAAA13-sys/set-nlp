@@ -18,6 +18,30 @@ const statusFilter = ref('ALL');
 
 const progress = computed(() => evaluationStore.queueProgress);
 
+const formattedDeadline = computed(() => {
+  const endsAt = evaluationStore.evaluationWindow?.ends_at;
+  if (!endsAt) return 'Open for AY 2026-2027 (Asia/Manila)';
+  try {
+    const d = new Date(endsAt);
+    return isNaN(d.getTime())
+      ? endsAt
+      : d.toLocaleString('en-US', { timeZone: 'Asia/Manila', dateStyle: 'medium', timeStyle: 'short' });
+  } catch (_) {
+    return endsAt;
+  }
+});
+
+const selectedDropdownSectionId = ref('');
+
+function onDropdownSelect(event) {
+  const secId = Number(event.target.value);
+  if (!secId) return;
+  const target = (evaluationStore.courses || []).find((c) => Number(c.course_section_id) === secId);
+  if (target && target.status !== 'COMPLETED') {
+    startEvaluation(target);
+  }
+}
+
 const updateDebouncedSearch = debounce((val) => {
   debouncedSearch.value = String(val || '').trim().toLowerCase();
 }, 250);
@@ -82,6 +106,13 @@ function startEvaluation(course) {
             <span class="ui-hint" tabindex="0" aria-label="Examination permit requirement" data-hint="Complete all enrolled course evaluations to unlock your examination permit.">?</span>
             <span class="sr-only">({{ progress.completed }} of {{ progress.total }} Completed)</span>
           </h2>
+          <div class="queue-meta-strip" style="font-size: 0.8rem; color: #4b5563; margin-top: 0.35rem;">
+            <span>Term: <strong>{{ evaluationStore.evaluationWindow?.term_name || '1st Semester AY 2026-2027' }}</strong></span>
+            <span style="margin: 0 0.4rem;">·</span>
+            <span>Deadline: <strong>{{ formattedDeadline }}</strong></span>
+            <span style="margin: 0 0.4rem;">·</span>
+            <span>Completed: <strong>{{ progress.completed }} of {{ progress.total }}</strong></span>
+          </div>
         </div>
 
         <div class="queue-stats-pill tabular-nums">
@@ -131,6 +162,32 @@ function startEvaluation(course) {
     </section>
 
     <section class="card queue-table-card" aria-label="Enrolled Course Evaluations">
+      <!-- Enrolled Subject-Section Selector Dropdown -->
+      <div class="queue-selector-dropdown-row" style="margin-bottom: 0.85rem; padding: 0.65rem 0.85rem; background: #fbfcfb; border: 1px solid #e1e7e1; border-radius: 8px;">
+        <label for="queue-section-dropdown" style="display: block; font-size: 0.8rem; font-weight: 700; color: #103c2e; margin-bottom: 0.35rem;">
+          Select Enrolled Subject to Evaluate:
+        </label>
+        <select
+          id="queue-section-dropdown"
+          v-model="selectedDropdownSectionId"
+          class="form-input form-select"
+          data-testid="queue-section-dropdown"
+          aria-label="Select Enrolled Subject"
+          @change="onDropdownSelect"
+          style="width: 100%; font-size: 0.85rem; padding: 0.45rem 0.65rem; border-radius: 6px; border: 1px solid #cbd5e1;"
+        >
+          <option value="">-- Choose Enrolled Course Section to Evaluate --</option>
+          <option
+            v-for="c in evaluationStore.courses"
+            :key="c.course_section_id"
+            :value="c.course_section_id"
+            :disabled="c.status === 'COMPLETED' || evaluationStore.evaluationWindow?.status !== 'OPEN'"
+          >
+            {{ c.course_code }} — {{ c.course_title }} — {{ c.instructor_name }} — Section {{ c.section_code || 'SEC-A' }} ({{ c.status === 'COMPLETED' ? 'Clearance Issued' : 'Pending' }})
+          </option>
+        </select>
+      </div>
+
       <div class="queue-filter-toolbar">
         <input
           :value="searchInput"
@@ -190,8 +247,10 @@ function startEvaluation(course) {
         <table class="institutional-table" data-testid="student-queue-table">
           <thead>
             <tr>
-              <th scope="col">Course Code</th>
-              <th scope="col">Instructor</th>
+              <th scope="col">Subject ID <span class="sr-only">Course Code</span></th>
+              <th scope="col">Subject Name</th>
+              <th scope="col">Professor <span class="sr-only">Instructor</span></th>
+              <th scope="col">Section</th>
               <th scope="col">Status</th>
               <th scope="col">Action</th>
             </tr>
@@ -204,9 +263,12 @@ function startEvaluation(course) {
             >
               <td>
                 <strong class="course-code-cell">{{ course.course_code }}</strong>
-                <div class="course-title-sub">{{ course.course_title }}</div>
+              </td>
+              <td>
+                <div class="course-title-sub" style="font-weight: 600; color: #1f2937;">{{ course.course_title }}</div>
               </td>
               <td>{{ course.instructor_name }}</td>
+              <td>{{ course.section_code || 'SEC-A' }}</td>
               <td>
                 <span
                   class="status-badge"

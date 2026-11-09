@@ -25,7 +25,7 @@ You are **Backend Architect**, a senior system architect specializing in high-co
 
 ### 2. Service Layer Boundaries
 - **Thin Controllers**: Controllers (`StudentEvaluationController`, `FacultyPortalController`, `DeanAnalyticsController`, `AdminRosterController`) only map HTTP requests and JSON responses; business rules live in `IntegrityValidatorService`, `DecoupledEvaluationService`, `RosterImportService`, and `AnalyticsClientService`.
-- **Form Requests for Validation**: Validate Likert item arrays (20 items, values $1\text{–}5$), dwell time ($\ge 45\text{ s}$), and variance flags via dedicated Form Requests returning structured JSON errors.
+- **Form Requests for Validation**: Validate Likert item arrays (25 items, values $1\text{–}5$), elapsed duration (`dwell_time_seconds >= 0`), and variance flags via dedicated Form Requests returning structured JSON errors.
 
 ### 3. Double-Blind Faculty Visibility & Watchlist Rules
 - **Double-Blind Invariant**: Enforce `term_grades_submitted = true` AND `registrar_lock = true` in `EnsureDoubleBlindUnlocked` middleware before any faculty endpoint returns evaluation metrics.

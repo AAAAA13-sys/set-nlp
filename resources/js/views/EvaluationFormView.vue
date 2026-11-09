@@ -2,7 +2,6 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import DestructiveConfirmModal from '../components/DestructiveConfirmModal.vue';
-import DwellTimerBadge from '../components/DwellTimerBadge.vue';
 import ErrorRecoveryBanner from '../components/ErrorRecoveryBanner.vue';
 import StraightLineModal from '../components/StraightLineModal.vue';
 import { useEvaluationStore } from '../stores/evaluation.js';
@@ -164,9 +163,18 @@ watch(
   },
 );
 
-const minDwellSeconds = computed(() =>
-  Number(evaluationStore.evaluationWindow?.min_dwell_seconds || 45),
-);
+const formattedDeadline = computed(() => {
+  const endsAt = evaluationStore.evaluationWindow?.ends_at;
+  if (!endsAt) return 'Open for AY 2026-2027 (Asia/Manila)';
+  try {
+    const d = new Date(endsAt);
+    return isNaN(d.getTime())
+      ? endsAt
+      : d.toLocaleString('en-US', { timeZone: 'Asia/Manila', dateStyle: 'medium', timeStyle: 'short' }) + ' (Asia/Manila)';
+  } catch (_) {
+    return endsAt;
+  }
+});
 
 const answeredRatings = computed(() =>
   ratings.value.filter((val) => Number.isInteger(val) && val >= 1 && val <= 5),
@@ -188,7 +196,7 @@ const straightLined = computed(
   () => allRatingsAnswered.value && isStraightLined(ratings.value),
 );
 const dwellValid = computed(() =>
-  isDwellTimeValid(evaluationStore.dwellSeconds, 25, minDwellSeconds.value),
+  isDwellTimeValid(evaluationStore.dwellSeconds, 25, 0),
 );
 const nlpPreview = computed(() => classifyCommentPreview(commentText.value));
 
@@ -247,15 +255,6 @@ async function performInitialSubmit() {
       type: 'error',
       code: 'INCOMPLETE_RATINGS',
       message: `Please rate all 25 pedagogical items across the five clusters (${remaining} item${remaining === 1 ? '' : 's'} remaining) before submitting.`,
-    };
-    return;
-  }
-
-  if (!dwellValid.value) {
-    statusBanner.value = {
-      type: 'error',
-      code: 'SPEED_RUN_DETECTED',
-      message: `Minimum reading duration of ${minDwellSeconds.value} seconds is required for this 25-item SET instrument (${Math.max(0, minDwellSeconds.value - evaluationStore.dwellSeconds)}s remaining).`,
     };
     return;
   }
@@ -354,15 +353,19 @@ function returnToQueue() {
         <div>
           <span class="eyebrow-badge">COURSE EVALUATION</span>
           <h2 id="eval-form-heading" class="section-title">
-            {{ evaluationStore.activeCourse?.course_code || 'Loading Section…' }} —
+            {{ evaluationStore.activeCourse?.course_code || 'CS-401' }} —
             {{ evaluationStore.activeCourse?.instructor_name || 'Assigned Instructor' }}
           </h2>
           <p class="section-subtitle">
-            {{ evaluationStore.activeCourse?.course_title || 'Academic Course Section' }}
+            <strong>{{ evaluationStore.activeCourse?.course_title || 'Academic Course Section' }}</strong>
             <span v-if="evaluationStore.activeCourse?.section_code">
               · Section {{ evaluationStore.activeCourse.section_code }}
             </span>
+            · Term: {{ evaluationStore.evaluationWindow?.term_name || '1st Semester AY 2026-2027' }}
           </p>
+          <div class="eval-meta-deadline" style="font-size: 0.8rem; color: #4b5563; margin-top: 0.25rem;">
+            <span>Submission Deadline: <strong>{{ formattedDeadline }}</strong></span>
+          </div>
         </div>
 
         <div class="eval-header-tools">
@@ -387,11 +390,21 @@ function returnToQueue() {
         </div>
       </div>
 
-      <DwellTimerBadge
-        :dwell-seconds="evaluationStore.dwellSeconds"
-        :min-seconds="minDwellSeconds"
-        :question-count="25"
-      />
+      <!-- Visible 5-Point Rating Scale Legend -->
+      <div class="rating-scale-legend-card" role="region" aria-label="Rating Scale Legend" style="margin: 0.85rem 0; padding: 0.65rem 0.85rem; background: #f9fbf9; border: 1px solid #dce7dc; border-radius: 8px;">
+        <span class="legend-title" style="font-size: 0.8rem; font-weight: 700; color: #103c2e; margin-right: 0.75rem;">Rating Scale Legend:</span>
+        <span class="legend-items" style="display: inline-flex; gap: 0.6rem; flex-wrap: wrap; font-size: 0.78rem; color: #374151;">
+          <span><strong>1</strong>: Strongly Disagree</span>
+          <span>·</span>
+          <span><strong>2</strong>: Disagree</span>
+          <span>·</span>
+          <span><strong>3</strong>: Neutral</span>
+          <span>·</span>
+          <span><strong>4</strong>: Agree</span>
+          <span>·</span>
+          <span><strong>5</strong>: Strongly Agree</span>
+        </span>
+      </div>
 
       <div class="live-metrics-strip tabular-nums" aria-label="Evaluation Progress">
         <div>

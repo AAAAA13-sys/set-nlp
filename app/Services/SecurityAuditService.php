@@ -107,17 +107,17 @@ class SecurityAuditService
     }
 
     /**
-     * Verify Response Authenticity Guards (< 45s speed-run, sigma^2 = 0 straight-line, > 5 professor questions).
+     * Verify Response Authenticity Guards (immediate submission >=0s accepted, negative rejected, sigma^2 = 0 straight-line, > 5 professor questions).
      *
      * @return array<string, mixed>
      */
     public function auditResponseAuthenticityGuards(): array
     {
-        // 1. Speed-Run Guard (< 45s rejected, >= 45s accepted)
-        $speedRunRejected12s = !$this->validator->validateDwellTime(12, IntegrityValidatorService::DEFAULT_QUESTION_COUNT);
-        $speedRunRejected44s = !$this->validator->validateDwellTime(44, IntegrityValidatorService::FIVE_CLUSTER_QUESTION_COUNT);
-        $validDwellAccepted45s = $this->validator->validateDwellTime(45, IntegrityValidatorService::FIVE_CLUSTER_QUESTION_COUNT);
-        $speedRunGuardPassed = $speedRunRejected12s && $speedRunRejected44s && $validDwellAccepted45s;
+        // 1. Mandatory Timing Policy: Negative duration rejected (< 0s), immediate submission allowed (>= 0s)
+        $negativeRejected = !$this->validator->validateDwellTime(-1, IntegrityValidatorService::DEFAULT_QUESTION_COUNT);
+        $zeroAccepted = $this->validator->validateDwellTime(0, IntegrityValidatorService::FIVE_CLUSTER_QUESTION_COUNT);
+        $validDwellAccepted = $this->validator->validateDwellTime(45, IntegrityValidatorService::FIVE_CLUSTER_QUESTION_COUNT);
+        $timingGuardPassed = $negativeRejected && $zeroAccepted && $validDwellAccepted;
 
         // 2. Straight-Lining Guard (sigma^2 = 0 detected, non-zero variance accepted)
         $uniformRatings = array_fill(0, IntegrityValidatorService::FIVE_CLUSTER_QUESTION_COUNT, 5);
@@ -150,17 +150,16 @@ class SecurityAuditService
 
         $profQuestionsGuardPassed = $exceededRejected && $validProfAccepted;
 
-        $passed = $speedRunGuardPassed && $straightLineGuardPassed && $profQuestionsGuardPassed;
+        $passed = $timingGuardPassed && $straightLineGuardPassed && $profQuestionsGuardPassed;
 
         return [
             'passed' => $passed,
             'status' => $passed ? 'PASS' : 'FAIL',
-            'speed_run_guard' => [
-                'passed' => $speedRunGuardPassed,
-                'minimum_dwell_seconds' => IntegrityValidatorService::MIN_DWELL_SECONDS_20_ITEMS,
-                'rejected_12s' => $speedRunRejected12s,
-                'rejected_44s' => $speedRunRejected44s,
-                'accepted_45s' => $validDwellAccepted45s,
+            'timing_policy_guard' => [
+                'passed' => $timingGuardPassed,
+                'negative_rejected' => $negativeRejected,
+                'zero_dwell_accepted' => $zeroAccepted,
+                'positive_dwell_accepted' => $validDwellAccepted,
             ],
             'straight_line_guard' => [
                 'passed' => $straightLineGuardPassed,
@@ -302,17 +301,17 @@ class SecurityAuditService
 
         $issuedAt = 1700000000;
         $startToken = $this->validator->issueStartToken(10, 101, 'plp-audit-secret', $issuedAt);
-        $under45Rejected = !$this->validator->verifyStartToken($startToken, 10, 101, 'plp-audit-secret', 45, $issuedAt + 30);
-        $at45Accepted = $this->validator->verifyStartToken($startToken, 10, 101, 'plp-audit-secret', 45, $issuedAt + 45);
+        $tamperedRejected = !$this->validator->verifyStartToken($startToken . 'tampered', 10, 101, 'plp-audit-secret', 0, $issuedAt + 5);
+        $validTokenAccepted = $this->validator->verifyStartToken($startToken, 10, 101, 'plp-audit-secret', 0, $issuedAt + 5);
 
-        $passed = $metadataStripped && $validHmacHash && $under45Rejected && $at45Accepted;
+        $passed = $metadataStripped && $validHmacHash && $tamperedRejected && $validTokenAccepted;
 
         return [
             'passed' => $passed,
             'status' => $passed ? 'PASS' : 'FAIL',
             'metadata_stripped' => $metadataStripped,
             'hmac_sha256_comment_hash_valid' => $validHmacHash,
-            'signed_start_token_enforced' => $under45Rejected && $at45Accepted,
+            'signed_start_token_enforced' => $tamperedRejected && $validTokenAccepted,
         ];
     }
 
@@ -492,7 +491,7 @@ class SecurityAuditService
             ['id' => 19, 'part' => 1, 'name' => 'Signed Webhooks', 'status' => 'ENFORCED', 'mechanism' => 'POST /api/webhooks/registrar-sync requires HMAC-SHA256 X-EvaluaTech-Signature'],
             // Part 2 (Controls 20-39)
             ['id' => 20, 'part' => 2, 'name' => 'Destructive Action Step-Up Confirmation', 'status' => 'ENFORCED', 'mechanism' => 'Explicit confirmation modal & payload guard on window suspend/close & unlock'],
-            ['id' => 21, 'part' => 2, 'name' => 'Business Logic Invariant Guards', 'status' => 'ENFORCED', 'mechanism' => '45s dwell + zero-variance challenge + double-blind grade lock'],
+            ['id' => 21, 'part' => 2, 'name' => 'Business Logic Invariant Guards', 'status' => 'ENFORCED', 'mechanism' => 'Window boundaries + zero-variance challenge + double-blind grade lock'],
             ['id' => 22, 'part' => 2, 'name' => 'Race Condition & Idempotency Protection', 'status' => 'ENFORCED', 'mechanism' => 'Atomic PDO transaction + SELECT FOR UPDATE + FT-02 submission_key'],
             ['id' => 23, 'part' => 2, 'name' => 'Webhook Anti-Replay Protection', 'status' => 'ENFORCED', 'mechanism' => '300s timestamp window + webhook_replays SHA-256 nonce table'],
             ['id' => 24, 'part' => 2, 'name' => 'Least-Privilege CI/CD Permissions', 'status' => 'ENFORCED', 'mechanism' => '.github/workflows/security-ci.yml sets permissions: contents: read'],
