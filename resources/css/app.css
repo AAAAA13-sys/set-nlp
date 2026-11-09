@@ -2022,6 +2022,7 @@ textarea:focus-visible,
   border-color: #176347;
   color: #ffffff;
   outline: none;
+  box-shadow: 0 0 0 3px rgba(23, 99, 71, 0.2);
 }
 
 .ui-hint[data-hint]::after {
@@ -2031,7 +2032,7 @@ textarea:focus-visible,
   left: 50%;
   transform: translateX(-50%) translateY(4px);
   min-width: 190px;
-  max-width: 280px;
+  max-width: 260px;
   padding: 7px 10px;
   border-radius: 7px;
   background: #103c2e;
@@ -2055,6 +2056,20 @@ textarea:focus-visible,
 .ui-hint[data-hint]:focus-visible::after {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 480px) {
+  .ui-hint[data-hint]::after {
+    left: auto;
+    right: 0;
+    transform: translateY(4px);
+    max-width: 220px;
+  }
+
+  .ui-hint[data-hint]:hover::after,
+  .ui-hint[data-hint]:focus-visible::after {
+    transform: translateY(0);
+  }
 }
 
 /* Keep form parameter subtexts hidden in favor of clean hover hints */

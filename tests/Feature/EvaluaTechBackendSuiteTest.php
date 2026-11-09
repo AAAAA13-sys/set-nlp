@@ -1735,7 +1735,7 @@ class EvaluaTechBackendSuiteTest extends TestCase
 
         // 1. Verify service layer longitudinal metrics computation
         $trends = $service->getLongitudinalSemesterTrends(1);
-        $this->assertIsArray($trends);
+        $this->assertTrue(is_array($trends));
         $this->assertSame(1, $trends['department_id']);
         $this->assertStringContainsString('AACCUP Area III', $trends['accreditation_standard']);
         $this->assertSame('PAMANTASAN NG LUNGSOD NG PASIG', $trends['institution']);
@@ -1891,7 +1891,7 @@ class EvaluaTechBackendSuiteTest extends TestCase
 
         // 1. Service Layer: College-Wide Completion Heatmap (unfiltered)
         $collegeHeatmap = $service->getDepartmentCompletionHeatmap();
-        $this->assertIsArray($collegeHeatmap);
+        $this->assertTrue(is_array($collegeHeatmap));
         $this->assertNull($collegeHeatmap['department_id']);
         $this->assertSame(85.0, $collegeHeatmap['institutional_target_pct']);
         $this->assertGreaterThan(0, $collegeHeatmap['total_sections']);

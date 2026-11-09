@@ -136,9 +136,12 @@ const handleLogin = throttle(() => {
       <div class="floating-auth-card" data-testid="login-card">
         <header class="auth-card-header">
           <span class="portal-access-label">STUDENT &amp; FACULTY ACCESS</span>
-          <h2 id="login-heading" class="auth-card-title">Sign in to your account</h2>
+          <h2 id="login-heading" class="auth-card-title">
+            Sign in to your account
+            <span class="ui-hint" tabindex="0" aria-label="Sign-in instructions" data-hint="Use your PLP student number (e.g., 2024-10892), employee ID, or university email.">?</span>
+          </h2>
           <p class="auth-card-subtitle">
-            Sign in with your PLP student number, employee ID, or university email.
+            Use your PLP ID or university email.
           </p>
         </header>
 

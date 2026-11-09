@@ -25,6 +25,7 @@ All seeded accounts use the password **`evaluatech123`**:
 - **Mobile Screenshot**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/02_login_mobile.png`
 
 ### Interactive Controls & Buttons on `/login`
+- **Hover / Keyboard Tooltip Hints (`?` `.ui-hint`)**: Hovering or focusing the `?` badge next to `"Sign in to your account"` shows a concise tooltip (`"Use your PLP student number (e.g., 2024-10892), employee ID, or university email."`) so the card stays uncluttered.
 1. **`Student / Employee ID or Email` Input (`[data-testid="login-identifier-input"]`)**:
    - Enter your PLP student number (e.g., `2024-10892`), employee ID (`FAC-10001`, `CHR-00001`, `DEAN-0001`, `ADM-00001`), or `@plpasig.edu.ph` email.
    - Automatically trims whitespace and clears any prior validation banner as you type.
@@ -63,6 +64,7 @@ Every authenticated screen shares the deep-emerald left sidebar (`#103c2e`) and 
 - **Permit Card Screenshot**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/20_student_queue_permit_card.png`
 
 #### Interactive Controls & Buttons on `/queue`
+- **Course Counter Pill (`3 / 6` `.ui-badge-count`) & Tooltip Hint (`?` `.ui-hint`)**: The `My Courses` header displays a compact `3 / 6` completion counter pill and a `?` tooltip (`"Complete all enrolled course evaluations to unlock your examination permit."`).
 1. **`Search course or professor...` Input (`[data-testid="queue-search-input"]`)**:
    - Filters your enrolled course rows in real time (debounced `220ms`) by course code (`CS-401`), title (`Discrete Mathematics`), or professor name (`Dr. R. Garcia`).
 2. **Status Filter Pills (`All (6)`, `Pending (3)`, `Completed (3)`)**:
@@ -91,6 +93,7 @@ Every authenticated screen shares the deep-emerald left sidebar (`#103c2e`) and 
 2. **Autosave Indicator (`[data-testid="survey-autosave-indicator"]`)**:
    - Automatically saves your in-progress ratings and comments locally (`Autosave ready` / `Draft saved`) with zero personal identifiers so you don't lose work if you refresh.
 3. **25 Likert Rating Pills (`1` to `5`) across 5 Teaching Areas**:
+   - Each teaching cluster header includes a compact `X / 5` `.ui-badge-count` progress pill, and the `Questions About Your Professor` and `Additional Comments` headers include `?` `.ui-hint` tooltips so the evaluation form stays focused on the questions.
    - Click `1` (*Strongly Disagree*), `2` (*Disagree*), `3` (*Neutral*), `4` (*Agree*), or `5` (*Strongly Agree*) for each of the 25 items (`PD-1`..`PD-5`, `AG-1`..`AG-5`, `CM-1`..`CM-5`, `PC-1`..`PC-5`, `SS-1`..`SS-5`).
    - The progress bar updates live (`Answered: X / 25`, `Average: X.XX / 5.00`).
 4. **Written Feedback Inputs (`Q1`–`Q4` & Optional `Q5`)**:
@@ -116,6 +119,7 @@ Every authenticated screen shares the deep-emerald left sidebar (`#103c2e`) and 
 - **Screenshot**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/06_student_advocacy_permit.png`
 
 #### Interactive Controls & Buttons on `/advocacy`
+- **Tooltip Hints (`?` `.ui-hint`)**: `Share Portal Link & Check Permit Status`, `Invite Classmates`, and `Your Clearance Code` use `?` hover/focus tooltip badges instead of long explanatory paragraphs.
 1. **`Copy Link` Button (`[data-testid="copy-advocacy-link-btn"]`)**:
    - Copies the portal share URL (`http://.../login?utm_source=plp_campus_advocacy`) to your clipboard and switches button text to `Copied!`.
 2. **`Copy Code` Button (`[data-testid="copy-clearance-token-btn"]`)**:
@@ -129,6 +133,7 @@ Every authenticated screen shares the deep-emerald left sidebar (`#103c2e`) and 
 - **Locked Section Screenshot**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/08_faculty_locked.png`
 
 ### Interactive Controls & Buttons on `/faculty`
+- **Tooltip Hints (`?` `.ui-hint`) & Comment Counter (`.ui-badge-count`)**: `Course Evaluation Summary`, `Results Locked Until Final Grades Are Submitted`, `Student Written Feedback Summary`, `Pedagogical Action Plan`, and `Anonymous Student Comments` include `?` tooltip hints and a live comment count pill.
 1. **`Section:` Dropdown (`[data-testid="faculty-section-select"]`)**:
    - Switch between your assigned course sections (e.g., `CS-401 (SEC-A) — Unlocked` vs `CS-401 (SEC-B) — Locked`).
 2. **When Locked (`Grades Pending` — `[data-testid="double-blind-lock-screen"]`)**:

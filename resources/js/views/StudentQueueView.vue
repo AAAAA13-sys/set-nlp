@@ -77,11 +77,11 @@ function startEvaluation(course) {
         <div>
           <span class="eyebrow-badge">COURSE EVALUATIONS</span>
           <h2 id="queue-heading" class="section-title">
-            My Courses ({{ progress.completed }} of {{ progress.total }} Completed)
+            My Courses
+            <span class="ui-badge-count">{{ progress.completed }} / {{ progress.total }}</span>
+            <span class="ui-hint" tabindex="0" aria-label="Examination permit requirement" data-hint="Complete all enrolled course evaluations to unlock your examination permit.">?</span>
+            <span class="sr-only">({{ progress.completed }} of {{ progress.total }} Completed)</span>
           </h2>
-          <p class="section-subtitle">
-            Evaluate your enrolled professors for this semester to unlock your examination permit.
-          </p>
         </div>
 
         <div class="queue-stats-pill tabular-nums">

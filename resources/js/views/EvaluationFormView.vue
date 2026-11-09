@@ -457,7 +457,8 @@ function returnToQueue() {
           <legend class="dimension-legend">
             <span class="dimension-name tabular-nums">
               {{ dimension.clusterNumber }}. {{ dimension.name }}
-              ({{ getDimensionAnsweredCount(dimension) }}/5)
+              <span class="ui-badge-count">{{ getDimensionAnsweredCount(dimension) }} / 5</span>
+              <span class="sr-only">({{ getDimensionAnsweredCount(dimension) }}/5)</span>
             </span>
             <small class="dimension-desc">1 = Strongly Disagree · 2 = Disagree · 3 = Neutral · 4 = Agree · 5 = Strongly Agree</small>
           </legend>
@@ -504,10 +505,10 @@ function returnToQueue() {
         <div class="prof-questions-header">
           <div>
             <span class="eyebrow-badge">WRITTEN FEEDBACK</span>
-            <h3 class="section-title">Questions About Your Professor</h3>
-            <p class="section-subtitle">
-              Share honest, constructive feedback in English, Tagalog, or Taglish.
-            </p>
+            <h3 class="section-title">
+              Questions About Your Professor
+              <span class="ui-hint" tabindex="0" aria-label="Language options" data-hint="Share honest, constructive feedback in English, Tagalog, or Taglish.">?</span>
+            </h3>
           </div>
           <button
             type="button"
@@ -656,10 +657,10 @@ function returnToQueue() {
       <section class="card narrative-card">
         <div class="narrative-head-row">
           <div>
-            <h3 class="section-title">Additional Comments</h3>
-            <p class="section-subtitle" style="margin-bottom: 0.75rem;">
-              Optional overall remarks about this course. Your name is never attached to your comments.
-            </p>
+            <h3 class="section-title">
+              Additional Comments
+              <span class="ui-hint" tabindex="0" aria-label="Anonymity note" data-hint="Optional overall remarks about this course. Your name is never attached to your comments.">?</span>
+            </h3>
           </div>
           <span class="char-counter tabular-nums" data-testid="narrative-char-counter">
             {{ commentText.length }} / 2000

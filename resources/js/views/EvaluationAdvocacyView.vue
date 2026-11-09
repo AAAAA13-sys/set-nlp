@@ -67,10 +67,8 @@ async function copyText(text, key) {
           <span class="eyebrow-badge">CLASS LINK &amp; PERMIT</span>
           <h2 id="advocacy-heading" class="section-title">
             Share Portal Link &amp; Check Permit Status
+            <span class="ui-hint" tabindex="0" aria-label="Class link and permit help" data-hint="Share the evaluation link with classmates or copy your signed examination clearance code.">?</span>
           </h2>
-          <p class="section-subtitle">
-            Share the evaluation link with your classmates or copy your signed examination clearance code.
-          </p>
         </div>
         <div class="advocacy-term-pill tabular-nums">
           <span>Term</span>
@@ -81,10 +79,10 @@ async function copyText(text, key) {
       <div class="advocacy-share-grid">
         <div class="share-box">
           <span class="share-kicker">CLASS EVALUATION LINK</span>
-          <h3>Invite Classmates</h3>
-          <p>
-            Share this link in your class group chat so classmates can finish their evaluations on time.
-          </p>
+          <h3>
+            Invite Classmates
+            <span class="ui-hint" tabindex="0" aria-label="Invite classmates help" data-hint="Share this link in your class group chat so classmates can finish their evaluations on time.">?</span>
+          </h3>
           <div class="share-input-row">
             <input
               :value="campusPortalShareUrl"
@@ -107,10 +105,10 @@ async function copyText(text, key) {
 
         <div class="share-box">
           <span class="share-kicker">EXAMINATION CLEARANCE</span>
-          <h3>Your Clearance Code</h3>
-          <p>
-            Generated automatically as you complete your assigned course evaluations.
-          </p>
+          <h3>
+            Your Clearance Code
+            <span class="ui-hint" tabindex="0" aria-label="Clearance code help" data-hint="Generated automatically as you complete your assigned course evaluations.">?</span>
+          </h3>
           <div v-if="latestClearanceToken" class="share-input-row">
             <input
               :value="latestClearanceToken"
