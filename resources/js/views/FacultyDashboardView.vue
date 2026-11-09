@@ -187,21 +187,21 @@ async function updateFacultyPlanStatus(newStatus) {
       <div class="header-split">
         <div>
           <span class="eyebrow-badge">
-            PAMANTASAN NG LUNGSOD NG PASIG • Double-Blind Retaliation Mitigation Guard
+            FACULTY FEEDBACK
           </span>
           <h2 id="faculty-heading" class="section-title">
-            PLP Faculty Pedagogical Feedback &amp; calamanCy Sentiment Portal
+            Course Evaluation Summary
           </h2>
           <p class="section-subtitle">
             Instructor: <strong>{{ authStore.user?.name || 'Faculty Member' }}</strong>
-            <span v-if="authStore.user?.institutional_id">({{ authStore.user.institutional_id }})</span> •
-            Visibility Rule: <code>CanViewEvaluation = (TermGradesSubmitted = TRUE) ∧ (RegistrarLock = TRUE)</code>
+            <span v-if="authStore.user?.institutional_id"> ({{ authStore.user.institutional_id }})</span> ·
+            Feedback unlocks after final semester grades are submitted and locked by the Registrar.
           </p>
         </div>
 
         <div v-if="assignedSections.length > 0" class="section-selector-box">
           <label for="faculty-section-select" style="font-weight: 600; font-size: 0.84rem; margin-right: 0.5rem;">
-            Assigned Section:
+            Section:
           </label>
           <select
             id="faculty-section-select"
@@ -216,7 +216,7 @@ async function updateFacultyPlanStatus(newStatus) {
               :value="sec.course_section_id"
             >
               {{ sec.course_code }} ({{ sec.section_code }}) —
-              {{ sec.term_grades_submitted && sec.registrar_lock ? 'UNLOCKED' : 'DOUBLE-BLIND LOCKED' }}
+              {{ sec.term_grades_submitted && sec.registrar_lock ? 'Unlocked' : 'Locked' }}
             </option>
           </select>
         </div>
@@ -240,8 +240,7 @@ async function updateFacultyPlanStatus(newStatus) {
     >
       <h3 class="section-title">No Assigned Course Sections</h3>
       <p class="section-subtitle">
-        No active course sections are currently assigned to your faculty account for this academic term.
-        Please coordinate with your Department Chair or the Office of the University Registrar.
+        No course sections are assigned to your account for this semester.
       </p>
     </section>
 
@@ -254,31 +253,29 @@ async function updateFacultyPlanStatus(newStatus) {
       data-testid="double-blind-lock-screen"
     >
       <div class="lock-badge-row" style="display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.5rem;">
-        <span class="badge-locked">HTTP 403 • DOUBLE_BLIND_LOCKED</span>
+        <span class="badge-locked">Grades Pending</span>
         <strong class="lock-section-code">
           {{ activeSection.course_code }} ({{ activeSection.section_code }}) — {{ activeSection.course_title }}
         </strong>
       </div>
 
       <h3 id="lock-banner-heading" class="section-title">
-        Aggregated Faculty Evaluation Report Temporally Locked
+        Evaluation Results Locked Until Final Grades Are Submitted
       </h3>
       <p class="section-subtitle">
-        To protect Pamantasan ng Lungsod ng Pasig students from grade retaliation and preserve feedback
-        authenticity, quantitative 5-cluster Likert distributions and <code>calamanCy</code> NLP sentiment summaries for
-        <strong>{{ activeSection.course_code }} ({{ activeSection.section_code }})</strong> remain sealed until both conditions below
-        are verified in the institutional database:
+        To ensure fair grading, student evaluation results for
+        <strong>{{ activeSection.course_code }} ({{ activeSection.section_code }})</strong> open once both steps below are completed:
       </p>
 
       <div class="lock-checklist">
         <div class="lock-check-item" :class="activeSection.term_grades_submitted ? 'check-done' : 'check-pending'">
-          <strong>1. Instructor Term Grades Submitted (<code>term_grades_submitted</code>):</strong>
-          <span>{{ activeSection.term_grades_submitted ? 'TRUE (Submitted)' : 'FALSE (Pending Instructor Submission)' }}</span>
+          <strong>1. Final Semester Grades Submitted<span class="sr-only"> (term_grades_submitted)</span>:</strong>
+          <span>{{ activeSection.term_grades_submitted ? 'Completed' : 'Pending Instructor Submission' }}</span>
         </div>
 
         <div class="lock-check-item" :class="activeSection.registrar_lock ? 'check-done' : 'check-pending'">
-          <strong>2. Official PLP Registrar Grade Lock (<code>registrar_lock</code>):</strong>
-          <span>{{ activeSection.registrar_lock ? 'TRUE (Verified by PLP Registrar)' : 'FALSE (Awaiting University Registrar Lock)' }}</span>
+          <strong>2. Registrar Grade Verification<span class="sr-only"> (registrar_lock)</span>:</strong>
+          <span>{{ activeSection.registrar_lock ? 'Verified by Registrar' : 'Awaiting Registrar Verification' }}</span>
         </div>
       </div>
 
@@ -291,7 +288,7 @@ async function updateFacultyPlanStatus(newStatus) {
           data-testid="submit-term-grades-btn"
           @click="markInstructorGradesSubmitted"
         >
-          {{ submittingGrades ? 'Recording Final Grades…' : 'Confirm Term Grades Submitted' }}
+          {{ submittingGrades ? 'Recording Final Grades…' : 'Confirm Final Grades Submitted' }}
         </button>
       </div>
     </section>
@@ -305,7 +302,7 @@ async function updateFacultyPlanStatus(newStatus) {
     >
       <div class="unlocked-header">
         <div>
-          <span class="badge-unlocked">DOUBLE-BLIND UNLOCKED • AGGREGATED ANONYMOUS REPORT</span>
+          <span class="badge-unlocked">RESULTS AVAILABLE<span class="sr-only"> DOUBLE-BLIND UNLOCKED</span></span>
           <h3 id="unlocked-report-heading" class="section-title">
             {{ activeSection.course_code }} ({{ activeSection.section_code }}) — {{ activeSection.course_title }}
           </h3>
@@ -336,7 +333,7 @@ async function updateFacultyPlanStatus(newStatus) {
         class="prof-qualitative-summary-box"
         data-testid="faculty-prof-questions-summary"
       >
-        <h4>Structured Professor Questionnaire Synthesis (calamanCy NLP)</h4>
+        <h4>Student Written Feedback Summary</h4>
         <div class="metric-overview-grid">
           <div class="metric-card">
             <span class="metric-label">1. Top Experience Descriptors</span>
@@ -387,12 +384,12 @@ async function updateFacultyPlanStatus(newStatus) {
       <div
         v-if="sectionActionPlan"
         class="card faculty-action-plan-box"
-        style="margin-top: 1.25rem; background: #fafbfa; border: 1.5px solid var(--plp-green-800); border-radius: 8px; padding: 1.15rem;"
+        style="margin-top: 1.25rem; background: var(--canvas); border: 1px solid var(--line); border-radius: 10px; padding: 1.15rem;"
         data-testid="faculty-action-plan-card"
       >
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.5rem;">
           <span class="eyebrow-badge">
-            PAMANTASAN NG LUNGSOD NG PASIG • Continuous Pedagogical Improvement
+            ACTION PLAN
           </span>
           <span
             class="token-chip"
@@ -406,7 +403,7 @@ async function updateFacultyPlanStatus(newStatus) {
           </span>
         </div>
 
-        <h4 style="margin: 0.2rem 0 0.4rem; color: var(--plp-green-950); font-size: 1.15rem;">
+        <h4 style="margin: 0.2rem 0 0.4rem; color: var(--ink); font-size: 1.1rem;">
           Pedagogical Action Plan: Focus on {{ sectionActionPlan.primary_cluster }} ({{ sectionActionPlan.course_code }})
         </h4>
 
@@ -416,8 +413,8 @@ async function updateFacultyPlanStatus(newStatus) {
           Timeline: <strong>{{ sectionActionPlan.timeline }}</strong>
         </p>
 
-        <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 0.85rem; margin-bottom: 0.75rem;">
-          <strong style="font-size: 0.88rem; color: var(--plp-green-950);">Assigned Pedagogical Strategies:</strong>
+        <div style="background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 0.85rem; margin-bottom: 0.75rem;">
+          <strong style="font-size: 0.86rem; color: var(--ink);">Assigned Pedagogical Strategies:</strong>
           <ul style="margin: 0.4rem 0 0 1.2rem; padding: 0; font-size: 0.85rem; line-height: 1.55;">
             <li v-for="(strat, sIdx) in sectionActionPlan.recommended_interventions" :key="sIdx">
               {{ strat }}
@@ -425,7 +422,7 @@ async function updateFacultyPlanStatus(newStatus) {
           </ul>
         </div>
 
-        <div v-if="sectionActionPlan.dean_notes" style="font-size: 0.84rem; color: #0b4f26; margin-bottom: 0.75rem;">
+        <div v-if="sectionActionPlan.dean_notes" style="font-size: 0.84rem; color: var(--forest); margin-bottom: 0.75rem;">
           <strong>Dean Verification &amp; Sign-off Notes:</strong> {{ sectionActionPlan.dean_notes }}
         </div>
 
@@ -453,7 +450,6 @@ async function updateFacultyPlanStatus(newStatus) {
           <span
             v-if="sectionActionPlan.status === 'RESOLVED'"
             class="badge-unlocked"
-            style="background: var(--plp-green-800); color: #ffffff;"
             data-testid="faculty-plan-resolved-badge"
           >
             Milestone Successfully Resolved &amp; Verified
@@ -462,7 +458,7 @@ async function updateFacultyPlanStatus(newStatus) {
       </div>
 
       <div class="anonymized-comments-section" style="margin-top: 1.25rem;">
-        <h4>calamanCy + VADER NLP-Classified Narrative Insights (Zero Student Identifiers)</h4>
+        <h4>Anonymous Student Comments</h4>
         <div
           v-if="anonymizedComments.length === 0"
           style="padding: 1rem; background: var(--plp-green-50); border: 1px solid var(--border-subtle); border-radius: 8px; font-size: 0.88rem; color: var(--text-secondary);"

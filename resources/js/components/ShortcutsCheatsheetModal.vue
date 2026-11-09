@@ -42,9 +42,9 @@ onUnmounted(() => {
     <div class="cheatsheet-dialog">
       <div class="cheatsheet-header">
         <div>
-          <span class="cheatsheet-kicker">KEYBOARD &amp; WORKFLOW REFERENCE</span>
+          <span class="cheatsheet-kicker">QUICK REFERENCE</span>
           <h3 id="cheatsheet-heading" class="cheatsheet-title">
-            PLP EvaluaTech Quick Cheatsheet
+            Keyboard Shortcuts &amp; Evaluation Rules
           </h3>
         </div>
         <button

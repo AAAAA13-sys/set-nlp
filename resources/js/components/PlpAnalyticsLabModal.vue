@@ -131,12 +131,19 @@ const validatedProfQuestions = computed(() =>
     <header class="plp-lab-header">
       <div>
         <span class="eyebrow-badge">
-          PAMANTASAN NG LUNGSOD NG PASIG • plpasig.edu.ph • {{ CALAMANCY_CONFIG.framework }} ({{ CALAMANCY_CONFIG.model }})
+          EVALUATION ANALYSIS
+          <span class="sr-only">{{ CALAMANCY_CONFIG.framework }} ({{ CALAMANCY_CONFIG.model }})</span>
         </span>
         <h3 id="plp-nlp-lab-heading" class="section-title">
-          PLP calamanCy + VADER Tagalog/Taglish/English NLP &amp; 5-Cluster Diagnostic Lab
+          Professor's Evaluation Analysis
+          <span
+            class="ui-hint"
+            tabindex="0"
+            data-hint="Analyzes student comments in English, Tagalog, and Taglish across the 5 teaching areas."
+            aria-label="Hint: Analyzes student comments in English, Tagalog, and Taglish across the 5 teaching areas."
+          >?</span>
         </h3>
-        <p class="section-subtitle">
+        <p class="sr-only">
           Pipeline Reference: <code>{{ CALAMANCY_CONFIG.repo }}</code> •
           Engine: <strong>{{ CALAMANCY_CONFIG.engineLabel }}</strong>
         </p>
@@ -148,11 +155,11 @@ const validatedProfQuestions = computed(() =>
         data-testid="close-plp-nlp-lab-btn"
         @click="emit('close')"
       >
-        Close Lab
+        Close
       </button>
     </header>
 
-    <div class="sample-comment-pills" role="group" aria-label="Tagalog, Taglish, and English Sample Narratives">
+    <div class="sample-comment-pills" role="group" aria-label="Sample Student Comments">
       <button
         v-for="sample in sampleNarratives"
         :key="sample.id"
@@ -167,7 +174,10 @@ const validatedProfQuestions = computed(() =>
     </div>
 
     <div class="form-field">
-      <label for="plp-lab-textarea">Interactive Student Narrative Input (Tagalog / Taglish / English)</label>
+      <label for="plp-lab-textarea">
+        Sample Comment
+        <span class="ui-hint" tabindex="0" data-hint="Type or paste a student comment in English, Tagalog, or Taglish to preview its rating category.">?</span>
+      </label>
       <textarea
         id="plp-lab-textarea"
         v-model="customNarrative"
@@ -179,19 +189,19 @@ const validatedProfQuestions = computed(() =>
 
     <!-- Morphological Lemmas & Polarity Strip -->
     <div class="nlp-live-preview tabular-nums" data-testid="plp-lab-polarity-strip">
-      <span>Polarity Score (P ∈ [−1.0, +1.0]):</span>
+      <span>Score:</span>
       <strong data-testid="plp-lab-polarity-value">
         {{ nlpAnalysis.polarity >= 0 ? `+${nlpAnalysis.polarity.toFixed(2)}` : nlpAnalysis.polarity.toFixed(2) }}
       </strong>
       <span class="badge-valence" :class="`valence-${nlpAnalysis.valence.toLowerCase()}`">
         {{ nlpAnalysis.valence }}
       </span>
-      <span>Primary 5-Cluster Tag:</span>
+      <span>Category:</span>
       <strong data-testid="plp-lab-primary-cluster">{{ nlpAnalysis.pedagogical_tag }}</strong>
     </div>
 
-    <div class="plp-lemma-row" aria-label="calamanCy Morphological Lemmas">
-      <span class="token-label">calamanCy Morphological Lemmas:</span>
+    <div class="plp-lemma-row" aria-label="Key Words">
+      <span class="token-label">Key Words:<span class="sr-only"> calamanCy Morphological Lemmas</span></span>
       <span
         v-for="lemma in activeLemmas"
         :key="lemma"
@@ -203,7 +213,7 @@ const validatedProfQuestions = computed(() =>
 
     <!-- 5-Cluster Confidence Distribution -->
     <div class="plp-clusters-breakdown" data-testid="plp-five-cluster-distribution">
-      <h4>5-Cluster Pedagogical Confidence Distribution (5-Point Likert Scale Alignment)</h4>
+      <h4>Teaching Area Breakdown</h4>
       <div
         v-for="cluster in clusterConfidenceList"
         :key="cluster.name"
@@ -211,8 +221,8 @@ const validatedProfQuestions = computed(() =>
       >
         <div class="sentiment-label">
           <span>
-            <strong>Cluster {{ cluster.clusterNumber }}: {{ cluster.name }}</strong>
-            ({{ cluster.scalePoints }}-Point Scale)
+            <strong>{{ cluster.clusterNumber }}. {{ cluster.name }}</strong>
+            <span class="sr-only">({{ cluster.scalePoints }}-Point Scale)</span>
           </span>
           <strong>{{ cluster.confidence }}%</strong>
         </div>
@@ -229,10 +239,10 @@ const validatedProfQuestions = computed(() =>
     <div class="prof-question-block" data-testid="plp-prof-questions-breakdown">
       <div class="prof-question-subhead">
         <strong>
-          Structured Professor Qualitative Instrument ({{ validatedProfQuestions.questionCount }} of Max {{ MAX_PROFESSOR_QUESTIONS }} Questions)
+          Written Feedback Summary ({{ validatedProfQuestions.questionCount }}/{{ MAX_PROFESSOR_QUESTIONS }})
         </strong>
         <span class="status-badge status-completed">
-          {{ validatedProfQuestions.valid ? 'VALIDATED (4-5 CAP)' : 'INCOMPLETE' }}
+          {{ validatedProfQuestions.valid ? 'Complete' : 'Incomplete' }}
         </span>
       </div>
 

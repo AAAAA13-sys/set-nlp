@@ -7,7 +7,10 @@ const selectedDensity = ref(authStore.uiPreferences?.density || 'comfortable');
 const selectedFocus = ref(authStore.uiPreferences?.focusArea || 'analytics');
 
 const isVisible = computed(
-  () => authStore.isAuthenticated && !authStore.uiPreferences?.onboardingCompleted,
+  () =>
+    authStore.isAuthenticated &&
+    Boolean(authStore.uiPreferences?.showPreferencesBanner) &&
+    !authStore.uiPreferences?.onboardingCompleted,
 );
 
 function applyPreferences() {
@@ -84,51 +87,56 @@ function dismissOnboarding() {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.85rem;
-  padding: 0.85rem 1.1rem;
+  gap: 0.65rem 1rem;
+  padding: 0.6rem 1rem;
   background: #ffffff;
   border: 1px solid #dbe3da;
   border-radius: 12px;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.15rem;
 }
 
 .onboarding-copy {
   display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  max-width: 520px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
 }
 
 .onboarding-pill {
-  display: inline-block;
-  width: fit-content;
-  font-size: 0.68rem;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.14rem 0.5rem;
+  border-radius: 999px;
+  background: #eaf4ee;
+  border: 1px solid #cce3d4;
+  font-size: 0.66rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   color: #176347;
 }
 
 .onboarding-title {
-  font-size: 0.92rem;
+  font-size: 0.86rem;
   color: #1f3028;
 }
 
 .onboarding-sub {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: #4b5e53;
 }
 
 .onboarding-controls {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 0.55rem;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .onboarding-select-label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   font-size: 0.72rem;
   font-weight: 700;
   color: #4b5e53;

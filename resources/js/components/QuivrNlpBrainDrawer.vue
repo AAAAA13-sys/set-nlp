@@ -20,7 +20,7 @@ const selectedCluster = ref('ALL');
 const loading = ref(false);
 const errorMsg = ref(null);
 const brainResponse = ref({
-  synthesis_summary: 'Ask a pedagogical question or filter anonymized vault feedback across Tagalog, Taglish, and English.',
+  synthesis_summary: 'Search and filter anonymous student feedback across courses and topics.',
   total_matches: 0,
   top_pedagogical_cluster: 'Pedagogical Delivery',
   zero_student_identity_verified: true,
@@ -129,9 +129,17 @@ onUnmounted(() => {
     <aside class="quivr-drawer">
       <div class="quivr-header">
         <div>
-          <span class="quivr-kicker">QUIVR-INSPIRED SECOND BRAIN · ZERO-PII VAULT</span>
+          <span class="quivr-kicker">EVALUATION ANALYSIS</span>
           <h3 id="quivr-brain-title" class="quivr-title">
-            calamanCy + VADER Pedagogical Insight Explorer
+            Professor's Evaluation Analysis
+            <span
+              class="ui-hint"
+              tabindex="0"
+              role="note"
+              aria-label="Search anonymized student feedback by keyword, sentiment, or teaching category"
+              data-hint="Search anonymized student feedback by keyword, sentiment, or teaching category."
+            >?</span>
+            <span class="sr-only"> calamanCy + VADER Pedagogical Insight Explorer</span>
           </h3>
         </div>
         <button

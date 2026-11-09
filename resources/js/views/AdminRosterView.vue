@@ -293,14 +293,14 @@ async function toggleLock(sectionId, field) {
       <div class="header-split">
         <div>
           <span class="eyebrow-badge">
-            PAMANTASAN NG LUNGSOD NG PASIG • Office of the University Registrar • RBAC &amp; Grade-Lock Control
+            UNIVERSITY REGISTRAR
           </span>
           <h2 id="admin-heading" class="section-title">
-            PLP Academic Catalog Ingestion &amp; Double-Blind Registrar Lock Console
+            Evaluation Schedule &amp; Grade Locks
           </h2>
           <p class="section-subtitle">
-            Administrator: <strong>{{ authStore.user?.name || 'University Registrar Admin' }}</strong><span v-if="authStore.user?.institutional_id"> ({{ authStore.user.institutional_id }})</span> •
-            Manage atomic CSV/JSON course enrollments, bulk synchronize Registrar Grade Locks, and audit all 63 Security Maxxxxxing controls.
+            Administrator: <strong>{{ authStore.user?.name || 'University Registrar Admin' }}</strong><span v-if="authStore.user?.institutional_id"> ({{ authStore.user.institutional_id }})</span> ·
+            Manage the evaluation window, import class rosters, and lock finalized course grades.
           </p>
         </div>
       </div>
@@ -310,14 +310,13 @@ async function toggleLock(sectionId, field) {
       <div class="watchlist-header">
         <div>
           <span class="eyebrow-badge">
-            SOP 1 &amp; SOP 2 • Evaluation Window &amp; Period Control Console
+            EVALUATION WINDOW
           </span>
           <h3 id="window-heading" class="section-title">
-            Academic Term Period Status &amp; Parameter Tuning
+            Evaluation Period &amp; Thresholds
           </h3>
           <p class="section-subtitle">
-            Configure the student evaluation period for <strong>{{ evaluationStore.evaluationWindow.term_name }} ({{ evaluationStore.evaluationWindow.term_code }})</strong>,
-            tune dwell timer and straight-lining thresholds, and control university-wide access.
+            Set the evaluation period for <strong>{{ evaluationStore.evaluationWindow.term_name }} ({{ evaluationStore.evaluationWindow.term_code }})</strong> and adjust response thresholds.
           </p>
         </div>
         <div class="window-status-pill-wrap">
@@ -369,7 +368,14 @@ async function toggleLock(sectionId, field) {
       <form class="window-params-grid" @submit.prevent="handleSaveEvaluationWindow">
         <div class="param-group">
           <label for="admin-dwell-input" class="param-label">
-            Min Interaction Dwell Time (seconds)
+            Min Dwell Time (s)
+            <span
+              class="ui-hint"
+              tabindex="0"
+              role="note"
+              aria-label="Minimum reading time required before submission (default 45s)"
+              data-hint="Minimum reading time required before submission (default 45s)."
+            >?</span>
             <span class="param-subtext">Speed-run rejection barrier (&ge; 45s required for 5 clusters)</span>
           </label>
           <input
@@ -385,7 +391,14 @@ async function toggleLock(sectionId, field) {
 
         <div class="param-group">
           <label for="admin-variance-input" class="param-label">
-            Straight-Line Variance Cutoff (&sigma;&sup2;)
+            Uniform Rating Cutoff (&sigma;&sup2;)
+            <span
+              class="ui-hint"
+              tabindex="0"
+              role="note"
+              aria-label="Triggers a confirmation prompt when all 25 ratings are identical"
+              data-hint="Triggers a confirmation prompt when all 25 ratings are identical."
+            >?</span>
             <span class="param-subtext">Uniform rating trigger (&sigma;&sup2; = 0.0 requires confirmation)</span>
           </label>
           <input
@@ -402,7 +415,14 @@ async function toggleLock(sectionId, field) {
 
         <div class="param-group">
           <label for="admin-watchlist-mean-input" class="param-label">
-            Dean Watchlist Rating Trigger (&mu; &lt;)
+            Watchlist Mean (&lt;)
+            <span
+              class="ui-hint"
+              tabindex="0"
+              role="note"
+              aria-label="Instructors below this average score appear on the Dean watchlist"
+              data-hint="Instructors below this average score appear on the Dean watchlist (default 3.50)."
+            >?</span>
             <span class="param-subtext">Instructors below this mean Likert score trigger watchlist (default 3.50)</span>
           </label>
           <input
@@ -419,7 +439,14 @@ async function toggleLock(sectionId, field) {
 
         <div class="param-group">
           <label for="admin-watchlist-neg-input" class="param-label">
-            Dean Watchlist Negative Sentiment (% &gt;)
+            Watchlist Negative (&gt; %)
+            <span
+              class="ui-hint"
+              tabindex="0"
+              role="note"
+              aria-label="Instructors exceeding this negative comment share appear on the watchlist"
+              data-hint="Instructors exceeding this negative comment share appear on the watchlist (default 35%)."
+            >?</span>
             <span class="param-subtext">Instructors with negative comments exceeding this % trigger watchlist (default 35.0%)</span>
           </label>
           <input
@@ -436,7 +463,14 @@ async function toggleLock(sectionId, field) {
 
         <div class="param-group full-width">
           <label for="admin-announcement-input" class="param-label">
-            Portal Announcement &amp; Student Guidance Banner
+            Student Banner Notice
+            <span
+              class="ui-hint"
+              tabindex="0"
+              role="note"
+              aria-label="Displayed at the top of the student evaluation queue"
+              data-hint="Displayed at the top of the student evaluation queue."
+            >?</span>
             <span class="param-subtext">Broadcasted to students on their evaluation queue dashboard</span>
           </label>
           <input
@@ -464,7 +498,7 @@ async function toggleLock(sectionId, field) {
             class="btn-primary"
             data-testid="save-evaluation-window-btn"
           >
-            Save Evaluation Window &amp; Threshold Configuration
+            Save Settings
           </button>
         </div>
       </form>
@@ -474,11 +508,16 @@ async function toggleLock(sectionId, field) {
       <div class="locks-header-row">
         <div>
           <h3 id="locks-heading" class="section-title">
-            Course Section Double-Blind Lock Synchronization
+            Course Grade Locks
+            <span
+              class="ui-hint"
+              tabindex="0"
+              role="note"
+              aria-label="Faculty reports unlock only after grades are submitted and locked by the Registrar"
+              data-hint="Faculty reports unlock only after grades are submitted and locked by the Registrar."
+            >?</span>
+            <span class="sr-only"> Course Section Double-Blind Lock Synchronization</span>
           </h3>
-          <p class="section-subtitle">
-            Toggle individual section flags with optimistic UI updates or select multiple rows for atomic bulk synchronization.
-          </p>
         </div>
       </div>
 
@@ -499,7 +538,7 @@ async function toggleLock(sectionId, field) {
             data-testid="bulk-enable-registrar-lock-btn"
             @click="applyBulkLock('registrar_lock', true)"
           >
-            Lock Selected (registrar_lock = TRUE)
+            Lock Selected<span class="sr-only"> (registrar_lock = TRUE)</span>
           </button>
           <button
             type="button"
@@ -508,7 +547,7 @@ async function toggleLock(sectionId, field) {
             data-testid="bulk-disable-registrar-lock-btn"
             @click="applyBulkLock('registrar_lock', false)"
           >
-            Unlock Selected (registrar_lock = FALSE)
+            Unlock Selected<span class="sr-only"> (registrar_lock = FALSE)</span>
           </button>
           <button
             type="button"
@@ -541,9 +580,9 @@ async function toggleLock(sectionId, field) {
               </th>
               <th scope="col">Course &amp; Section</th>
               <th scope="col">Instructor</th>
-              <th scope="col">Grades Submitted (<code>term_grades_submitted</code>)</th>
-              <th scope="col">Registrar Lock (<code>registrar_lock</code>)</th>
-              <th scope="col">Faculty Report Visibility</th>
+              <th scope="col">Grades Submitted<span class="sr-only"> (<code>term_grades_submitted</code>)</span></th>
+              <th scope="col">Registrar Lock<span class="sr-only"> (<code>registrar_lock</code>)</span></th>
+              <th scope="col">Report Status</th>
             </tr>
           </thead>
           <tbody>
@@ -575,7 +614,8 @@ async function toggleLock(sectionId, field) {
                   :data-testid="`toggle-grades-${sec.course_code}`"
                   @click="toggleLock(sec.course_section_id, 'term_grades_submitted')"
                 >
-                  {{ sec.term_grades_submitted ? 'TRUE (Submitted)' : 'FALSE (Pending)' }}
+                  {{ sec.term_grades_submitted ? 'Submitted' : 'Pending' }}
+                  <span class="sr-only">{{ sec.term_grades_submitted ? 'TRUE' : 'FALSE' }}</span>
                 </button>
               </td>
               <td>
@@ -586,7 +626,8 @@ async function toggleLock(sectionId, field) {
                   :data-testid="`toggle-registrar-${sec.course_code}`"
                   @click="toggleLock(sec.course_section_id, 'registrar_lock')"
                 >
-                  {{ sec.registrar_lock ? 'TRUE (Locked)' : 'FALSE (Unlocked)' }}
+                  {{ sec.registrar_lock ? 'Locked' : 'Open' }}
+                  <span class="sr-only">{{ sec.registrar_lock ? 'TRUE' : 'FALSE' }}</span>
                 </button>
               </td>
               <td>
@@ -600,9 +641,16 @@ async function toggleLock(sectionId, field) {
                 >
                   {{
                     canFacultyViewEvaluation(sec.term_grades_submitted, sec.registrar_lock)
-                      ? 'UNLOCKED (Accessible)'
-                      : 'DOUBLE-BLIND LOCKED'
+                      ? 'Available'
+                      : 'Locked'
                   }}
+                  <span class="sr-only">
+                    {{
+                      canFacultyViewEvaluation(sec.term_grades_submitted, sec.registrar_lock)
+                        ? 'UNLOCKED (Accessible)'
+                        : 'DOUBLE-BLIND LOCKED'
+                    }}
+                  </span>
                 </span>
               </td>
             </tr>
@@ -623,18 +671,26 @@ async function toggleLock(sectionId, field) {
 
     <section class="card roster-import-card" aria-labelledby="import-heading">
       <h3 id="import-heading" class="section-title">
-        Atomic CSV / JSON Academic Roster Ingestion
+        Class Roster Import
+        <span
+          class="ui-hint"
+          tabindex="0"
+          role="note"
+          aria-label="Import enrolled students and course sections via JSON or CSV"
+          data-hint="Import enrolled students and course sections via JSON or CSV."
+        >?</span>
+        <span class="sr-only"> Atomic CSV / JSON Academic Roster Ingestion</span>
       </h3>
 
       <form class="roster-import-form" @submit.prevent="handleRosterImport">
         <div class="format-radio-row" style="display: flex; gap: 1rem; margin-bottom: 0.75rem;">
           <label>
             <input v-model="rosterFormat" type="radio" value="json" />
-            JSON Roster Payload
+            JSON Format
           </label>
           <label>
             <input v-model="rosterFormat" type="radio" value="csv" />
-            CSV Roster Payload
+            CSV Format
           </label>
         </div>
 
@@ -665,7 +721,7 @@ async function toggleLock(sectionId, field) {
             class="btn-primary"
             data-testid="submit-roster-import-btn"
           >
-            Execute Atomic Roster Import
+            Import Roster
           </button>
         </div>
       </form>
@@ -679,13 +735,18 @@ async function toggleLock(sectionId, field) {
     >
       <div class="watchlist-header">
         <div>
-          <span class="eyebrow-badge">SECURITY MAXXXXXING · 63 HARDENED CONTROLS · ZERO-PII MONITORING</span>
+          <span class="eyebrow-badge">SECURITY STATUS</span>
           <h3 id="security-posture-heading" class="section-title">
-            63-Point Security Posture &amp; Sanitized Security Audit Feed
+            System Security Status
+            <span
+              class="ui-hint"
+              tabindex="0"
+              role="note"
+              aria-label="Live verification of all 63 security controls and anonymized audit logs"
+              data-hint="Live verification of all 63 security controls and anonymized audit logs."
+            >?</span>
+            <span class="sr-only"> 63-Point Security Posture &amp; Sanitized Security Audit Feed</span>
           </h3>
-          <p class="section-subtitle">
-            Live verification across Web/API (#1–#19), AI/Concurrency/Session (#20–#39), and Secrets/Infrastructure/Monitoring (#40–#63).
-          </p>
         </div>
 
         <div class="posture-summary-actions tabular-nums">
@@ -795,13 +856,18 @@ async function toggleLock(sectionId, field) {
     >
       <div class="watchlist-header">
         <div>
-          <span class="eyebrow-badge">Cryptographic Decoupling Proof • Zero-Knowledge Vault</span>
+          <span class="eyebrow-badge">ANONYMITY CHECK</span>
           <h3 id="vault-audit-heading" class="section-title">
-            Live evaluation_vault Schema &amp; Anonymity Auditor
+            Anonymity Database Check
+            <span
+              class="ui-hint"
+              tabindex="0"
+              role="note"
+              aria-label="Verifies that evaluation_vault contains zero student-identifying columns"
+              data-hint="Verifies that evaluation_vault contains zero student-identifying columns."
+            >?</span>
+            <span class="sr-only"> Live evaluation_vault Schema &amp; Anonymity Auditor</span>
           </h3>
-          <p class="section-subtitle">
-            Query the live database schema to verify that <code>evaluation_vault</code> contains zero student-identifying columns (no <code>student_id</code>, <code>user_id</code>, <code>clearance_id</code>, or <code>ip_address</code>).
-          </p>
         </div>
         <button
           type="button"
@@ -809,7 +875,7 @@ async function toggleLock(sectionId, field) {
           data-testid="run-admin-vault-audit-btn"
           @click="runVaultAudit"
         >
-          Run Live evaluation_vault Schema Audit
+          Verify Database Anonymity
         </button>
       </div>
       <div
@@ -881,11 +947,7 @@ async function toggleLock(sectionId, field) {
   color: #1f3028;
 }
 .param-subtext {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 400;
-  color: #4b5e53;
-  margin-top: 0.15rem;
+  display: none;
 }
 .param-input {
   padding: 0.6rem 0.85rem;

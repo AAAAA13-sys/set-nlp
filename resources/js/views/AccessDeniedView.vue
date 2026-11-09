@@ -40,15 +40,14 @@ async function switchAccount() {
           </svg>
         </div>
         <div>
-          <span class="eyebrow-badge" style="background:#fee2e2;color:#991b1b;border-color:#fca5a5;">
-            PAMANTASAN NG LUNGSOD NG PASIG • Role-Based Access Control (RBAC)
+          <span class="eyebrow-badge" style="color: var(--danger);">
+            ACCESS RESTRICTED
           </span>
-          <h2 id="access-denied-heading" class="section-title" style="color:#991b1b;">
-            403 Forbidden — Institutional Role Access Restricted
+          <h2 id="access-denied-heading" class="section-title">
+            403 Forbidden — Access Restricted
           </h2>
           <p class="section-subtitle">
-            Every institutional role operates exclusively within its authorized workspace to uphold cryptographic student anonymity,
-            double-blind grading integrity, and departmental security boundaries.
+            Your account does not have permission to view this page. Each role is limited to its assigned workspace.
           </p>
         </div>
       </div>

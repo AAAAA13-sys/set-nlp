@@ -24,35 +24,35 @@ const baseCommands = computed(() => {
 
   if (role === 'student') {
     cmds.push(
-      { id: 'nav-queue', group: 'Workspace', label: 'Go to My Evaluation Queue', hint: '/queue', action: () => router.push('/queue') },
-      { id: 'nav-survey', group: 'Workspace', label: 'Open Active SET Instrument', hint: '/evaluate', action: () => router.push('/evaluate') },
+      { id: 'nav-queue', group: 'Workspace', label: 'Go to My Courses', hint: '/queue', action: () => router.push('/queue') },
+      { id: 'nav-survey', group: 'Workspace', label: 'Evaluate Professor', hint: '/evaluate', action: () => router.push('/evaluate') },
     );
   }
   if (role === 'faculty') {
-    cmds.push({ id: 'nav-faculty', group: 'Workspace', label: 'Open Faculty Double-Blind Portal', hint: '/faculty', action: () => router.push('/faculty') });
+    cmds.push({ id: 'nav-faculty', group: 'Workspace', label: 'Open My Sections', hint: '/faculty', action: () => router.push('/faculty') });
   }
   if (role === 'chair') {
     cmds.push(
-      { id: 'nav-chair', group: 'Workspace', label: 'Open Department Chair Workspace', hint: '/chair', action: () => router.push('/chair') },
-      { id: 'open-quivr', group: 'AI Second Brain', label: 'Query Quivr NLP Vault Insight Brain', hint: 'calamanCy + VADER', action: () => emit('open-quivr-brain') },
+      { id: 'nav-chair', group: 'Workspace', label: 'Open Department Overview', hint: '/chair', action: () => router.push('/chair') },
+      { id: 'open-quivr', group: 'AI Assistant', label: 'Ask AI Assistant (Quivr NLP Brain)', hint: 'Feedback Search', action: () => emit('open-quivr-brain') },
     );
   }
   if (role === 'dean') {
     cmds.push(
-      { id: 'nav-dean', group: 'Workspace', label: 'Open College Dean Analytics Overview', hint: '/dean', action: () => router.push('/dean') },
-      { id: 'open-quivr', group: 'AI Second Brain', label: 'Query Quivr NLP Vault Insight Brain', hint: 'calamanCy + VADER', action: () => emit('open-quivr-brain') },
+      { id: 'nav-dean', group: 'Workspace', label: 'Open College Overview', hint: '/dean', action: () => router.push('/dean') },
+      { id: 'open-quivr', group: 'AI Assistant', label: 'Ask AI Assistant (Quivr NLP Brain)', hint: 'Feedback Search', action: () => emit('open-quivr-brain') },
     );
   }
   if (role === 'admin') {
     cmds.push(
-      { id: 'nav-admin', group: 'Workspace', label: 'Open Registrar & Security Posture Console', hint: '/admin', action: () => router.push('/admin') },
-      { id: 'open-quivr', group: 'AI Second Brain', label: 'Query Quivr NLP Vault Insight Brain', hint: 'calamanCy + VADER', action: () => emit('open-quivr-brain') },
+      { id: 'nav-admin', group: 'Workspace', label: 'Open Registrar Console', hint: '/admin', action: () => router.push('/admin') },
+      { id: 'open-quivr', group: 'AI Assistant', label: 'Ask AI Assistant (Quivr NLP Brain)', hint: 'Feedback Search', action: () => emit('open-quivr-brain') },
     );
   }
 
   cmds.push(
-    { id: 'nav-advocacy', group: 'Campus Hub', label: 'Open Campus SET Advocacy & Permit Verification Hub', hint: '/advocacy', action: () => router.push('/advocacy') },
-    { id: 'toggle-sidebar', group: 'Layout', label: 'Toggle Sidebar Rail Collapse', hint: 'Ctrl + B', action: () => emit('toggle-sidebar') },
+    { id: 'nav-advocacy', group: 'Campus Hub', label: 'Open Exam Permit & Share', hint: '/advocacy', action: () => router.push('/advocacy') },
+    { id: 'toggle-sidebar', group: 'Layout', label: 'Collapse or Expand Sidebar', hint: 'Ctrl + B', action: () => emit('toggle-sidebar') },
     {
       id: 'toggle-density',
       group: 'Layout',
@@ -63,7 +63,7 @@ const baseCommands = computed(() => {
         authStore.updateUiPreferences({ density: next });
       },
     },
-    { id: 'open-shortcuts', group: 'Help', label: 'View Keyboard Shortcuts & Formula Cheatsheet', hint: '?', action: () => emit('open-shortcuts') },
+    { id: 'open-shortcuts', group: 'Help', label: 'Keyboard Shortcuts & Quick Reference', hint: '?', action: () => emit('open-shortcuts') },
   );
 
   return cmds;

@@ -213,42 +213,40 @@ async function endorseActionPlan(item) {
       <div class="chair-banner-top">
         <div>
           <span class="eyebrow-badge">
-            PAMANTASAN NG LUNGSOD NG PASIG • Department Chair Diagnostic Workspace
+            DEPARTMENT OVERVIEW
           </span>
           <h2 id="chair-heading" class="section-title">
             {{ departmentName }}
           </h2>
           <p class="section-subtitle">
-            Department Chair: <strong data-testid="chair-department-badge">{{ chairIdentifier }}</strong> •
-            Active Term: <strong>{{ authStore.activeTerm || '1st Semester AY 2026-2027' }}</strong>
+            Department Chair: <strong data-testid="chair-department-badge">{{ chairIdentifier }}</strong> ·
+            {{ authStore.activeTerm || '1st Semester AY 2026-2027' }}
           </p>
         </div>
 
-        <div class="scope-guard-badge" style="background:#ecfdf5;border:1px solid #a7f3d0;padding:0.5rem 0.85rem;border-radius:6px;">
-          <span style="font-size:0.75rem;font-weight:700;color:var(--plp-green-950);text-transform:uppercase;">
-            Departmental RBAC Scope:
+        <div class="scope-guard-badge" style="background:var(--canvas);border:1px solid var(--line);padding:0.75rem 1rem;border-radius:10px;">
+          <span style="font-size:0.72rem;font-weight:600;color:var(--forest);text-transform:uppercase;letter-spacing:0.06em;">
+            Department Scope
           </span>
-          <div style="font-size:0.82rem;color:var(--plp-green-900);">
-            Scoped strictly to {{ departmentName }} faculty sections.
+          <div style="font-size:0.82rem;color:var(--ink-muted);margin-top:2px;">
+            {{ departmentName }} sections only
           </div>
-          <div style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.4rem;">
+          <div style="margin-top: 0.6rem; display: flex; flex-wrap: wrap; gap: 0.45rem;">
             <button
               type="button"
               class="btn-secondary btn-xs"
-              style="display: inline-flex; align-items: center; gap: 0.35rem;"
               data-testid="chair-open-analytics-lab-btn"
               @click="showAnalyticsLab = true"
             >
-              <span>Department calamanCy NLP Lab</span>
+              <span>Evaluation Analysis</span>
             </button>
             <button
               type="button"
               class="btn-primary btn-xs"
-              style="display: inline-flex; align-items: center; gap: 0.35rem;"
               data-testid="chair-open-quivr-brain-btn"
               @click="showQuivrBrain = true"
             >
-              <span>Query Quivr NLP Brain</span>
+              <span>Search Feedback</span>
             </button>
           </div>
         </div>
@@ -263,15 +261,15 @@ async function endorseActionPlan(item) {
         </div>
 
         <div class="metric-card">
-          <span class="metric-label">Vault Evaluations Logged</span>
+          <span class="metric-label">Evaluations Submitted</span>
           <strong class="metric-value">{{ submissionsLoggedDisplay }}</strong>
-          <small style="color:var(--text-secondary);">Across {{ chairHeatmapData.sections?.length || departmentFaculty.length }} Department Sections</small>
+          <small style="color:var(--text-secondary);">{{ chairHeatmapData.sections?.length || departmentFaculty.length }} Active Sections</small>
         </div>
 
         <div class="metric-card">
-          <span class="metric-label">Department Mean Rating</span>
+          <span class="metric-label">Department Average</span>
           <strong class="metric-value">{{ departmentMeanScore.toFixed(2) }} / 5.00</strong>
-          <small style="color:#059669;font-weight:600;">AACCUP Area III Tracked</small>
+          <small style="color:#059669;font-weight:600;">Out of 5.00</small>
         </div>
 
         <div class="metric-card">
@@ -288,10 +286,10 @@ async function endorseActionPlan(item) {
     <section class="card department-roster-card" aria-label="Department Faculty Performance">
       <div class="watchlist-header">
         <div>
-          <span class="eyebrow-badge">Department Faculty Performance Overview</span>
-          <h3 class="section-title">{{ departmentName }} Faculty Roster</h3>
+          <span class="eyebrow-badge">FACULTY ROSTER</span>
+          <h3 class="section-title">{{ departmentName }} Instructors</h3>
           <p class="section-subtitle">
-            Live database aggregation of anonymized teaching evaluations across departmental instructional sections.
+            Summary of student evaluations across all active sections in this department.
           </p>
         </div>
         <div v-if="quartilesData?.tier_counts" style="display:flex;gap:0.4rem;flex-wrap:wrap;">
@@ -358,12 +356,12 @@ async function endorseActionPlan(item) {
     <section class="card chair-watchlist-card" data-testid="chair-watchlist-card">
       <div class="watchlist-header">
         <div>
-          <span class="eyebrow-badge" style="background:#fee2e2;color:#991b1b;border-color:#fca5a5;">
-            SOP 2 • Faculty Exception Watchlist (Mean &lt; 3.50 or Negative Sentiment &gt; 35%)
+          <span class="eyebrow-badge">
+            WATCHLIST &amp; SUPPORT
           </span>
-          <h3 class="section-title">Department Pedagogical Interventions</h3>
+          <h3 class="section-title">Faculty Watchlist &amp; Support Plans</h3>
           <p class="section-subtitle">
-            Department Chair review and intervention endorsement for instructors requiring pedagogical support.
+            Review and endorse action plans for instructors below 3.50 mean rating or above 35% negative comments.
           </p>
         </div>
       </div>
@@ -379,13 +377,14 @@ async function endorseActionPlan(item) {
 
       <div
         v-if="departmentWatchlist.length === 0"
-        style="padding: 1.25rem; text-align: center; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; margin-top: 1rem;"
+        class="info-strip info-strip--tinted"
+        style="margin-top: 1rem; flex-direction: column; align-items: flex-start; gap: 4px;"
         data-testid="chair-watchlist-empty"
       >
-        <div style="font-weight: 700; color: #166534; font-size: 0.95rem;">
+        <div style="font-weight: 700; color: var(--forest-deep); font-size: 0.95rem;">
           Department Quality Benchmark Met
         </div>
-        <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #15803d;">
+        <p style="margin: 0; font-size: 0.85rem; color: var(--ink-muted);">
           All department faculty members currently meet or exceed institutional accreditation standards (Mean ≥ 3.50, Negative Sentiment ≤ 35%).
         </p>
       </div>
@@ -394,19 +393,19 @@ async function endorseActionPlan(item) {
         <div
           v-for="item in departmentWatchlist"
           :key="item.id"
-          style="margin-top:1rem;padding:1rem;background:#fffaf0;border:1px solid #feebc8;border-radius:8px;"
+          style="margin-top:1rem;padding:1.1rem 1.25rem;background:var(--canvas);border:1px solid var(--line);border-radius:10px;"
         >
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
             <div>
-              <h4 style="margin:0;font-size:1.05rem;color:#744210;">
+              <h4 style="margin:0;font-size:1.02rem;color:var(--ink);">
                 {{ item.faculty_name }} — {{ item.course_code }} (Mean: {{ item.mean_score.toFixed(2) }} / Negative: {{ item.negative_sentiment_pct.toFixed(1) }}%)
               </h4>
-              <p style="margin:0.25rem 0 0;font-size:0.85rem;color:#975a16;">
+              <p style="margin:0.25rem 0 0;font-size:0.84rem;color:var(--ink-muted);">
                 Primary Pedagogical Focus: <strong>{{ item.primary_tag }}</strong>
                 <span v-if="item.sample_comment"> • Representative Comment: “{{ item.sample_comment }}”</span>
               </p>
             </div>
-            <span class="token-chip chip-unsigned" style="font-size:0.8rem;">
+            <span class="token-chip" :class="planEndorsed[item.id] ? 'chip-signed' : 'chip-unsigned'">
               {{ planEndorsed[item.id] ? 'CHAIR ENDORSED' : item.action_plan_status || 'PENDING CHAIR REVIEW' }}
             </span>
           </div>
@@ -414,7 +413,7 @@ async function endorseActionPlan(item) {
           <div style="margin-top:0.75rem;">
             <label
               :for="`chair-notes-${item.id}`"
-              style="display:block;font-size:0.82rem;font-weight:600;color:#744210;margin-bottom:0.35rem;"
+              style="display:block;font-size:0.82rem;font-weight:600;color:var(--ink);margin-bottom:0.35rem;"
             >
               Department Chair Intervention Notes &amp; Recommendation to Dean:
             </label>
@@ -422,7 +421,7 @@ async function endorseActionPlan(item) {
               :id="`chair-notes-${item.id}`"
               v-model="chairNotes[item.id]"
               rows="2"
-              style="width:100%;padding:0.5rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.85rem;"
+              class="narrative-textarea"
               placeholder="Add chair notes regarding assessment rubrics, lecture punctuality, or syllabus pacing…"
             ></textarea>
           </div>
@@ -446,11 +445,11 @@ async function endorseActionPlan(item) {
       <div class="iso-header">
         <div>
           <span class="eyebrow-badge">
-            PAMANTASAN NG LUNGSOD NG PASIG • AACCUP Area III Department Matrix
+            SEMESTER TRENDS
           </span>
           <h3 class="section-title">Department Longitudinal Quality Trends</h3>
           <p class="section-subtitle">
-            Curriculum &amp; instructional competence progression comparing active department metrics against prior semester baselines.
+            Comparison of current semester evaluation ratings against the prior semester baseline.
           </p>
         </div>
         <span class="token-chip chip-signed tabular-nums" style="font-size:0.8rem;">
@@ -524,11 +523,11 @@ async function endorseActionPlan(item) {
       <div class="iso-header">
         <div>
           <span class="eyebrow-badge">
-            PAMANTASAN NG LUNGSOD NG PASIG • Departmental Participation Matrix
+            COMPLETION HEATMAP
           </span>
           <h3 class="section-title">{{ departmentName }} Section Completion Heatmap</h3>
           <p class="section-subtitle">
-            Course-by-course response density monitoring against the institutional ≥ 85% participation threshold.
+            Section-by-section evaluation completion rates compared against the 85% target.
           </p>
         </div>
         <span class="token-chip chip-signed tabular-nums" style="font-size:0.8rem;">

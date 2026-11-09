@@ -226,7 +226,7 @@ function generateAccreditationCsv() {
 const selectedDepartment = ref('ALL');
 
 const departmentsList = [
-  { id: 'ALL', name: 'All Colleges & Departments (University-Wide)' },
+  { id: 'ALL', name: 'All Colleges & Departments' },
   { id: '1', name: 'College of Computer Studies (CCS)' },
   { id: '2', name: 'College of Arts and Sciences (CAS)' },
 ];
@@ -498,18 +498,18 @@ function exportAccreditationDossier() {
       <div class="dean-banner-top">
         <div>
           <span class="eyebrow-badge">
-            PAMANTASAN NG LUNGSOD NG PASIG • Dean's Analytical Overview
+            COLLEGE OVERVIEW
           </span>
           <h2 id="dean-heading" class="section-title">
-            Scope: {{ selectedDepartmentLabel }}
+            {{ selectedDepartmentLabel }}
           </h2>
           <p class="section-subtitle">
-            Dean: <strong>{{ authStore.user?.name || 'Dr. V. Mendoza' }}</strong> •
-            Period: <strong>{{ overview.period || 'Final SET' }}</strong> ({{ authStore.activeTerm || overview.activeTerm }})
+            Dean: <strong>{{ authStore.user?.name || 'Dr. V. Mendoza' }}</strong> ·
+            <strong>{{ overview.period || 'Final SET' }}</strong> ({{ authStore.activeTerm || overview.activeTerm }})
           </p>
           <div class="department-filter-box" style="margin-top: 0.5rem;">
             <label for="dean-dept-filter" style="font-size: 0.8rem; font-weight: 600; color: #374151; display: inline-flex; align-items: center; gap: 0.5rem;">
-              <span>Academic Department Filter:</span>
+              <span>Department:</span>
               <select
                 id="dean-dept-filter"
                 v-model="selectedDepartment"
@@ -536,7 +536,7 @@ function exportAccreditationDossier() {
             data-testid="tab-dean-overview"
             @click="activeTab = 'overview'"
           >
-            SOP 2: Sentiment, Quartiles &amp; Watchlist
+            Overview &amp; Watchlist
           </button>
           <button
             type="button"
@@ -547,7 +547,7 @@ function exportAccreditationDossier() {
             data-testid="tab-longitudinal-trends"
             @click="activeTab = 'longitudinal'"
           >
-            AACCUP Area III: Longitudinal &amp; Dossier
+            Semester Trends &amp; Dossier
           </button>
           <button
             type="button"
@@ -558,7 +558,7 @@ function exportAccreditationDossier() {
             data-testid="tab-quality-sus"
             @click="activeTab = 'quality'"
           >
-            SOP 3: ISO/IEC 25010 &amp; SUS
+            System Quality &amp; Compliance
           </button>
           <button
             type="button"
@@ -569,7 +569,7 @@ function exportAccreditationDossier() {
             data-testid="tab-qualitative-synthesis"
             @click="activeTab = 'qualitative'"
           >
-            SOP 4: Qualitative Synthesis (calamanCy)
+            Written Feedback
           </button>
         </div>
 
@@ -580,7 +580,7 @@ function exportAccreditationDossier() {
             data-testid="open-quivr-brain-btn"
             @click="showQuivrBrain = true"
           >
-            Query Quivr NLP Vault Brain
+            Search Feedback
           </button>
           <button
             type="button"
@@ -588,7 +588,7 @@ function exportAccreditationDossier() {
             data-testid="open-analytics-lab-btn"
             @click="showAnalyticsLab = true"
           >
-            Launch calamanCy NLP Diagnostics Lab
+            Evaluation Analysis
           </button>
         </div>
       </div>
@@ -600,11 +600,11 @@ function exportAccreditationDossier() {
           <strong class="metric-value">{{ responseRateDisplay }}% (Target: &gt;85%)</strong>
         </div>
         <div class="metric-card">
-          <span class="metric-label">Submissions Logged</span>
+          <span class="metric-label">Evaluations Submitted</span>
           <strong class="metric-value">{{ submissionsLoggedDisplay }}</strong>
         </div>
         <div class="metric-card">
-          <span class="metric-label">Average Evaluation Time</span>
+          <span class="metric-label">Average Completion Time</span>
           <strong class="metric-value">{{ averageEvalTimeDisplay }}</strong>
         </div>
         <div class="metric-card">
@@ -617,7 +617,7 @@ function exportAccreditationDossier() {
     <div v-if="activeTab === 'overview'" class="dean-overview-panels">
       <!-- Sentiment Polarity Distribution -->
       <section class="card sentiment-distribution-card" data-testid="sentiment-distribution-card">
-        <h3 class="section-title">Sentiment Polarity Distribution (Narrative Comments • calamanCy + VADER)</h3>
+        <h3 class="section-title">Student Comment Sentiment</h3>
         <div class="sentiment-bars tabular-nums">
           <div class="sentiment-row">
             <div class="sentiment-label">
@@ -669,10 +669,10 @@ function exportAccreditationDossier() {
       >
         <div class="iso-header">
           <div>
-            <span class="eyebrow-badge">PAMANTASAN NG LUNGSOD NG PASIG • Faculty Merit &amp; Intervention Tiers</span>
-            <h3 class="section-title">4-Tier Faculty Performance Quartiles</h3>
+            <span class="eyebrow-badge">PERFORMANCE TIERS</span>
+            <h3 class="section-title">Faculty Performance Quartiles</h3>
             <p class="section-subtitle">
-              Database-derived faculty distribution across High Distinction (μ ≥ 4.50, Positive ≥ 80%), Proficient (4.00–4.49), Developmental (3.50–3.99), and Priority Intervention (μ &lt; 3.50 or Neg &gt; 35%).
+              Distribution of evaluated instructors across High Distinction, Proficient, Developmental, and Priority Intervention tiers.
             </p>
           </div>
           <span class="token-chip chip-signed tabular-nums">
@@ -681,58 +681,58 @@ function exportAccreditationDossier() {
         </div>
 
         <div class="metric-overview-grid tabular-nums" style="margin-top: 1rem;">
-          <div class="metric-card" style="border-left-color: #0b4f26;">
+          <div class="metric-card">
             <span class="metric-label">High Distinction</span>
             <strong class="metric-value">{{ performanceQuartiles.tier_counts.high_distinction }}</strong>
-            <small style="color: var(--text-secondary);">μ ≥ 4.50 &amp; Positive ≥ 80%</small>
+            <small class="metric-sub">μ ≥ 4.50 &amp; Positive ≥ 80%</small>
           </div>
-          <div class="metric-card" style="border-left-color: #16a34a;">
+          <div class="metric-card">
             <span class="metric-label">Proficient</span>
             <strong class="metric-value">{{ performanceQuartiles.tier_counts.proficient }}</strong>
-            <small style="color: var(--text-secondary);">μ 4.00 – 4.49</small>
+            <small class="metric-sub">μ 4.00 – 4.49</small>
           </div>
-          <div class="metric-card" style="border-left-color: #eab308;">
+          <div class="metric-card">
             <span class="metric-label">Developmental</span>
             <strong class="metric-value">{{ performanceQuartiles.tier_counts.development }}</strong>
-            <small style="color: var(--text-secondary);">μ 3.50 – 3.99</small>
+            <small class="metric-sub">μ 3.50 – 3.99</small>
           </div>
-          <div class="metric-card" style="border-left-color: #dc2626;">
+          <div class="metric-card">
             <span class="metric-label">Priority Intervention</span>
-            <strong class="metric-value" style="color: #dc2626;">{{ performanceQuartiles.tier_counts.priority_intervention }}</strong>
-            <small style="color: #991b1b;">μ &lt; 3.50 or Neg &gt; 35%</small>
+            <strong class="metric-value" style="color: var(--danger);">{{ performanceQuartiles.tier_counts.priority_intervention }}</strong>
+            <small class="metric-sub">μ &lt; 3.50 or Neg &gt; 35%</small>
           </div>
         </div>
       </section>
 
       <!-- Department-Level Completion Heatmap Matrix (Chapter II & III SOP 1) -->
       <section class="card completion-heatmap-card" style="margin-top: 1.25rem;" data-testid="completion-heatmap-card">
-        <div class="iso-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem;">
+        <div class="iso-header">
           <div>
             <span class="eyebrow-badge">
-              PAMANTASAN NG LUNGSOD NG PASIG • Participation Density Matrix
+              COMPLETION HEATMAP
             </span>
-            <h3 class="section-title">Department-Level Evaluation Completion Heatmap</h3>
+            <h3 class="section-title">Section Evaluation Completion Heatmap</h3>
             <p class="section-subtitle">
-              Section-by-section completion tracking and response rate density across all active academic department blocks.
+              Section-by-section evaluation completion rates across active departments.
             </p>
           </div>
           <div class="tabular-nums" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-            <span class="token-chip chip-signed" style="font-size: 0.75rem;">
+            <span class="token-chip chip-signed">
               Overall Participation: {{ heatmapData.overall_completion_rate_pct }}%
             </span>
-            <span class="badge-unlocked" style="font-size: 0.75rem;">
+            <span class="badge-unlocked">
               Target: &gt; {{ heatmapData.institutional_target_pct }}%
             </span>
           </div>
         </div>
 
         <!-- Heatmap Color-Coded Performance Band Legend -->
-        <div class="heatmap-legend tabular-nums" style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-top: 0.75rem; font-size: 0.78rem;" data-testid="heatmap-legend">
-          <span style="font-weight: 600; color: #4b5563;">Response Density Bands:</span>
-          <span class="token-chip chip-signed" style="background: #0b4f26; color: #fff;">≥ 90% EXCELLENT ({{ heatmapData.band_distribution.EXCELLENT }} sections)</span>
-          <span class="token-chip chip-signed" style="background: #16a34a; color: #fff;">80–89% OPTIMAL ({{ heatmapData.band_distribution.OPTIMAL }} sections)</span>
-          <span class="token-chip chip-unsigned" style="background: #eab308; color: #000;">70–79% WARNING ({{ heatmapData.band_distribution.WARNING }} sections)</span>
-          <span class="token-chip chip-unsigned" style="background: #dc2626; color: #fff;">&lt; 70% CRITICAL ({{ heatmapData.band_distribution.CRITICAL }} sections)</span>
+        <div class="heatmap-legend tabular-nums" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-top: 0.85rem; font-size: 0.78rem;" data-testid="heatmap-legend">
+          <span style="font-weight: 600; color: var(--ink-muted);">Response Density Bands:</span>
+          <span class="token-chip chip-signed">≥ 90% EXCELLENT ({{ heatmapData.band_distribution.EXCELLENT }} sections)</span>
+          <span class="token-chip chip-signed">80–89% OPTIMAL ({{ heatmapData.band_distribution.OPTIMAL }} sections)</span>
+          <span class="token-chip chip-unsigned">70–79% WARNING ({{ heatmapData.band_distribution.WARNING }} sections)</span>
+          <span class="status-badge status-flagged">&lt; 70% CRITICAL ({{ heatmapData.band_distribution.CRITICAL }} sections)</span>
         </div>
 
         <!-- Section Heatmap Table -->
@@ -854,19 +854,19 @@ function exportAccreditationDossier() {
             <div
               v-if="selectedInterventionPlan?.faculty_id === item.id"
               class="intervention-plan-box"
-              style="margin-top: 0.75rem; padding: 0.85rem; background: #f8faf8; border: 1px solid var(--plp-green-800); border-radius: 6px;"
+              style="margin-top: 0.75rem; padding: 1rem 1.15rem; background: var(--canvas); border: 1px solid var(--line); border-radius: 10px;"
               data-testid="dean-intervention-plan"
             >
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
                 <span class="eyebrow-badge">PAMANTASAN NG LUNGSOD NG PASIG • Academic Excellence Intervention</span>
-                <span class="badge-locked" style="background:var(--plp-gold-500);color:#000;">
+                <span class="status-badge status-pending">
                   Urgency: {{ selectedInterventionPlan.urgency_level }}
                 </span>
               </div>
-              <h4 style="margin: 0.2rem 0; color: var(--plp-green-950);">
+              <h4 style="margin: 0.2rem 0; color: var(--ink);">
                 Intervention Strategy: {{ selectedInterventionPlan.faculty_name }} ({{ selectedInterventionPlan.primary_cluster }})
               </h4>
-              <p style="font-size: 0.84rem; margin: 0.3rem 0; color: #4b5563;">
+              <p style="font-size: 0.84rem; margin: 0.3rem 0; color: var(--ink-muted);">
                 Timeline: <strong>{{ selectedInterventionPlan.timeline }}</strong> • Target: <strong>Mean ≥ {{ selectedInterventionPlan.target_milestone.target_mean_score }} / Negative ≤ {{ selectedInterventionPlan.target_milestone.target_negative_pct }}%</strong>
               </p>
               <ul style="font-size: 0.84rem; margin: 0.4rem 0 0 1.2rem; padding: 0; line-height: 1.5;">
@@ -878,8 +878,7 @@ function exportAccreditationDossier() {
                 <span style="font-size:0.8rem;font-weight:600;">Dean Sign-off / Milestone Action:</span>
                 <button
                   type="button"
-                  class="btn-secondary btn-xs"
-                  style="background:var(--plp-green-800);color:#fff;"
+                  class="btn-primary btn-xs"
                   :data-testid="`approve-plan-btn-${selectedInterventionPlan.faculty_id}`"
                   @click="setPlanStatus(selectedInterventionPlan.faculty_id, 'APPROVED', 'Dean approved pedagogical workshop attendance.')"
                 >
@@ -887,15 +886,14 @@ function exportAccreditationDossier() {
                 </button>
                 <button
                   type="button"
-                  class="btn-secondary btn-xs"
-                  style="background:var(--plp-green-950);color:var(--plp-gold-400);"
+                  class="btn-gold btn-xs"
                   :data-testid="`resolve-plan-btn-${selectedInterventionPlan.faculty_id}`"
                   @click="setPlanStatus(selectedInterventionPlan.faculty_id, 'RESOLVED', 'Milestone achieved: Mean rating recovered above 3.80.')"
                 >
                   Mark Milestone Resolved
                 </button>
               </div>
-              <p v-if="getDeanNotes(selectedInterventionPlan.faculty_id)" style="font-size:0.8rem;color:#0b4f26;margin-top:0.4rem;">
+              <p v-if="getDeanNotes(selectedInterventionPlan.faculty_id)" style="font-size:0.8rem;color:var(--forest);margin-top:0.4rem;">
                 <strong>Dean Verification Notes:</strong> {{ getDeanNotes(selectedInterventionPlan.faculty_id) }}
               </p>
             </div>
@@ -943,18 +941,18 @@ function exportAccreditationDossier() {
         <div class="iso-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem;">
           <div>
             <span class="eyebrow-badge">
-              PAMANTASAN NG LUNGSOD NG PASIG • Institutional Quality Assurance Office
+              QUALITY &amp; COMPLIANCE
             </span>
-            <h3 class="section-title">AACCUP Level III &amp; CHED CMO 46 Accreditation Compliance Audit Matrix</h3>
+            <h3 class="section-title">Accreditation &amp; Quality Standards Checklist</h3>
             <p class="section-subtitle">
-              Automated audit trail verifying all 8 institutional standards, cryptographic decoupling, and pedagogical instruments.
+              Verification of evaluation privacy, response quality, and accreditation requirements.
             </p>
           </div>
           <div style="display: flex; gap: 0.5rem; align-items: center;">
-            <span class="badge-unlocked" style="background: var(--plp-green-800); color: #fff; font-size: 0.8rem;">
+            <span class="badge-unlocked">
               {{ complianceAuditData.overall_status }} ({{ complianceAuditData.compliance_percentage }}%)
             </span>
-            <span class="badge-unlocked" style="background: var(--plp-gold-500); color: #000; font-size: 0.8rem;">
+            <span class="token-chip chip-signed">
               {{ complianceAuditData.accreditation_grade }}
             </span>
           </div>
@@ -965,14 +963,14 @@ function exportAccreditationDossier() {
             v-for="cp in complianceAuditData.checkpoints"
             :key="cp.criterion_id"
             class="checkpoint-card"
-            style="padding: 0.75rem 1rem; background: #f8faf8; border: 1px solid #c8d6ca; border-radius: 8px;"
+            style="padding: 0.85rem 1rem; background: var(--canvas); border: 1px solid var(--line); border-radius: 10px;"
             :data-testid="`checkpoint-${cp.criterion_id}`"
           >
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
-              <strong style="font-size: 0.82rem; color: var(--plp-green-950);">{{ cp.criterion_id }}: {{ cp.title }}</strong>
+              <strong style="font-size: 0.82rem; color: var(--ink);">{{ cp.criterion_id }}: {{ cp.title }}</strong>
               <span class="token-chip chip-signed" style="font-size: 0.68rem;">{{ cp.status }}</span>
             </div>
-            <p style="margin: 0.25rem 0 0; font-size: 0.75rem; color: #4b5563; line-height: 1.4;">
+            <p style="margin: 0.25rem 0 0; font-size: 0.76rem; color: var(--ink-muted); line-height: 1.45;">
               {{ cp.evidence }}
             </p>
           </div>
@@ -990,10 +988,10 @@ function exportAccreditationDossier() {
             </p>
           </div>
           <div style="display:flex;gap:0.5rem;align-items:center;">
-            <span class="badge-unlocked" style="background:var(--plp-green-800);color:#fff;">
+            <span class="badge-unlocked">
               AACCUP Area III: COMPLIANT
             </span>
-            <span class="badge-unlocked" style="background:var(--plp-gold-500);color:#000;">
+            <span class="token-chip chip-signed">
               CHED CMO 46: CERTIFIED
             </span>
           </div>
@@ -1137,10 +1135,10 @@ function exportAccreditationDossier() {
       >
         <div class="iso-header">
           <div>
-            <span class="eyebrow-badge">PAMANTASAN NG LUNGSOD NG PASIG • AACCUP Level III &amp; CHED CMO 46</span>
-            <h3 class="section-title">Cryptographically Sealed Accreditation Evidence Dossier</h3>
+            <span class="eyebrow-badge">ACCREDITATION DOSSIER</span>
+            <h3 class="section-title">Accreditation Evidence Summary</h3>
             <p class="section-subtitle">
-              Tamper-evident institutional dossier verifying 95% confidence statistical representation, 5-cluster composite domain scores, and SHA-256 verification digest.
+              Summary of response sample size, overall rating average, watchlist resolution, and verification seal.
             </p>
           </div>
           <span class="badge-unlocked" data-testid="dossier-digital-seal">
@@ -1181,10 +1179,10 @@ function exportAccreditationDossier() {
       <section class="card longitudinal-banner-card" style="margin-bottom: 1.25rem;" data-testid="longitudinal-trends-card">
         <div class="iso-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
           <div>
-            <span class="eyebrow-badge">PAMANTASAN NG LUNGSOD NG PASIG • AACCUP Area III Accreditation Matrix</span>
-            <h3 class="section-title">Longitudinal Semester Trend Analytics &amp; Instructional Competence Velocity</h3>
+            <span class="eyebrow-badge">SEMESTER TRENDS</span>
+            <h3 class="section-title">Semester-Over-Semester Trend Comparison</h3>
             <p class="section-subtitle">
-              Cross-semester evaluation tracking comparing active term vs previous term baselines across Likert ratings, sentiment shifts, and action plan resolution.
+              Comparison of current semester ratings, comment sentiment, and action plan resolution against the prior semester.
             </p>
           </div>
           <div style="display:flex;gap:0.5rem;align-items:center;">
@@ -1307,10 +1305,20 @@ function exportAccreditationDossier() {
       <section class="card synthesis-banner-card" style="margin-bottom: 1.25rem;" data-testid="calamancy-header-card">
         <div class="iso-header">
           <div>
-            <span class="eyebrow-badge">PAMANTASAN NG LUNGSOD NG PASIG • NLP Linguistic Intelligence</span>
-            <h3 class="section-title">Qualitative Narrative Synthesis (calamanCy • spaCy Tagalog/Taglish/English Pipeline)</h3>
-            <p class="section-subtitle">
-              Multi-question professor qualitative analysis synthesizing student narratives into word frequency, lemmas, and 5-cluster pedagogical dimensions.
+            <span class="eyebrow-badge">EVALUATION ANALYSIS</span>
+            <h3 class="section-title">
+              Professor's Evaluation Analysis
+              <span
+                class="ui-hint"
+                tabindex="0"
+                role="note"
+                aria-label="Summary of student responses across all open-ended professor evaluation questions"
+                data-hint="Summary of student responses across all open-ended professor evaluation questions."
+              >?</span>
+              <span class="sr-only"> Qualitative Narrative Synthesis calamanCy</span>
+            </h3>
+            <p class="section-subtitle sr-only">
+              Summary of student responses to the open-ended professor evaluation questions across all sections.
             </p>
           </div>
           <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
@@ -1320,7 +1328,7 @@ function exportAccreditationDossier() {
               data-testid="export-qualitative-json-btn"
               @click="downloadQualitativeJson"
             >
-              Export calamanCy JSON
+              Export JSON
             </button>
             <button
               type="button"
@@ -1328,13 +1336,13 @@ function exportAccreditationDossier() {
               data-testid="export-qualitative-csv-btn"
               @click="downloadQualitativeCsv"
             >
-              Export calamanCy CSV
+              Export CSV
             </button>
-            <span class="badge-unlocked" style="background:var(--plp-green-800);color:#fff;" data-testid="calamancy-engine-badge">
-              Engine: {{ qualitativeSynthesis.nlp_engine }} (tl_calamancy_md)
+            <span class="sr-only" data-testid="calamancy-engine-badge">
+              NLP: {{ qualitativeSynthesis.nlp_engine }} (tl_calamancy_md)
             </span>
-            <span class="badge-unlocked tabular-nums" style="background:var(--plp-gold-500);color:#000;">
-              Submissions Synthesized: {{ qualitativeSynthesis.submission_count }}
+            <span class="token-chip chip-signed tabular-nums">
+              Responses: {{ qualitativeSynthesis.submission_count }}
             </span>
           </div>
         </div>
@@ -1344,11 +1352,17 @@ function exportAccreditationDossier() {
       <section class="card descriptors-card" style="margin-bottom: 1.25rem;" data-testid="q1-top-descriptors-card">
         <div class="watchlist-header">
           <div>
-            <span class="eyebrow-badge">Question 1 • Three Words that Describe the Professor</span>
-            <h3 class="section-title">Top Faculty Descriptors (calamanCy Lemma &amp; Sentiment Classification)</h3>
-            <p class="section-subtitle">
-              Normalized frequency distribution of the 3-word qualitative descriptors submitted across evaluated sections.
-            </p>
+            <span class="eyebrow-badge">QUESTION 1</span>
+            <h3 class="section-title">
+              Three Words Describing the Professor
+              <span
+                class="ui-hint"
+                tabindex="0"
+                role="note"
+                aria-label="Most frequent words students used to describe their professors this semester"
+                data-hint="Most frequent words students used to describe their professors this semester."
+              >?</span>
+            </h3>
           </div>
         </div>
 
@@ -1358,17 +1372,15 @@ function exportAccreditationDossier() {
             :key="item.word"
             class="token-chip tabular-nums"
             :class="item.valence === 'Positive' ? 'chip-signed' : 'chip-unsigned'"
-            style="padding: 0.45rem 0.85rem; font-size: 0.88rem; display:inline-flex; align-items:center; gap: 0.45rem;"
+            style="padding: 0.45rem 0.85rem; font-size: 0.86rem; display:inline-flex; align-items:center; gap: 0.45rem;"
             :data-testid="`descriptor-${item.word.toLowerCase()}`"
           >
             <strong>{{ item.word }}</strong>
             <span style="font-size:0.75rem;opacity:0.85;">(×{{ item.count }})</span>
             <span
-              style="font-size:0.7rem;padding:0.1rem 0.35rem;border-radius:4px;"
-              :style="{
-                background: item.valence === 'Positive' ? 'var(--plp-green-800)' : (item.valence === 'Negative' ? '#dc2626' : '#6b7280'),
-                color: '#ffffff'
-              }"
+              class="status-badge"
+              :class="item.valence === 'Positive' ? 'status-completed' : (item.valence === 'Negative' ? 'status-flagged' : 'status-pending')"
+              style="font-size:0.68rem;padding:0.1rem 0.4rem;"
             >
               {{ item.valence }} ({{ item.polarity > 0 ? '+' : '' }}{{ item.polarity.toFixed(2) }})
             </span>
@@ -1380,24 +1392,31 @@ function exportAccreditationDossier() {
       <section class="card improvement-clusters-card" style="margin-bottom: 1.25rem;" data-testid="q2-improvement-clusters-card">
         <div class="watchlist-header">
           <div>
-            <span class="eyebrow-badge">Question 2 • Room for Improvements (Lettered a., b., c…)</span>
-            <h3 class="section-title">Institutional Pedagogical Improvement Clusters</h3>
-            <p class="section-subtitle">
-              Specific, constructive improvement topics classified across the 5 PLP pedagogical dimensions for accreditation evidence.
-            </p>
+            <span class="eyebrow-badge">QUESTION 2</span>
+            <h3 class="section-title">
+              Areas for Improvement
+              <span
+                class="ui-hint"
+                tabindex="0"
+                role="note"
+                aria-label="Constructive improvement topics grouped by teaching category"
+                data-hint="Constructive improvement topics grouped by teaching category."
+              >?</span>
+              <span class="sr-only"> Institutional Pedagogical Improvement Clusters</span>
+            </h3>
           </div>
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:1rem;margin-top:0.85rem;">
+        <div style="display:flex;flex-direction:column;gap:0.85rem;margin-top:0.85rem;">
           <div
             v-for="clusterName in clustersList"
             :key="clusterName"
             class="cluster-box"
-            style="padding:0.85rem;background:#fafbfa;border:1px solid #d1fae5;border-radius:6px;"
+            style="padding:0.95rem 1.1rem;background:var(--canvas);border:1px solid var(--line);border-radius:10px;"
             :data-testid="`cluster-box-${clusterName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`"
           >
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
-              <strong style="color:var(--plp-green-950);font-size:0.95rem;">
+              <strong style="color:var(--ink);font-size:0.95rem;">
                 {{ clusterName }}
               </strong>
               <span class="token-chip chip-signed tabular-nums" style="font-size:0.72rem;">
@@ -1405,7 +1424,7 @@ function exportAccreditationDossier() {
               </span>
             </div>
 
-            <div v-if="getClusterTopics(clusterName).length === 0" style="font-size:0.82rem;color:#6b7280;font-style:italic;">
+            <div v-if="getClusterTopics(clusterName).length === 0" style="font-size:0.82rem;color:var(--ink-muted);font-style:italic;">
               No critical improvement topics flagged under this pedagogical dimension.
             </div>
 
@@ -1434,11 +1453,17 @@ function exportAccreditationDossier() {
       <!-- Q3 & Q4: Key Strengths & Recommendations Split Grid -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.25rem;">
         <section class="card strengths-card" data-testid="q3-key-strengths-card">
-          <span class="eyebrow-badge">Question 3 • Teaching Strengths</span>
-          <h3 class="section-title" style="font-size:1.1rem;">Key Teaching Strengths</h3>
-          <p class="section-subtitle" style="font-size:0.82rem;">
-            Synthesized instructional proficiencies and positive classroom practices highlighted by students.
-          </p>
+          <span class="eyebrow-badge">QUESTION 3</span>
+          <h3 class="section-title" style="font-size:1.1rem;">
+            Teaching Strengths
+            <span
+              class="ui-hint"
+              tabindex="0"
+              role="note"
+              aria-label="Key teaching strengths highlighted by students"
+              data-hint="Key teaching strengths highlighted by students."
+            >?</span>
+          </h3>
           <ul style="margin:0.75rem 0 0 1.2rem;padding:0;font-size:0.85rem;line-height:1.55;">
             <li
               v-for="(strItem, strIdx) in qualitativeSynthesis.key_strengths"
@@ -1452,11 +1477,17 @@ function exportAccreditationDossier() {
         </section>
 
         <section class="card recommendations-card" data-testid="q4-key-recommendations-card">
-          <span class="eyebrow-badge">Question 4 • Student Recommendations</span>
-          <h3 class="section-title" style="font-size:1.1rem;">Actionable Student Recommendations</h3>
-          <p class="section-subtitle" style="font-size:0.82rem;">
-            Student recommendations for curriculum design, lab equipment, and pacing enhancements.
-          </p>
+          <span class="eyebrow-badge">QUESTION 4</span>
+          <h3 class="section-title" style="font-size:1.1rem;">
+            Student Recommendations
+            <span
+              class="ui-hint"
+              tabindex="0"
+              role="note"
+              aria-label="Actionable student suggestions for course delivery and pacing"
+              data-hint="Actionable student suggestions for course delivery and pacing."
+            >?</span>
+          </h3>
           <ul style="margin:0.75rem 0 0 1.2rem;padding:0;font-size:0.85rem;line-height:1.55;">
             <li
               v-for="(recItem, recIdx) in qualitativeSynthesis.key_recommendations"

@@ -82,9 +82,7 @@ function printPermit() {
   >
     <div class="permit-header">
       <div>
-        <span class="permit-eyebrow">
-          PAMANTASAN NG LUNGSOD NG PASIG • Office of the University Registrar • Examination Clearance
-        </span>
+        <span class="permit-eyebrow">EXAMINATION CLEARANCE</span>
         <h3 class="permit-title">
           {{ progress.allCleared ? 'Digital Examination Permit — CLEARED' : 'Digital Examination Permit — GATED (PENDING)' }}
         </h3>
@@ -100,16 +98,12 @@ function printPermit() {
 
     <div class="permit-body">
       <p v-if="!progress.allCleared" class="permit-description">
-        Complete the remaining <strong>{{ progress.pending }}</strong> pending faculty evaluation(s) in your
-        Pamantasan ng Lungsod ng Pasig enrollment queue ({{ progress.completed }} of {{ progress.total }} completed)
-        to unlock your signed Digital Examination Permit. Your ratings and comments are cryptographically decoupled from your student ID.
+        Finish your remaining <strong>{{ progress.pending }}</strong> course evaluation(s) ({{ progress.completed }} of {{ progress.total }} completed) to unlock your examination permit.
       </p>
 
       <div v-else class="permit-verified-box">
         <p class="permit-description">
-          All <strong>{{ progress.total }} of {{ progress.total }}</strong> enrolled course evaluations have
-          been verified. Your examination clearance is cryptographically signed and synchronized with the
-          <strong>Pamantasan ng Lungsod ng Pasig — Office of the University Registrar</strong>.
+          All <strong>{{ progress.total }}</strong> course evaluations are complete. Your examination permit is ready.
         </p>
         <div class="permit-token-grid">
           <div>

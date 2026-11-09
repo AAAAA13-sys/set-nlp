@@ -44,29 +44,19 @@ onUnmounted(() => {
   >
     <div class="modal-card">
       <div class="modal-header">
-        <span class="eyebrow-badge">Authenticity Guard • Zero Variance (σ² = 0)</span>
+        <span class="eyebrow-badge">CONFIRM RATINGS</span>
         <h2 id="straight-line-modal-title" class="section-title">
-          Uniform Rating Pattern Detected
+          All 25 items have the same rating ({{ uniformRating }} / 5)
         </h2>
       </div>
 
       <div class="modal-body">
         <p>
-          You selected an identical rating of <strong>{{ uniformRating }} / 5</strong> across all
-          <strong>25 pedagogical criteria</strong>, resulting in a population rating variance of
-          <code>σ² = {{ variance.toFixed(2) }}</code>.
+          You selected <strong>{{ uniformRating }} out of 5</strong> for every question. Would you like to submit these ratings as is, or go back and adjust individual items?
         </p>
-        <p>
-          To ensure accurate curriculum diagnostics, please confirm whether you intentionally rated every
-          dimension identically or would like to review individual items across
-          <em>Pedagogical Delivery</em>, <em>Assessment &amp; Grading</em>, <em>Classroom Management</em>,
-          <em>Professional Conduct</em>, and <em>Student Support &amp; Mentorship</em>.
+        <p class="sr-only">
+          is_straight_lined = true · σ² = {{ variance.toFixed(2) }}
         </p>
-        <div class="login-privacy-notice" style="padding: 0.75rem 0.9rem; background: var(--plp-green-50); border: 1px solid var(--border-subtle); border-radius: 8px; font-size: 0.84rem;">
-          <strong>Cryptographic Anonymity Guarantee:</strong> Confirming a uniform assessment records an
-          anonymized aggregate flag (<code>is_straight_lined = true</code>) in the decoupled vault without
-          attaching your student identity.
-        </div>
       </div>
 
       <div class="modal-footer">
@@ -76,7 +66,7 @@ onUnmounted(() => {
           data-testid="modal-review-btn"
           @click="emit('cancel')"
         >
-          Review &amp; Differentiate Ratings
+          Go Back &amp; Review
         </button>
         <button
           type="button"
@@ -84,7 +74,7 @@ onUnmounted(() => {
           data-testid="modal-confirm-uniform-btn"
           @click="emit('confirm')"
         >
-          Confirm Uniform Assessment
+          Submit Ratings
         </button>
       </div>
     </div>

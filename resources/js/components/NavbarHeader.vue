@@ -92,7 +92,7 @@ async function handleLogout() {
             <span class="sch-domain-dot" aria-hidden="true">·</span>
             <span class="sch-domain-kicker">plpasig.edu.ph</span>
           </div>
-          <h1 class="sch-portal-heading">Institutional Evaluation Portal</h1>
+          <h1 class="sch-portal-heading">Student Evaluation of Teachers<span class="sr-only"> Institutional Evaluation Portal</span></h1>
         </div>
       </div>
 
@@ -114,7 +114,7 @@ async function handleLogout() {
         </button>
 
         <div class="sch-term-chip" aria-label="Active Academic Term">
-          <span>Active Term:</span>
+          <span>Term:</span>
           <strong>{{ authStore.activeTerm || '1st Semester AY 2026-2027' }}</strong>
         </div>
 
@@ -148,9 +148,10 @@ async function handleLogout() {
           </div>
 
           <div class="sch-signed-in" data-testid="logged-in-user">
-            <span class="sr-only">Signed in as:</span>
-            <span class="sch-signed-caption" aria-hidden="true">Signed in as:</span>
-            <strong class="sch-user-id">{{ authStore.displayIdentifier }}</strong>
+            <span class="sr-only">Signed in as: {{ authStore.displayIdentifier }}</span>
+            <strong class="sch-user-id" :title="authStore.displayIdentifier">
+              {{ authStore.user?.institutional_id || authStore.user?.email }}
+            </strong>
           </div>
 
           <button
@@ -181,12 +182,12 @@ async function handleLogout() {
 
 .sch-topbar-inner {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem 1rem;
-  min-height: 64px;
-  padding: 0.65rem 1.35rem;
+  gap: 0.75rem;
+  min-height: 60px;
+  padding: 0.5rem 1.35rem;
 }
 
 .sch-topbar-left {
@@ -194,6 +195,7 @@ async function handleLogout() {
   align-items: center;
   gap: 0.75rem;
   min-width: 0;
+  flex-shrink: 0;
 }
 
 .mobile-menu-trigger {
@@ -215,37 +217,39 @@ async function handleLogout() {
   flex-direction: column;
   gap: 0.08rem;
   min-width: 0;
+  white-space: nowrap;
 }
 
 .sch-kicker-row {
   display: flex;
   align-items: center;
   gap: 0.38rem;
-  font-size: 0.66rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   color: #176347;
 }
 
 .sch-domain-kicker {
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   color: #4b5e53;
 }
 
 .sch-portal-heading {
   margin: 0;
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: -0.015em;
+  font-size: 0.98rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   color: #1f3028;
 }
 
 .sch-topbar-right {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.45rem;
+  flex-shrink: 0;
 }
 
 .sch-cmdk-trigger {

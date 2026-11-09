@@ -48,14 +48,14 @@ const primaryLinks = computed(() => {
   if (role === 'student') {
     items.push({
       to: '/queue',
-      label: 'Evaluation Queue',
+      label: 'My Courses',
       icon: 'queue',
       testId: 'sidebar-link-queue',
       matchPrefix: '/queue',
     });
     items.push({
       to: firstPendingSectionId.value ? `/evaluate/${firstPendingSectionId.value}` : '/evaluate',
-      label: 'SET Instrument',
+      label: 'Evaluate Professor',
       icon: 'survey',
       testId: 'sidebar-link-evaluate',
       matchPrefix: '/evaluate',
@@ -63,7 +63,7 @@ const primaryLinks = computed(() => {
   } else if (role === 'faculty') {
     items.push({
       to: '/faculty',
-      label: 'Faculty Double-Blind',
+      label: 'My Sections',
       icon: 'shield',
       testId: 'sidebar-link-faculty',
       matchPrefix: '/faculty',
@@ -71,7 +71,7 @@ const primaryLinks = computed(() => {
   } else if (role === 'chair') {
     items.push({
       to: '/chair',
-      label: 'Chair Diagnostics',
+      label: 'Department Overview',
       icon: 'chart',
       testId: 'sidebar-link-chair',
       matchPrefix: '/chair',
@@ -79,7 +79,7 @@ const primaryLinks = computed(() => {
   } else if (role === 'dean') {
     items.push({
       to: '/dean',
-      label: 'Dean Analytics',
+      label: 'College Overview',
       icon: 'analytics',
       testId: 'sidebar-link-dean',
       matchPrefix: '/dean',
@@ -87,7 +87,7 @@ const primaryLinks = computed(() => {
   } else if (role === 'admin') {
     items.push({
       to: '/admin',
-      label: 'Registrar & Security',
+      label: 'Registrar Console',
       icon: 'admin',
       testId: 'sidebar-link-admin',
       matchPrefix: '/admin',
@@ -96,7 +96,7 @@ const primaryLinks = computed(() => {
 
   items.push({
     to: '/advocacy',
-    label: 'Campus Advocacy Hub',
+    label: 'Exam Permit & Share',
     icon: 'share',
     testId: 'sidebar-link-advocacy',
     matchPrefix: '/advocacy',
@@ -155,8 +155,8 @@ async function handleSignOut() {
         <div class="sidebar-brand-identity">
           <div class="sidebar-monogram" aria-hidden="true">e.</div>
           <div v-if="!collapsed" class="sidebar-brand-copy">
-            <strong class="sidebar-brand-name">PLP EvaluaTech</strong>
-            <span class="sidebar-brand-sub">SET &amp; NLP ANALYTICS</span>
+            <strong class="sidebar-brand-name">PLP EvaluTech</strong>
+            <span class="sidebar-brand-sub">FACULTY EVALUATION</span>
           </div>
         </div>
 
@@ -258,7 +258,7 @@ async function handleSignOut() {
           v-if="canUseQuivrBrain"
           type="button"
           class="sidebar-action-btn"
-          :title="collapsed ? 'Quivr NLP Vault Brain' : undefined"
+          :title="collapsed ? 'Professor\'s Evaluation Analysis' : undefined"
           data-testid="sidebar-quivr-btn"
           @click="$emit('open-quivr-brain'); $emit('close-mobile')"
         >
@@ -267,7 +267,7 @@ async function handleSignOut() {
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
             </svg>
           </span>
-          <span v-if="!collapsed" class="sidebar-label">Quivr NLP Brain</span>
+          <span v-if="!collapsed" class="sidebar-label">Evaluation Analysis</span>
           <span v-if="!collapsed" class="sidebar-ai-tag">AI</span>
         </button>
 

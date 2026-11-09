@@ -25,23 +25,22 @@ function goHome() {
 <template>
   <main class="workspace-main notfound-workspace" aria-labelledby="notfound-heading" data-testid="custom-404-view">
     <section class="card notfound-card">
-      <div class="notfound-code-badge">HTTP 404 · PAGE NOT FOUND</div>
+      <div class="notfound-code-badge">404 · PAGE NOT FOUND</div>
       <h2 id="notfound-heading" class="section-title notfound-title">
-        This university portal address does not exist.
+        Page not found
       </h2>
       <p class="section-subtitle notfound-subtitle">
-        The requested route <code class="notfound-path">{{ attemptedPath }}</code> is not registered in the
-        Pamantasan ng Lungsod ng Pasig EvaluaTech portal.
+        The address <code class="notfound-path">{{ attemptedPath }}</code> could not be found in PLP EvaluTech.
       </p>
 
       <div class="notfound-guidance">
         <div class="guidance-item">
-          <strong>Verify your active role workspace</strong>
-          <span>Use your role navigation rail or press <kbd>Ctrl + K</kbd> to jump directly to an authorized page.</span>
+          <strong>Use the sidebar menu</strong>
+          <span>Select a page from the left sidebar or press <kbd>Ctrl + K</kbd> to jump to a section.</span>
         </div>
         <div class="guidance-item">
-          <strong>Zero-PII session intact</strong>
-          <span>Your current institutional session and any autosaved SET drafts remain protected.</span>
+          <strong>Your progress is saved</strong>
+          <span>Your current sign-in session and any saved evaluation drafts are still intact.</span>
         </div>
       </div>
 

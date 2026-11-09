@@ -352,9 +352,7 @@ function returnToQueue() {
     <section class="card eval-header-card">
       <div class="eval-course-banner">
         <div>
-          <span class="eyebrow-badge">
-            PAMANTASAN NG LUNGSOD NG PASIG • 5 Clusters × 5-Point Likert Scale • {{ CALAMANCY_CONFIG.engineLabel }}
-          </span>
+          <span class="eyebrow-badge">COURSE EVALUATION</span>
           <h2 id="eval-form-heading" class="section-title">
             {{ evaluationStore.activeCourse?.course_code || 'Loading Section…' }} —
             {{ evaluationStore.activeCourse?.instructor_name || 'Assigned Instructor' }}
@@ -362,9 +360,8 @@ function returnToQueue() {
           <p class="section-subtitle">
             {{ evaluationStore.activeCourse?.course_title || 'Academic Course Section' }}
             <span v-if="evaluationStore.activeCourse?.section_code">
-              • Section {{ evaluationStore.activeCourse.section_code }}
+              · Section {{ evaluationStore.activeCourse.section_code }}
             </span>
-            • Pamantasan ng Lungsod ng Pasig
           </p>
         </div>
 
@@ -379,11 +376,11 @@ function returnToQueue() {
               data-testid="discard-draft-btn"
               @click="showDiscardDraftModal = true"
             >
-              Discard
+              Clear
             </button>
           </div>
 
-          <div class="idempotency-box">
+          <div v-show="false" class="idempotency-box">
             <span class="token-label">FT-02 Submission Key:</span>
             <code data-testid="submission-key-code">{{ evaluationStore.submissionKey || 'Initializing…' }}</code>
           </div>
@@ -396,33 +393,27 @@ function returnToQueue() {
         :question-count="25"
       />
 
-      <div class="live-metrics-strip tabular-nums" aria-label="Real-Time Response Progress and Authenticity Metrics">
+      <div class="live-metrics-strip tabular-nums" aria-label="Evaluation Progress">
         <div>
-          <span>Items Rated:</span>
+          <span>Answered:</span>
           <strong data-testid="live-answered-count"> {{ answeredCount }} / 25</strong>
         </div>
         <div>
-          <span>Mean Score (μ):</span>
+          <span>Average:</span>
           <strong data-testid="live-mean-score">
             {{ answeredCount > 0 ? ` ${currentMean.toFixed(2)} / 5.00` : ' —' }}
           </strong>
         </div>
-        <div>
+        <div class="sr-only">
           <span>Variance (σ²):</span>
           <strong data-testid="live-variance-score">
             {{ allRatingsAnswered ? ` ${currentVariance.toFixed(4)}` : ' —' }}
           </strong>
         </div>
         <div>
-          <span>Authenticity Guard:</span>
-          <strong :class="straightLined ? 'text-warning' : 'text-success'">
-            {{
-              !allRatingsAnswered
-                ? ' Rate all 25 items'
-                : straightLined
-                  ? ' Uniform Ratings (Confirmation Required)'
-                  : ' Differentiated (σ² > 0)'
-            }}
+          <span>Status:</span>
+          <strong :class="allRatingsAnswered ? 'text-success' : ''">
+            {{ !allRatingsAnswered ? ` ${25 - answeredCount} remaining` : ' All 25 items rated' }}
           </strong>
         </div>
       </div>
@@ -465,10 +456,10 @@ function returnToQueue() {
         <fieldset class="dimension-fieldset">
           <legend class="dimension-legend">
             <span class="dimension-name tabular-nums">
-              Cluster {{ dimension.clusterNumber }}: {{ dimension.name }}
-              ({{ getDimensionAnsweredCount(dimension) }}/5 rated<template v-if="getDimensionMean(dimension) !== null"> • Mean: {{ getDimensionMean(dimension).toFixed(2) }} / 5.00</template>)
+              {{ dimension.clusterNumber }}. {{ dimension.name }}
+              ({{ getDimensionAnsweredCount(dimension) }}/5)
             </span>
-            <small class="dimension-desc">{{ dimension.description }} — Scale: 1 (Poor) to 5 (Outstanding)</small>
+            <small class="dimension-desc">1 = Strongly Disagree · 2 = Disagree · 3 = Neutral · 4 = Agree · 5 = Strongly Agree</small>
           </legend>
 
           <div
@@ -512,12 +503,10 @@ function returnToQueue() {
       <section class="card prof-questions-card" data-testid="professor-questions-section">
         <div class="prof-questions-header">
           <div>
-            <span class="eyebrow-badge">
-              Qualitative Professor Evaluation • {{ activeProfQuestionCount }} of {{ MAX_PROFESSOR_QUESTIONS }} Questions Active
-            </span>
-            <h3 class="section-title">Structured Questions Regarding the Professor (calamanCy NLP)</h3>
+            <span class="eyebrow-badge">WRITTEN FEEDBACK</span>
+            <h3 class="section-title">Questions About Your Professor</h3>
             <p class="section-subtitle">
-              Responses in English, Tagalog, or Taglish are lemmatized and analyzed anonymously via <code>calamanCy</code> ({{ CALAMANCY_CONFIG.model }}) and VADER.
+              Share honest, constructive feedback in English, Tagalog, or Taglish.
             </p>
           </div>
           <button
@@ -528,8 +517,8 @@ function returnToQueue() {
           >
             {{
               showFifthQuestion
-                ? 'Remove Optional 5th Question'
-                : '+ Add Optional 5th Question'
+                ? 'Hide 5th Question'
+                : '+ Optional 5th Question'
             }}
           </button>
         </div>
@@ -663,14 +652,13 @@ function returnToQueue() {
         </div>
       </section>
 
-      <!-- Part III: Overall Narrative Synthesis & Live calamanCy + VADER Preview -->
+      <!-- Part III: Overall Narrative Synthesis -->
       <section class="card narrative-card">
         <div class="narrative-head-row">
           <div>
-            <h3 class="section-title">Open-Ended Pedagogical Narrative Summary</h3>
-            <p class="section-subtitle" style="margin-bottom: 0.85rem;">
-              Your comment is stripped of PII, salted and hashed, and classified by the
-              <code>calamanCy</code> + VADER NLP pipeline across the five pedagogical clusters.
+            <h3 class="section-title">Additional Comments</h3>
+            <p class="section-subtitle" style="margin-bottom: 0.75rem;">
+              Optional overall remarks about this course. Your name is never attached to your comments.
             </p>
           </div>
           <span class="char-counter tabular-nums" data-testid="narrative-char-counter">
@@ -690,13 +678,11 @@ function returnToQueue() {
         ></textarea>
 
         <div v-if="commentText.trim().length > 0" class="nlp-live-preview tabular-nums" data-testid="nlp-live-preview">
-          <span>Engine: <strong>{{ nlpPreview.nlp_engine }}</strong></span>
-          <span>Polarity:</span>
-          <strong>P = {{ nlpPreview.polarity >= 0 ? `+${nlpPreview.polarity.toFixed(2)}` : nlpPreview.polarity.toFixed(2) }}</strong>
+          <span>Tone:</span>
           <span class="badge-valence" :class="`valence-${nlpPreview.valence.toLowerCase()}`">
             {{ nlpPreview.valence }}
           </span>
-          <span>Cluster Tag:</span>
+          <span>Topic:</span>
           <strong data-testid="nlp-preview-tag">{{ nlpPreview.tag }}</strong>
         </div>
 
@@ -706,7 +692,7 @@ function returnToQueue() {
             class="btn-secondary"
             @click="returnToQueue"
           >
-            Back to Queue
+            Back to Courses
           </button>
 
           <button
@@ -717,8 +703,8 @@ function returnToQueue() {
           >
             {{
               evaluationStore.submitting
-                ? 'Recording Anonymized Evaluation…'
-                : 'Submit Anonymized Evaluation & Sign Clearance'
+                ? 'Submitting…'
+                : 'Submit Evaluation'
             }}
           </button>
         </div>

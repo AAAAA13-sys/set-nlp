@@ -64,26 +64,26 @@ async function copyText(text, key) {
     <section class="card advocacy-hero-card">
       <div class="advocacy-header-row">
         <div>
-          <span class="eyebrow-badge">PAMANTASAN NG LUNGSOD NG PASIG · CAMPUS OUTREACH &amp; REFERRAL HUB</span>
+          <span class="eyebrow-badge">CLASS LINK &amp; PERMIT</span>
           <h2 id="advocacy-heading" class="section-title">
-            Campus SET Participation Advocacy &amp; Permit Verification Hub
+            Share Portal Link &amp; Check Permit Status
           </h2>
           <p class="section-subtitle">
-            Share official class evaluation links with fellow Pasigueño students and verify cryptographic exam clearance tokens without exposing student survey responses.
+            Share the evaluation link with your classmates or copy your signed examination clearance code.
           </p>
         </div>
         <div class="advocacy-term-pill tabular-nums">
-          <span>Active Term</span>
+          <span>Term</span>
           <strong>{{ authStore.activeTerm || '1st Semester AY 2026-2027' }}</strong>
         </div>
       </div>
 
       <div class="advocacy-share-grid">
         <div class="share-box">
-          <span class="share-kicker">CLASS REPRESENTATIVE REFERRAL LINK</span>
-          <h3>Invite Classmates to Complete Their SET Queue</h3>
+          <span class="share-kicker">CLASS EVALUATION LINK</span>
+          <h3>Invite Classmates</h3>
           <p>
-            Distribute this official PLP EvaluaTech portal link in class group channels so enrolled students secure their final examination clearance before Registrar lock.
+            Share this link in your class group chat so classmates can finish their evaluations on time.
           </p>
           <div class="share-input-row">
             <input
@@ -100,16 +100,16 @@ async function copyText(text, key) {
               data-testid="copy-advocacy-link-btn"
               @click="copyText(campusPortalShareUrl, 'portal')"
             >
-              {{ copiedTarget === 'portal' ? 'Copied Link' : 'Copy Share Link' }}
+              {{ copiedTarget === 'portal' ? 'Copied' : 'Copy Link' }}
             </button>
           </div>
         </div>
 
         <div class="share-box">
-          <span class="share-kicker">CRYPTOGRAPHIC CLEARANCE VERIFICATION</span>
-          <h3>Zero-Knowledge Exam Permit Architecture</h3>
+          <span class="share-kicker">EXAMINATION CLEARANCE</span>
+          <h3>Your Clearance Code</h3>
           <p>
-            Each completed course evaluation mints an HMAC-SHA256 signed token in <code>evaluation_clearances</code> while storing ratings separately in <code>evaluation_vault</code>.
+            Generated automatically as you complete your assigned course evaluations.
           </p>
           <div v-if="latestClearanceToken" class="share-input-row">
             <input
@@ -126,11 +126,11 @@ async function copyText(text, key) {
               data-testid="copy-clearance-token-btn"
               @click="copyText(latestClearanceToken, 'token')"
             >
-              {{ copiedTarget === 'token' ? 'Copied Token' : 'Copy Token' }}
+              {{ copiedTarget === 'token' ? 'Copied' : 'Copy Code' }}
             </button>
           </div>
           <div v-else class="token-placeholder">
-            <span>Signed clearance tokens appear automatically once a student completes a course evaluation.</span>
+            <span>Complete a course evaluation to generate your clearance code.</span>
           </div>
         </div>
       </div>
@@ -139,8 +139,8 @@ async function copyText(text, key) {
     <section class="card advocacy-drives-card">
       <div class="drives-header">
         <div>
-          <span class="eyebrow-badge">AACCUP AREA III · PARTICIPATION CAMPAIGNS</span>
-          <h3 class="section-title">College Participation &amp; Student Council Drives</h3>
+          <span class="eyebrow-badge">COLLEGE PARTICIPATION</span>
+          <h3 class="section-title">College Completion Targets</h3>
         </div>
       </div>
 

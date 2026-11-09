@@ -52,14 +52,13 @@ const formattedTime = computed(() => {
         <strong class="dwell-title">
           {{
             isSatisfied
-              ? `Reading Duration Verified (≥ ${minSeconds}s)`
-              : `Minimum Reading Duration (${minSeconds}s Required)`
+              ? `Ready to submit (${formattedTime})`
+              : `Please review each question carefully (${minSeconds}s minimum)`
           }}
         </strong>
         <p class="dwell-subtitle">
-          Elapsed: <strong class="tabular-nums">{{ formattedTime }} ({{ dwellSeconds }}s / {{ minSeconds }}s)</strong>
-          <span v-if="!isSatisfied" class="tabular-nums"> — {{ remainingSeconds }}s remaining before submission unlocks</span>
-          <span v-else> — Verified for {{ questionCount }}-item SET instrument</span>
+          <span v-if="!isSatisfied" class="tabular-nums">{{ remainingSeconds }}s remaining before you can submit</span>
+          <span v-else>All {{ questionCount }} items ready for submission</span>
         </p>
       </div>
     </div>

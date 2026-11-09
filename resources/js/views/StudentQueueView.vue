@@ -75,22 +75,19 @@ function startEvaluation(course) {
     <section class="card queue-progress-card" data-testid="student-queue-progress">
       <div class="queue-header-row">
         <div>
-          <span class="eyebrow-badge">
-            PAMANTASAN NG LUNGSOD NG PASIG • Student Evaluation Queue
-          </span>
+          <span class="eyebrow-badge">COURSE EVALUATIONS</span>
           <h2 id="queue-heading" class="section-title">
-            My Evaluation Queue ({{ progress.completed }} of {{ progress.total }} Completed)
+            My Courses ({{ progress.completed }} of {{ progress.total }} Completed)
           </h2>
           <p class="section-subtitle">
-            Complete all enrolled faculty evaluations for the active term at
-            <strong>Pamantasan ng Lungsod ng Pasig (PLP)</strong> to unlock your cryptographically signed Digital Examination Permit.
+            Evaluate your enrolled professors for this semester to unlock your examination permit.
           </p>
         </div>
 
         <div class="queue-stats-pill tabular-nums">
-          <span>Completion: <strong>{{ progress.percentage }}%</strong></span>
-          <span class="divider" aria-hidden="true">|</span>
-          <span>Clearance: <strong>{{ progress.clearanceStatus }}</strong></span>
+          <span>Progress: <strong>{{ progress.percentage }}%</strong></span>
+          <span class="divider" aria-hidden="true">·</span>
+          <span>Permit: <strong>{{ progress.clearanceStatus }}</strong></span>
         </div>
       </div>
 
@@ -111,11 +108,11 @@ function startEvaluation(course) {
       <div
         v-if="evaluationStore.evaluationWindow?.announcement_message"
         class="alert-banner alert-success"
-        style="margin-top: 1rem;"
+        style="margin-top: 0.85rem;"
         data-testid="student-window-announcement"
       >
         <div>
-          <strong>Office of the University Registrar:</strong>
+          <strong>Registrar Notice:</strong>
           {{ evaluationStore.evaluationWindow.announcement_message }}
         </div>
       </div>
@@ -127,8 +124,8 @@ function startEvaluation(course) {
         data-testid="student-window-status-alert"
       >
         <div>
-          <strong>Evaluation Window ({{ evaluationStore.evaluationWindow?.status }}):</strong>
-          Evaluation submissions are currently paused or concluded for this academic term.
+          <strong>Status ({{ evaluationStore.evaluationWindow?.status }}):</strong>
+          Evaluations are currently closed for this semester.
         </div>
       </div>
     </section>
@@ -139,7 +136,7 @@ function startEvaluation(course) {
           :value="searchInput"
           type="search"
           class="form-input queue-search-input"
-          placeholder="Filter enrolled courses or instructors…"
+          placeholder="Search course or professor…"
           aria-label="Filter enrolled courses or instructors"
           data-testid="queue-search-input"
           @input="onSearchInput"

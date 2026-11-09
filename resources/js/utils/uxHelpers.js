@@ -207,32 +207,32 @@ export function getRoleTierBadge(role) {
     case 'admin':
       return {
         tierCode: 'TIER 1',
-        label: 'University Registrar Governance',
+        label: 'Registrar Office',
         tone: 'gold',
       };
     case 'dean':
       return {
         tierCode: 'TIER 1',
-        label: 'College Dean Executive Scope',
+        label: 'College Dean',
         tone: 'gold',
       };
     case 'chair':
       return {
         tierCode: 'TIER 2',
-        label: 'Department Chair Academic Scope',
+        label: 'Department Chair',
         tone: 'emerald',
       };
     case 'faculty':
       return {
         tierCode: 'TIER 3',
-        label: 'Double-Blind Faculty Access',
+        label: 'Faculty Member',
         tone: 'emerald',
       };
     case 'student':
     default:
       return {
         tierCode: 'SET PASS',
-        label: 'Anonymized Student Evaluator',
+        label: 'Student Portal',
         tone: 'sage',
       };
   }

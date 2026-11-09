@@ -121,11 +121,11 @@ export const EvaluaTechAppShell = defineComponent({
             h('footer', { class: 'app-workspace-footer' }, [
               h(
                 'span',
-                'Pamantasan ng Lungsod ng Pasig · EvaluaTech SET & calamanCy NLP Analytics',
+                'Pamantasan ng Lungsod ng Pasig · Student Evaluation of Teachers',
               ),
               h(
                 'span',
-                'RA 10173 Zero-Knowledge Vault · Double-Blind Registrar Governance',
+                'Confidential & Anonymous (RA 10173)',
               ),
             ]),
           ]),
