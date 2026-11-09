@@ -93,6 +93,7 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 - [x] **Checkpoint 15:** Course Catalog Tab & Add-Section Shortcut (`AdminSetupView.vue`, inspired by `subject_list.php`): Added Course Catalog management tab listing course codes, course titles, assigned departments, and academic units, with an inline `+ Add Section` modal shortcut directly bound to each course offering.
 - [x] **Checkpoint 16:** Academic Supervisor Evaluation Report Modal & Student Course Clearance Receipt Certificate (`ChairDashboardView.vue`, `EvaluationFormView.vue`, inspired by `report.php`): Added Department Chair evaluation report breakdown modal with overall rating, descriptive qualitative performance badge (`Outstanding`, `Very Satisfactory`, etc.), 5 pedagogical cluster score bars, and NLP sentiment polarity metrics; added student course evaluation clearance receipt certificate modal with cryptographic clearance token proof and print/save actions (`124 / 124 PASS`).
 - [x] **Checkpoint 17:** Faculty Directory Tab, Student Queue Clearance Permit Unlocking & Dean Heatmap Section Report Modal (`AdminSetupView.vue`, `StudentQueueView.vue`, `DeanDashboardView.vue`): Added 5th tab `Faculty Directory` (`data-testid="tab-faculty-btn"`, `pane-faculty`) inspired by `admin/faculty_list.php` listing institutional IDs, departments, emails, and active teaching loads; embedded `ClearancePermitCard.vue` in `StudentQueueView.vue` unlocking on 100% completion for direct registrar verification and permit printing; added Dean Section Evaluation Breakdown Modal (`data-testid="dean-section-report-modal"`) to the section completion heatmap (`125 / 125 PASS`).
+- [x] **Checkpoint 18:** Student Directory Tab & Term Clearance Status Tracking (`AdminSetupView.vue`, `AcademicSetupService.php`, inspired by `admin/student_list.php`): Added 6th tab `Student Directory` (`data-testid="tab-students-btn"`, `pane-students`) listing student institutional IDs, names, departments, emails, enrolled courses counts, completion progress bars, and clearance status badges (`CLEARED` vs `PENDING (X/Y)`), integrated into `AcademicSetupService::getSetupOverview()` and Pinia `setupStore.studentsList` (`126 / 126 PASS`, 904 assertions).
 
 ---
 
@@ -100,10 +101,10 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 
 | Verification Tier | Command Executed | Executed Units | Pass Rate | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (901 assertions) | 35 / 35 | **100% PASS** |
-| **Frontend DOM & UX Suite** | `npm.cmd test` | 44 test groups | 44 / 44 | **100% PASS** |
+| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (904 assertions) | 35 / 35 | **100% PASS** |
+| **Frontend DOM & UX Suite** | `npm.cmd test` | 45 test groups | 45 / 45 | **100% PASS** |
 | **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 46 unit tests | 46 / 46 | **100% PASS** |
 | **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 50 PHP files, 203 sources | 100% clean | **100% PASS** |
 | **Vite Production Bundle** | `npm.cmd run build` | 79 modules | Zero `.map` files | **100% PASS** |
-| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 125 automated units | 125 / 125 | **100% PASS** |
+| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 126 automated units | 126 / 126 | **100% PASS** |
 

@@ -1343,4 +1343,24 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(deanViewSfc.includes('closeDeanSectionReport'), 'Close dean section report handler');
     });
   });
+
+  describe('Group 45: Student Directory Tab & Evaluation Clearance Tracking in Academic Setup', () => {
+    it('verifies Academic Setup student directory tab, clearance progress bar, and store integration', () => {
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+      const setupStoreSrc = readResourceFile('stores/academicSetup.js');
+
+      // 1. Student Directory Tab & Table (AdminSetupView.vue, inspired by student_list.php)
+      assert.ok(setupViewSfc.includes('data-testid="tab-students-btn"'), 'Student directory tab button');
+      assert.ok(setupViewSfc.includes('data-testid="pane-students"'), 'Student directory tab pane');
+      assert.ok(setupViewSfc.includes('data-testid="student-search-input"'), 'Student search input');
+      assert.ok(setupViewSfc.includes('data-testid="student-status-filter-select"'), 'Student status filter select');
+      assert.ok(setupViewSfc.includes('data-testid="student-directory-table"'), 'Student directory table');
+      assert.ok(setupViewSfc.includes('student-clearance-status-'), 'Student clearance status badge');
+      assert.ok(setupViewSfc.includes('filteredStudentsDirectory'), 'Computed filtered students directory');
+
+      // 2. Academic Setup Pinia Store Student Integration
+      assert.ok(setupStoreSrc.includes('studentsList'), 'Academic setup store exposes studentsList');
+      assert.ok(setupStoreSrc.includes('overview.value.students'), 'Computed students from overview');
+    });
+  });
 });

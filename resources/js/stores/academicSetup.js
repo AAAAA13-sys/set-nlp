@@ -12,6 +12,7 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     departments: [],
     courses: [],
     faculty: [],
+    students: [],
     readiness_summary: {
       total_sections: 0,
       assigned_sections: 0,
@@ -50,6 +51,7 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
   const departments = computed(() => overview.value.departments || []);
   const courses = computed(() => overview.value.courses || []);
   const facultyList = computed(() => overview.value.faculty || []);
+  const studentsList = computed(() => overview.value.students || []);
   const readinessSummary = computed(() => overview.value.readiness_summary || {});
   const isCycleReady = computed(() => Boolean(readinessSummary.value.is_cycle_ready));
   const questionnairePreview = computed(() => overview.value.questionnaire_preview || null);
@@ -298,6 +300,7 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     departments,
     courses,
     facultyList,
+    studentsList,
     readinessSummary,
     isCycleReady,
     questionnairePreview,

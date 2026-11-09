@@ -254,7 +254,50 @@ class AcademicSetupService
         $windowConfig = $this->evaluationService->getEvaluationWindow($selectedTermId);
         $windowStatus = (string) ($windowConfig['status'] ?? 'CLOSED');
 
-        // 7. Readiness analysis & actionable validation warnings
+        // 7. Fetch students and clearance status for the selected term (Inspired by student_list.php)
+        $studStmt = $this->pdo->prepare("
+            SELECT 
+                u.id,
+                u.institutional_id,
+                u.name,
+                u.email,
+                u.department_id,
+                d.code AS department_code,
+                d.name AS department_name,
+                COUNT(DISTINCT e.course_section_id) AS enrolled_count,
+                COUNT(DISTINCT ec.course_section_id) AS cleared_count
+            FROM users u
+            LEFT JOIN departments d ON d.id = u.department_id
+            LEFT JOIN enrollments e ON e.student_id = u.id AND e.academic_term_id = :term_id
+            LEFT JOIN evaluation_clearances ec ON ec.student_id = u.id AND ec.course_section_id = e.course_section_id
+            WHERE u.role = 'student' AND u.is_active = 1
+            GROUP BY u.id, u.institutional_id, u.name, u.email, u.department_id, d.code, d.name
+            ORDER BY u.name ASC
+        ");
+        $studStmt->execute([':term_id' => $selectedTermId]);
+        $rawStudents = $studStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $students = [];
+        foreach ($rawStudents as $s) {
+            $enrolled = (int) $s['enrolled_count'];
+            $cleared = (int) $s['cleared_count'];
+            $isComplete = $enrolled > 0 && $cleared >= $enrolled;
+            $students[] = [
+                'id' => (int) $s['id'],
+                'institutional_id' => (string) $s['institutional_id'],
+                'name' => (string) $s['name'],
+                'email' => (string) $s['email'],
+                'department_id' => $s['department_id'] !== null ? (int) $s['department_id'] : null,
+                'department_code' => $s['department_code'] ?: 'CCS',
+                'department_name' => $s['department_name'] ?: 'College of Computer Studies',
+                'enrolled_count' => $enrolled,
+                'cleared_count' => $cleared,
+                'is_complete' => $isComplete,
+                'clearance_status' => $enrolled === 0 ? 'NO ENROLLMENT' : ($isComplete ? 'CLEARED' : "PENDING ({$cleared}/{$enrolled})"),
+            ];
+        }
+
+        // 8. Readiness analysis & actionable validation warnings
         $validationWarnings = [];
         $totalSectionsCount = count($sections);
 
@@ -286,7 +329,7 @@ class AcademicSetupService
             'validation_warnings' => $validationWarnings,
         ];
 
-        // 8. Questionnaire Preview (Canonical 25 Likert items across 5 clusters + 4 qualitative questions)
+        // 9. Questionnaire Preview (Canonical 25 Likert items across 5 clusters + 4 qualitative questions)
         $questionnairePreview = $this->getQuestionnairePreview();
 
         return [
@@ -297,6 +340,7 @@ class AcademicSetupService
             'departments' => $departments,
             'courses' => $courses,
             'faculty' => $faculty,
+            'students' => $students,
             'sections' => $sections,
             'readiness_summary' => $readinessSummary,
             'window_config' => $windowConfig,

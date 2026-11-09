@@ -266,6 +266,25 @@ function quickAssignFaculty(faculty) {
   activeTab.value = 'assignments';
 }
 
+const studentSearchInput = ref('');
+const studentStatusFilter = ref('ALL');
+
+const filteredStudentsDirectory = computed(() => {
+  const query = studentSearchInput.value.trim().toLowerCase();
+  const filter = studentStatusFilter.value;
+  let list = setupStore.studentsList || [];
+  if (filter === 'CLEARED') {
+    list = list.filter((s) => s.is_complete);
+  } else if (filter === 'PENDING') {
+    list = list.filter((s) => !s.is_complete);
+  }
+  if (!query) return list;
+  return list.filter((s) => {
+    const text = `${s.name || ''} ${s.institutional_id || ''} ${s.email || ''} ${s.department_name || ''} ${s.department_code || ''}`.toLowerCase();
+    return text.includes(query);
+  });
+});
+
 async function handleFacultyAssignmentChange(sectionId, event) {
   const newFacultyId = event.target.value ? Number(event.target.value) : null;
   try {
@@ -516,6 +535,20 @@ async function executeDeleteSection() {
             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
           </svg>
           <span>Faculty Directory ({{ setupStore.facultyList.length }})</span>
+        </button>
+
+        <button
+          type="button"
+          class="setup-tab-btn"
+          :class="{ active: activeTab === 'students' }"
+          data-testid="tab-students-btn"
+          @click="activeTab = 'students'"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+          </svg>
+          <span>Student Directory ({{ setupStore.studentsList.length }})</span>
         </button>
 
         <button
@@ -944,7 +977,98 @@ async function executeDeleteSection() {
       </div>
     </section>
 
-    <!-- TAB 5: QUESTIONNAIRE PREVIEW (Inspired by questionnaire.php) -->
+    <!-- TAB 5: STUDENT DIRECTORY (Inspired by admin/student_list.php) -->
+    <section v-if="activeTab === 'students'" class="tab-pane" data-testid="pane-students">
+      <div class="pane-controls-bar">
+        <div class="search-filter-group" style="display: flex; gap: 0.65rem; flex-wrap: wrap;">
+          <input
+            v-model="studentSearchInput"
+            type="search"
+            class="form-input search-input"
+            placeholder="Search student by name, student ID, or department…"
+            data-testid="student-search-input"
+          />
+          <select
+            v-model="studentStatusFilter"
+            class="form-input"
+            style="width: auto; min-width: 170px;"
+            data-testid="student-status-filter-select"
+          >
+            <option value="ALL">All Clearance Status</option>
+            <option value="CLEARED">Cleared (100%)</option>
+            <option value="PENDING">Pending Evaluations</option>
+          </select>
+        </div>
+        <div class="actions-group">
+          <span class="token-chip chip-signed">
+            Total Students: {{ setupStore.studentsList.length }}
+          </span>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="institutional-table tabular-nums" data-testid="student-directory-table">
+          <thead>
+            <tr>
+              <th scope="col">Student ID</th>
+              <th scope="col">Student Name</th>
+              <th scope="col">Department / College</th>
+              <th scope="col">Institutional Email</th>
+              <th scope="col">Enrolled Courses</th>
+              <th scope="col">Evaluation Progress</th>
+              <th scope="col">Clearance Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="std in filteredStudentsDirectory" :key="std.id" :data-testid="`student-row-${std.id}`">
+              <td><code>{{ std.institutional_id }}</code></td>
+              <td><strong>{{ std.name }}</strong></td>
+              <td>
+                <span class="dept-badge">{{ std.department_code || 'CCS' }}</span>
+                <span style="margin-left: 0.35rem; font-size: 0.8rem; color: #4b5563;">{{ std.department_name }}</span>
+              </td>
+              <td>{{ std.email }}</td>
+              <td>
+                <span class="enrolled-badge">{{ std.enrolled_count }} Courses</span>
+              </td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <div style="flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; min-width: 60px;">
+                    <div
+                      :style="{
+                        width: `${std.enrolled_count > 0 ? (std.cleared_count / std.enrolled_count) * 100 : 0}%`,
+                        background: std.is_complete ? '#059669' : '#eab308',
+                        height: '100%'
+                      }"
+                    ></div>
+                  </div>
+                  <strong style="font-size: 0.82rem; color: #374151;">
+                    {{ std.cleared_count }} / {{ std.enrolled_count }}
+                  </strong>
+                </div>
+              </td>
+              <td>
+                <span
+                  class="token-chip"
+                  :class="std.is_complete ? 'chip-signed' : 'chip-unsigned'"
+                  style="font-size: 0.75rem;"
+                  :data-testid="`student-clearance-status-${std.id}`"
+                >
+                  {{ std.clearance_status }}
+                </span>
+              </td>
+            </tr>
+            <tr v-if="filteredStudentsDirectory.length === 0">
+              <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                No student records match your search criteria for this academic term.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 6: QUESTIONNAIRE PREVIEW (Inspired by questionnaire.php) -->
     <section v-if="activeTab === 'questionnaire'" class="tab-pane" data-testid="pane-questionnaire">
       <div class="questionnaire-header-banner">
         <div class="questionnaire-badge-row">

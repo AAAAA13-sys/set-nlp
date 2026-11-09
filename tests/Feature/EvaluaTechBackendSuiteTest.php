@@ -2688,10 +2688,13 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $overview = $overviewRes->getData(true);
         $this->assertArrayHasKey('terms', $overview);
         $this->assertArrayHasKey('sections', $overview);
+        $this->assertArrayHasKey('faculty', $overview);
+        $this->assertArrayHasKey('students', $overview);
         $this->assertArrayHasKey('readiness_summary', $overview);
         $this->assertArrayHasKey('questionnaire_preview', $overview);
         $this->assertGreaterThanOrEqual(1, count($overview['terms']));
         $this->assertGreaterThanOrEqual(6, count($overview['sections']));
+        $this->assertGreaterThanOrEqual(1, count($overview['students']));
         $this->assertTrue($overview['readiness_summary']['is_cycle_ready']);
 
         // 3. Questionnaire Preview: Exactly 5 clusters, 25 items, 4 qualitative questions
