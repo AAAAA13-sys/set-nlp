@@ -41,6 +41,64 @@ const courseForm = ref({
   units: 3,
 });
 
+const showImportRosterModal = ref(false);
+const rosterImportFormat = ref('json');
+const rosterImportContent = ref('');
+const rosterImporting = ref(false);
+
+function openImportRosterModal() {
+  rosterImportFormat.value = 'json';
+  rosterImportContent.value = JSON.stringify([
+    {
+      student_id: '2024-10892',
+      course_code: 'CS-401',
+      course_title: 'Design and Analysis of Algorithms',
+      instructor_name: 'Prof. A. Dela Cruz',
+      department_name: 'Department of Computer Science',
+    },
+  ], null, 2);
+  showImportRosterModal.value = true;
+}
+
+async function submitRosterImport() {
+  if (!rosterImportContent.value.trim()) {
+    flashError('Please provide roster data in CSV or JSON format.');
+    return;
+  }
+  rosterImporting.value = true;
+  try {
+    let parsedRows = [];
+    if (rosterImportFormat.value === 'json') {
+      parsedRows = JSON.parse(rosterImportContent.value);
+    } else {
+      const lines = rosterImportContent.value.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+      const dataLines = lines.filter((l) => !l.toLowerCase().startsWith('student_id,'));
+      parsedRows = dataLines.map((line) => {
+        const [student_id, course_code, course_title, instructor_name, department_name] = line.split(',').map((c) => c.trim());
+        return { student_id, course_code, course_title, instructor_name, department_name };
+      });
+    }
+
+    const res = await evaluationStore.ingestRosterRows(
+      parsedRows,
+      rosterImportFormat.value,
+      rosterImportContent.value,
+    );
+
+    if (res.ok) {
+      showImportRosterModal.value = false;
+      await setupStore.fetchOverview(setupStore.selectedTermId);
+      flashSuccess(res.message || 'Successfully imported academic roster into term.');
+    } else {
+      flashError(res.message || 'Roster import failed.');
+    }
+  } catch (err) {
+    flashError(`Malformed ${rosterImportFormat.value.toUpperCase()} payload: ${err.message}`);
+  } finally {
+    rosterImporting.value = false;
+  }
+}
+
 function flashSuccess(msg) {
   successMessage.value = msg;
   errorMessage.value = '';
@@ -401,6 +459,14 @@ async function executeDeleteSection() {
         </div>
 
         <div class="pane-actions-group">
+          <button
+            type="button"
+            class="btn-secondary"
+            data-testid="import-roster-btn"
+            @click="openImportRosterModal"
+          >
+            + Import Roster
+          </button>
           <button
             type="button"
             class="btn-secondary"
@@ -971,6 +1037,71 @@ async function executeDeleteSection() {
             {{ setupStore.actionBusy ? 'Deleting...' : 'Delete Section' }}
           </button>
         </footer>
+      </div>
+    </div>
+
+    <!-- MODAL: Import Academic Roster (CSV / JSON) -->
+    <div
+      v-if="showImportRosterModal"
+      class="setup-modal-scrim"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="import-roster-modal-title"
+      data-testid="import-roster-modal"
+    >
+      <div class="setup-modal-box setup-modal-lg">
+        <header class="setup-modal-header">
+          <h2 id="import-roster-modal-title">Import Academic Roster</h2>
+          <button type="button" class="modal-close-btn" @click="showImportRosterModal = false">&times;</button>
+        </header>
+
+        <form class="setup-modal-form" @submit.prevent="submitRosterImport">
+          <div class="setup-modal-body">
+            <p style="font-size: 0.88rem; color: #4b5563; margin-bottom: 0.75rem;">
+              Atomically ingest student enrollments, course offerings, and section faculty assignments for the selected academic term.
+            </p>
+
+            <div class="form-group">
+              <label>Select Format:</label>
+              <div style="display: flex; gap: 1.25rem; margin-top: 0.35rem;">
+                <label style="display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+                  <input v-model="rosterImportFormat" type="radio" value="json" />
+                  JSON Format
+                </label>
+                <label style="display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+                  <input v-model="rosterImportFormat" type="radio" value="csv" />
+                  CSV Format
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 0.85rem;">
+              <label for="roster-import-data">
+                {{ rosterImportFormat === 'json' ? 'JSON Array of Student Enrollment Rows:' : 'CSV Rows (student_id, course_code, course_title, instructor_name, department_name):' }}
+              </label>
+              <textarea
+                id="roster-import-data"
+                v-model="rosterImportContent"
+                rows="8"
+                style="width: 100%; font-family: monospace; font-size: 0.82rem; padding: 0.65rem; border: 1px solid var(--line-soft); border-radius: 6px; box-sizing: border-box;"
+                data-testid="academic-setup-roster-textarea"
+                required
+              ></textarea>
+            </div>
+          </div>
+
+          <footer class="setup-modal-footer">
+            <button type="button" class="btn-secondary" @click="showImportRosterModal = false">Cancel</button>
+            <button
+              type="submit"
+              class="btn-primary"
+              :disabled="rosterImporting"
+              data-testid="submit-setup-roster-import-btn"
+            >
+              {{ rosterImporting ? 'Importing Roster...' : 'Import Roster Now' }}
+            </button>
+          </footer>
+        </form>
       </div>
     </div>
   </main>
@@ -1756,6 +1887,10 @@ async function executeDeleteSection() {
   max-width: 520px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   overflow: hidden;
+}
+
+.setup-modal-box.setup-modal-lg {
+  max-width: 660px !important;
 }
 
 .setup-modal-header {
