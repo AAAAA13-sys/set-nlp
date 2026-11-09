@@ -244,6 +244,37 @@ async function submitNewCourse() {
   }
 }
 
+function exportCoursesCatalogCsv() {
+  const coursesList = setupStore.courses || [];
+  const sanitize = (val) => {
+    let s = String(val ?? '');
+    if (/^[=+@-]/i.test(s)) {
+      s = `'${s}`;
+    }
+    return `"${s.replace(/"/g, '""')}"`;
+  };
+
+  const headers = ['Course Code', 'Course Title', 'Department', 'Units'];
+  const rows = coursesList.map((c) => [
+    sanitize(c.code),
+    sanitize(c.title),
+    sanitize(c.department_name || c.department_code || 'College of Computer Studies'),
+    sanitize(c.units ?? 3),
+  ].join(','));
+
+  const csvContent = [headers.map(sanitize).join(','), ...rows].join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  const nowStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  link.setAttribute('download', `PLP_Course_Catalog_${nowStr}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
 const facultySearchInput = ref('');
 
 const filteredFacultyDirectory = computed(() => {
@@ -488,6 +519,69 @@ async function executeDeleteSection() {
             </li>
           </ul>
         </div>
+      </div>
+
+      <!-- Institutional Overview Stats Ribbon (Inspired by admin/home.php) -->
+      <div class="admin-stats-ribbon" data-testid="admin-stats-ribbon" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0.85rem; margin-top: 1rem;">
+        <button
+          type="button"
+          class="stat-card-btn"
+          data-testid="stat-card-courses"
+          style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 10px; padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease;"
+          @click="activeTab = 'courses'"
+        >
+          <div style="font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Course Offerings</div>
+          <div style="font-size: 1.65rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">{{ setupStore.courses.length }}</div>
+          <div style="font-size: 0.75rem; color: #15803d; margin-top: 0.2rem; font-weight: 600;">Catalog Offerings →</div>
+        </button>
+
+        <button
+          type="button"
+          class="stat-card-btn"
+          data-testid="stat-card-sections"
+          style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 10px; padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease;"
+          @click="activeTab = 'assignments'"
+        >
+          <div style="font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Course Sections</div>
+          <div style="font-size: 1.65rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">{{ setupStore.sections.length }}</div>
+          <div style="font-size: 0.75rem; color: #15803d; margin-top: 0.2rem; font-weight: 600;">Teaching Loads →</div>
+        </button>
+
+        <button
+          type="button"
+          class="stat-card-btn"
+          data-testid="stat-card-faculty"
+          style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 10px; padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease;"
+          @click="activeTab = 'faculty'"
+        >
+          <div style="font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Faculty Members</div>
+          <div style="font-size: 1.65rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">{{ setupStore.facultyList.length }}</div>
+          <div style="font-size: 0.75rem; color: #15803d; margin-top: 0.2rem; font-weight: 600;">Faculty Directory →</div>
+        </button>
+
+        <button
+          type="button"
+          class="stat-card-btn"
+          data-testid="stat-card-students"
+          style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 10px; padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease;"
+          @click="activeTab = 'students'"
+        >
+          <div style="font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Enrolled Students</div>
+          <div style="font-size: 1.65rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">{{ setupStore.studentsList.length }}</div>
+          <div style="font-size: 0.75rem; color: #15803d; margin-top: 0.2rem; font-weight: 600;">Clearance Tracker →</div>
+        </button>
+
+        <button
+          type="button"
+          class="stat-card-btn"
+          data-testid="stat-card-users"
+          style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 10px; padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease;"
+          @click="activeTab = 'users'"
+        >
+          <div style="font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">System Accounts</div>
+          <div style="font-size: 1.65rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">{{ setupStore.systemUsers.length }}</div>
+          <div style="font-size: 0.75rem; color: #15803d; margin-top: 0.2rem; font-weight: 600;">Staff &amp; Users →</div>
+        </button>
       </div>
 
       <!-- Navigation Tabs -->
@@ -876,14 +970,25 @@ async function executeDeleteSection() {
             University course offerings, academic departments, and credit unit weights.
           </p>
         </div>
-        <button
-          type="button"
-          class="btn-primary"
-          data-testid="catalog-new-course-btn"
-          @click="openNewCourseModal"
-        >
-          + New Course Offering
-        </button>
+        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+          <button
+            type="button"
+            class="btn-secondary"
+            data-testid="export-courses-csv-btn"
+            style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; font-weight: 600;"
+            @click="exportCoursesCatalogCsv"
+          >
+            📊 Export Catalog (CSV)
+          </button>
+          <button
+            type="button"
+            class="btn-primary"
+            data-testid="catalog-new-course-btn"
+            @click="openNewCourseModal"
+          >
+            + New Course Offering
+          </button>
+        </div>
       </div>
 
       <div class="table-responsive-wrapper">

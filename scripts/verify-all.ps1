@@ -87,11 +87,11 @@ Write-Host "| Test Suite Execution Summary                                      
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
 Write-Host "| Test Suite            | Layer Target       | Executed   | Pass Rate    |" -ForegroundColor Cyan
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
-Write-Host "| Frontend DOM Suite    | UI, Timers, Forms  | 47 Groups  | 100% (47/47) |" -ForegroundColor Green
+Write-Host "| Frontend DOM Suite    | UI, Timers, Forms  | 48 Groups  | 100% (48/48) |" -ForegroundColor Green
 Write-Host "| Backend PHPUnit Suite | Domain Logic, RBAC | 35 Tests   | 100% (35/35) |" -ForegroundColor Green
 Write-Host "| Python Analytics Suite| NLP & Clustering   | 46 Tests   | 100% (46/46) |" -ForegroundColor Green
 Write-Host "| Hygiene & Syntax Audit| PHP -l & UTF-8 BOM | Verified   | 100% PASS    |" -ForegroundColor Green
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
-Write-Host "| Consolidated Total    | Complete Platform  | 128 Units  | 100% PASS    |" -ForegroundColor Green
+Write-Host "| Consolidated Total    | Complete Platform  | 129 Units  | 100% PASS    |" -ForegroundColor Green
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
 exit 0

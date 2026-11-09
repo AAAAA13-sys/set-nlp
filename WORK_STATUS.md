@@ -96,6 +96,7 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 - [x] **Checkpoint 18:** Student Directory Tab & Term Clearance Status Tracking (`AdminSetupView.vue`, `AcademicSetupService.php`, inspired by `admin/student_list.php`): Added 6th tab `Student Directory` (`data-testid="tab-students-btn"`, `pane-students`) listing student institutional IDs, names, departments, emails, enrolled courses counts, completion progress bars, and clearance status badges (`CLEARED` vs `PENDING (X/Y)`), integrated into `AcademicSetupService::getSetupOverview()` and Pinia `setupStore.studentsList` (`126 / 126 PASS`, 904 assertions).
 - [x] **Checkpoint 19:** Administrator Section Evaluation Breakdown Modal, Institutional Evaluation Summary CSV Export & Student Queue Clearance Receipt Shortcut (`AdminRosterView.vue`, `StudentQueueView.vue`, inspired by `report.php`): Added Administrator section evaluation report breakdown modal (`data-testid="admin-section-eval-modal"`) with overall rating, descriptive qualitative performance badge (`Outstanding`, `Very Satisfactory`, etc.), 5 pedagogical cluster score bars, NLP sentiment polarity metrics, and Print/Export trigger; added institutional evaluation summary CSV export (`data-testid="export-master-summary-btn"`) with formula-injection neutralization; added student queue course clearance receipt modal shortcut (`data-testid="student-queue-clearance-receipt-modal"`) with cryptographic clearance token proof and print/save actions (`127 / 127 PASS`).
 - [x] **Checkpoint 20:** System User Accounts & Staff Directory Tab in Academic Setup (`AdminSetupView.vue`, `AcademicSetupService.php`, `academicSetup.js`, inspired by `admin/user_list.php`): Added 7th tab `System Accounts` (`data-testid="tab-users-btn"`, `pane-users`) listing verified institutional user accounts across all 5 roles (`admin`, `dean`, `chair`, `faculty`, `student`) with search input, role filter dropdown (`data-testid="users-role-filter-select"`), role badges, departmental affiliations, and active status indicators (`128 / 128 PASS`, 906 assertions).
+- [x] **Checkpoint 21:** Institutional Overview Stats Ribbon & Course Catalog CSV Export in Academic Setup (`AdminSetupView.vue`, inspired by `admin/home.php` and `admin/subject_list.php`): Added responsive institutional stats ribbon (`data-testid="admin-stats-ribbon"`) with 5 interactive overview KPI cards (`stat-card-courses`, `stat-card-sections`, `stat-card-faculty`, `stat-card-students`, `stat-card-users`) providing instant tab switching and metrics visualization; added formula-injection-safe Course Catalog CSV export (`data-testid="export-courses-csv-btn"`) (`129 / 129 PASS`).
 
 ---
 
@@ -104,9 +105,9 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 | Verification Tier | Command Executed | Executed Units | Pass Rate | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (906 assertions) | 35 / 35 | **100% PASS** |
-| **Frontend DOM & UX Suite** | `npm.cmd test` | 47 test groups (48 tests) | 48 / 48 | **100% PASS** |
+| **Frontend DOM & UX Suite** | `npm.cmd test` | 48 test groups (50 tests) | 50 / 50 | **100% PASS** |
 | **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 46 unit tests | 46 / 46 | **100% PASS** |
 | **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 50 PHP files, 203 sources | 100% clean | **100% PASS** |
 | **Vite Production Bundle** | `npm.cmd run build` | 79 modules | Zero `.map` files | **100% PASS** |
-| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 128 automated units | 128 / 128 | **100% PASS** |
+| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 129 automated units | 129 / 129 | **100% PASS** |
 

@@ -1414,4 +1414,27 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupStoreSrc.includes('overview.value.system_users'), 'Computed system users from overview');
     });
   });
+
+  describe('Group 48: Institutional Stats Ribbon & Course Catalog CSV Export in Academic Setup', () => {
+    it('verifies institutional overview stats ribbon and quick navigation cards', () => {
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+
+      // 1. Overview Stats Ribbon (Inspired by admin/home.php)
+      assert.ok(setupViewSfc.includes('data-testid="admin-stats-ribbon"'), 'Admin stats ribbon container');
+      assert.ok(setupViewSfc.includes('data-testid="stat-card-courses"'), 'Stat card for courses');
+      assert.ok(setupViewSfc.includes('data-testid="stat-card-sections"'), 'Stat card for sections');
+      assert.ok(setupViewSfc.includes('data-testid="stat-card-faculty"'), 'Stat card for faculty');
+      assert.ok(setupViewSfc.includes('data-testid="stat-card-students"'), 'Stat card for students');
+      assert.ok(setupViewSfc.includes('data-testid="stat-card-users"'), 'Stat card for system users');
+    });
+
+    it('verifies course catalog CSV export button, handler, and filename pattern', () => {
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+
+      // 2. Course Catalog CSV Export
+      assert.ok(setupViewSfc.includes('data-testid="export-courses-csv-btn"'), 'Export courses CSV button');
+      assert.ok(setupViewSfc.includes('exportCoursesCatalogCsv'), 'Export courses CSV handler');
+      assert.ok(setupViewSfc.includes('PLP_Course_Catalog_'), 'Course catalog CSV filename pattern');
+    });
+  });
 });
