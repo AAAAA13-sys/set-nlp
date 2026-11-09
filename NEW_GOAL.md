@@ -108,6 +108,6 @@ Every role uses one Vue single-page website with button/link navigation through 
 - **Live Playwright Browser Captures:**
   - `live_student_eval_desktop.png` & `live_student_eval_mobile.png`: Verified top back button pill (`← Back to My Courses`), clean header branding, zero autosave text, zero fullscreen toggle, and enlarged root typography (`17.5px; line-height: 1.62;`).
   - `live_jquery_ui_notification.png`: Verified fixed top-right DOM error notification with jQuery UI styling and 4-second animated countdown timer.
-  - `live_admin_setup_verified.png`: Verified Academic Setup workspace with term cycle controls, faculty assignment matrix, inline Registrar Grade-Lock toggle (`🔒 Locked` / `🔓 Inactive`), and integrated `+ Import Roster` modal.
+  - `live_admin_setup_verified.png`: Verified Academic Setup workspace with term cycle controls, faculty assignment matrix, inline Registrar Grade-Lock toggle (`🔒 Locked` / `🔓 Inactive`), integrated `+ Import Roster` modal, and cross-navigation links connecting the Registrar Console (`/admin`) and Academic Setup (`/admin/setup`).
   - `live_dean_verified.png`: Verified Dean college analytics with single-page top-bar navigation.
 - **Git State:** All commits committed and pushed to `origin/main` (`https://github.com/AAAAA13-sys/set-nlp.git`).
