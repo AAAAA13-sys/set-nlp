@@ -945,10 +945,10 @@ function exportAccreditationDossier() {
             <span class="eyebrow-badge">
               QUALITY &amp; COMPLIANCE
             </span>
-            <h3 class="section-title">Accreditation &amp; Quality Standards Checklist</h3>
-            <p class="section-subtitle">
-              Verification of evaluation privacy, response quality, and accreditation requirements.
-            </p>
+            <h3 class="section-title">
+              Accreditation &amp; Quality Standards Checklist
+              <span class="ui-hint" tabindex="0" aria-label="Checklist details" data-hint="Verification of evaluation privacy, response quality, and accreditation requirements.">?</span>
+            </h3>
           </div>
           <div style="display: flex; gap: 0.5rem; align-items: center;">
             <span class="badge-unlocked">
@@ -984,10 +984,10 @@ function exportAccreditationDossier() {
         <div class="iso-header">
           <div>
             <span class="eyebrow-badge">PAMANTASAN NG LUNGSOD NG PASIG • Institutional Quality Assurance</span>
-            <h3 class="section-title">Institutional Accreditation Compliance (AACCUP • CHED • ISO 25010)</h3>
-            <p class="section-subtitle">
-              Automated institutional alignment with AACCUP Area III, CHED CMO 46 s. 2012, and 5-cluster pedagogical benchmarks.
-            </p>
+            <h3 class="section-title">
+              Institutional Accreditation Compliance (AACCUP • CHED • ISO 25010)
+              <span class="ui-hint" tabindex="0" aria-label="Accreditation alignment details" data-hint="Alignment with AACCUP Area III, CHED CMO 46 s. 2012, and 5-cluster pedagogical benchmarks.">?</span>
+            </h3>
           </div>
           <div style="display:flex;gap:0.5rem;align-items:center;">
             <span class="badge-unlocked">
@@ -1118,10 +1118,10 @@ function exportAccreditationDossier() {
         </table>
 
         <div class="sus-calculator-box" style="margin-top: 1rem;">
-          <h4>Live 10-Item SUS Benchmark: {{ liveSusResult.score }} ({{ liveSusResult.label }})</h4>
-          <p class="section-subtitle">
-            Odd items score <code>(Rating - 1)</code>; even items score <code>(5 - Rating)</code>; sum multiplied by <code>2.5</code> (Grade A threshold ≥ 80.3).
-          </p>
+          <h4>
+            Live 10-Item SUS Benchmark: {{ liveSusResult.score }} ({{ liveSusResult.label }})
+            <span class="ui-hint" tabindex="0" aria-label="SUS calculation formula" data-hint="Odd items score (Rating - 1); even items score (5 - Rating); sum multiplied by 2.5 (Grade A threshold >= 80.3).">?</span>
+          </h4>
         </div>
       </section>
     </div>
@@ -1138,10 +1138,10 @@ function exportAccreditationDossier() {
         <div class="iso-header">
           <div>
             <span class="eyebrow-badge">ACCREDITATION DOSSIER</span>
-            <h3 class="section-title">Accreditation Evidence Summary</h3>
-            <p class="section-subtitle">
-              Summary of response sample size, overall rating average, watchlist resolution, and verification seal.
-            </p>
+            <h3 class="section-title">
+              Accreditation Evidence Summary
+              <span class="ui-hint" tabindex="0" aria-label="Evidence dossier details" data-hint="Summary of response sample size, overall rating average, watchlist resolution, and verification seal.">?</span>
+            </h3>
           </div>
           <span class="badge-unlocked" data-testid="dossier-digital-seal">
             {{ evidenceDossier.cryptographic_seal.digital_seal }}
@@ -1182,10 +1182,10 @@ function exportAccreditationDossier() {
         <div class="iso-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
           <div>
             <span class="eyebrow-badge">SEMESTER TRENDS</span>
-            <h3 class="section-title">Semester-Over-Semester Trend Comparison</h3>
-            <p class="section-subtitle">
-              Comparison of current semester ratings, comment sentiment, and action plan resolution against the prior semester.
-            </p>
+            <h3 class="section-title">
+              Semester-Over-Semester Trend Comparison
+              <span class="ui-hint" tabindex="0" aria-label="Semester trend details" data-hint="Comparison of current semester ratings, comment sentiment, and action plan resolution against the prior semester.">?</span>
+            </h3>
           </div>
           <div style="display:flex;gap:0.5rem;align-items:center;">
             <button

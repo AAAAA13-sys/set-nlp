@@ -37,10 +37,10 @@ function dismissOnboarding() {
   >
     <div class="onboarding-copy">
       <span class="onboarding-pill">WORKSPACE PREFERENCES</span>
-      <strong class="onboarding-title">Tailor your PLP EvaluaTech layout</strong>
-      <span class="onboarding-sub">
-        Choose your default table density and primary workflow focus. Saved locally to your active session.
-      </span>
+      <strong class="onboarding-title">
+        Display Preferences
+        <span class="ui-hint" tabindex="0" aria-label="Preference settings help" data-hint="Choose your default table density and primary workflow focus. Saved locally to your active session.">?</span>
+      </strong>
     </div>
 
     <div class="onboarding-controls">

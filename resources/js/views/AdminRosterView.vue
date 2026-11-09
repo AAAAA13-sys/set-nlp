@@ -297,10 +297,10 @@ async function toggleLock(sectionId, field) {
           </span>
           <h2 id="admin-heading" class="section-title">
             Evaluation Schedule &amp; Grade Locks
+            <span class="ui-hint" tabindex="0" aria-label="Registrar console overview" data-hint="Manage the evaluation window, import class rosters, and lock finalized course grades.">?</span>
           </h2>
           <p class="section-subtitle">
-            Administrator: <strong>{{ authStore.user?.name || 'University Registrar Admin' }}</strong><span v-if="authStore.user?.institutional_id"> ({{ authStore.user.institutional_id }})</span> ·
-            Manage the evaluation window, import class rosters, and lock finalized course grades.
+            Administrator: <strong>{{ authStore.user?.name || 'University Registrar Admin' }}</strong><span v-if="authStore.user?.institutional_id"> ({{ authStore.user.institutional_id }})</span>
           </p>
         </div>
       </div>
@@ -314,10 +314,8 @@ async function toggleLock(sectionId, field) {
           </span>
           <h3 id="window-heading" class="section-title">
             Evaluation Period &amp; Thresholds
+            <span class="ui-hint" tabindex="0" aria-label="Evaluation period settings" :data-hint="`Configure the evaluation period for ${evaluationStore.evaluationWindow.term_name} (${evaluationStore.evaluationWindow.term_code}) and response thresholds.`">?</span>
           </h3>
-          <p class="section-subtitle">
-            Set the evaluation period for <strong>{{ evaluationStore.evaluationWindow.term_name }} ({{ evaluationStore.evaluationWindow.term_code }})</strong> and adjust response thresholds.
-          </p>
         </div>
         <div class="window-status-pill-wrap">
           <span
@@ -509,6 +507,7 @@ async function toggleLock(sectionId, field) {
         <div>
           <h3 id="locks-heading" class="section-title">
             Course Grade Locks
+            <span class="ui-badge-count">{{ (evaluationStore.sectionLocks || []).length }}</span>
             <span
               class="ui-hint"
               tabindex="0"

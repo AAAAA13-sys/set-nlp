@@ -55,6 +55,7 @@ const formattedTime = computed(() => {
               ? `Ready to submit (${formattedTime})`
               : `Please review each question carefully (${minSeconds}s minimum)`
           }}
+          <span class="ui-hint" tabindex="0" aria-label="Reading timer requirement" data-hint="A 45-second minimum reading duration ensures thoughtful responses across all 25 items.">?</span>
         </strong>
         <p class="dwell-subtitle">
           <span v-if="!isSatisfied" class="tabular-nums">{{ remainingSeconds }}s remaining before you can submit</span>

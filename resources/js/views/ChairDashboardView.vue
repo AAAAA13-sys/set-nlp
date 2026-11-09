@@ -287,10 +287,11 @@ async function endorseActionPlan(item) {
       <div class="watchlist-header">
         <div>
           <span class="eyebrow-badge">FACULTY ROSTER</span>
-          <h3 class="section-title">{{ departmentName }} Instructors</h3>
-          <p class="section-subtitle">
-            Summary of student evaluations across all active sections in this department.
-          </p>
+          <h3 class="section-title">
+            {{ departmentName }} Instructors
+            <span class="ui-badge-count">{{ departmentFaculty.length }}</span>
+            <span class="ui-hint" tabindex="0" aria-label="Department instructor summary" data-hint="Summary of student evaluations across all active sections in this department.">?</span>
+          </h3>
         </div>
         <div v-if="quartilesData?.tier_counts" style="display:flex;gap:0.4rem;flex-wrap:wrap;">
           <span class="token-chip chip-signed">High Distinction: {{ quartilesData.tier_counts.high_distinction }}</span>
