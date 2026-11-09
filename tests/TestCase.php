@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-namespace PHPUnit\Framework {
+namespace Tests\Harness {
     if (!class_exists(AssertionFailedError::class)) {
         class AssertionFailedError extends \RuntimeException {}
     }
 
-    if (!class_exists(TestCase::class)) {
-        abstract class TestCase
-        {
-            protected static int $assertionCount = 0;
+    abstract class BaseTestCase
+    {
+        protected static int $assertionCount = 0;
 
             protected function setUp(): void {}
             protected function tearDown(): void {}
@@ -215,12 +214,17 @@ namespace PHPUnit\Framework {
                 }
             }
         }
+}
+
+namespace PHPUnit\Framework {
+    if (!class_exists('PHPUnit\\Framework\\TestCase', false)) {
+        class_alias(\Tests\Harness\BaseTestCase::class, 'PHPUnit\\Framework\\TestCase');
     }
 }
 
 namespace Tests {
     use PDO;
-    use PHPUnit\Framework\TestCase as BaseTestCase;
+    use Tests\Harness\BaseTestCase;
 
     abstract class TestCase extends BaseTestCase
     {

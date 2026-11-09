@@ -59,7 +59,7 @@ if ($invokedDirectly) {
     }
 
     $elapsedMs = round((microtime(true) - $startTime) * 1000, 2);
-    $assertions = \PHPUnit\Framework\TestCase::getAssertionCount();
+    $assertions = \Tests\TestCase::getAssertionCount();
 
     echo "------------------------------------------------------------------------\n";
     echo sprintf(
