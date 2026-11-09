@@ -34,19 +34,19 @@ const baseCommands = computed(() => {
   if (role === 'chair') {
     cmds.push(
       { id: 'nav-chair', group: 'Workspace', label: 'Open Department Overview', hint: '/chair', action: () => router.push('/chair') },
-      { id: 'open-quivr', group: 'AI Assistant', label: 'Ask AI Assistant (Quivr NLP Brain)', hint: 'Feedback Search', action: () => emit('open-quivr-brain') },
+      { id: 'open-quivr', group: 'Analysis', label: "Professor's Evaluation Analysis", hint: 'Feedback Search', action: () => emit('open-quivr-brain') },
     );
   }
   if (role === 'dean') {
     cmds.push(
       { id: 'nav-dean', group: 'Workspace', label: 'Open College Overview', hint: '/dean', action: () => router.push('/dean') },
-      { id: 'open-quivr', group: 'AI Assistant', label: 'Ask AI Assistant (Quivr NLP Brain)', hint: 'Feedback Search', action: () => emit('open-quivr-brain') },
+      { id: 'open-quivr', group: 'Analysis', label: "Professor's Evaluation Analysis", hint: 'Feedback Search', action: () => emit('open-quivr-brain') },
     );
   }
   if (role === 'admin') {
     cmds.push(
       { id: 'nav-admin', group: 'Workspace', label: 'Open Registrar Console', hint: '/admin', action: () => router.push('/admin') },
-      { id: 'open-quivr', group: 'AI Assistant', label: 'Ask AI Assistant (Quivr NLP Brain)', hint: 'Feedback Search', action: () => emit('open-quivr-brain') },
+      { id: 'open-quivr', group: 'Analysis', label: "Professor's Evaluation Analysis", hint: 'Feedback Search', action: () => emit('open-quivr-brain') },
     );
   }
 
@@ -144,7 +144,7 @@ function onKeyDown(event) {
           v-model="searchQuery"
           type="text"
           class="cmdk-input"
-          placeholder="Type a command, workspace route, or NLP action…"
+          placeholder="Search pages or actions…"
           aria-label="Search workspace commands"
           data-testid="command-palette-input"
         />

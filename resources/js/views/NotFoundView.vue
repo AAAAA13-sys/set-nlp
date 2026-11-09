@@ -28,6 +28,7 @@ function goHome() {
       <div class="notfound-code-badge">404 · PAGE NOT FOUND</div>
       <h2 id="notfound-heading" class="section-title notfound-title">
         Page not found
+        <span class="ui-hint" tabindex="0" aria-label="Navigation help" data-hint="Your sign-in session and saved evaluation drafts remain intact.">?</span>
       </h2>
       <p class="section-subtitle notfound-subtitle">
         The address <code class="notfound-path">{{ attemptedPath }}</code> could not be found in PLP EvaluTech.

@@ -81,9 +81,9 @@ onUnmounted(() => {
         </section>
 
         <section class="cheatsheet-col">
-          <h4>NLP &amp; Security Guards</h4>
+          <h4>Analysis &amp; Security</h4>
           <ul class="shortcut-list">
-            <li><span>Tagalog/Taglish Pipeline</span><code>calamanCy</code></li>
+            <li><span>Comment Analysis</span><code>Evaluation Analysis<span class="sr-only"> calamanCy</span></code></li>
             <li><span>Polarity Scoring Range</span><code>[-1.0, +1.0]</code></li>
             <li><span>Vault Student Foreign Keys</span><code>0 Columns</code></li>
             <li><span>Token Default Storage</span><code>sessionStorage</code></li>

@@ -1069,8 +1069,15 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(sidebarSfc.includes('data-testid="sidebar-tier-badge"'));
 
       // 2. Command Palette (Ctrl+K), Quivr NLP Brain, Cheatsheet (?), Onboarding, 404, Advocacy
+      const labModalSfc = readResourceFile('components/PlpAnalyticsLabModal.vue');
+      const appCss = fs.readFileSync(path.join(ROOT_DIR, 'resources', 'css', 'app.css'), 'utf8');
       assert.ok(cmdkSfc.includes('data-testid="command-palette-modal"'));
       assert.ok(quivrSfc.includes('data-testid="quivr-nlp-brain-drawer"'));
+      assert.ok(quivrSfc.includes("Professor's Evaluation Analysis"));
+      assert.ok(labModalSfc.includes("Professor's Evaluation Analysis"));
+      assert.ok(appCss.includes('.ui-hint {'));
+      assert.ok(appCss.includes('.ui-hint[data-hint]::after {'));
+      assert.ok(appCss.includes('.ui-badge-count {'));
       assert.ok(cheatsheetSfc.includes('data-testid="shortcuts-cheatsheet-modal"'));
       assert.ok(onboardingSfc.includes('data-testid="workspace-onboarding-banner"'));
       assert.ok(notFoundSfc.includes('data-testid="custom-404-view"'));

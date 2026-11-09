@@ -45,9 +45,10 @@ async function switchAccount() {
           </span>
           <h2 id="access-denied-heading" class="section-title">
             403 Forbidden — Access Restricted
+            <span class="ui-hint" tabindex="0" aria-label="Access restriction note" data-hint="Each role is limited to its assigned workspace.">?</span>
           </h2>
           <p class="section-subtitle">
-            Your account does not have permission to view this page. Each role is limited to its assigned workspace.
+            Your account does not have permission to view this page.
           </p>
         </div>
       </div>
