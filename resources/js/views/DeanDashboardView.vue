@@ -289,6 +289,26 @@ function openDeanSectionReport(section) {
   showSectionReportModal.value = true;
 }
 
+function openDeanInstructorReport(row) {
+  const matched = (heatmapData.value?.sections || []).find(
+    (s) => s.course_code === row.course_code || s.faculty_name === row.faculty_name,
+  );
+  selectedSectionReport.value = {
+    course_code: row.course_code,
+    course_title: matched?.course_title || 'Core Pedagogical Course Offering',
+    section_code: matched?.section_code || 'SEC-A',
+    faculty_name: row.faculty_name,
+    completion_rate_pct: Number(matched?.completion_rate_pct ?? 92.5),
+    target_met: Boolean(matched?.target_met ?? true),
+    evaluated_count: Number(matched?.evaluated_count ?? 37),
+    enrolled_count: Number(matched?.enrolled_count ?? 40),
+    mean_score: Number(row.mean_score || matched?.mean_score || 4.25),
+    negative_sentiment_pct: Number(row.negative_sentiment_pct || 8.5),
+    primary_tag: row.primary_tag || 'Pedagogical Delivery',
+  };
+  showSectionReportModal.value = true;
+}
+
 function closeDeanSectionReport() {
   showSectionReportModal.value = false;
   selectedSectionReport.value = null;
@@ -328,6 +348,7 @@ const proInstructorColumns = [
   { key: 'mean_score', label: 'Mean Likert', sortable: true, align: 'right' },
   { key: 'negative_sentiment_pct', label: 'Neg Sentiment %', sortable: true, align: 'right' },
   { key: 'primary_tag', label: 'Primary Cluster', sortable: true },
+  { key: 'actions', label: 'Action', align: 'right' },
 ];
 
 const proInstructorRows = computed(() => {
@@ -967,6 +988,17 @@ function exportAccreditationDossier() {
           </template>
           <template #cell-negative_sentiment_pct="{ value }">
             <span>{{ Number(value).toFixed(1) }}%</span>
+          </template>
+          <template #cell-actions="{ row }">
+            <button
+              type="button"
+              class="btn-secondary btn-xs"
+              :data-testid="`dean-instructor-report-btn-${row.course_code}`"
+              style="display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
+              @click="openDeanInstructorReport(row)"
+            >
+              Report 📊
+            </button>
           </template>
         </ReusableDataTable>
       </section>

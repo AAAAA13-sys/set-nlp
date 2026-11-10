@@ -1663,4 +1663,19 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(appCss.includes('.print-report-card'), 'Print report card border and padding reset');
     });
   });
+
+  describe('Group 56: College Dean Sentiment Explorer Evaluation Reports & Cross-Role Report Alignment', () => {
+    it('verifies dean instructor report trigger in explorer table and openDeanInstructorReport handler', () => {
+      const deanViewSfc = readResourceFile('views/DeanDashboardView.vue');
+
+      // 1. Dean Sentiment Explorer Action Column & Button (Inspired by report.php)
+      assert.ok(deanViewSfc.includes('data-testid="`dean-instructor-report-btn-${row.course_code}`"'), 'Dean instructor report button in explorer table');
+      assert.ok(deanViewSfc.includes('openDeanInstructorReport'), 'openDeanInstructorReport handler defined');
+      assert.ok(deanViewSfc.includes("key: 'actions', label: 'Action'"), 'Action column in proInstructorColumns');
+
+      // 2. Report Modal Binding
+      assert.ok(deanViewSfc.includes('data-testid="dean-section-report-modal"'), 'Dean section report modal present');
+      assert.ok(deanViewSfc.includes('data-testid="print-dean-report-btn"'), 'Print dean report button present');
+    });
+  });
 });
