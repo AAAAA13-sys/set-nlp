@@ -1081,6 +1081,9 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       const labModalSfc = readResourceFile('components/PlpAnalyticsLabModal.vue');
       const appCss = fs.readFileSync(path.join(ROOT_DIR, 'resources', 'css', 'app.css'), 'utf8');
       assert.ok(cmdkSfc.includes('data-testid="command-palette-modal"'));
+      assert.ok(cmdkSfc.includes('nav-admin-setup'));
+      assert.ok(cmdkSfc.includes('nav-verify-permit'));
+      assert.ok(cmdkSfc.includes('nav-advocacy'));
       assert.ok(quivrSfc.includes('data-testid="quivr-nlp-brain-drawer"'));
       assert.ok(quivrSfc.includes("Professor's Evaluation Analysis"));
       assert.ok(labModalSfc.includes("Professor's Evaluation Analysis"));

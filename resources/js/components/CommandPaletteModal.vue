@@ -46,12 +46,14 @@ const baseCommands = computed(() => {
   if (role === 'admin') {
     cmds.push(
       { id: 'nav-admin', group: 'Workspace', label: 'Open Registrar Console', hint: '/admin', action: () => router.push('/admin') },
+      { id: 'nav-admin-setup', group: 'Workspace', label: 'Academic Setup & Cycle Management', hint: '/admin/setup', action: () => router.push('/admin/setup') },
       { id: 'open-quivr', group: 'Analysis', label: "Professor's Evaluation Analysis", hint: 'Feedback Search', action: () => emit('open-quivr-brain') },
     );
   }
 
   cmds.push(
-    { id: 'toggle-sidebar', group: 'Layout', label: 'Collapse or Expand Sidebar', hint: 'Ctrl + B', action: () => emit('toggle-sidebar') },
+    { id: 'nav-verify-permit', group: 'Tools', label: 'Verify Examination Permit (Proctor Portal)', hint: '/verify', action: () => router.push('/verify') },
+    { id: 'nav-advocacy', group: 'Help', label: 'Evaluation Advocacy & Anonymity Protocol', hint: '/advocacy', action: () => router.push('/advocacy') },
     {
       id: 'toggle-density',
       group: 'Layout',
