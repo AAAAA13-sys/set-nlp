@@ -99,15 +99,24 @@ Every role uses one Vue single-page website with button/link navigation through 
 
 ## Verified Results & Handoff Evidence (10 November 2026)
 
-- **Backend PHPUnit Suite:** 35 feature & domain tests, 906 assertions (`100% PASS` in 3.4s via SQLite in-memory PDO).
-- **Frontend DOM & Domain Suite:** 48 test groups covering all role workspaces, single-page top-bar navigation, timing policies, Course Catalog, Faculty Directory, Student Directory, System Accounts Directory, Institutional Overview Stats Ribbon, Course Catalog CSV Export, Chair/Dean report breakdown modals, Student clearance receipts, Admin section evaluation breakdown modal, and institutional summary CSV export (`100% PASS` in 0.3s).
-- **Python NLP Microservice Suite:** 46 unit tests verifying VADER compound bounds, 5 pedagogical clusters, multi-questionnaire synthesis, and PII scrubbing (`100% PASS` in 1.4s).
-- **Hygiene & Syntax Audit:** 50 PHP files clean (`php -l`), 203 source files UTF-8 No-BOM, 0 git diff warnings.
-- **Consolidated Total:** **129 Automated Test Units (100% PASS)** via `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1`.
-- **Production Bundle:** `npm run build` compiled in 2.48s with zero `.map` files in `public/build/`.
+- **Backend PHPUnit Suite:** 35 feature & domain tests, 932 assertions (`100% PASS` in 3.6s via SQLite in-memory PDO).
+- **Frontend DOM & Domain Suite:** 66 test groups (70 tests) covering all 5 role workspaces, single-page top-bar navigation, immediate submission policy (0s+ dwell time), 7 Academic Setup tabs, Course Catalog & Sections, Faculty Directory, Student Directory, System Accounts Directory, Institutional Overview Stats Ribbon, multi-tier CSV Exports with formula-injection neutralization, Section Evaluation Breakdown Modals with Tripartite Accreditation Signatures, Student Clearance Receipts, Cross-Role Rating Scale Rubric Modal (`EvaluationRubricModal.vue`), and Deep Tab URL Synchronization (`100% PASS` in 0.5s).
+- **Python NLP Microservice Suite:** 46 unit tests verifying VADER compound polarity bounds ($[-1.0, +1.0]$), 5 pedagogical cluster tagging, multi-questionnaire structured qualitative synthesis, pedagogical action plans, and PII/prompt-delimiter scrubbing (`100% PASS` in 2.5s).
+- **Hygiene & Syntax Audit:** 50 PHP files clean (`php -l`), 205 source files UTF-8 No-BOM, 0 git diff warnings.
+- **Consolidated Multi-Tier Matrix:** **140 Automated Test Units (100% PASS)** via `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1`.
+- **Production Bundle:** `npm run build` compiled 82 modules cleanly with zero `.map` files in `public/build/`.
 - **Live Playwright Browser Captures:**
-  - `live_student_eval_desktop.png` & `live_student_eval_mobile.png`: Verified top back button pill (`← Back to My Courses`), clean header branding, zero autosave text, zero fullscreen toggle, and enlarged root typography (`17.5px; line-height: 1.62;`).
-  - `live_jquery_ui_notification.png`: Verified fixed top-right DOM error notification with jQuery UI styling and 4-second animated countdown timer.
-  - `live_admin_setup_verified.png`: Verified Academic Setup workspace with term cycle controls (create/edit term modal, set-as-active), faculty assignment matrix, inline Registrar Grade-Lock toggle (`🔒 Locked` / `🔓 Inactive`), integrated `+ Import Roster` modal, and cross-navigation links connecting the Registrar Console (`/admin`) and Academic Setup (`/admin/setup`).
-  - `live_dean_verified.png`: Verified Dean college analytics with single-page top-bar navigation, alongside printable faculty evaluation rating sheets with PLP Academic Affairs seal in the Faculty Portal (`FacultyDashboardView.vue`).
-- **Git State:** All commits committed and pushed to `origin/main` (`https://github.com/AAAAA13-sys/set-nlp.git`).
+  - `live_student_eval_desktop.png` & `live_student_eval_mobile.png`: Top back button pill (`← Back to My Courses`), clean header branding, zero autosave text, zero fullscreen toggle, and enlarged root typography (`17.5px; line-height: 1.62;`).
+  - `live_student_rubric_btn.png` & `live_student_rubric_modal.png`: Student evaluation queue with `Rating Rubric 📋` button and active modal inspection for the accredited 5-point rating scale and criteria.
+  - `live_jquery_ui_notification.png`: Fixed top-right DOM error notification with jQuery UI styling and 4-second animated countdown timer.
+  - `live_admin_setup_verified.png`: Academic Setup workspace with term cycle controls (create/edit term modal, set-as-active), faculty assignment matrix, inline Registrar Grade-Lock toggle (`🔒 Locked` / `🔓 Inactive`), integrated `+ Import Roster` modal, and cross-navigation links connecting the Registrar Console (`/admin`) and Academic Setup (`/admin/setup`).
+  - `live_admin_setup_terms_tab.png`: Direct URL deep tab synchronization (`/admin/setup?tab=terms`) activating the Academic Terms tab with search and status filtering.
+  - `live_faculty_dossier.png`: Consolidated Faculty Evaluation Dossier modal in Tab 4 with composite ratings, AACCUP performance adjectives, and section-by-section teaching load breakdowns.
+  - `live_section_roster_modal.png`: Section Class Roster & Student Clearance Checklist modal with search, clearance status filter, direct permit verification, and CSV export.
+  - `live_student_enrollment_modal.png`: Student Enrollment & Course Clearance Checklist modal with instructor assignments, evaluation status pills, and cryptographic clearance proof tokens.
+  - `live_course_sections_modal.png`: Course Sections & Term Offerings modal detailing total enrollment, turnout rate %, instructor assignments, and inline section evaluation report links.
+  - `live_questionnaire_rubric.png`: Accredited 5-point evaluation rating rubric card and performance bands table in Tab 7.
+  - `live_chair_heatmap_report_modal.png` & `live_dean_sentiment_report_modal.png`: Section evaluation breakdown reports with 5 pedagogical cluster bars, NLP sentiment metrics, and official Tripartite Accreditation Signature Blocks.
+  - `live_faculty_rubric_btn.png` & `live_faculty_rubric_modal.png`: Unlocked faculty dashboard evaluation header with `Rating Rubric 📋` action and accredited 5-point standards modal.
+  - `live_permit_verify.png`: Public Proctor Examination Permit Verification Portal (`/verify`) with digital permit card, verified badge, 100% completion proof, and security hash.
+- **Git State:** Clean working tree on `main`, synchronized and pushed to `origin/main` (`https://github.com/AAAAA13-sys/set-nlp.git`).
