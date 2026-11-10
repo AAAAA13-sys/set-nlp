@@ -183,7 +183,7 @@ class DecoupledEvaluationService
     }
 
     /**
-     * Build dynamic student evaluation queue and digital examination permit state.
+     * Build dynamic student evaluation queue and digital evaluation clearance state.
      *
      * @return array<string, mixed>
      */

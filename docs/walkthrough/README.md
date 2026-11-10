@@ -345,7 +345,7 @@ This walkthrough documents the full operational capabilities of EvaluaTech acros
 
 ## 3. Institutional Governance & Security Verification
 
-- **Zero Permits Policy Enforced:** The walkthrough confirms that the university tracks evaluation completion progress without issuing or gating examination permits.
+- **Zero Permits Policy Enforced:** The walkthrough confirms that the university tracks evaluation completion progress without issuing or gating student participation.
 - **Dual-Token Anonymity Guaranteed:** Zero student identifiers (`student_id`, `user_id`, `ip_address`) exist in the evaluation vault.
 - **Double-Blind Grade Lock Validated:** Faculty reports remain locked until term grades are submitted and verified by the Registrar lock.
 - **Accreditation Separation:** Campus facilities feedback (`TAG_UNCLASSIFIED`) is strictly separated from teaching pedagogy in the compiled Level III dossier.

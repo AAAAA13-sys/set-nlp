@@ -64,9 +64,9 @@ Pamantasan ng Lungsod ng Pasig (PLP) is an esteemed public higher education inst
 
 ## 4. Acceptance Criteria
 
-- [ ] Zero instances of "examination permit" or "exam permit" in `resources/js/views/`, `resources/js/components/`, `app/Services/`, or `docs/walkthrough/`.
-- [ ] Zero demo/cheat buttons in `PermitVerifyView.vue` or any other user workspace.
-- [ ] Codebase pruned cleanly via `ponytail` (zero dead code, minimal diffs, YAGNI enforced).
-- [ ] `docs/INSTITUTIONAL_SYSTEM_ARCHITECTURE.md` delivered and fully articulated for all 5 respected actors.
-- [ ] All 181+ automated units pass across Backend PHPUnit, Frontend DOM, Python NLP, and Playwright E2E.
-- [ ] Zero warnings in `impeccable detect` and clean UTF-8 No-BOM encoding.
+- [x] Zero instances of "examination permit" or "exam permit" in `resources/js/views/`, `resources/js/components/`, `app/Services/`, or `docs/walkthrough/`.
+- [x] Zero demo/cheat buttons in `PermitVerifyView.vue` or any other user workspace.
+- [x] Codebase pruned cleanly via `ponytail` (zero dead code, minimal diffs, YAGNI enforced).
+- [x] `docs/INSTITUTIONAL_SYSTEM_ARCHITECTURE.md` delivered and fully articulated for all 5 respected actors.
+- [x] All 181+ automated units pass across Backend PHPUnit, Frontend DOM, Python NLP, and Playwright E2E.
+- [x] Zero warnings in `impeccable detect` and clean UTF-8 No-BOM encoding.
