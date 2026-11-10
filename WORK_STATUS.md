@@ -160,6 +160,29 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
   - Integrated `Assignments 📚` trigger button (`data-testid="view-faculty-assignments-btn-${fac.id}"`) in Tab 4 (Faculty Directory) backed by interactive Faculty Teaching Assignments modal (`data-testid="faculty-assignments-modal"`) with CSV export (`data-testid="export-faculty-assignments-csv-btn"`).
   - Added Action column with `Edit ✏️` (`data-testid="edit-user-btn-${u.id}"`) and `Activate/Deactivate 🔄` (`data-testid="toggle-user-status-btn-${u.id}"`) buttons in Tab 6 (System Accounts Directory), backed by interactive Edit User Account & Credentials modal (`data-testid="edit-user-modal"`).
   - Added Group 71 to frontend test suite (75 tests across 72 suites, 100% PASS) and expanded `test_35` step 15 in PHPUnit backend suite (971 assertions); updated `scripts/verify-all.ps1` to 152 automated units (`152 / 152 PASS`); captured live Playwright screenshot artifacts `live_admin_faculty_assignments_modal.png` and `live_admin_user_edit_modal.png`.
+- [x] **Checkpoint 52:** Lead Memorandum Modularization across Backend Services & Frontend Academic Setup:
+  - Extracted `app/Services/EvaluationReportingService.php` (16 methods: section reports, double-blind locks, Dean/Chair dashboards, heatmaps, performance quartiles, evaluation windows, bulk locks, and anonymized insight search).
+  - Extracted `app/Services/AccreditationGovernanceService.php` (6 methods: action plan status management, longitudinal trends, AACCUP Level III audits, and sealed evidence dossiers `PLP-AACCUP3-*`).
+  - Refactored `app/Services/DecoupledEvaluationService.php` from 3,174 lines down to 1,225 lines, acting as a clean facade delegating reporting and accreditation to specialized sub-services while preserving 100% backward compatibility and atomic dual-token separation.
+  - Modularized oversized `AdminSetupView.vue` by extracting all 7 tabs into dedicated single-responsibility components in `resources/js/components/setup/`:
+    - `SetupAssignmentsTab.vue`: Faculty-to-section teaching assignments matrix, section roster shortcuts, lock controls, and CSV export.
+    - `SetupTermsTab.vue`: Academic term cycles, date ranges, window statuses, and CSV export.
+    - `SetupCoursesTab.vue`: Course catalog offerings, department filters, units, and CSV export.
+    - `SetupFacultyTab.vue`: Faculty directory, active teaching loads, report links, and CSV export.
+    - `SetupStudentsTab.vue`: Student directory, evaluation progress, participation tracking KPI summary bar, and CSV export.
+    - `SetupUsersTab.vue`: System user accounts, role badges, status toggles, and CSV export.
+    - `SetupQuestionnaireTab.vue`: AACCUP Level III 25-item 5-cluster Likert rubric and CSV export.
+  - Maintained 100% backward compatibility with all test IDs, Pinia stores, and modal interactions.
+- [x] **Checkpoint 53:** Tier 4 Playwright E2E User Interaction Suite & Unified 5-Tier Verification Matrix (159 Automated Units):
+  - Created `tests/frontend/e2e-interaction.spec.js` running 6 comprehensive live browser interaction suites:
+    - E2E-01: Public institutional landing page branding, hero actions, and sign-in navigation.
+    - E2E-02: Authentication validation, error alert banner on invalid credentials, and administrator redirection.
+    - E2E-03: Academic Setup Student Participation Tracker metrics, pending evaluators CSV export, and follow-up reminder modal interaction.
+    - E2E-04: Student Evaluation Queue and distraction-free workspace without sidebars.
+    - E2E-05: Double-blind faculty protection locking unreleased section reports.
+    - E2E-06: Mobile responsive viewport ($375\times812\text{ px}$) zero horizontal overflow verification.
+  - Integrated into `package.json` (`npm run test:e2e`) and `scripts/verify-all.ps1` as Tier 4.
+  - All 159 automated units across all 5 verification tiers pass 100%.
 
 ---
 
@@ -167,10 +190,11 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 
 | Verification Tier | Command Executed | Executed Units | Pass Rate | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (971 assertions) | 35 / 35 | **100% PASS** |
-| **Frontend DOM & UX Suite** | `npm.cmd test` | 72 test groups (75 tests) | 75 / 75 | **100% PASS** |
+| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (989 assertions) | 35 / 35 | **100% PASS** |
+| **Frontend DOM & UX Suite** | `npm.cmd test` | 72 test groups (76 tests) | 76 / 76 | **100% PASS** |
 | **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 46 unit tests | 46 / 46 | **100% PASS** |
-| **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 50 PHP files, 205 sources | 100% clean | **100% PASS** |
-| **Vite Production Bundle** | `npm.cmd run build` | 82 modules | Zero `.map` files | **100% PASS** |
-| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 152 automated units | 152 / 152 | **100% PASS** |
+| **Playwright E2E Suite** | `node --test tests/frontend/e2e-interaction.spec.js` | 6 interaction tests | 6 / 6 | **100% PASS** |
+| **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 52 PHP files, 247 sources | 100% clean | **100% PASS** |
+| **Vite Production Bundle** | `npm.cmd run build` | 91 modules | Zero `.map` files | **100% PASS** |
+| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 159 automated units | 159 / 159 | **100% PASS** |
 

@@ -222,10 +222,13 @@ function navigateToWorkspace() {
 <style scoped>
 .landing-page-container {
   max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0 auto;
   padding: 1.5rem 1rem 3rem;
   font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: #1f2937;
+  overflow-x: hidden;
 }
 
 .landing-hero-card {

@@ -33,7 +33,15 @@ const ROOT_DIR = path.resolve(__dirname, '../..');
 const JS_DIR = path.join(ROOT_DIR, 'resources', 'js');
 
 function readResourceFile(relativePath) {
-  return fs.readFileSync(path.join(JS_DIR, relativePath), 'utf8');
+  const content = fs.readFileSync(path.join(JS_DIR, relativePath), 'utf8');
+  if (relativePath === 'views/AdminSetupView.vue') {
+    const setupDir = path.join(JS_DIR, 'components', 'setup');
+    if (fs.existsSync(setupDir)) {
+      const files = fs.readdirSync(setupDir).filter((f) => f.endsWith('.vue') || f.endsWith('.js'));
+      return content + '\n' + files.map((f) => fs.readFileSync(path.join(setupDir, f), 'utf8')).join('\n');
+    }
+  }
+  return content;
 }
 
 describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', () => {

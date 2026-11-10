@@ -1,0 +1,285 @@
+{
+  "source": "C:\\Users\\Ivan\\Music\\NLP SET\\docs\\Student Evaluation of Teachers Dataset (ML Training - Tagalog, English, Taglish) - Dataset.csv",
+  "source_sha256": "a097f9dee4e1bb8bd7377c3cc7706efeba4c420cbe959f3be504072fc6b17d5b",
+  "engine_sha256": "e88838bf406e8be66f6e07bb191419555cdcbff070ea75ae5fc03d7820206729",
+  "commit": "db6875b19d43a5d4b2e83af411a3fb99e54f14e0",
+  "generated_at_utc": "2026-11-10T10:54:09.807961+00:00",
+  "runtime": {
+    "python": "3.14.3",
+    "vader_version": "3.3.2",
+    "calamancy_loaded": false,
+    "effective_mode": "Project rule-based polarity blended with VADER; heuristic token/lemma/POS fallback; keyword-based domains",
+    "endpoint": "/analyze/batch via handle_request (in-process, no HTTP server)",
+    "batch_size_limit": 250,
+    "batch_count": 4,
+    "analysis_seconds": 3.6285
+  },
+  "reference_distribution": {
+    "Positive": 356,
+    "Negative": 312,
+    "Neutral": 132
+  },
+  "predicted_distribution": {
+    "Positive": 246,
+    "Negative": 131,
+    "Neutral": 423
+  },
+  "metrics": {
+    "rows": 800,
+    "correct": 435,
+    "accuracy": 0.54375,
+    "macro_f1": 0.5376812883768629,
+    "per_class": {
+      "Positive": {
+        "support": 356,
+        "precision": 0.8699186991869918,
+        "recall": 0.601123595505618,
+        "f1": 0.7109634551495017
+      },
+      "Neutral": {
+        "support": 132,
+        "precision": 0.24822695035460993,
+        "recall": 0.7954545454545454,
+        "f1": 0.37837837837837834
+      },
+      "Negative": {
+        "support": 312,
+        "precision": 0.8854961832061069,
+        "recall": 0.3717948717948718,
+        "f1": 0.5237020316027088
+      }
+    },
+    "confusion_matrix_actual_rows_predicted_columns": {
+      "Positive": {
+        "Positive": 214,
+        "Neutral": 138,
+        "Negative": 4
+      },
+      "Neutral": {
+        "Positive": 16,
+        "Neutral": 105,
+        "Negative": 11
+      },
+      "Negative": {
+        "Positive": 16,
+        "Neutral": 180,
+        "Negative": 116
+      }
+    }
+  },
+  "by_reference_language": {
+    "English": {
+      "rows": 323,
+      "correct": 199,
+      "accuracy": 0.6160990712074303,
+      "macro_f1": 0.5841659076953195,
+      "per_class": {
+        "Positive": {
+          "support": 179,
+          "precision": 0.9069767441860465,
+          "recall": 0.6536312849162011,
+          "f1": 0.7597402597402598
+        },
+        "Neutral": {
+          "support": 47,
+          "precision": 0.2536231884057971,
+          "recall": 0.7446808510638298,
+          "f1": 0.3783783783783784
+        },
+        "Negative": {
+          "support": 97,
+          "precision": 0.8392857142857143,
+          "recall": 0.4845360824742268,
+          "f1": 0.6143790849673203
+        }
+      },
+      "confusion_matrix_actual_rows_predicted_columns": {
+        "Positive": {
+          "Positive": 117,
+          "Neutral": 59,
+          "Negative": 3
+        },
+        "Neutral": {
+          "Positive": 6,
+          "Neutral": 35,
+          "Negative": 6
+        },
+        "Negative": {
+          "Positive": 6,
+          "Neutral": 44,
+          "Negative": 47
+        }
+      }
+    },
+    "Tagalog": {
+      "rows": 192,
+      "correct": 106,
+      "accuracy": 0.5520833333333334,
+      "macro_f1": 0.5447744108762853,
+      "per_class": {
+        "Positive": {
+          "support": 91,
+          "precision": 0.9642857142857143,
+          "recall": 0.5934065934065934,
+          "f1": 0.7346938775510204
+        },
+        "Neutral": {
+          "support": 30,
+          "precision": 0.25,
+          "recall": 0.9333333333333333,
+          "f1": 0.39436619718309857
+        },
+        "Negative": {
+          "support": 71,
+          "precision": 1.0,
+          "recall": 0.3380281690140845,
+          "f1": 0.5052631578947369
+        }
+      },
+      "confusion_matrix_actual_rows_predicted_columns": {
+        "Positive": {
+          "Positive": 54,
+          "Neutral": 37,
+          "Negative": 0
+        },
+        "Neutral": {
+          "Positive": 2,
+          "Neutral": 28,
+          "Negative": 0
+        },
+        "Negative": {
+          "Positive": 0,
+          "Neutral": 47,
+          "Negative": 24
+        }
+      }
+    },
+    "Taglish": {
+      "rows": 285,
+      "correct": 130,
+      "accuracy": 0.45614035087719296,
+      "macro_f1": 0.4716645092584942,
+      "per_class": {
+        "Positive": {
+          "support": 86,
+          "precision": 0.7049180327868853,
+          "recall": 0.5,
+          "f1": 0.5850340136054422
+        },
+        "Neutral": {
+          "support": 55,
+          "precision": 0.24277456647398843,
+          "recall": 0.7636363636363637,
+          "f1": 0.3684210526315789
+        },
+        "Negative": {
+          "support": 144,
+          "precision": 0.8823529411764706,
+          "recall": 0.3125,
+          "f1": 0.46153846153846156
+        }
+      },
+      "confusion_matrix_actual_rows_predicted_columns": {
+        "Positive": {
+          "Positive": 43,
+          "Neutral": 42,
+          "Negative": 1
+        },
+        "Neutral": {
+          "Positive": 8,
+          "Neutral": 42,
+          "Negative": 5
+        },
+        "Negative": {
+          "Positive": 10,
+          "Neutral": 89,
+          "Negative": 45
+        }
+      }
+    }
+  },
+  "predicted_domains": {
+    "Pedagogical Delivery": 351,
+    "Classroom Management": 75,
+    "Student Support & Mentorship": 26,
+    "Assessment & Grading": 334,
+    "Professional Conduct": 14
+  },
+  "reference_aspects": {
+    "Subject Mastery": 6,
+    "Punctuality": 3,
+    "Teaching Pace": 7,
+    "Feedback Quality": 1,
+    "Assessment Fairness": 90,
+    "Presentation": 1,
+    "Empathy": 5,
+    "Communication": 6,
+    "Motivation": 1,
+    "Grading Transparency": 27,
+    "Engagement": 3,
+    "Relevance": 1,
+    "Teaching Depth": 2,
+    "Temperament": 1,
+    "Workload": 8,
+    "Course Delivery": 1,
+    "Mentorship": 4,
+    "Classroom Atmosphere": 4,
+    "Grading Criteria": 17,
+    "Assessment Support": 19,
+    "Exam Time Limit": 16,
+    "Grading Fairness": 22,
+    "Assessment Quality": 22,
+    "Exam Difficulty": 26,
+    "Assessment Feedback": 32,
+    "Rubric Clarity": 24,
+    "Assessment Clarity": 6,
+    "Peer Evaluation": 4,
+    "Exam Quality": 3,
+    "Pop Quizzes": 4,
+    "Exam Environment": 7,
+    "Assessment Alignment": 9,
+    "Teaching Delivery": 91,
+    "Course Content": 54,
+    "Examination": 48,
+    "Lab Work": 101,
+    "Library Facilities": 65,
+    "Extracurricular": 59
+  },
+  "data_quality": {
+    "blank_comments": 0,
+    "overlength_comments": 0,
+    "duplicate_extra_rows": 1,
+    "duplicate_groups": [
+      {
+        "row_ids": [
+          "202",
+          "636"
+        ],
+        "reference_labels": [
+          "Positive"
+        ]
+      }
+    ],
+    "deduplicated_accuracy": 0.5431789737171464,
+    "scrubber_changed_rows": 0,
+    "no_domain_keyword_matches": 172,
+    "exact_benchmark_calibration_matches": 0
+  },
+  "limitations": [
+    "Dataset reference labels were supplied, not independently adjudicated.",
+    "No model training or tuning occurred; this is a dataset agreement evaluation, not an independent holdout certification.",
+    "calamanCy and spaCy are unavailable in this Python environment; trained-model tagging was not evaluated.",
+    "The API engine label names calamanCy even when the heuristic fallback runs.",
+    "Domain confidence is a heuristic match score, not calibrated sentiment confidence.",
+    "Reference aspects have a different taxonomy from the five output domains; no domain accuracy is claimed.",
+    "Library facilities and extracurricular feedback extend beyond teacher-focused domain coverage.",
+    "Dataset row IDs are source row identifiers, not student identities.",
+    "Timing measures one local in-process run, not production HTTP latency or a load benchmark."
+  ],
+  "diagnostics": {
+    "zero_polarity_rows": 420,
+    "zero_polarity_but_augmented_vader_nonzero": 110,
+    "among_those_vader_matches_reference": 71,
+    "explanation": "_compute_rule_based_polarity returns 0 before the VADER blend when its custom lexicon total is 0; standalone augmented VADER produces nonzero scores on these rows. This diagnostic does not change primary results."
+  }
+}

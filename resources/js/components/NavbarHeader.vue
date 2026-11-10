@@ -788,6 +788,15 @@ async function handleLogout() {
   }
 }
 
+@media (max-width: 640px) {
+  .sch-brand-sub {
+    display: none;
+  }
+  .sch-topbar-right .sch-nav-pill:not(.sch-nav-pill-active) {
+    display: none;
+  }
+}
+
 @media print {
   .sch-topbar {
     display: none !important;
