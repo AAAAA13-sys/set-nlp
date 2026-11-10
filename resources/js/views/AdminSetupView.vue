@@ -244,8 +244,7 @@ async function submitNewCourse() {
   }
 }
 
-function exportCoursesCatalogCsv() {
-  const coursesList = setupStore.courses || [];
+function triggerCsvDownload(headers, rows, baseFilename) {
   const sanitize = (val) => {
     let s = String(val ?? '');
     if (/^[=+@-]/i.test(s)) {
@@ -253,7 +252,26 @@ function exportCoursesCatalogCsv() {
     }
     return `"${s.replace(/"/g, '""')}"`;
   };
+  const csvContent = [headers.map(sanitize).join(','), ...rows].join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  const nowStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  link.setAttribute('download', `${baseFilename}_${nowStr}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
 
+function exportCoursesCatalogCsv() {
+  const coursesList = setupStore.courses || [];
+  const sanitize = (val) => {
+    let s = String(val ?? '');
+    if (/^[=+@-]/i.test(s)) s = `'${s}`;
+    return `"${s.replace(/"/g, '""')}"`;
+  };
   const headers = ['Course Code', 'Course Title', 'Department', 'Units'];
   const rows = coursesList.map((c) => [
     sanitize(c.code),
@@ -261,18 +279,85 @@ function exportCoursesCatalogCsv() {
     sanitize(c.department_name || c.department_code || 'College of Computer Studies'),
     sanitize(c.units ?? 3),
   ].join(','));
+  triggerCsvDownload(headers, rows, 'PLP_Course_Catalog');
+}
 
-  const csvContent = [headers.map(sanitize).join(','), ...rows].join('\r\n');
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  const nowStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-  link.setAttribute('download', `PLP_Course_Catalog_${nowStr}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+function exportFacultyDirectoryCsv() {
+  const list = setupStore.facultyList || [];
+  const sanitize = (val) => {
+    let s = String(val ?? '');
+    if (/^[=+@-]/i.test(s)) s = `'${s}`;
+    return `"${s.replace(/"/g, '""')}"`;
+  };
+  const headers = ['Institutional ID', 'Faculty Name', 'Department', 'Email', 'Role', 'Assigned Sections'];
+  const rows = list.map((f) => [
+    sanitize(f.institutional_id),
+    sanitize(f.name),
+    sanitize(f.department_name || f.department_code || 'College of Computer Studies'),
+    sanitize(f.email),
+    sanitize(f.role),
+    sanitize(getFacultyAssignedSectionsCount(f.id)),
+  ].join(','));
+  triggerCsvDownload(headers, rows, 'PLP_Faculty_Directory');
+}
+
+function exportStudentsDirectoryCsv() {
+  const list = setupStore.studentsList || [];
+  const sanitize = (val) => {
+    let s = String(val ?? '');
+    if (/^[=+@-]/i.test(s)) s = `'${s}`;
+    return `"${s.replace(/"/g, '""')}"`;
+  };
+  const headers = ['Student ID', 'Student Name', 'Email', 'Department', 'Enrolled Courses', 'Cleared Evaluations', 'Clearance Status'];
+  const rows = list.map((s) => [
+    sanitize(s.institutional_id),
+    sanitize(s.name),
+    sanitize(s.email),
+    sanitize(s.department_name || s.department_code || 'College of Computer Studies'),
+    sanitize(s.enrolled_count),
+    sanitize(s.cleared_count),
+    sanitize(s.clearance_status),
+  ].join(','));
+  triggerCsvDownload(headers, rows, 'PLP_Student_Clearance_Roster');
+}
+
+function exportSystemUsersCsv() {
+  const list = setupStore.systemUsers || [];
+  const sanitize = (val) => {
+    let s = String(val ?? '');
+    if (/^[=+@-]/i.test(s)) s = `'${s}`;
+    return `"${s.replace(/"/g, '""')}"`;
+  };
+  const headers = ['Institutional ID', 'Full Name', 'Email', 'System Role', 'Department', 'Account Status'];
+  const rows = list.map((u) => [
+    sanitize(u.institutional_id),
+    sanitize(u.name),
+    sanitize(u.email),
+    sanitize(u.role),
+    sanitize(u.department_name || u.department_code || 'College of Computer Studies'),
+    sanitize(u.is_active ? 'Active' : 'Inactive'),
+  ].join(','));
+  triggerCsvDownload(headers, rows, 'PLP_System_Users_Directory');
+}
+
+function exportAssignmentsMatrixCsv() {
+  const list = setupStore.sections || [];
+  const sanitize = (val) => {
+    let s = String(val ?? '');
+    if (/^[=+@-]/i.test(s)) s = `'${s}`;
+    return `"${s.replace(/"/g, '""')}"`;
+  };
+  const headers = ['Course Code', 'Course Title', 'Section', 'Assigned Instructor', 'Enrolled Students', 'Status', 'Registrar Lock'];
+  const rows = list.map((sec) => [
+    sanitize(sec.course_code),
+    sanitize(sec.course_title),
+    sanitize(sec.section_code || 'SEC-A'),
+    sanitize(sec.instructor_name || 'Unassigned'),
+    sanitize(sec.enrolled_count ?? 35),
+    sanitize(sec.is_assigned ? 'Assigned' : 'Unassigned'),
+    sanitize(sec.registrar_lock ? 'Locked' : 'Open'),
+  ].join(','));
+  triggerCsvDownload(headers, rows, 'PLP_Faculty_Assignments_Matrix');
 }
 
 const facultySearchInput = ref('');
@@ -738,6 +823,15 @@ async function executeDeleteSection() {
           <button
             type="button"
             class="btn-secondary"
+            data-testid="export-assignments-csv-btn"
+            style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; font-weight: 600;"
+            @click="exportAssignmentsMatrixCsv"
+          >
+            📊 Export Assignments (CSV)
+          </button>
+          <button
+            type="button"
+            class="btn-secondary"
             data-testid="import-roster-btn"
             @click="openImportRosterModal"
           >
@@ -1052,7 +1146,16 @@ async function executeDeleteSection() {
             data-testid="faculty-search-input"
           />
         </div>
-        <div class="actions-group">
+        <div class="actions-group" style="display: flex; gap: 0.5rem; align-items: center;">
+          <button
+            type="button"
+            class="btn-secondary"
+            data-testid="export-faculty-csv-btn"
+            style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; font-weight: 600;"
+            @click="exportFacultyDirectoryCsv"
+          >
+            📊 Export Faculty (CSV)
+          </button>
           <span class="token-chip chip-signed">
             Total Instructors: {{ setupStore.facultyList.length }}
           </span>
@@ -1137,7 +1240,16 @@ async function executeDeleteSection() {
             <option value="PENDING">Pending Evaluations</option>
           </select>
         </div>
-        <div class="actions-group">
+        <div class="actions-group" style="display: flex; gap: 0.5rem; align-items: center;">
+          <button
+            type="button"
+            class="btn-secondary"
+            data-testid="export-students-csv-btn"
+            style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; font-weight: 600;"
+            @click="exportStudentsDirectoryCsv"
+          >
+            📊 Export Students (CSV)
+          </button>
           <span class="token-chip chip-signed">
             Total Students: {{ setupStore.studentsList.length }}
           </span>
@@ -1230,6 +1342,17 @@ async function executeDeleteSection() {
             <option value="faculty">Faculty Members</option>
             <option value="student">Enrolled Students</option>
           </select>
+        </div>
+        <div class="actions-group">
+          <button
+            type="button"
+            class="btn-secondary"
+            data-testid="export-users-csv-btn"
+            style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; font-weight: 600;"
+            @click="exportSystemUsersCsv"
+          >
+            📊 Export Users (CSV)
+          </button>
         </div>
       </div>
 

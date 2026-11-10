@@ -1434,7 +1434,36 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       // 2. Course Catalog CSV Export
       assert.ok(setupViewSfc.includes('data-testid="export-courses-csv-btn"'), 'Export courses CSV button');
       assert.ok(setupViewSfc.includes('exportCoursesCatalogCsv'), 'Export courses CSV handler');
-      assert.ok(setupViewSfc.includes('PLP_Course_Catalog_'), 'Course catalog CSV filename pattern');
+      assert.ok(setupViewSfc.includes('PLP_Course_Catalog'), 'Course catalog CSV filename pattern');
+    });
+  });
+
+  describe('Group 49: Comprehensive Institutional Directory & Assignments Matrix CSV Export Suite', () => {
+    it('verifies assignments matrix, faculty directory, student roster, and system users CSV export actions in Academic Setup', () => {
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+
+      // 1. Shared formula-injection neutralized CSV generator
+      assert.ok(setupViewSfc.includes('triggerCsvDownload'), 'Shared CSV download helper function');
+
+      // 2. Faculty Assignments Matrix Export
+      assert.ok(setupViewSfc.includes('data-testid="export-assignments-csv-btn"'), 'Export assignments matrix CSV button');
+      assert.ok(setupViewSfc.includes('exportAssignmentsMatrixCsv'), 'Export assignments matrix CSV handler');
+      assert.ok(setupViewSfc.includes('PLP_Faculty_Assignments_Matrix'), 'Assignments matrix CSV filename prefix');
+
+      // 3. Faculty Directory Export
+      assert.ok(setupViewSfc.includes('data-testid="export-faculty-csv-btn"'), 'Export faculty directory CSV button');
+      assert.ok(setupViewSfc.includes('exportFacultyDirectoryCsv'), 'Export faculty directory CSV handler');
+      assert.ok(setupViewSfc.includes('PLP_Faculty_Directory'), 'Faculty directory CSV filename prefix');
+
+      // 4. Student Clearance Roster Export
+      assert.ok(setupViewSfc.includes('data-testid="export-students-csv-btn"'), 'Export student clearance roster CSV button');
+      assert.ok(setupViewSfc.includes('exportStudentsDirectoryCsv'), 'Export student clearance roster CSV handler');
+      assert.ok(setupViewSfc.includes('PLP_Student_Clearance_Roster'), 'Student roster CSV filename prefix');
+
+      // 5. System Users Directory Export
+      assert.ok(setupViewSfc.includes('data-testid="export-users-csv-btn"'), 'Export system users CSV button');
+      assert.ok(setupViewSfc.includes('exportSystemUsersCsv'), 'Export system users CSV handler');
+      assert.ok(setupViewSfc.includes('PLP_System_Users_Directory'), 'System users CSV filename prefix');
     });
   });
 });
