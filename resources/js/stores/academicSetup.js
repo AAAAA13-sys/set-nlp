@@ -287,6 +287,31 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     }
   }
 
+  async function createUser(payload) {
+    actionBusy.value = true;
+    error.value = null;
+    try {
+      const res = await fetch('/api/admin/setup/users', {
+        method: 'POST',
+        headers: getApiHeaders(true),
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to create user account.');
+      }
+
+      await fetchOverview(selectedTermId.value);
+      return data;
+    } catch (e) {
+      error.value = e.message;
+      throw e;
+    } finally {
+      actionBusy.value = false;
+    }
+  }
+
   async function fetchQuestionnaire() {
     try {
       const res = await fetch('/api/admin/setup/questionnaire', {
@@ -331,6 +356,7 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     createSection,
     assignFaculty,
     deleteSection,
+    createUser,
     fetchQuestionnaire,
   };
 });

@@ -1414,6 +1414,16 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       // 2. Academic Setup Pinia Store System Users Integration
       assert.ok(setupStoreSrc.includes('systemUsers'), 'Academic setup store exposes systemUsers');
       assert.ok(setupStoreSrc.includes('overview.value.system_users'), 'Computed system users from overview');
+
+      // 3. System User Account Creation Modal & Store Action (Inspired by admin/manage_user.php)
+      assert.ok(setupViewSfc.includes('data-testid="add-user-btn"'), 'Add user button in users tab');
+      assert.ok(setupViewSfc.includes('data-testid="new-user-modal"'), 'New user account modal');
+      assert.ok(setupViewSfc.includes('data-testid="user-name-input"'), 'User full name input');
+      assert.ok(setupViewSfc.includes('data-testid="user-id-input"'), 'User institutional ID input');
+      assert.ok(setupViewSfc.includes('data-testid="user-email-input"'), 'User email input');
+      assert.ok(setupViewSfc.includes('data-testid="user-role-select"'), 'User role select');
+      assert.ok(setupViewSfc.includes('data-testid="submit-create-user-btn"'), 'Submit create user button');
+      assert.ok(setupStoreSrc.includes('createUser'), 'createUser action in setup store');
     });
   });
 

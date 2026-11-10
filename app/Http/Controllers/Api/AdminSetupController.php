@@ -212,4 +212,33 @@ class AdminSetupController extends Controller
 
         return new JsonResponse($this->setupService->getQuestionnairePreview(), 200);
     }
+
+    public function createUser(Request $request): JsonResponse
+    {
+        if ($authError = $this->verifyAdminRole($request)) {
+            return $authError;
+        }
+
+        try {
+            $result = $this->setupService->createUser($request->all());
+            (new SecurityAuditService())->logEvent(
+                $this->setupService->getPdo(),
+                'USER_ACCOUNT_CREATED',
+                'INFO',
+                [
+                    'institutional_id' => $result['institutional_id'] ?? null,
+                    'role' => $result['role'] ?? null,
+                ],
+                'admin',
+                '/api/admin/setup/users'
+            );
+            return new JsonResponse($result, 201);
+        } catch (InvalidArgumentException $e) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'INVALID_USER_PAYLOAD',
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+    }
 }

@@ -784,6 +784,123 @@ class AcademicSetupService
     }
 
     /**
+     * Create a new institutional user account (admin, dean, chair, faculty, student).
+     *
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    public function createUser(array $data): array
+    {
+        $name = trim((string) ($data['name'] ?? ''));
+        $email = strtolower(trim((string) ($data['email'] ?? '')));
+        $role = strtolower(trim((string) ($data['role'] ?? 'faculty')));
+        $institutionalId = strtoupper(trim((string) ($data['institutional_id'] ?? '')));
+        $departmentId = !empty($data['department_id']) ? (int) $data['department_id'] : null;
+        $password = (string) ($data['password'] ?? 'evaluatech123');
+
+        if ($name === '' || $email === '' || $institutionalId === '') {
+            throw new InvalidArgumentException('Full name, email address, and institutional ID are required.');
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidArgumentException('A valid institutional email address is required.');
+        }
+
+        $validRoles = ['admin', 'dean', 'chair', 'faculty', 'student'];
+        if (!in_array($role, $validRoles, true)) {
+            throw new InvalidArgumentException('Invalid role specified. Must be one of: admin, dean, chair, faculty, student.');
+        }
+
+        // Check duplicate email
+        $chkEmail = $this->pdo->prepare('SELECT id FROM users WHERE email = :email LIMIT 1');
+        $chkEmail->execute([':email' => $email]);
+        if ($chkEmail->fetch()) {
+            throw new InvalidArgumentException("A user with email '{$email}' already exists.");
+        }
+
+        // Check duplicate institutional_id
+        $chkId = $this->pdo->prepare('SELECT id FROM users WHERE institutional_id = :id LIMIT 1');
+        $chkId->execute([':id' => $institutionalId]);
+        if ($chkId->fetch()) {
+            throw new InvalidArgumentException("A user with institutional ID '{$institutionalId}' already exists.");
+        }
+
+        // If department provided, verify it exists
+        if ($departmentId !== null && $departmentId > 0) {
+            $chkDept = $this->pdo->prepare('SELECT id, code, name FROM departments WHERE id = :id LIMIT 1');
+            $chkDept->execute([':id' => $departmentId]);
+            $deptRow = $chkDept->fetch(PDO::FETCH_ASSOC);
+            if (!$deptRow) {
+                throw new InvalidArgumentException('Selected academic department does not exist.');
+            }
+        } else {
+            $departmentId = null;
+        }
+
+        $passwordHash = password_hash($password !== '' ? $password : 'evaluatech123', PASSWORD_BCRYPT);
+        $now = date('Y-m-d H:i:s');
+
+        // Detect schema columns in users table (SQLite test harness vs production migrations)
+        $userCols = [];
+        try {
+            $cols = $this->pdo->query('PRAGMA table_info(users)')->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($cols as $col) {
+                if (!empty($col['name'])) {
+                    $userCols[] = (string) $col['name'];
+                }
+            }
+        } catch (\Throwable) {
+            $userCols = ['institutional_id', 'name', 'email', 'password', 'role', 'department_id', 'is_active', 'created_at', 'updated_at'];
+        }
+
+        $pwdCol = in_array('password', $userCols, true) ? 'password' : 'password_hash';
+        $hasTimestamps = in_array('created_at', $userCols, true);
+
+        if ($hasTimestamps) {
+            $stmt = $this->pdo->prepare("
+                INSERT INTO users (institutional_id, name, email, {$pwdCol}, role, department_id, is_active, created_at, updated_at)
+                VALUES (:inst_id, :name, :email, :pwd, :role, :dept_id, 1, :created_at, :updated_at)
+            ");
+            $stmt->execute([
+                ':inst_id' => $institutionalId,
+                ':name' => $name,
+                ':email' => $email,
+                ':pwd' => $passwordHash,
+                ':role' => $role,
+                ':dept_id' => $departmentId,
+                ':created_at' => $now,
+                ':updated_at' => $now,
+            ]);
+        } else {
+            $stmt = $this->pdo->prepare("
+                INSERT INTO users (institutional_id, name, email, {$pwdCol}, role, department_id, is_active)
+                VALUES (:inst_id, :name, :email, :pwd, :role, :dept_id, 1)
+            ");
+            $stmt->execute([
+                ':inst_id' => $institutionalId,
+                ':name' => $name,
+                ':email' => $email,
+                ':pwd' => $passwordHash,
+                ':role' => $role,
+                ':dept_id' => $departmentId,
+            ]);
+        }
+
+        $userId = (int) $this->pdo->lastInsertId();
+
+        return [
+            'success' => true,
+            'user_id' => $userId,
+            'institutional_id' => $institutionalId,
+            'name' => $name,
+            'email' => $email,
+            'role' => $role,
+            'department_id' => $departmentId,
+            'is_active' => true,
+        ];
+    }
+
+    /**
      * Ensure evaluation window config exists for an academic term.
      */
     private function ensureEvaluationWindowConfig(int $termId): void

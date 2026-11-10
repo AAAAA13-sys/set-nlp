@@ -2792,5 +2792,44 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $delNewRes = $setupController->deleteSection($delNewReq, $newSecId);
         $this->assertSame(200, $delNewRes->getStatusCode());
         $this->assertTrue($delNewRes->getData(true)['success']);
+
+        // 10. System User Account Creation & Validation (Inspired by admin/manage_user.php)
+        $invalidUserReq = new \Illuminate\Http\Request([
+            'name' => '',
+            'email' => 'not-an-email',
+            'institutional_id' => '',
+        ]);
+        $invalidUserReq->setUserResolver(fn () => $adminUser);
+        $invalidUserRes = $setupController->createUser($invalidUserReq);
+        $this->assertSame(422, $invalidUserRes->getStatusCode());
+        $this->assertSame('INVALID_USER_PAYLOAD', $invalidUserRes->getData(true)['code']);
+
+        $validUserReq = new \Illuminate\Http\Request([
+            'name' => 'Prof. Maria Santos',
+            'email' => 'msantos@plpasig.edu.ph',
+            'institutional_id' => 'FAC-10088',
+            'role' => 'faculty',
+            'department_id' => 1,
+            'password' => 'evaluatech123',
+        ]);
+        $validUserReq->setUserResolver(fn () => $adminUser);
+        $validUserRes = $setupController->createUser($validUserReq);
+        $this->assertSame(201, $validUserRes->getStatusCode());
+        $userData = $validUserRes->getData(true);
+        $this->assertTrue($userData['success']);
+        $this->assertSame('FAC-10088', $userData['institutional_id']);
+        $this->assertSame('faculty', $userData['role']);
+
+        // Non-admin role cannot create users
+        $facultyUser = (object) ['id' => 4, 'role' => 'faculty'];
+        $nonAdminUserReq = new \Illuminate\Http\Request([
+            'name' => 'Intruder User',
+            'email' => 'intruder@plpasig.edu.ph',
+            'institutional_id' => 'FAC-99999',
+            'role' => 'faculty',
+        ]);
+        $nonAdminUserReq->setUserResolver(fn () => $facultyUser);
+        $nonAdminUserRes = $setupController->createUser($nonAdminUserReq);
+        $this->assertSame(403, $nonAdminUserRes->getStatusCode());
     }
 }

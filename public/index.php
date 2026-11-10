@@ -322,6 +322,8 @@ if ($isApiRoute) {
             $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->createSection($req));
         } elseif ($uriPath === '/api/admin/setup/assign-faculty' && $method === 'POST') {
             $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->assignFaculty($req));
+        } elseif ($uriPath === '/api/admin/setup/users' && $method === 'POST') {
+            $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->createUser($req));
         } elseif (preg_match('#^/api/admin/setup/sections/(\d+)/delete$#', $uriPath, $m) === 1 && in_array($method, ['POST', 'DELETE'], true)) {
             $secId = (int) $m[1];
             $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->deleteSection($req, $secId));

@@ -41,6 +41,38 @@ const courseForm = ref({
   units: 3,
 });
 
+const showNewUserModal = ref(false);
+const userForm = ref({
+  name: '',
+  email: '',
+  role: 'faculty',
+  institutional_id: '',
+  department_id: '',
+  password: '',
+});
+
+function openNewUserModal() {
+  userForm.value = {
+    name: '',
+    email: '',
+    role: 'faculty',
+    institutional_id: '',
+    department_id: setupStore.departments[0]?.id || '',
+    password: '',
+  };
+  showNewUserModal.value = true;
+}
+
+async function submitNewUser() {
+  try {
+    const res = await setupStore.createUser(userForm.value);
+    showNewUserModal.value = false;
+    flashSuccess(`User account "${res.name}" (${res.institutional_id}) created successfully.`);
+  } catch (err) {
+    flashError(err.message || 'Failed to create user account.', 'Account Creation Error');
+  }
+}
+
 const showImportRosterModal = ref(false);
 const rosterImportFormat = ref('json');
 const rosterImportContent = ref('');
@@ -1518,7 +1550,7 @@ async function executeDeleteSection() {
             <option value="student">Enrolled Students</option>
           </select>
         </div>
-        <div class="actions-group">
+        <div class="actions-group" style="display: flex; gap: 0.5rem; align-items: center;">
           <button
             type="button"
             class="btn-secondary"
@@ -1527,6 +1559,15 @@ async function executeDeleteSection() {
             @click="exportSystemUsersCsv"
           >
             📊 Export Users (CSV)
+          </button>
+          <button
+            type="button"
+            class="btn-primary"
+            data-testid="add-user-btn"
+            style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; font-weight: 600;"
+            @click="openNewUserModal"
+          >
+            + New User Account
           </button>
         </div>
       </div>
@@ -1950,6 +1991,124 @@ async function executeDeleteSection() {
             <button type="button" class="btn-secondary" @click="showNewCourseModal = false">Cancel</button>
             <button type="submit" class="btn-primary" :disabled="setupStore.actionBusy">
               {{ setupStore.actionBusy ? 'Adding...' : 'Add Course' }}
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL: Add User Account (Inspired by admin/manage_user.php) -->
+    <div
+      v-if="showNewUserModal"
+      class="setup-modal-scrim"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="new-user-modal-title"
+      data-testid="new-user-modal"
+    >
+      <div class="setup-modal-box">
+        <header class="setup-modal-header">
+          <h2 id="new-user-modal-title">Create System User Account</h2>
+          <button type="button" class="modal-close-btn" @click="showNewUserModal = false">&times;</button>
+        </header>
+
+        <form class="setup-modal-form" @submit.prevent="submitNewUser">
+          <div class="form-group">
+            <label for="new-user-name">Full Name:</label>
+            <input
+              id="new-user-name"
+              v-model="userForm.name"
+              type="text"
+              class="form-input"
+              placeholder="e.g., Prof. Maria Santos"
+              data-testid="user-name-input"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="new-user-id">Institutional ID:</label>
+            <input
+              id="new-user-id"
+              v-model="userForm.institutional_id"
+              type="text"
+              class="form-input font-mono"
+              placeholder="e.g., FAC-10007 or 2026-10001"
+              data-testid="user-id-input"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="new-user-email">Institutional Email Address:</label>
+            <input
+              id="new-user-email"
+              v-model="userForm.email"
+              type="email"
+              class="form-input"
+              placeholder="e.g., msantos@plpasig.edu.ph"
+              data-testid="user-email-input"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="new-user-role">System Role:</label>
+            <select
+              id="new-user-role"
+              v-model="userForm.role"
+              class="form-input"
+              data-testid="user-role-select"
+              required
+            >
+              <option value="faculty">Faculty Member</option>
+              <option value="chair">Department Chair</option>
+              <option value="dean">College Dean</option>
+              <option value="admin">System Administrator (Registrar)</option>
+              <option value="student">Student</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="new-user-dept">Department / College Affiliation:</label>
+            <select
+              id="new-user-dept"
+              v-model="userForm.department_id"
+              class="form-input"
+              data-testid="user-dept-select"
+            >
+              <option value="">— Institution-Wide / None —</option>
+              <option
+                v-for="d in setupStore.departments"
+                :key="d.id"
+                :value="d.id"
+              >
+                {{ d.code }} — {{ d.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="new-user-pwd">Initial Password (Optional):</label>
+            <input
+              id="new-user-pwd"
+              v-model="userForm.password"
+              type="password"
+              class="form-input"
+              placeholder="Default: evaluatech123"
+              data-testid="user-password-input"
+            />
+          </div>
+
+          <footer class="setup-modal-footer">
+            <button type="button" class="btn-secondary" @click="showNewUserModal = false">Cancel</button>
+            <button
+              type="submit"
+              class="btn-primary"
+              :disabled="setupStore.actionBusy"
+              data-testid="submit-create-user-btn"
+            >
+              {{ setupStore.actionBusy ? 'Creating...' : 'Create Account' }}
             </button>
           </footer>
         </form>
