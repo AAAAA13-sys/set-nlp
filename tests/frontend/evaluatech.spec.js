@@ -1475,4 +1475,29 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('PLP_AACCUP3_Evaluation_Instrument'), 'Questionnaire instrument CSV filename prefix');
     });
   });
+
+  describe('Group 50: Academic Setup Term Cycle CSV Export & Section Evaluation Report Breakdown Modal', () => {
+    it('verifies academic terms CSV export action, handler, and filename pattern', () => {
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+
+      // 1. Academic Terms CSV Export (Inspired by admin/academic_list.php)
+      assert.ok(setupViewSfc.includes('data-testid="export-terms-csv-btn"'), 'Export terms CSV button');
+      assert.ok(setupViewSfc.includes('exportAcademicTermsCsv'), 'Export terms CSV handler');
+      assert.ok(setupViewSfc.includes('PLP_Academic_Terms'), 'Academic terms CSV filename prefix');
+    });
+
+    it('verifies section evaluation report breakdown modal, rating adjective, and printable export in Academic Setup', () => {
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+
+      // 2. Section Evaluation Report Modal (Inspired by admin/report.php)
+      assert.ok(setupViewSfc.includes('setup-view-report-btn-'), 'Section evaluation report button in assignments table');
+      assert.ok(setupViewSfc.includes('data-testid="setup-section-eval-modal"'), 'Setup section evaluation report modal container');
+      assert.ok(setupViewSfc.includes('data-testid="setup-report-target-status"'), 'Setup report target status chip');
+      assert.ok(setupViewSfc.includes('data-testid="setup-report-adjective"'), 'Setup report performance adjective badge');
+      assert.ok(setupViewSfc.includes('data-testid="print-setup-report-btn"'), 'Print/Export setup rating sheet button');
+      assert.ok(setupViewSfc.includes('data-testid="close-setup-report-modal-btn"'), 'Close setup report modal button');
+      assert.ok(setupViewSfc.includes('openSetupSectionReport'), 'Open setup section report handler');
+      assert.ok(setupViewSfc.includes('closeSetupSectionReport'), 'Close setup section report handler');
+    });
+  });
 });
