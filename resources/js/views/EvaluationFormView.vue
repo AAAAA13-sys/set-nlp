@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import DestructiveConfirmModal from '../components/DestructiveConfirmModal.vue';
 import ErrorRecoveryBanner from '../components/ErrorRecoveryBanner.vue';
+import EvaluationRubricModal from '../components/EvaluationRubricModal.vue';
 import StraightLineModal from '../components/StraightLineModal.vue';
 import { useAuthStore } from '../stores/auth.js';
 import { useEvaluationStore } from '../stores/evaluation.js';
@@ -64,6 +65,7 @@ const improvementTopicPrompts = [
 const showStraightLineModal = ref(false);
 const showDiscardDraftModal = ref(false);
 const showReceiptModal = ref(false);
+const showRubricModal = ref(false);
 const statusBanner = ref(null);
 const networkFailureDetail = ref('');
 const draftSavedLabel = ref('Autosave ready');
@@ -473,7 +475,7 @@ function returnToQueue() {
     <!-- Removed enrolled-subjects-switcher per user request -->
 
     <section class="card eval-header-card">
-      <div class="eval-top-bar" style="margin-bottom: 0.85rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line-soft);">
+      <div class="eval-top-bar" style="margin-bottom: 0.85rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line-soft); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
         <button
           type="button"
           class="btn-secondary btn-sm eval-back-btn"
@@ -481,6 +483,16 @@ function returnToQueue() {
           @click="returnToQueue"
         >
           ← Back to My Courses
+        </button>
+
+        <button
+          type="button"
+          class="btn-secondary btn-xs"
+          data-testid="eval-open-rubric-btn"
+          style="display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 600; padding: 0.35rem 0.75rem;"
+          @click="showRubricModal = true"
+        >
+          📋 Rating Rubric
         </button>
       </div>
 
@@ -1075,6 +1087,12 @@ function returnToQueue() {
         </div>
       </div>
     </div>
+    <!-- Accredited Evaluation Rubric Modal -->
+    <EvaluationRubricModal
+      :visible="showRubricModal"
+      role-title="Student"
+      @close="showRubricModal = false"
+    />
   </main>
 </template>
 

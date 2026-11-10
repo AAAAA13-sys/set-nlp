@@ -47,6 +47,13 @@ const baseCommands = computed(() => {
     cmds.push(
       { id: 'nav-admin', group: 'Workspace', label: 'Open Registrar Console', hint: '/admin', action: () => router.push('/admin') },
       { id: 'nav-admin-setup', group: 'Workspace', label: 'Academic Setup & Cycle Management', hint: '/admin/setup', action: () => router.push('/admin/setup') },
+      { id: 'nav-setup-assignments', group: 'Academic Setup', label: 'Faculty Teaching Assignments Matrix', hint: '/admin/setup?tab=assignments', action: () => router.push('/admin/setup?tab=assignments') },
+      { id: 'nav-setup-terms', group: 'Academic Setup', label: 'Academic Terms & Window Schedules', hint: '/admin/setup?tab=terms', action: () => router.push('/admin/setup?tab=terms') },
+      { id: 'nav-setup-courses', group: 'Academic Setup', label: 'Course Catalog & Section Offerings', hint: '/admin/setup?tab=courses', action: () => router.push('/admin/setup?tab=courses') },
+      { id: 'nav-setup-faculty', group: 'Academic Setup', label: 'Faculty Members Directory', hint: '/admin/setup?tab=faculty', action: () => router.push('/admin/setup?tab=faculty') },
+      { id: 'nav-setup-students', group: 'Academic Setup', label: 'Student Directory & Clearance Roster', hint: '/admin/setup?tab=students', action: () => router.push('/admin/setup?tab=students') },
+      { id: 'nav-setup-users', group: 'Academic Setup', label: 'System Accounts & Staff Roles', hint: '/admin/setup?tab=users', action: () => router.push('/admin/setup?tab=users') },
+      { id: 'nav-setup-questionnaire', group: 'Academic Setup', label: 'Evaluation Questionnaire & Rubric', hint: '/admin/setup?tab=questionnaire', action: () => router.push('/admin/setup?tab=questionnaire') },
       { id: 'open-quivr', group: 'Analysis', label: "Professor's Evaluation Analysis", hint: 'Feedback Search', action: () => emit('open-quivr-brain') },
     );
   }

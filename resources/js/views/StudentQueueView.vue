@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import ClearancePermitCard from '../components/ClearancePermitCard.vue';
 import ErrorRecoveryBanner from '../components/ErrorRecoveryBanner.vue';
+import EvaluationRubricModal from '../components/EvaluationRubricModal.vue';
 import SkeletonLoader from '../components/SkeletonLoader.vue';
 import { useAuthStore } from '../stores/auth.js';
 import { useEvaluationStore } from '../stores/evaluation.js';
@@ -19,6 +20,7 @@ const statusFilter = ref('ALL');
 
 const showQueueReceiptModal = ref(false);
 const selectedQueueReceiptCourse = ref(null);
+const showRubricModal = ref(false);
 
 function openCourseReceiptModal(course) {
   selectedQueueReceiptCourse.value = course;
@@ -257,7 +259,16 @@ function startEvaluation(course) {
           </button>
         </div>
 
-        <div style="margin-left: auto; display: flex; align-items: center; gap: 0.5rem;">
+        <div style="margin-left: auto; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+          <button
+            type="button"
+            class="btn-secondary btn-xs"
+            data-testid="student-open-rubric-btn"
+            style="display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 600; padding: 0.35rem 0.75rem;"
+            @click="showRubricModal = true"
+          >
+            📋 Rating Rubric
+          </button>
           <button
             type="button"
             class="btn-secondary btn-xs"
@@ -497,6 +508,12 @@ function startEvaluation(course) {
         </div>
       </div>
     </div>
+    <!-- Accredited Evaluation Rubric Modal -->
+    <EvaluationRubricModal
+      :visible="showRubricModal"
+      role-title="Student"
+      @close="showRubricModal = false"
+    />
   </main>
 </template>
 

@@ -1,13 +1,38 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useAcademicSetupStore } from '../stores/academicSetup.js';
 import { useEvaluationStore } from '../stores/evaluation.js';
 import { showJQueryUiError } from '../utils/jqueryUiNotification.js';
 
+const route = useRoute();
+const router = useRouter();
 const setupStore = useAcademicSetupStore();
 const evalStore = useEvaluationStore();
 
-const activeTab = ref('assignments'); // 'terms' | 'assignments' | 'questionnaire'
+const VALID_SETUP_TABS = ['assignments', 'terms', 'courses', 'faculty', 'students', 'users', 'questionnaire'];
+const activeTab = ref(
+  route?.query?.tab && VALID_SETUP_TABS.includes(route.query.tab)
+    ? route.query.tab
+    : 'assignments'
+);
+
+function switchTab(tab) {
+  if (!VALID_SETUP_TABS.includes(tab)) return;
+  activeTab.value = tab;
+  if (router && route?.query?.tab !== tab) {
+    router.replace({ query: { ...route?.query, tab } }).catch(() => {});
+  }
+}
+
+watch(
+  () => route?.query?.tab,
+  (newTab) => {
+    if (newTab && VALID_SETUP_TABS.includes(newTab) && activeTab.value !== newTab) {
+      activeTab.value = newTab;
+    }
+  },
+);
 const successMessage = ref('');
 const errorMessage = ref('');
 
@@ -936,7 +961,7 @@ async function executeDeleteSection() {
           class="stat-card-btn"
           data-testid="stat-card-courses"
           style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 10px; padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease;"
-          @click="activeTab = 'courses'"
+          @click="switchTab('courses')"
         >
           <div style="font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Course Offerings</div>
           <div style="font-size: 1.65rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">{{ setupStore.courses.length }}</div>
@@ -948,7 +973,7 @@ async function executeDeleteSection() {
           class="stat-card-btn"
           data-testid="stat-card-sections"
           style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 10px; padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease;"
-          @click="activeTab = 'assignments'"
+          @click="switchTab('assignments')"
         >
           <div style="font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Course Sections</div>
           <div style="font-size: 1.65rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">{{ setupStore.sections.length }}</div>
@@ -960,7 +985,7 @@ async function executeDeleteSection() {
           class="stat-card-btn"
           data-testid="stat-card-faculty"
           style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 10px; padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease;"
-          @click="activeTab = 'faculty'"
+          @click="switchTab('faculty')"
         >
           <div style="font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Faculty Members</div>
           <div style="font-size: 1.65rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">{{ setupStore.facultyList.length }}</div>
@@ -972,7 +997,7 @@ async function executeDeleteSection() {
           class="stat-card-btn"
           data-testid="stat-card-students"
           style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 10px; padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease;"
-          @click="activeTab = 'students'"
+          @click="switchTab('students')"
         >
           <div style="font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Enrolled Students</div>
           <div style="font-size: 1.65rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">{{ setupStore.studentsList.length }}</div>
@@ -984,7 +1009,7 @@ async function executeDeleteSection() {
           class="stat-card-btn"
           data-testid="stat-card-users"
           style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 10px; padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease;"
-          @click="activeTab = 'users'"
+          @click="switchTab('users')"
         >
           <div style="font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">System Accounts</div>
           <div style="font-size: 1.65rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">{{ setupStore.systemUsers.length }}</div>
@@ -999,7 +1024,7 @@ async function executeDeleteSection() {
           class="setup-tab-btn"
           :class="{ active: activeTab === 'assignments' }"
           data-testid="tab-assignments-btn"
-          @click="activeTab = 'assignments'"
+          @click="switchTab('assignments')"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -1015,7 +1040,7 @@ async function executeDeleteSection() {
           class="setup-tab-btn"
           :class="{ active: activeTab === 'terms' }"
           data-testid="tab-terms-btn"
-          @click="activeTab = 'terms'"
+          @click="switchTab('terms')"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -1031,7 +1056,7 @@ async function executeDeleteSection() {
           class="setup-tab-btn"
           :class="{ active: activeTab === 'courses' }"
           data-testid="tab-courses-btn"
-          @click="activeTab = 'courses'"
+          @click="switchTab('courses')"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
@@ -1045,7 +1070,7 @@ async function executeDeleteSection() {
           class="setup-tab-btn"
           :class="{ active: activeTab === 'faculty' }"
           data-testid="tab-faculty-btn"
-          @click="activeTab = 'faculty'"
+          @click="switchTab('faculty')"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -1061,7 +1086,7 @@ async function executeDeleteSection() {
           class="setup-tab-btn"
           :class="{ active: activeTab === 'students' }"
           data-testid="tab-students-btn"
-          @click="activeTab = 'students'"
+          @click="switchTab('students')"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
@@ -1075,7 +1100,7 @@ async function executeDeleteSection() {
           class="setup-tab-btn"
           :class="{ active: activeTab === 'users' }"
           data-testid="tab-users-btn"
-          @click="activeTab = 'users'"
+          @click="switchTab('users')"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
@@ -1091,7 +1116,7 @@ async function executeDeleteSection() {
           class="setup-tab-btn"
           :class="{ active: activeTab === 'questionnaire' }"
           data-testid="tab-questionnaire-btn"
-          @click="activeTab = 'questionnaire'"
+          @click="switchTab('questionnaire')"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>

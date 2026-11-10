@@ -1831,4 +1831,52 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(deanViewSfc.includes('data-testid="dean-heatmap-empty-state"'), 'Dean heatmap empty state row present');
     });
   });
+
+  describe('Group 65: Student Queue & Evaluation Form Rating Scale Rubric Integration', () => {
+    it('verifies student rubric inspection buttons and modal bindings across StudentQueueView and EvaluationFormView', () => {
+      const queueViewSfc = readResourceFile('views/StudentQueueView.vue');
+      const evalFormSfc = readResourceFile('views/EvaluationFormView.vue');
+
+      // 1. StudentQueueView Rubric Integration
+      assert.ok(queueViewSfc.includes("import EvaluationRubricModal from '../components/EvaluationRubricModal.vue'"), 'StudentQueueView imports EvaluationRubricModal');
+      assert.ok(queueViewSfc.includes('data-testid="student-open-rubric-btn"'), 'Student queue rubric trigger button present');
+      assert.ok(queueViewSfc.includes('showRubricModal = true'), 'Student queue rubric click sets showRubricModal');
+      assert.ok(queueViewSfc.includes('<EvaluationRubricModal'), 'Student queue renders EvaluationRubricModal');
+      assert.ok(queueViewSfc.includes('role-title="Student"'), 'Student queue passes role-title="Student"');
+
+      // 2. EvaluationFormView Rubric Integration
+      assert.ok(evalFormSfc.includes("import EvaluationRubricModal from '../components/EvaluationRubricModal.vue'"), 'EvaluationFormView imports EvaluationRubricModal');
+      assert.ok(evalFormSfc.includes('data-testid="eval-open-rubric-btn"'), 'Evaluation form rubric trigger button present in top bar');
+      assert.ok(evalFormSfc.includes('showRubricModal = true'), 'Evaluation form rubric click sets showRubricModal');
+      assert.ok(evalFormSfc.includes('<EvaluationRubricModal'), 'Evaluation form renders EvaluationRubricModal');
+    });
+  });
+
+  describe('Group 66: Academic Setup Deep Tab URL Synchronization & Command Palette Tab Shortcuts', () => {
+    it('verifies tab query parameter synchronization in AdminSetupView and setup commands in CommandPaletteModal', () => {
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+      const commandPaletteSfc = readResourceFile('components/CommandPaletteModal.vue');
+
+      // 1. AdminSetupView Query Parameter Tab Synchronization
+      assert.ok(setupViewSfc.includes('VALID_SETUP_TABS'), 'AdminSetupView defines VALID_SETUP_TABS array');
+      assert.ok(setupViewSfc.includes('switchTab'), 'AdminSetupView defines switchTab method');
+      assert.ok(setupViewSfc.includes('router.replace'), 'AdminSetupView synchronizes route query with tab switch');
+      assert.ok(setupViewSfc.includes('@click="switchTab(\'assignments\')"'), 'Assignments tab uses switchTab');
+      assert.ok(setupViewSfc.includes('@click="switchTab(\'terms\')"'), 'Terms tab uses switchTab');
+      assert.ok(setupViewSfc.includes('@click="switchTab(\'courses\')"'), 'Courses tab uses switchTab');
+      assert.ok(setupViewSfc.includes('@click="switchTab(\'faculty\')"'), 'Faculty tab uses switchTab');
+      assert.ok(setupViewSfc.includes('@click="switchTab(\'students\')"'), 'Students tab uses switchTab');
+      assert.ok(setupViewSfc.includes('@click="switchTab(\'users\')"'), 'Users tab uses switchTab');
+      assert.ok(setupViewSfc.includes('@click="switchTab(\'questionnaire\')"'), 'Questionnaire tab uses switchTab');
+
+      // 2. CommandPaletteModal Setup Tab Shortcuts
+      assert.ok(commandPaletteSfc.includes("id: 'nav-setup-assignments'"), 'Command palette has nav-setup-assignments shortcut');
+      assert.ok(commandPaletteSfc.includes("id: 'nav-setup-terms'"), 'Command palette has nav-setup-terms shortcut');
+      assert.ok(commandPaletteSfc.includes("id: 'nav-setup-courses'"), 'Command palette has nav-setup-courses shortcut');
+      assert.ok(commandPaletteSfc.includes("id: 'nav-setup-faculty'"), 'Command palette has nav-setup-faculty shortcut');
+      assert.ok(commandPaletteSfc.includes("id: 'nav-setup-students'"), 'Command palette has nav-setup-students shortcut');
+      assert.ok(commandPaletteSfc.includes("id: 'nav-setup-users'"), 'Command palette has nav-setup-users shortcut');
+      assert.ok(commandPaletteSfc.includes("id: 'nav-setup-questionnaire'"), 'Command palette has nav-setup-questionnaire shortcut');
+    });
+  });
 });
