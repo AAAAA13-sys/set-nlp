@@ -343,6 +343,22 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     }
   }
 
+  async function fetchSectionRoster(sectionId) {
+    try {
+      const res = await fetch(`/api/admin/setup/sections/${sectionId}/roster`, {
+        headers: getApiHeaders(),
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || 'Failed to fetch section class roster.');
+      }
+      return await res.json();
+    } catch (e) {
+      error.value = e.message;
+      throw e;
+    }
+  }
+
   return {
     overview,
     loading,
@@ -376,5 +392,6 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     createUser,
     fetchQuestionnaire,
     fetchStudentEnrollment,
+    fetchSectionRoster,
   };
 });

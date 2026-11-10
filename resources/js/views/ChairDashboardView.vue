@@ -3,7 +3,7 @@ import { computed, onMounted, ref } from 'vue';
 import PlpAnalyticsLabModal from '../components/PlpAnalyticsLabModal.vue';
 import QuivrNlpBrainDrawer from '../components/QuivrNlpBrainDrawer.vue';
 import { useAuthStore } from '../stores/auth.js';
-import { evaluateWatchlistFlag } from '../utils/evaluationMath.js';
+import { evaluateWatchlistFlag, sanitizeCsvCell } from '../utils/evaluationMath.js';
 
 const authStore = useAuthStore();
 const showAnalyticsLab = ref(false);
@@ -47,6 +47,49 @@ function printChairReport() {
   if (typeof window !== 'undefined' && typeof window.print === 'function') {
     window.print();
   }
+}
+
+function exportChairFacultyCsv() {
+  const termCode = longitudinalData.value?.active_term?.term_code || '1st_Sem_AY2026-2027';
+  const dept = departmentName.value.replace(/[^a-zA-Z0-9_-]/g, '_');
+  const headers = [
+    'Faculty Name',
+    'Faculty ID',
+    'Course Code',
+    'Section Code',
+    'Enrolled Students',
+    'Completed Evaluations',
+    'Turnout Rate (%)',
+    'Mean Rating (1-5)',
+    'Performance Category',
+    'Negative Sentiment (%)',
+    'Primary Pedagogical Focus',
+    'Watchlist Status',
+  ];
+  const rows = departmentFaculty.value.map((f) => [
+    sanitizeCsvCell(f.faculty_name),
+    sanitizeCsvCell(f.id),
+    sanitizeCsvCell(f.course_code),
+    sanitizeCsvCell(f.section_code),
+    f.enrolled_count,
+    f.evaluated_count,
+    f.enrolled_count > 0 ? ((f.evaluated_count / f.enrolled_count) * 100).toFixed(1) : '100.0',
+    f.mean_score.toFixed(2),
+    sanitizeCsvCell(getPerformanceRatingText(f.mean_score)),
+    f.negative_sentiment_pct.toFixed(1),
+    sanitizeCsvCell(f.primary_tag),
+    sanitizeCsvCell(f.status),
+  ]);
+  const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `PLP_${dept}_Faculty_Evaluation_Summary_${termCode}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
 const departmentName = computed(
@@ -320,10 +363,21 @@ async function endorseActionPlan(item) {
             <span class="ui-hint" tabindex="0" aria-label="Department instructor summary" data-hint="Summary of student evaluations across all active sections in this department.">?</span>
           </h3>
         </div>
-        <div v-if="quartilesData?.tier_counts" style="display:flex;gap:0.4rem;flex-wrap:wrap;">
-          <span class="token-chip chip-signed">High Distinction: {{ quartilesData.tier_counts.high_distinction }}</span>
-          <span class="token-chip chip-signed">Proficient: {{ quartilesData.tier_counts.proficient }}</span>
-          <span class="token-chip chip-unsigned">Priority: {{ quartilesData.tier_counts.priority_intervention }}</span>
+        <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+          <div v-if="quartilesData?.tier_counts" style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+            <span class="token-chip chip-signed">High Distinction: {{ quartilesData.tier_counts.high_distinction }}</span>
+            <span class="token-chip chip-signed">Proficient: {{ quartilesData.tier_counts.proficient }}</span>
+            <span class="token-chip chip-unsigned">Priority: {{ quartilesData.tier_counts.priority_intervention }}</span>
+          </div>
+          <button
+            type="button"
+            class="btn-secondary btn-xs"
+            data-testid="export-chair-faculty-csv-btn"
+            style="display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 600;"
+            @click="exportChairFacultyCsv"
+          >
+            📥 Export Summary CSV
+          </button>
         </div>
       </div>
 

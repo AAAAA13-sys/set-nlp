@@ -260,4 +260,22 @@ class AdminSetupController extends Controller
 
         return new JsonResponse($details, 200);
     }
+
+    public function sectionRoster(Request $request, int $id = 0): JsonResponse
+    {
+        if ($authError = $this->verifyAdminRole($request)) {
+            return $authError;
+        }
+
+        $roster = $this->setupService->getSectionRoster($id);
+        if (!$roster) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'SECTION_NOT_FOUND',
+                'message' => 'Course section record not found.',
+            ], 404);
+        }
+
+        return new JsonResponse($roster, 200);
+    }
 }

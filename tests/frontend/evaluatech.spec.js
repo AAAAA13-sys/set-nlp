@@ -1588,4 +1588,57 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('closeFacultyDossier'), 'closeFacultyDossier handler');
     });
   });
+
+  describe('Group 53: Section Class Roster & Student Clearance Checklist Modal in Academic Setup', () => {
+    it('verifies section roster modal, student clearance pills, search/filter, and roster CSV export', () => {
+      const setupStoreSrc = readResourceFile('stores/academicSetup.js');
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+
+      // 1. Store Action for Section Class Roster
+      assert.ok(setupStoreSrc.includes('fetchSectionRoster'), 'fetchSectionRoster action in academicSetup store');
+      assert.ok(setupStoreSrc.includes('/api/admin/setup/sections/'), 'API call to section roster endpoint');
+
+      // 2. Trigger Buttons in Tab 1 (Assignments) and Tab 3 (Course Sections Modal)
+      assert.ok(setupViewSfc.includes('data-testid="`setup-section-roster-btn-${sec.course_code}`"'), 'Roster trigger button in assignments table');
+      assert.ok(setupViewSfc.includes('data-testid="`course-modal-roster-btn-${sec.course_section_id}`"'), 'Roster trigger button in course sections modal');
+
+      // 3. Section Class Roster Modal Elements
+      assert.ok(setupViewSfc.includes('data-testid="section-roster-modal"'), 'Section roster modal container');
+      assert.ok(setupViewSfc.includes('data-testid="section-roster-course-code"'), 'Course code and section display in roster header');
+      assert.ok(setupViewSfc.includes('data-testid="section-roster-instructor"'), 'Instructor name display in roster header');
+      assert.ok(setupViewSfc.includes('data-testid="section-roster-turnout-chip"'), 'Turnout rate and evaluation count chip');
+
+      // 4. Search, Filter, and Table Elements
+      assert.ok(setupViewSfc.includes('data-testid="section-roster-search-input"'), 'Search input in section roster');
+      assert.ok(setupViewSfc.includes('data-testid="section-roster-filter-select"'), 'Evaluation filter select in section roster');
+      assert.ok(setupViewSfc.includes('data-testid="section-roster-students-table"'), 'Students roster table');
+      assert.ok(setupViewSfc.includes('data-testid="`roster-status-${s.student_id}`"'), 'Student clearance status pill in row');
+      assert.ok(setupViewSfc.includes('data-testid="`roster-permit-verify-btn-${s.student_id}`"'), 'Student permit verify button in row');
+
+      // 5. Export and Print Actions
+      assert.ok(setupViewSfc.includes('data-testid="export-section-roster-csv-btn"'), 'Export section roster CSV button');
+      assert.ok(setupViewSfc.includes('data-testid="print-section-roster-btn"'), 'Print section roster button');
+      assert.ok(setupViewSfc.includes('data-testid="close-section-roster-btn"'), 'Close section roster modal button');
+      assert.ok(setupViewSfc.includes('exportSectionRosterCsv'), 'exportSectionRosterCsv function');
+      assert.ok(setupViewSfc.includes('printSectionRoster'), 'printSectionRoster function');
+    });
+  });
+
+  describe('Group 54: Department Chair Faculty Evaluation Summary CSV Export', () => {
+    it('verifies export summary CSV button and formula-injection-neutralized export handler in ChairDashboardView', () => {
+      const chairViewSfc = readResourceFile('views/ChairDashboardView.vue');
+
+      // 1. Export Summary CSV Trigger in Chair Dashboard
+      assert.ok(chairViewSfc.includes('data-testid="export-chair-faculty-csv-btn"'), 'Export chair faculty CSV button present');
+      assert.ok(chairViewSfc.includes('@click="exportChairFacultyCsv"'), 'Button wired to exportChairFacultyCsv');
+
+      // 2. Export Handler and Formula Injection Sanitization
+      assert.ok(chairViewSfc.includes('function exportChairFacultyCsv()'), 'exportChairFacultyCsv handler function defined');
+      assert.ok(chairViewSfc.includes('sanitizeCsvCell'), 'sanitizeCsvCell imported and utilized for export');
+      assert.ok(chairViewSfc.includes('Faculty Name'), 'CSV header includes Faculty Name');
+      assert.ok(chairViewSfc.includes('Turnout Rate (%)'), 'CSV header includes Turnout Rate (%)');
+      assert.ok(chairViewSfc.includes('Mean Rating (1-5)'), 'CSV header includes Mean Rating (1-5)');
+      assert.ok(chairViewSfc.includes('Watchlist Status'), 'CSV header includes Watchlist Status');
+    });
+  });
 });

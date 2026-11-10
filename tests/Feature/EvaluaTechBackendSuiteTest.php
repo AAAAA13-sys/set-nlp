@@ -2854,5 +2854,29 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertArrayHasKey('courses', $enrollData);
         $this->assertSame(11, $enrollData['student']['id']);
         $this->assertGreaterThan(0, $enrollData['total_count']);
+
+        // 12. Section Class Roster & Student Clearance Checklist (Inspired by class_list.php & manage_restriction.php)
+        $nonAdminRosterReq = new \Illuminate\Http\Request();
+        $nonAdminRosterReq->setUserResolver(fn () => $facultyUser);
+        $nonAdminRosterRes = $setupController->sectionRoster($nonAdminRosterReq, 1);
+        $this->assertSame(403, $nonAdminRosterRes->getStatusCode());
+
+        $notFoundRosterReq = new \Illuminate\Http\Request();
+        $notFoundRosterReq->setUserResolver(fn () => $adminUser);
+        $notFoundRosterRes = $setupController->sectionRoster($notFoundRosterReq, 99999);
+        $this->assertSame(404, $notFoundRosterRes->getStatusCode());
+        $this->assertSame('SECTION_NOT_FOUND', $notFoundRosterRes->getData(true)['code']);
+
+        $validRosterReq = new \Illuminate\Http\Request();
+        $validRosterReq->setUserResolver(fn () => $adminUser);
+        $validRosterRes = $setupController->sectionRoster($validRosterReq, 1);
+        $this->assertSame(200, $validRosterRes->getStatusCode());
+        $rosterData = $validRosterRes->getData(true);
+        $this->assertIsArray($rosterData);
+        $this->assertArrayHasKey('section', $rosterData);
+        $this->assertArrayHasKey('students', $rosterData);
+        $this->assertSame(1, $rosterData['section']['id']);
+        $this->assertGreaterThanOrEqual(0, $rosterData['section']['enrolled_count']);
+        $this->assertIsArray($rosterData['students']);
     }
 }

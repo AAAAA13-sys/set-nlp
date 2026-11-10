@@ -589,6 +589,86 @@ async function openStudentEnrollmentModal(std) {
   }
 }
 
+const showSectionRosterModal = ref(false);
+const sectionRosterLoading = ref(false);
+const selectedSectionRoster = ref(null);
+const sectionRosterSearch = ref('');
+const sectionRosterFilter = ref('ALL');
+
+async function openSectionRosterModal(sec) {
+  selectedSectionRoster.value = null;
+  sectionRosterSearch.value = '';
+  sectionRosterFilter.value = 'ALL';
+  showSectionRosterModal.value = true;
+  sectionRosterLoading.value = true;
+  try {
+    const secId = Number(sec.course_section_id || sec.id);
+    const data = await setupStore.fetchSectionRoster(secId);
+    selectedSectionRoster.value = data;
+  } catch (err) {
+    flashError(err.message || 'Failed to fetch section class roster.');
+  } finally {
+    sectionRosterLoading.value = false;
+  }
+}
+
+const filteredSectionRosterStudents = computed(() => {
+  const roster = selectedSectionRoster.value?.students || [];
+  const query = sectionRosterSearch.value.trim().toLowerCase();
+  const filter = sectionRosterFilter.value;
+  let list = roster;
+  if (filter === 'CLEARED') {
+    list = list.filter((s) => s.has_evaluated);
+  } else if (filter === 'PENDING') {
+    list = list.filter((s) => !s.has_evaluated);
+  }
+  if (!query) return list;
+  return list.filter((s) => {
+    const text = `${s.name || ''} ${s.institutional_id || ''} ${s.email || ''} ${s.department_code || ''}`.toLowerCase();
+    return text.includes(query);
+  });
+});
+
+function exportSectionRosterCsv() {
+  if (!selectedSectionRoster.value) return;
+  const sec = selectedSectionRoster.value.section;
+  const students = selectedSectionRoster.value.students || [];
+  const sanitize = (val) => {
+    let s = String(val ?? '');
+    if (/^[=+@-]/i.test(s)) s = `'${s}`;
+    return `"${s.replace(/"/g, '""')}"`;
+  };
+  const headers = [
+    'Student Name',
+    'Institutional ID',
+    'Email Address',
+    'Department',
+    'Course Code',
+    'Section Code',
+    'Evaluation Clearance Status',
+    'Clearance Proof Token',
+    'Cleared At',
+  ];
+  const rows = students.map((s) => [
+    sanitize(s.name),
+    sanitize(s.institutional_id),
+    sanitize(s.email),
+    sanitize(s.department_code),
+    sanitize(sec.course_code),
+    sanitize(sec.section_code),
+    sanitize(s.clearance_status),
+    sanitize(s.clearance_token || 'N/A'),
+    sanitize(s.cleared_at || 'N/A'),
+  ].join(','));
+  triggerCsvDownload(headers, rows, `PLP_Section_Roster_${sec.course_code}_${sec.section_code}`);
+}
+
+function printSectionRoster() {
+  if (typeof window !== 'undefined' && typeof window.print === 'function') {
+    window.print();
+  }
+}
+
 const filteredStudentsDirectory = computed(() => {
   const query = studentSearchInput.value.trim().toLowerCase();
   const filter = studentStatusFilter.value;
@@ -1164,6 +1244,16 @@ async function executeDeleteSection() {
               </td>
               <td class="text-right">
                 <div style="display: flex; gap: 0.35rem; justify-content: flex-end; align-items: center;">
+                  <button
+                    type="button"
+                    class="btn-secondary-sm"
+                    style="font-size: 0.75rem; padding: 0.25rem 0.6rem; border-radius: 6px; border: 1px solid #103c2e; background: #ecfdf5; color: #103c2e; font-weight: 700;"
+                    :data-testid="`setup-section-roster-btn-${sec.course_code}`"
+                    title="View section student roster and clearance checklist"
+                    @click="openSectionRosterModal(sec)"
+                  >
+                    Roster 👥
+                  </button>
                   <button
                     v-if="sec.vault_count > 0 || sec.cleared_count > 0"
                     type="button"
@@ -3022,6 +3112,15 @@ async function executeDeleteSection() {
                       <button
                         type="button"
                         class="btn-secondary btn-xs"
+                        :data-testid="`course-modal-roster-btn-${sec.course_section_id}`"
+                        style="display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600; margin-right: 0.35rem;"
+                        @click="openSectionRosterModal(sec)"
+                      >
+                        Roster 👥
+                      </button>
+                      <button
+                        type="button"
+                        class="btn-secondary btn-xs"
                         :data-testid="`course-modal-report-btn-${sec.course_section_id}`"
                         style="display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
                         @click="closeCourseSectionsModal(); openSetupSectionReport(sec)"
@@ -3055,6 +3154,199 @@ async function executeDeleteSection() {
             class="btn-secondary"
             data-testid="close-course-sections-btn"
             @click="closeCourseSectionsModal"
+          >
+            Close
+          </button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Modal: Section Class Roster & Student Clearance Checklist (Inspired by admin/class_list.php & manage_restriction.php) -->
+    <div
+      v-if="showSectionRosterModal"
+      class="setup-modal-scrim"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="section-roster-modal-title"
+      data-testid="section-roster-modal"
+      @click.self="showSectionRosterModal = false"
+    >
+      <div class="setup-modal-box" style="max-width: 860px; padding: 1.5rem; max-height: 90vh; overflow-y: auto;">
+        <header class="setup-modal-header" style="border-bottom: 1px solid #e5e7eb; padding-bottom: 0.85rem;">
+          <div>
+            <h2 id="section-roster-modal-title" style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #103c2e;">
+              Course Section Class Roster &amp; Clearance Checklist
+            </h2>
+            <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #6b7280;">
+              Pamantasan ng Lungsod ng Pasig — Section Enrollment &amp; Evaluation Clearance Roster
+            </p>
+          </div>
+          <button type="button" class="modal-close-btn" @click="showSectionRosterModal = false">&times;</button>
+        </header>
+
+        <div v-if="sectionRosterLoading" style="text-align: center; padding: 3rem 1rem;">
+          <div class="spinner" style="margin: 0 auto 1rem;"></div>
+          <p style="color: #6b7280; font-size: 0.9rem;">Loading section enrollment roster and clearance records…</p>
+        </div>
+
+        <div v-else-if="selectedSectionRoster" style="padding: 1.25rem 0; display: flex; flex-direction: column; gap: 1.25rem;">
+          <!-- Section Summary Card -->
+          <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+            <div>
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Course &amp; Section</div>
+              <div style="font-weight: 700; font-size: 1.05rem; color: #111827;" data-testid="section-roster-course-code">
+                {{ selectedSectionRoster.section.course_code }} ({{ selectedSectionRoster.section.section_code }})
+              </div>
+              <div style="font-size: 0.82rem; color: #4b5563;">
+                {{ selectedSectionRoster.section.course_title }}
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Instructor</div>
+              <div style="font-weight: 700; font-size: 0.95rem; color: #047857;" data-testid="section-roster-instructor">
+                {{ selectedSectionRoster.section.instructor_name }}
+              </div>
+              <div style="font-size: 0.82rem; color: #6b7280;">
+                {{ selectedSectionRoster.section.department_name }} ({{ selectedSectionRoster.section.department_code }})
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Turnout Status</div>
+              <div style="margin-top: 0.25rem;">
+                <span
+                  class="token-chip"
+                  :class="selectedSectionRoster.section.turnout_pct >= 85 ? 'chip-signed' : 'chip-unsigned'"
+                  data-testid="section-roster-turnout-chip"
+                >
+                  {{ selectedSectionRoster.section.evaluated_count }} / {{ selectedSectionRoster.section.enrolled_count }} Evaluated ({{ selectedSectionRoster.section.turnout_pct }}%)
+                </span>
+              </div>
+              <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.35rem;">
+                Term: {{ selectedSectionRoster.section.term_code }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Search and Filter Bar -->
+          <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+              <input
+                v-model="sectionRosterSearch"
+                type="text"
+                class="form-input"
+                placeholder="Search by student name, ID, or email…"
+                data-testid="section-roster-search-input"
+                style="width: 100%; font-size: 0.85rem; padding: 0.45rem 0.75rem;"
+              />
+            </div>
+            <div style="min-width: 160px;">
+              <select
+                v-model="sectionRosterFilter"
+                class="form-input"
+                data-testid="section-roster-filter-select"
+                style="width: 100%; font-size: 0.85rem; padding: 0.45rem 0.75rem;"
+              >
+                <option value="ALL">All Students ({{ selectedSectionRoster.students.length }})</option>
+                <option value="CLEARED">Evaluated ({{ selectedSectionRoster.section.evaluated_count }})</option>
+                <option value="PENDING">Pending ({{ selectedSectionRoster.section.enrolled_count - selectedSectionRoster.section.evaluated_count }})</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Students Roster Table -->
+          <div>
+            <h3 style="font-size: 0.95rem; font-weight: 700; color: #1f2937; margin: 0 0 0.5rem;">
+              Enrolled Students ({{ filteredSectionRosterStudents.length }} of {{ selectedSectionRoster.students.length }})
+            </h3>
+            <div class="table-responsive-wrapper" style="max-height: 320px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px;">
+              <table class="setup-data-table" data-testid="section-roster-students-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Institutional ID</th>
+                    <th scope="col">Student Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Department</th>
+                    <th scope="col" class="text-center">Clearance Status</th>
+                    <th scope="col">Clearance Token Proof</th>
+                    <th scope="col" class="text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="s in filteredSectionRosterStudents"
+                    :key="s.student_id"
+                    :data-testid="`section-roster-row-${s.student_id}`"
+                  >
+                    <td><strong class="font-mono text-emerald">{{ s.institutional_id }}</strong></td>
+                    <td style="font-weight: 600; color: #111827;">{{ s.name }}</td>
+                    <td style="color: #6b7280; font-size: 0.82rem;">{{ s.email }}</td>
+                    <td><span class="dept-badge">{{ s.department_code }}</span></td>
+                    <td class="text-center">
+                      <span
+                        class="token-chip"
+                        :class="s.has_evaluated ? 'chip-signed' : 'chip-unsigned'"
+                        :data-testid="`roster-status-${s.student_id}`"
+                        style="font-size: 0.72rem; padding: 0.15rem 0.45rem;"
+                      >
+                        {{ s.has_evaluated ? '✅ Evaluated' : '⏳ Pending' }}
+                      </span>
+                    </td>
+                    <td>
+                      <code v-if="s.clearance_token" class="font-mono" style="font-size: 0.72rem; background: #ecfdf5; color: #065f46; padding: 0.15rem 0.35rem; border-radius: 4px;">
+                        {{ s.clearance_token.slice(0, 16) }}…
+                      </code>
+                      <span v-else style="color: #9ca3af; font-size: 0.8rem;">—</span>
+                    </td>
+                    <td class="text-right">
+                      <router-link
+                        v-if="s.has_evaluated"
+                        :to="`/verify?id=${encodeURIComponent(s.institutional_id)}`"
+                        class="btn-secondary btn-xs"
+                        :data-testid="`roster-permit-verify-btn-${s.student_id}`"
+                        style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
+                      >
+                        Permit 📜
+                      </router-link>
+                      <span v-else style="font-size: 0.75rem; color: #9ca3af; padding: 0.25rem 0.35rem;">Awaiting</span>
+                    </td>
+                  </tr>
+                  <tr v-if="filteredSectionRosterStudents.length === 0">
+                    <td colspan="7" class="empty-state-cell">
+                      No enrolled students match the search criteria.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <footer class="setup-modal-footer" style="border-top: 1px solid #e5e7eb; padding-top: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+          <div style="display: flex; gap: 0.5rem;">
+            <button
+              v-if="selectedSectionRoster"
+              type="button"
+              class="btn-secondary btn-sm"
+              data-testid="export-section-roster-csv-btn"
+              @click="exportSectionRosterCsv"
+            >
+              📥 Export Roster CSV
+            </button>
+            <button
+              v-if="selectedSectionRoster"
+              type="button"
+              class="btn-secondary btn-sm"
+              data-testid="print-section-roster-btn"
+              @click="printSectionRoster"
+            >
+              🖨 Print Roster
+            </button>
+          </div>
+          <button
+            type="button"
+            class="btn-secondary btn-sm"
+            data-testid="close-section-roster-btn"
+            @click="showSectionRosterModal = false"
           >
             Close
           </button>

@@ -1084,4 +1084,107 @@ class AcademicSetupService
             'courses' => $queueData['queue'] ?? [],
         ];
     }
+
+    /**
+     * Retrieve the enrolled student roster and evaluation clearance status for a course section.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getSectionRoster(int $sectionId): ?array
+    {
+        $secStmt = $this->pdo->prepare('
+            SELECT
+                cs.id,
+                cs.section_code,
+                cs.course_id,
+                cs.academic_term_id,
+                cs.faculty_id,
+                c.code AS course_code,
+                c.title AS course_title,
+                c.department_id,
+                d.code AS department_code,
+                d.name AS department_name,
+                at.code AS term_code,
+                at.name AS term_name,
+                f.name AS instructor_name,
+                f.institutional_id AS instructor_institutional_id
+            FROM course_sections cs
+            JOIN courses c ON c.id = cs.course_id
+            JOIN academic_terms at ON at.id = cs.academic_term_id
+            LEFT JOIN departments d ON d.id = c.department_id
+            LEFT JOIN users f ON f.id = cs.faculty_id
+            WHERE cs.id = :id
+            LIMIT 1
+        ');
+        $secStmt->execute([':id' => $sectionId]);
+        $section = $secStmt->fetch(PDO::FETCH_ASSOC);
+        if (!$section) {
+            return null;
+        }
+
+        // Fetch all enrolled students with clearance status
+        $rosterStmt = $this->pdo->prepare('
+            SELECT
+                u.id AS student_id,
+                u.institutional_id,
+                u.name,
+                u.email,
+                sd.code AS department_code,
+                sd.name AS department_name,
+                ec.clearance_token,
+                ec.cleared_at
+            FROM enrollments e
+            JOIN users u ON u.id = e.student_id
+            LEFT JOIN departments sd ON sd.id = u.department_id
+            LEFT JOIN evaluation_clearances ec
+                ON ec.student_id = u.id AND ec.course_section_id = e.course_section_id
+            WHERE e.course_section_id = :sid
+            ORDER BY u.name ASC
+        ');
+        $rosterStmt->execute([':sid' => $sectionId]);
+        $rawStudents = $rosterStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $students = [];
+        $evaluatedCount = 0;
+        $totalEnrolled = count($rawStudents);
+
+        foreach ($rawStudents as $s) {
+            $hasEvaluated = !empty($s['clearance_token']);
+            if ($hasEvaluated) {
+                $evaluatedCount++;
+            }
+            $students[] = [
+                'student_id' => (int) $s['student_id'],
+                'institutional_id' => (string) $s['institutional_id'],
+                'name' => (string) $s['name'],
+                'email' => (string) $s['email'],
+                'department_code' => (string) ($s['department_code'] ?: 'CCS'),
+                'department_name' => (string) ($s['department_name'] ?: 'College of Computer Studies'),
+                'has_evaluated' => $hasEvaluated,
+                'clearance_status' => $hasEvaluated ? 'CLEARED' : 'PENDING',
+                'clearance_token' => $s['clearance_token'] ? (string) $s['clearance_token'] : null,
+                'cleared_at' => $s['cleared_at'] ? (string) $s['cleared_at'] : null,
+            ];
+        }
+
+        $turnoutPct = $totalEnrolled > 0 ? round(($evaluatedCount / $totalEnrolled) * 100, 1) : 0.0;
+
+        return [
+            'section' => [
+                'id' => (int) $section['id'],
+                'section_code' => (string) $section['section_code'],
+                'course_code' => (string) $section['course_code'],
+                'course_title' => (string) $section['course_title'],
+                'department_code' => (string) ($section['department_code'] ?: 'CCS'),
+                'department_name' => (string) ($section['department_name'] ?: 'College of Computer Studies'),
+                'instructor_name' => (string) ($section['instructor_name'] ?: 'Unassigned Faculty'),
+                'term_code' => (string) $section['term_code'],
+                'term_name' => (string) $section['term_name'],
+                'enrolled_count' => $totalEnrolled,
+                'evaluated_count' => $evaluatedCount,
+                'turnout_pct' => $turnoutPct,
+            ],
+            'students' => $students,
+        ];
+    }
 }
