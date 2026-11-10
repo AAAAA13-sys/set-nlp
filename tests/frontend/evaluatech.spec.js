@@ -1777,4 +1777,20 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(adminRosterSfc.includes('filteredSectionLocks.length === 0'), 'Section locks empty state bound to filteredSectionLocks');
     });
   });
+
+  describe('Group 62: Academic Setup Terms Search & Status Filter Scoping', () => {
+    it('verifies search input, status filter dropdown, and empty state in Academic Terms tab', () => {
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+
+      // 1. Tab 2: Terms Search & Status Filter Inputs
+      assert.ok(setupViewSfc.includes('data-testid="terms-search-input"'), 'Academic terms search input present');
+      assert.ok(setupViewSfc.includes('data-testid="terms-status-filter-select"'), 'Academic terms status filter select present');
+      assert.ok(setupViewSfc.includes('data-testid="terms-reset-filters-btn"'), 'Academic terms reset filters button present');
+
+      // 2. Computed Logic & Iteration
+      assert.ok(setupViewSfc.includes('filteredTerms'), 'filteredTerms computed property defined');
+      assert.ok(setupViewSfc.includes('v-for="t in filteredTerms"'), 'Terms table iterates over filteredTerms');
+      assert.ok(setupViewSfc.includes('data-testid="terms-empty-state"'), 'Terms empty state row present');
+    });
+  });
 });

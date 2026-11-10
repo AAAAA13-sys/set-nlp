@@ -427,8 +427,31 @@ function exportQuestionnaireInstrumentCsv() {
   triggerCsvDownload(headers, rows, 'PLP_AACCUP3_Evaluation_Instrument');
 }
 
+const termSearchInput = ref('');
+const termStatusFilter = ref('ALL');
+
+const filteredTerms = computed(() => {
+  const q = termSearchInput.value.trim().toLowerCase();
+  return (setupStore.terms || []).filter((t) => {
+    if (termStatusFilter.value === 'ACTIVE' && !t.is_active) {
+      return false;
+    }
+    if (termStatusFilter.value === 'ARCHIVED' && t.is_active) {
+      return false;
+    }
+    if (['OPEN', 'CLOSED', 'EXTENDED', 'REOPENED'].includes(termStatusFilter.value)) {
+      if ((t.window_status || '').toUpperCase() !== termStatusFilter.value) {
+        return false;
+      }
+    }
+    if (!q) return true;
+    const haystack = `${t.code || ''} ${t.name || ''} ${t.academic_year || ''} ${t.window_status || ''}`.toLowerCase();
+    return haystack.includes(q);
+  });
+});
+
 function exportAcademicTermsCsv() {
-  const list = setupStore.terms || [];
+  const list = filteredTerms.value;
   const sanitize = (val) => {
     let s = String(val ?? '');
     if (/^[=+@-]/i.test(s)) s = `'${s}`;
@@ -1333,6 +1356,42 @@ async function executeDeleteSection() {
         </div>
       </div>
 
+      <div class="filter-controls-row" style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.75rem;">
+        <input
+          type="search"
+          v-model="termSearchInput"
+          class="form-input search-input"
+          placeholder="Search term code, name, academic year…"
+          data-testid="terms-search-input"
+          style="flex: 1; min-width: 220px;"
+          aria-label="Search academic terms"
+        />
+        <select
+          v-model="termStatusFilter"
+          class="form-input"
+          style="width: auto; min-width: 170px;"
+          data-testid="terms-status-filter-select"
+          aria-label="Filter terms by status"
+        >
+          <option value="ALL">All Statuses</option>
+          <option value="ACTIVE">⭐ Active Term</option>
+          <option value="ARCHIVED">📦 Archived</option>
+          <option value="OPEN">🟢 Open Window</option>
+          <option value="EXTENDED">🟡 Extended Window</option>
+          <option value="REOPENED">🔵 Reopened Window</option>
+          <option value="CLOSED">🔴 Closed Window</option>
+        </select>
+        <button
+          v-if="termSearchInput || termStatusFilter !== 'ALL'"
+          type="button"
+          class="btn-secondary-sm"
+          data-testid="terms-reset-filters-btn"
+          @click="termSearchInput = ''; termStatusFilter = 'ALL';"
+        >
+          Reset
+        </button>
+      </div>
+
       <div class="table-responsive-wrapper">
         <table class="setup-data-table" data-testid="terms-table">
           <thead>
@@ -1348,7 +1407,7 @@ async function executeDeleteSection() {
           </thead>
           <tbody>
             <tr
-              v-for="t in setupStore.terms"
+              v-for="t in filteredTerms"
               :key="t.id"
               :class="{ 'row-active-term': t.is_active }"
               :data-testid="`term-row-${t.id}`"
@@ -1398,6 +1457,16 @@ async function executeDeleteSection() {
                   </button>
                   <span v-else class="text-active-label">Current Active</span>
                 </div>
+              </td>
+            </tr>
+            <tr v-if="filteredTerms.length === 0" data-testid="terms-empty-state">
+              <td colspan="7" style="text-align: center; padding: 2rem; color: #6b7280;">
+                <div style="font-weight: 600; color: #111827; margin-bottom: 0.25rem;">
+                  No Academic Terms Match Filter
+                </div>
+                <p style="margin: 0; font-size: 0.85rem;">
+                  Try adjusting your search query or reset the status filter to view all academic terms.
+                </p>
               </td>
             </tr>
           </tbody>
