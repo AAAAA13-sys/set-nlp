@@ -51,11 +51,11 @@ const userForm = ref({
   password: '',
 });
 
-function openNewUserModal() {
+function openNewUserModal(role = 'faculty') {
   userForm.value = {
     name: '',
     email: '',
-    role: 'faculty',
+    role: typeof role === 'string' ? role : 'faculty',
     institutional_id: '',
     department_id: setupStore.departments[0]?.id || '',
     password: '',
@@ -1357,6 +1357,15 @@ async function executeDeleteSection() {
           >
             📊 Export Faculty (CSV)
           </button>
+          <button
+            type="button"
+            class="btn-primary"
+            data-testid="add-faculty-btn"
+            style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; font-weight: 600;"
+            @click="openNewUserModal('faculty')"
+          >
+            + New Faculty
+          </button>
           <span class="token-chip chip-signed">
             Total Instructors: {{ setupStore.facultyList.length }}
           </span>
@@ -1461,6 +1470,15 @@ async function executeDeleteSection() {
             @click="exportStudentsDirectoryCsv"
           >
             📊 Export Students (CSV)
+          </button>
+          <button
+            type="button"
+            class="btn-primary"
+            data-testid="add-student-btn"
+            style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; font-weight: 600;"
+            @click="openNewUserModal('student')"
+          >
+            + New Student
           </button>
           <span class="token-chip chip-signed">
             Total Students: {{ setupStore.studentsList.length }}
@@ -1702,6 +1720,74 @@ async function executeDeleteSection() {
           This 25-item evaluation instrument is standardized across all academic colleges. Items are categorized into five core pedagogical clusters plus four qualitative professor response fields. Questions are read-only under institutional policy.
         </p>
       </div>
+
+      <!-- Institutional Scoring Rubric & Performance Bands (Inspired by questionnaire.php and report.php) -->
+      <article class="cluster-card" data-testid="questionnaire-rubric-card" style="margin-bottom: 1.5rem; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.25rem;">
+        <header class="cluster-card-header" style="margin-bottom: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h2 class="cluster-card-title" style="margin: 0; font-size: 1.05rem; font-weight: 700; color: #103c2e;">
+              Institutional Evaluation Rating Rubric & Performance Bands
+            </h2>
+            <p class="cluster-card-desc" style="margin: 0.25rem 0 0; font-size: 0.82rem; color: #6b7280;">
+              Pamantasan ng Lungsod ng Pasig — AACCUP Level III 5-Point Likert Evaluation Standards
+            </p>
+          </div>
+          <span class="token-chip chip-signed" style="font-size: 0.75rem;">
+            AACCUP Standard
+          </span>
+        </header>
+
+        <div class="table-responsive-wrapper">
+          <table class="setup-data-table" data-testid="evaluation-rubric-table">
+            <thead>
+              <tr>
+                <th scope="col" style="width: 70px;" class="text-center">Scale</th>
+                <th scope="col" style="width: 140px;">Qualitative Rating</th>
+                <th scope="col" style="width: 120px;" class="text-center">Score Range</th>
+                <th scope="col">Pedagogical Description & Performance Standard</th>
+                <th scope="col">Institutional Action & Governance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-center"><strong class="scale-pt" style="background: #059669; color: #ffffff; padding: 0.2rem 0.55rem; border-radius: 4px; font-weight: 700;">5</strong></td>
+                <td><strong style="color: #059669;">Outstanding</strong></td>
+                <td class="text-center font-mono">4.50 – 5.00</td>
+                <td>Consistently demonstrates exemplary pedagogical mastery, rigorous assessment, superior classroom rapport, and outstanding learner mentorship.</td>
+                <td><span class="token-chip chip-signed" style="font-size: 0.72rem;">Commended for Teaching Excellence</span></td>
+              </tr>
+              <tr>
+                <td class="text-center"><strong class="scale-pt" style="background: #10b981; color: #ffffff; padding: 0.2rem 0.55rem; border-radius: 4px; font-weight: 700;">4</strong></td>
+                <td><strong style="color: #047857;">Very Satisfactory</strong></td>
+                <td class="text-center font-mono">3.50 – 4.49</td>
+                <td>Frequently surpasses institutional teaching standards with clear delivery, timely feedback, and effective classroom management.</td>
+                <td><span class="token-chip chip-signed" style="font-size: 0.72rem;">Meets Institutional Accreditation Criteria</span></td>
+              </tr>
+              <tr>
+                <td class="text-center"><strong class="scale-pt" style="background: #f59e0b; color: #ffffff; padding: 0.2rem 0.55rem; border-radius: 4px; font-weight: 700;">3</strong></td>
+                <td><strong style="color: #b45309;">Satisfactory</strong></td>
+                <td class="text-center font-mono">2.50 – 3.49</td>
+                <td>Meets baseline course delivery and grading expectations. Pedagogical delivery is adequate with room for instructional enrichment.</td>
+                <td><span class="token-chip chip-unsigned" style="font-size: 0.72rem;">Continuous Monitoring</span></td>
+              </tr>
+              <tr>
+                <td class="text-center"><strong class="scale-pt" style="background: #f97316; color: #ffffff; padding: 0.2rem 0.55rem; border-radius: 4px; font-weight: 700;">2</strong></td>
+                <td><strong style="color: #c2410c;">Fair</strong></td>
+                <td class="text-center font-mono">1.50 – 2.49</td>
+                <td>Inconsistently achieves course objectives; notable challenges in instructional clarity, consultation availability, or assessment fairness.</td>
+                <td><span class="token-chip chip-unsigned" style="font-size: 0.72rem; color: #c2410c; background: #fff7ed;">Dean Watchlist / Departmental Coaching</span></td>
+              </tr>
+              <tr>
+                <td class="text-center"><strong class="scale-pt" style="background: #ef4444; color: #ffffff; padding: 0.2rem 0.55rem; border-radius: 4px; font-weight: 700;">1</strong></td>
+                <td><strong style="color: #dc2626;">Poor</strong></td>
+                <td class="text-center font-mono">1.00 – 1.49</td>
+                <td>Fails to meet basic instructional standards; frequent student difficulties with syllabus adherence, grading transparency, or professional conduct.</td>
+                <td><span class="token-chip chip-unsigned" style="font-size: 0.72rem; color: #dc2626; background: #fef2f2;">Mandatory Pedagogical Action Plan</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
 
       <div v-if="setupStore.questionnairePreview" class="clusters-container">
         <!-- 5 Clusters -->
