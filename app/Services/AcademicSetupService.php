@@ -1358,4 +1358,325 @@ class AcademicSetupService
             'students' => $students,
         ];
     }
+
+    /**
+     * Get the active academic term ID or default to the lowest term ID.
+     */
+    public function getActiveTermId(): int
+    {
+        $stmt = $this->pdo->query('SELECT id FROM academic_terms WHERE is_active = 1 LIMIT 1');
+        $id = $stmt ? $stmt->fetchColumn() : false;
+        if ($id) {
+            return (int) $id;
+        }
+
+        $fallback = $this->pdo->query('SELECT id FROM academic_terms ORDER BY id ASC LIMIT 1');
+        return $fallback ? (int) $fallback->fetchColumn() : 1;
+    }
+
+    /**
+     * Retrieve assigned course sections and teaching portfolio for a faculty member.
+     *
+     * @param int $facultyId
+     * @param int|null $academicTermId
+     * @return array<string, mixed>|null
+     */
+    public function getFacultyAssignments(int $facultyId, ?int $academicTermId = null): ?array
+    {
+        $facStmt = $this->pdo->prepare("
+            SELECT
+                u.id,
+                u.institutional_id,
+                u.name,
+                u.email,
+                u.department_id,
+                u.role,
+                u.is_active,
+                d.code AS department_code,
+                d.name AS department_name
+            FROM users u
+            LEFT JOIN departments d ON d.id = u.department_id
+            WHERE u.id = :id AND u.role IN ('faculty', 'chair', 'dean')
+            LIMIT 1
+        ");
+        $facStmt->execute([':id' => $facultyId]);
+        $faculty = $facStmt->fetch(PDO::FETCH_ASSOC);
+        if (!$faculty) {
+            return null;
+        }
+
+        $termId = $academicTermId ?? $this->getActiveTermId();
+        $termStmt = $this->pdo->prepare('SELECT id, code, name, academic_year FROM academic_terms WHERE id = :id LIMIT 1');
+        $termStmt->execute([':id' => $termId]);
+        $term = $termStmt->fetch(PDO::FETCH_ASSOC);
+
+        $secStmt = $this->pdo->prepare('
+            SELECT
+                cs.id AS course_section_id,
+                cs.section_code,
+                cs.course_id,
+                cs.faculty_id,
+                cs.academic_term_id,
+                cs.term_grades_submitted,
+                cs.registrar_lock,
+                cs.enrolled_count AS stored_enrolled_count,
+                c.code AS course_code,
+                c.title AS course_title,
+                c.units,
+                c.department_id,
+                d.code AS department_code,
+                d.name AS department_name
+            FROM course_sections cs
+            INNER JOIN courses c ON c.id = cs.course_id
+            LEFT JOIN departments d ON d.id = c.department_id
+            WHERE cs.faculty_id = :fid AND cs.academic_term_id = :tid
+            ORDER BY c.code ASC, cs.section_code ASC
+        ');
+        $secStmt->execute([':fid' => $facultyId, ':tid' => $termId]);
+        $rawSections = $secStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $sections = [];
+        $totalEnrolled = 0;
+        $totalEvaluations = 0;
+
+        foreach ($rawSections as $row) {
+            $secId = (int) $row['course_section_id'];
+
+            // Real enrollment count
+            $enrCountStmt = $this->pdo->prepare('SELECT COUNT(*) FROM enrollments WHERE course_section_id = :sec_id');
+            $enrCountStmt->execute([':sec_id' => $secId]);
+            $realEnrolledCount = (int) $enrCountStmt->fetchColumn();
+            if ($realEnrolledCount === 0 && !empty($row['stored_enrolled_count'])) {
+                $realEnrolledCount = (int) $row['stored_enrolled_count'];
+            }
+            $totalEnrolled += $realEnrolledCount;
+
+            // Clearances (completed evaluations count)
+            $clrStmt = $this->pdo->prepare("SELECT COUNT(*) FROM evaluation_clearances WHERE course_section_id = :sec_id AND status = 'CLEARED'");
+            $clrStmt->execute([':sec_id' => $secId]);
+            $clearedCount = (int) $clrStmt->fetchColumn();
+            $totalEvaluations += $clearedCount;
+
+            $turnoutPct = $realEnrolledCount > 0 ? round(($clearedCount / $realEnrolledCount) * 100, 1) : 0.0;
+
+            $gradesSubmitted = (bool) $row['term_grades_submitted'];
+            $registrarLock = (bool) $row['registrar_lock'];
+
+            $sections[] = [
+                'course_section_id' => $secId,
+                'section_code' => (string) $row['section_code'],
+                'course_id' => (int) $row['course_id'],
+                'course_code' => (string) $row['course_code'],
+                'course_title' => (string) $row['course_title'],
+                'units' => (int) ($row['units'] ?? 3),
+                'department_id' => (int) ($row['department_id'] ?? 1),
+                'department_code' => (string) ($row['department_code'] ?? 'CCS'),
+                'department_name' => (string) ($row['department_name'] ?? 'College of Computer Studies'),
+                'enrolled_count' => $realEnrolledCount,
+                'cleared_count' => $clearedCount,
+                'turnout_pct' => $turnoutPct,
+                'term_grades_submitted' => $gradesSubmitted,
+                'registrar_lock' => $registrarLock,
+                'double_blind_unlocked' => $gradesSubmitted && $registrarLock,
+            ];
+        }
+
+        $overallTurnout = $totalEnrolled > 0 ? round(($totalEvaluations / $totalEnrolled) * 100, 1) : 0.0;
+
+        return [
+            'faculty' => [
+                'id' => (int) $faculty['id'],
+                'institutional_id' => (string) $faculty['institutional_id'],
+                'name' => (string) $faculty['name'],
+                'email' => (string) $faculty['email'],
+                'department_code' => (string) ($faculty['department_code'] ?: 'CCS'),
+                'department_name' => (string) ($faculty['department_name'] ?: 'College of Computer Studies'),
+                'role' => (string) $faculty['role'],
+                'is_active' => (bool) $faculty['is_active'],
+            ],
+            'term' => [
+                'id' => $termId,
+                'code' => $term ? (string) $term['code'] : 'CURRENT',
+                'name' => $term ? (string) $term['name'] : 'Active Academic Term',
+                'academic_year' => $term ? (string) $term['academic_year'] : '2026-2027',
+            ],
+            'summary' => [
+                'total_sections' => count($sections),
+                'total_enrolled' => $totalEnrolled,
+                'total_evaluations' => $totalEvaluations,
+                'overall_turnout_pct' => $overallTurnout,
+            ],
+            'sections' => $sections,
+        ];
+    }
+
+    /**
+     * Update an institutional user account's profile, role, department, or password.
+     *
+     * @param int $userId
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    public function updateUser(int $userId, array $data): array
+    {
+        if ($userId <= 0) {
+            throw new InvalidArgumentException('Valid user ID required.');
+        }
+
+        $chkStmt = $this->pdo->prepare('SELECT id, institutional_id, name, email, role, department_id, is_active FROM users WHERE id = :id LIMIT 1');
+        $chkStmt->execute([':id' => $userId]);
+        $existing = $chkStmt->fetch(PDO::FETCH_ASSOC);
+        if (!$existing) {
+            throw new InvalidArgumentException("User with ID {$userId} not found.");
+        }
+
+        $name = isset($data['name']) ? trim((string) $data['name']) : (string) $existing['name'];
+        $email = isset($data['email']) ? strtolower(trim((string) $data['email'])) : (string) $existing['email'];
+        $role = isset($data['role']) ? strtolower(trim((string) $data['role'])) : (string) $existing['role'];
+        $deptId = array_key_exists('department_id', $data) ? (!empty($data['department_id']) ? (int) $data['department_id'] : null) : ($existing['department_id'] !== null ? (int) $existing['department_id'] : null);
+        $newPassword = isset($data['password']) && trim((string) $data['password']) !== '' ? (string) $data['password'] : null;
+
+        if ($name === '' || $email === '') {
+            throw new InvalidArgumentException('Full name and email address are required.');
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidArgumentException('A valid institutional email address is required.');
+        }
+
+        $validRoles = ['admin', 'dean', 'chair', 'faculty', 'student'];
+        if (!in_array($role, $validRoles, true)) {
+            throw new InvalidArgumentException('Invalid role specified. Must be one of: admin, dean, chair, faculty, student.');
+        }
+
+        // Email duplicate check
+        $dupEmail = $this->pdo->prepare('SELECT id FROM users WHERE email = :email AND id != :id LIMIT 1');
+        $dupEmail->execute([':email' => $email, ':id' => $userId]);
+        if ($dupEmail->fetch()) {
+            throw new InvalidArgumentException("Another user already exists with email '{$email}'.");
+        }
+
+        // Department check
+        if ($deptId !== null && $deptId > 0) {
+            $chkDept = $this->pdo->prepare('SELECT id FROM departments WHERE id = :id LIMIT 1');
+            $chkDept->execute([':id' => $deptId]);
+            if (!$chkDept->fetch()) {
+                throw new InvalidArgumentException('Selected academic department does not exist.');
+            }
+        } else {
+            $deptId = null;
+        }
+
+        // Detect schema columns in users table (password vs password_hash, updated_at)
+        $userCols = [];
+        try {
+            $cols = $this->pdo->query('PRAGMA table_info(users)')->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($cols as $col) {
+                if (!empty($col['name'])) {
+                    $userCols[] = (string) $col['name'];
+                }
+            }
+        } catch (\Throwable) {
+            $userCols = ['institutional_id', 'name', 'email', 'password', 'role', 'department_id', 'is_active', 'updated_at'];
+        }
+
+        $pwdCol = in_array('password', $userCols, true) ? 'password' : 'password_hash';
+        $hasUpdatedAt = in_array('updated_at', $userCols, true);
+
+        $params = [
+            ':name' => $name,
+            ':email' => $email,
+            ':role' => $role,
+            ':dept_id' => $deptId,
+            ':id' => $userId,
+        ];
+
+        $updateFields = ['name = :name', 'email = :email', 'role = :role', 'department_id = :dept_id'];
+        if ($newPassword !== null) {
+            $params[':pwd'] = password_hash($newPassword, PASSWORD_BCRYPT);
+            $updateFields[] = "{$pwdCol} = :pwd";
+        }
+        if ($hasUpdatedAt) {
+            $params[':updated_at'] = date('Y-m-d H:i:s');
+            $updateFields[] = 'updated_at = :updated_at';
+        }
+
+        $sql = 'UPDATE users SET ' . implode(', ', $updateFields) . ' WHERE id = :id';
+        $updStmt = $this->pdo->prepare($sql);
+        $updStmt->execute($params);
+
+        return [
+            'success' => true,
+            'user_id' => $userId,
+            'institutional_id' => (string) $existing['institutional_id'],
+            'name' => $name,
+            'email' => $email,
+            'role' => $role,
+            'department_id' => $deptId,
+            'password_updated' => $newPassword !== null,
+            'message' => "User account '{$name}' updated successfully.",
+        ];
+    }
+
+    /**
+     * Toggle a user account's active/inactive status (protects against self-deactivation).
+     *
+     * @param int $userId
+     * @param int|null $operatorId
+     * @return array<string, mixed>
+     */
+    public function toggleUserStatus(int $userId, ?int $operatorId = null): array
+    {
+        if ($userId <= 0) {
+            throw new InvalidArgumentException('Valid user ID required.');
+        }
+
+        $chkStmt = $this->pdo->prepare('SELECT id, institutional_id, name, email, is_active FROM users WHERE id = :id LIMIT 1');
+        $chkStmt->execute([':id' => $userId]);
+        $existing = $chkStmt->fetch(PDO::FETCH_ASSOC);
+        if (!$existing) {
+            throw new InvalidArgumentException("User with ID {$userId} not found.");
+        }
+
+        $currentStatus = (bool) $existing['is_active'];
+
+        // Self-deactivation protection
+        if ($operatorId !== null && $operatorId === $userId && $currentStatus) {
+            throw new RuntimeException('CANNOT_DEACTIVATE_SELF: Administrators cannot deactivate their own active session account.');
+        }
+
+        $newStatus = !$currentStatus;
+        $now = date('Y-m-d H:i:s');
+
+        // Check if updated_at exists
+        $userCols = [];
+        try {
+            $cols = $this->pdo->query('PRAGMA table_info(users)')->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($cols as $col) {
+                if (!empty($col['name'])) {
+                    $userCols[] = (string) $col['name'];
+                }
+            }
+        } catch (\Throwable) {
+            $userCols = ['is_active', 'updated_at'];
+        }
+
+        if (in_array('updated_at', $userCols, true)) {
+            $upd = $this->pdo->prepare('UPDATE users SET is_active = :status, updated_at = :updated_at WHERE id = :id');
+            $upd->execute([':status' => $newStatus ? 1 : 0, ':updated_at' => $now, ':id' => $userId]);
+        } else {
+            $upd = $this->pdo->prepare('UPDATE users SET is_active = :status WHERE id = :id');
+            $upd->execute([':status' => $newStatus ? 1 : 0, ':id' => $userId]);
+        }
+
+        return [
+            'success' => true,
+            'user_id' => $userId,
+            'institutional_id' => (string) $existing['institutional_id'],
+            'name' => (string) $existing['name'],
+            'is_active' => $newStatus,
+            'status_label' => $newStatus ? 'ACTIVE' : 'INACTIVE',
+            'message' => "User account '{$existing['name']}' is now " . ($newStatus ? 'ACTIVE' : 'INACTIVE') . '.',
+        ];
+    }
 }

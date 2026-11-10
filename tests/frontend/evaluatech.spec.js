@@ -1983,4 +1983,42 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('It contains ${t.total_sections} course section(s)'), 'Guard prevents deleting term with sections');
     });
   });
+
+  describe('Group 71: Faculty Teaching Assignments Modal & User Account Edit and Status Lifecycle', () => {
+    it('verifies faculty assignments modal, user edit modal, status toggle action, store methods, and CSV export', () => {
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+      const setupStoreSrc = readResourceFile('stores/academicSetup.js');
+
+      // 1. Store Methods
+      assert.ok(setupStoreSrc.includes('async function fetchFacultyAssignments('), 'Store defines fetchFacultyAssignments');
+      assert.ok(setupStoreSrc.includes('async function updateUser('), 'Store defines updateUser');
+      assert.ok(setupStoreSrc.includes('async function toggleUserStatus('), 'Store defines toggleUserStatus');
+      assert.ok(setupStoreSrc.includes('/api/admin/setup/faculty/${facultyId}/assignments'), 'Faculty assignments endpoint path');
+      assert.ok(setupStoreSrc.includes('/api/admin/setup/users/${userId}'), 'Update user endpoint path');
+      assert.ok(setupStoreSrc.includes('/api/admin/setup/users/${userId}/toggle-status'), 'Toggle user status endpoint path');
+
+      // 2. Tab 4: Faculty Teaching Assignments Trigger & Modal
+      assert.ok(setupViewSfc.includes(':data-testid="`view-faculty-assignments-btn-${fac.id}`"'), 'View faculty assignments button present');
+      assert.ok(setupViewSfc.includes('data-testid="faculty-assignments-modal"'), 'Faculty assignments modal present');
+      assert.ok(setupViewSfc.includes('data-testid="faculty-summary-sections"'), 'Summary total sections present');
+      assert.ok(setupViewSfc.includes('data-testid="faculty-summary-enrolled"'), 'Summary enrolled students present');
+      assert.ok(setupViewSfc.includes('data-testid="faculty-summary-evaluations"'), 'Summary evaluations count present');
+      assert.ok(setupViewSfc.includes('data-testid="faculty-summary-turnout"'), 'Summary turnout percentage present');
+      assert.ok(setupViewSfc.includes('data-testid="faculty-assignments-table"'), 'Faculty assignments table present');
+      assert.ok(setupViewSfc.includes('data-testid="export-faculty-assignments-csv-btn"'), 'Export faculty assignments CSV button present');
+      assert.ok(setupViewSfc.includes('exportFacultyAssignmentsCsv'), 'exportFacultyAssignmentsCsv method defined');
+
+      // 3. Tab 6: System User Actions & Edit Modal
+      assert.ok(setupViewSfc.includes(':data-testid="`edit-user-btn-${u.id}`"'), 'Edit user button present');
+      assert.ok(setupViewSfc.includes(':data-testid="`toggle-user-status-btn-${u.id}`"'), 'Toggle user status button present');
+      assert.ok(setupViewSfc.includes('data-testid="edit-user-modal"'), 'Edit user modal present');
+      assert.ok(setupViewSfc.includes('data-testid="edit-user-name-input"'), 'Edit user name input present');
+      assert.ok(setupViewSfc.includes('data-testid="edit-user-email-input"'), 'Edit user email input present');
+      assert.ok(setupViewSfc.includes('data-testid="edit-user-role-select"'), 'Edit user role select present');
+      assert.ok(setupViewSfc.includes('data-testid="edit-user-dept-select"'), 'Edit user dept select present');
+      assert.ok(setupViewSfc.includes('data-testid="edit-user-password-input"'), 'Edit user password input present');
+      assert.ok(setupViewSfc.includes('data-testid="edit-user-save-btn"'), 'Edit user save button present');
+      assert.ok(setupViewSfc.includes('confirmToggleUserStatus'), 'confirmToggleUserStatus method defined');
+    });
+  });
 });

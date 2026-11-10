@@ -41,6 +41,19 @@ const showNewTermModal = ref(false);
 const showNewSectionModal = ref(false);
 const showNewCourseModal = ref(false);
 const showEditCourseModal = ref(false);
+const showFacultyAssignmentsModal = ref(false);
+const facultyAssignmentsLoading = ref(false);
+const selectedFacultyAssignments = ref(null);
+const showEditUserModal = ref(false);
+const userEditForm = ref({
+  id: null,
+  institutional_id: '',
+  name: '',
+  email: '',
+  role: 'faculty',
+  department_id: null,
+  password: '',
+});
 const sectionToDelete = ref(null);
 
 // Forms
@@ -838,6 +851,107 @@ const filteredSystemUsers = computed(() => {
     return text.includes(query);
   });
 });
+
+async function openFacultyAssignmentsModal(fac) {
+  selectedFacultyAssignments.value = null;
+  showFacultyAssignmentsModal.value = true;
+  facultyAssignmentsLoading.value = true;
+  try {
+    const data = await setupStore.fetchFacultyAssignments(fac.id, setupStore.selectedTermId);
+    selectedFacultyAssignments.value = data;
+  } catch (err) {
+    flashError(err.message || 'Failed to fetch faculty teaching assignments.');
+  } finally {
+    facultyAssignmentsLoading.value = false;
+  }
+}
+
+function exportFacultyAssignmentsCsv() {
+  if (!selectedFacultyAssignments.value) return;
+  const fac = selectedFacultyAssignments.value.faculty;
+  const term = selectedFacultyAssignments.value.term;
+  const sections = selectedFacultyAssignments.value.sections || [];
+  const sanitize = (val) => {
+    let s = String(val ?? '');
+    if (/^[=+@-]/i.test(s)) s = `'${s}`;
+    return `"${s.replace(/"/g, '""')}"`;
+  };
+  const headers = [
+    'Faculty Name',
+    'Faculty ID',
+    'Email',
+    'Department',
+    'Academic Term',
+    'Course Code',
+    'Course Title',
+    'Section Code',
+    'Units',
+    'Enrolled Students',
+    'Evaluations Received',
+    'Turnout Percentage',
+    'Grade Status',
+    'Registrar Lock',
+    'Double-Blind Unlocked',
+  ];
+  const rows = sections.map((s) => [
+    sanitize(fac.name),
+    sanitize(fac.institutional_id),
+    sanitize(fac.email),
+    sanitize(fac.department_code),
+    sanitize(term.name),
+    sanitize(s.course_code),
+    sanitize(s.course_title),
+    sanitize(s.section_code),
+    sanitize(s.units),
+    sanitize(s.enrolled_count),
+    sanitize(s.cleared_count),
+    sanitize(`${s.turnout_pct}%`),
+    sanitize(s.term_grades_submitted ? 'Submitted' : 'Pending'),
+    sanitize(s.registrar_lock ? 'Locked' : 'Open'),
+    sanitize(s.double_blind_unlocked ? 'Unlocked' : 'Locked'),
+  ].join(','));
+  triggerCsvDownload(headers, rows, `PLP_Faculty_Assignments_${fac.institutional_id}_${term.code}`);
+}
+
+function openEditUserModal(u) {
+  userEditForm.value = {
+    id: u.id,
+    institutional_id: u.institutional_id || '',
+    name: u.name || '',
+    email: u.email || '',
+    role: u.role || 'faculty',
+    department_id: u.department_id ? Number(u.department_id) : null,
+    password: '',
+  };
+  showEditUserModal.value = true;
+}
+
+async function submitEditUser() {
+  if (!userEditForm.value.name || !userEditForm.value.email) {
+    flashError('Full name and email are required.');
+    return;
+  }
+  try {
+    const res = await setupStore.updateUser(userEditForm.value.id, userEditForm.value);
+    showEditUserModal.value = false;
+    flashSuccess(`User account "${res.name}" updated successfully.`);
+  } catch (err) {
+    flashError(err.message || 'Failed to update user account.');
+  }
+}
+
+async function confirmToggleUserStatus(u) {
+  const actionName = u.is_active ? 'deactivate' : 'activate';
+  if (!confirm(`Are you sure you want to ${actionName} the account for "${u.name}" (${u.email})?`)) {
+    return;
+  }
+  try {
+    const res = await setupStore.toggleUserStatus(u.id);
+    flashSuccess(`User account "${res.name}" is now ${res.status_label}.`);
+  } catch (err) {
+    flashError(err.message || `Failed to ${actionName} user account.`);
+  }
+}
 
 async function handleFacultyAssignmentChange(sectionId, event) {
   const newFacultyId = event.target.value ? Number(event.target.value) : null;
@@ -1841,6 +1955,15 @@ async function executeDeleteSection() {
                   <button
                     type="button"
                     class="btn-secondary btn-xs"
+                    :data-testid="`view-faculty-assignments-btn-${fac.id}`"
+                    style="display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
+                    @click="openFacultyAssignmentsModal(fac)"
+                  >
+                    Assignments 📚
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-secondary btn-xs"
                     :data-testid="`assign-faculty-shortcut-btn-${fac.id}`"
                     @click="quickAssignFaculty(fac)"
                   >
@@ -2099,6 +2222,7 @@ async function executeDeleteSection() {
               <th scope="col">System Role</th>
               <th scope="col">Department / College</th>
               <th scope="col">Account Status</th>
+              <th scope="col">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -2153,13 +2277,40 @@ async function executeDeleteSection() {
                   class="status-badge"
                   :class="u.is_active ? 'status-completed' : 'status-pending'"
                   style="font-size: 0.72rem; padding: 0.2rem 0.55rem;"
+                  :data-testid="`user-status-badge-${u.id}`"
                 >
                   {{ u.is_active ? 'Active' : 'Inactive' }}
                 </span>
               </td>
+              <td>
+                <div style="display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap;">
+                  <button
+                    type="button"
+                    class="btn-secondary btn-xs"
+                    :data-testid="`edit-user-btn-${u.id}`"
+                    style="font-weight: 600;"
+                    @click="openEditUserModal(u)"
+                  >
+                    Edit ✏️
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-secondary btn-xs"
+                    :data-testid="`toggle-user-status-btn-${u.id}`"
+                    :style="{
+                      fontWeight: 600,
+                      color: u.is_active ? '#991b1b' : '#065f46',
+                      borderColor: u.is_active ? '#fca5a5' : '#6ee7b7'
+                    }"
+                    @click="confirmToggleUserStatus(u)"
+                  >
+                    {{ u.is_active ? 'Deactivate ⏸️' : 'Activate ▶️' }}
+                  </button>
+                </div>
+              </td>
             </tr>
             <tr v-if="filteredSystemUsers.length === 0" data-testid="users-empty-state">
-              <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+              <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
                 No system user accounts match the specified search or role filter.
               </td>
             </tr>
@@ -3740,6 +3891,269 @@ async function executeDeleteSection() {
             Close
           </button>
         </footer>
+      </div>
+    </div>
+
+    <!-- MODAL: Faculty Teaching Assignments & Load Portfolio -->
+    <div
+      v-if="showFacultyAssignmentsModal"
+      class="setup-modal-scrim"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="faculty-assignments-modal-title"
+      data-testid="faculty-assignments-modal"
+      @click.self="showFacultyAssignmentsModal = false"
+    >
+      <div class="setup-modal-box" style="max-width: 820px; width: 92%;">
+        <header class="setup-modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <span class="setup-kicker" style="font-size: 0.75rem; text-transform: uppercase; color: #103c2e; font-weight: 700;">Faculty Teaching Portfolio</span>
+            <h2 id="faculty-assignments-modal-title" style="margin: 0.2rem 0 0; font-size: 1.25rem; font-weight: 700; color: #111827;">
+              Assigned Course Sections &amp; Class Turnout
+            </h2>
+          </div>
+          <button type="button" class="modal-close-btn" data-testid="close-faculty-assignments-modal" @click="showFacultyAssignmentsModal = false">&times;</button>
+        </header>
+
+        <div v-if="facultyAssignmentsLoading" style="text-align: center; padding: 2.5rem 1rem;">
+          <div class="spinner" style="margin: 0 auto 0.75rem;"></div>
+          <p style="color: #4b5563; font-size: 0.9rem;">Loading faculty teaching assignments...</p>
+        </div>
+
+        <div v-else-if="selectedFacultyAssignments" class="modal-body-content" style="padding: 1rem 0;">
+          <!-- Profile & Term Header -->
+          <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <div style="font-size: 1.05rem; font-weight: 700; color: #111827;">
+                {{ selectedFacultyAssignments.faculty.name }}
+              </div>
+              <div style="font-size: 0.82rem; color: #4b5563; display: flex; gap: 0.75rem; align-items: center; margin-top: 0.2rem;">
+                <code>{{ selectedFacultyAssignments.faculty.institutional_id }}</code>
+                <span>{{ selectedFacultyAssignments.faculty.email }}</span>
+                <span class="dept-badge">{{ selectedFacultyAssignments.faculty.department_code }}</span>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span class="token-chip chip-signed" style="font-size: 0.78rem;">
+                {{ selectedFacultyAssignments.term.name }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Summary Metric Cards -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 0.75rem 1rem; text-align: center;">
+              <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #166534;">Total Sections</div>
+              <div style="font-size: 1.5rem; font-weight: 800; color: #14532d; margin-top: 0.2rem;" data-testid="faculty-summary-sections">
+                {{ selectedFacultyAssignments.summary.total_sections }}
+              </div>
+            </div>
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.75rem 1rem; text-align: center;">
+              <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #1e40af;">Enrolled Students</div>
+              <div style="font-size: 1.5rem; font-weight: 800; color: #1e3a8a; margin-top: 0.2rem;" data-testid="faculty-summary-enrolled">
+                {{ selectedFacultyAssignments.summary.total_enrolled }}
+              </div>
+            </div>
+            <div style="background: #fefce8; border: 1px solid #fef08a; border-radius: 8px; padding: 0.75rem 1rem; text-align: center;">
+              <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #854d0e;">Evaluations Received</div>
+              <div style="font-size: 1.5rem; font-weight: 800; color: #713f12; margin-top: 0.2rem;" data-testid="faculty-summary-evaluations">
+                {{ selectedFacultyAssignments.summary.total_evaluations }}
+              </div>
+            </div>
+            <div style="background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 8px; padding: 0.75rem 1rem; text-align: center;">
+              <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #6b21a8;">Turnout Rate</div>
+              <div style="font-size: 1.5rem; font-weight: 800; color: #581c87; margin-top: 0.2rem;" data-testid="faculty-summary-turnout">
+                {{ selectedFacultyAssignments.summary.overall_turnout_pct }}%
+              </div>
+            </div>
+          </div>
+
+          <!-- Section Table -->
+          <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
+            <table class="setup-table" style="font-size: 0.85rem;" data-testid="faculty-assignments-table">
+              <thead>
+                <tr>
+                  <th scope="col">Course Code</th>
+                  <th scope="col">Course Title</th>
+                  <th scope="col">Section</th>
+                  <th scope="col">Units</th>
+                  <th scope="col">Enrolled</th>
+                  <th scope="col">Evaluated</th>
+                  <th scope="col">Turnout</th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="s in selectedFacultyAssignments.sections"
+                  :key="s.course_section_id"
+                  :data-testid="`faculty-sec-row-${s.course_section_id}`"
+                >
+                  <td><code>{{ s.course_code }}</code></td>
+                  <td><strong>{{ s.course_title }}</strong></td>
+                  <td><span class="section-badge">{{ s.section_code }}</span></td>
+                  <td>{{ s.units }}</td>
+                  <td>{{ s.enrolled_count }}</td>
+                  <td>{{ s.cleared_count }}</td>
+                  <td>
+                    <span style="font-weight: 700; color: #103c2e;">
+                      {{ s.turnout_pct }}%
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      class="status-badge"
+                      :class="s.double_blind_unlocked ? 'status-completed' : 'status-pending'"
+                      style="font-size: 0.72rem;"
+                    >
+                      {{ s.double_blind_unlocked ? 'Unlocked' : 'Locked' }}
+                    </span>
+                  </td>
+                </tr>
+                <tr v-if="selectedFacultyAssignments.sections.length === 0" data-testid="faculty-assignments-empty">
+                  <td colspan="8" style="text-align: center; padding: 1.5rem; color: #6b7280;">
+                    No teaching course sections assigned to this faculty member for this term.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <footer class="setup-modal-footer" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+          <button
+            v-if="selectedFacultyAssignments && selectedFacultyAssignments.sections.length > 0"
+            type="button"
+            class="btn-secondary"
+            data-testid="export-faculty-assignments-csv-btn"
+            style="font-size: 0.82rem; padding: 0.4rem 0.8rem;"
+            @click="exportFacultyAssignmentsCsv"
+          >
+            📊 Export Assignments (CSV)
+          </button>
+          <div style="margin-left: auto;">
+            <button type="button" class="btn-secondary" data-testid="close-faculty-assignments-btn" @click="showFacultyAssignmentsModal = false">Close</button>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <!-- MODAL: Edit User Account (Inspired by admin/manage_user.php) -->
+    <div
+      v-if="showEditUserModal"
+      class="setup-modal-scrim"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="edit-user-modal-title"
+      data-testid="edit-user-modal"
+    >
+      <div class="setup-modal-box">
+        <header class="setup-modal-header">
+          <h2 id="edit-user-modal-title">Edit User Account &amp; Credentials</h2>
+          <button type="button" class="modal-close-btn" data-testid="close-edit-user-modal" @click="showEditUserModal = false">&times;</button>
+        </header>
+
+        <form class="setup-modal-form" @submit.prevent="submitEditUser">
+          <div class="form-group">
+            <label for="edit-user-inst-id">Institutional ID:</label>
+            <input
+              id="edit-user-inst-id"
+              :value="userEditForm.institutional_id"
+              type="text"
+              class="form-input font-mono"
+              disabled
+              style="background: #f3f4f6; color: #6b7280;"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="edit-user-name">Full Name:</label>
+            <input
+              id="edit-user-name"
+              v-model="userEditForm.name"
+              type="text"
+              class="form-input"
+              data-testid="edit-user-name-input"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="edit-user-email">Institutional Email:</label>
+            <input
+              id="edit-user-email"
+              v-model="userEditForm.email"
+              type="email"
+              class="form-input"
+              data-testid="edit-user-email-input"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="edit-user-role">System Role:</label>
+            <select
+              id="edit-user-role"
+              v-model="userEditForm.role"
+              class="form-input"
+              data-testid="edit-user-role-select"
+              required
+            >
+              <option value="faculty">Faculty Member</option>
+              <option value="chair">Department Chair</option>
+              <option value="dean">College Dean</option>
+              <option value="admin">System Administrator (Registrar)</option>
+              <option value="student">Student</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-user-dept">Department / College Affiliation:</label>
+            <select
+              id="edit-user-dept"
+              v-model="userEditForm.department_id"
+              class="form-input"
+              data-testid="edit-user-dept-select"
+            >
+              <option :value="null">— Institution-Wide / None —</option>
+              <option
+                v-for="d in setupStore.departments"
+                :key="d.id"
+                :value="d.id"
+              >
+                {{ d.code }} — {{ d.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-user-pwd">Reset Password (Optional):</label>
+            <input
+              id="edit-user-pwd"
+              v-model="userEditForm.password"
+              type="password"
+              class="form-input"
+              placeholder="Leave blank to keep existing password"
+              data-testid="edit-user-password-input"
+              autocomplete="new-password"
+            />
+            <small style="font-size: 0.76rem; color: #6b7280; margin-top: 0.2rem; display: block;">
+              Enter a new password to reset, or leave empty to keep current password unchanged.
+            </small>
+          </div>
+
+          <footer class="setup-modal-footer">
+            <button type="button" class="btn-secondary" @click="showEditUserModal = false">Cancel</button>
+            <button
+              type="submit"
+              class="btn-primary"
+              data-testid="edit-user-save-btn"
+              :disabled="setupStore.actionBusy"
+            >
+              {{ setupStore.actionBusy ? 'Saving...' : 'Save User Changes' }}
+            </button>
+          </footer>
+        </form>
       </div>
     </div>
   </main>

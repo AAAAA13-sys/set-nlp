@@ -153,6 +153,13 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
   - Registered REST routes in `routes/api.php` and standalone router in `public/index.php` (`DELETE/POST /api/admin/setup/terms/{id}/delete`) with five-role RBAC enforcement (`admin` only).
   - Added `Delete 🗑️` action button (`data-testid="delete-term-btn-${t.id}"`) in Tab 2 of `AdminSetupView.vue` for inactive terms with dynamic status awareness and confirmation dialog.
   - Added Group 70 to the frontend test suite (74 tests across 71 suites, 100% PASS) and expanded `test_35` step 14 in PHPUnit backend suite (949 assertions); updated `scripts/verify-all.ps1` to 151 automated units (`151 / 151 PASS`); captured live Playwright screenshot artifact `live_admin_terms_actions.png`.
+- [x] **Checkpoint 51:** Faculty Teaching Assignments Modal & System User Account Edit & Status Lifecycle Management (`AcademicSetupService.php`, `AdminSetupController.php`, `AdminSetupView.vue`, `academicSetup.js`, `routes/api.php`, `public/index.php`, `tests/Feature/EvaluaTechBackendSuiteTest.php`, `tests/frontend/evaluatech.spec.js`, inspired by `admin/faculty_list.php`, `admin/manage_restriction.php`, `admin/user_list.php`, and `admin/manage_user.php`):
+  - Implemented `getFacultyAssignments(int $facultyId, ?int $academicTermId = null)` in `AcademicSetupService` and `AdminSetupController`, providing complete operational visibility into a faculty member's teaching load, course codes, units, enrolled students, evaluations cleared, turnout percentage, and double-blind lock statuses for any academic term (`GET /api/admin/setup/faculty/{id}/assignments`).
+  - Implemented `updateUser(int $userId, array $data)` with email duplicate verification, institutional role validation, department scoping, and optional bcrypt password resetting with security audit logging (`USER_UPDATED`).
+  - Implemented `toggleUserStatus(int $userId, ?int $operatorId = null)` with protection against administrator self-deactivation (`CANNOT_DEACTIVATE_SELF` - HTTP 422) and security audit telemetry (`USER_STATUS_TOGGLED`).
+  - Integrated `Assignments 📚` trigger button (`data-testid="view-faculty-assignments-btn-${fac.id}"`) in Tab 4 (Faculty Directory) backed by interactive Faculty Teaching Assignments modal (`data-testid="faculty-assignments-modal"`) with CSV export (`data-testid="export-faculty-assignments-csv-btn"`).
+  - Added Action column with `Edit ✏️` (`data-testid="edit-user-btn-${u.id}"`) and `Activate/Deactivate 🔄` (`data-testid="toggle-user-status-btn-${u.id}"`) buttons in Tab 6 (System Accounts Directory), backed by interactive Edit User Account & Credentials modal (`data-testid="edit-user-modal"`).
+  - Added Group 71 to frontend test suite (75 tests across 72 suites, 100% PASS) and expanded `test_35` step 15 in PHPUnit backend suite (971 assertions); updated `scripts/verify-all.ps1` to 152 automated units (`152 / 152 PASS`); captured live Playwright screenshot artifacts `live_admin_faculty_assignments_modal.png` and `live_admin_user_edit_modal.png`.
 
 ---
 
@@ -160,10 +167,10 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 
 | Verification Tier | Command Executed | Executed Units | Pass Rate | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (949 assertions) | 35 / 35 | **100% PASS** |
-| **Frontend DOM & UX Suite** | `npm.cmd test` | 71 test groups (74 tests) | 74 / 74 | **100% PASS** |
+| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (971 assertions) | 35 / 35 | **100% PASS** |
+| **Frontend DOM & UX Suite** | `npm.cmd test` | 72 test groups (75 tests) | 75 / 75 | **100% PASS** |
 | **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 46 unit tests | 46 / 46 | **100% PASS** |
 | **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 50 PHP files, 205 sources | 100% clean | **100% PASS** |
 | **Vite Production Bundle** | `npm.cmd run build` | 82 modules | Zero `.map` files | **100% PASS** |
-| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 151 automated units | 151 / 151 | **100% PASS** |
+| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 152 automated units | 152 / 152 | **100% PASS** |
 

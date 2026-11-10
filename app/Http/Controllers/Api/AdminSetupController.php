@@ -398,4 +398,112 @@ class AdminSetupController extends Controller
 
         return new JsonResponse($roster, 200);
     }
+
+    public function facultyAssignments(Request $request, int $id = 0): JsonResponse
+    {
+        if ($authError = $this->verifyAdminRole($request)) {
+            return $authError;
+        }
+
+        $facultyId = $id > 0 ? $id : (int) $request->input('faculty_id', 0);
+        $termId = $request->query('academic_term_id') ? (int) $request->query('academic_term_id') : null;
+
+        $assignments = $this->setupService->getFacultyAssignments($facultyId, $termId);
+        if (!$assignments) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'FACULTY_NOT_FOUND',
+                'message' => 'Faculty member record not found.',
+            ], 404);
+        }
+
+        return new JsonResponse($assignments, 200);
+    }
+
+    public function updateUser(Request $request, int $id = 0): JsonResponse
+    {
+        if ($authError = $this->verifyAdminRole($request)) {
+            return $authError;
+        }
+
+        $userId = $id > 0 ? $id : (int) $request->input('user_id', 0);
+        if ($userId <= 0) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'INVALID_USER_ID',
+                'message' => 'Valid user_id is required.',
+            ], 422);
+        }
+
+        try {
+            $result = $this->setupService->updateUser($userId, $request->all());
+            (new SecurityAuditService())->logEvent(
+                $this->setupService->getPdo(),
+                'USER_UPDATED',
+                'INFO',
+                [
+                    'user_id' => $userId,
+                    'institutional_id' => $result['institutional_id'] ?? null,
+                    'role' => $result['role'] ?? null,
+                    'password_updated' => $result['password_updated'] ?? false,
+                ],
+                'admin',
+                '/api/admin/setup/users/' . $userId
+            );
+            return new JsonResponse($result, 200);
+        } catch (InvalidArgumentException $e) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'INVALID_USER_PAYLOAD',
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+    }
+
+    public function toggleUserStatus(Request $request, int $id = 0): JsonResponse
+    {
+        if ($authError = $this->verifyAdminRole($request)) {
+            return $authError;
+        }
+
+        $userId = $id > 0 ? $id : (int) $request->input('user_id', 0);
+        if ($userId <= 0) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'INVALID_USER_ID',
+                'message' => 'Valid user_id is required.',
+            ], 422);
+        }
+
+        $user = $request->user();
+        $operatorId = is_object($user) && isset($user->id) ? (int) $user->id : null;
+
+        try {
+            $result = $this->setupService->toggleUserStatus($userId, $operatorId);
+            (new SecurityAuditService())->logEvent(
+                $this->setupService->getPdo(),
+                'USER_STATUS_TOGGLED',
+                'INFO',
+                [
+                    'user_id' => $userId,
+                    'is_active' => $result['is_active'] ?? false,
+                ],
+                'admin',
+                '/api/admin/setup/users/' . $userId . '/toggle-status'
+            );
+            return new JsonResponse($result, 200);
+        } catch (RuntimeException $e) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'CANNOT_DEACTIVATE_SELF',
+                'message' => $e->getMessage(),
+            ], 422);
+        } catch (InvalidArgumentException $e) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'USER_NOT_FOUND',
+                'message' => $e->getMessage(),
+            ], 404);
+        }
+    }
 }

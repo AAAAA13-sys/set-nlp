@@ -344,6 +344,15 @@ if ($isApiRoute) {
         } elseif (preg_match('#^/api/admin/setup/sections/(\d+)/roster$#', $uriPath, $m) === 1 && $method === 'GET') {
             $secId = (int) $m[1];
             $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->sectionRoster($req, $secId));
+        } elseif (preg_match('#^/api/admin/setup/faculty/(\d+)/assignments$#', $uriPath, $m) === 1 && $method === 'GET') {
+            $facId = (int) $m[1];
+            $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->facultyAssignments($req, $facId));
+        } elseif (preg_match('#^/api/admin/setup/users/(\d+)$#', $uriPath, $m) === 1 && in_array($method, ['PUT', 'POST'], true)) {
+            $uId = (int) $m[1];
+            $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->updateUser($req, $uId));
+        } elseif (preg_match('#^/api/admin/setup/users/(\d+)/toggle-status$#', $uriPath, $m) === 1 && $method === 'POST') {
+            $uId = (int) $m[1];
+            $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->toggleUserStatus($req, $uId));
         }
         // Security & Zero-Knowledge Vault Audit Endpoints (Role: admin, dean)
         elseif ($uriPath === '/api/security/vault-audit' && $method === 'GET') {

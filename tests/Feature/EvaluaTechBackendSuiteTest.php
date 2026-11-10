@@ -2819,6 +2819,7 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertTrue($userData['success']);
         $this->assertSame('FAC-10088', $userData['institutional_id']);
         $this->assertSame('faculty', $userData['role']);
+        $createdUserId = (int) $userData['user_id'];
 
         // Non-admin role cannot create users
         $facultyUser = (object) ['id' => 4, 'role' => 'faculty'];
@@ -2944,5 +2945,71 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $delTermData = $delEmptyTermRes->getData(true);
         $this->assertTrue($delTermData['success']);
         $this->assertSame($emptyTermId, $delTermData['term_id']);
+
+        // 15. Faculty Teaching Assignments Inspection & User Account Profile & Status Lifecycle (Inspired by admin/manage_user.php and admin/manage_restriction.php)
+        // a. Retrieve faculty teaching assignments
+        $facAssignReq = new \Illuminate\Http\Request(['academic_term_id' => 1]);
+        $facAssignReq->setUserResolver(fn () => $adminUser);
+        $facAssignRes = $setupController->facultyAssignments($facAssignReq, 5);
+        $this->assertSame(200, $facAssignRes->getStatusCode());
+        $facAssignData = $facAssignRes->getData(true);
+        $this->assertArrayHasKey('faculty', $facAssignData);
+        $this->assertArrayHasKey('term', $facAssignData);
+        $this->assertArrayHasKey('summary', $facAssignData);
+        $this->assertArrayHasKey('sections', $facAssignData);
+        $this->assertSame(5, $facAssignData['faculty']['id']);
+        $this->assertGreaterThanOrEqual(1, $facAssignData['summary']['total_sections']);
+
+        // Non-existent faculty returns 404
+        $invalidFacReq = new \Illuminate\Http\Request();
+        $invalidFacReq->setUserResolver(fn () => $adminUser);
+        $invalidFacRes = $setupController->facultyAssignments($invalidFacReq, 99999);
+        $this->assertSame(404, $invalidFacRes->getStatusCode());
+        $this->assertSame('FACULTY_NOT_FOUND', $invalidFacRes->getData(true)['code']);
+
+        // b. Update user profile and password
+        $updUserReq = new \Illuminate\Http\Request([
+            'name' => 'Prof. Alan Turing Updated',
+            'email' => 'aturing.updated@plpasig.edu.ph',
+            'role' => 'faculty',
+            'department_id' => 1,
+            'password' => 'newpassword123',
+        ]);
+        $updUserReq->setUserResolver(fn () => $adminUser);
+        $updUserRes = $setupController->updateUser($updUserReq, $createdUserId);
+        $this->assertSame(200, $updUserRes->getStatusCode());
+        $updUserData = $updUserRes->getData(true);
+        $this->assertTrue($updUserData['success']);
+        $this->assertSame('Prof. Alan Turing Updated', $updUserData['name']);
+        $this->assertSame('aturing.updated@plpasig.edu.ph', $updUserData['email']);
+        $this->assertTrue($updUserData['password_updated']);
+
+        // Duplicate email collision returns 422
+        $dupEmailReq = new \Illuminate\Http\Request([
+            'name' => 'Duplicate Email User',
+            'email' => 'registrar@evaluatech.edu',
+            'role' => 'faculty',
+        ]);
+        $dupEmailReq->setUserResolver(fn () => $adminUser);
+        $dupEmailRes = $setupController->updateUser($dupEmailReq, $createdUserId);
+        $this->assertSame(422, $dupEmailRes->getStatusCode());
+        $this->assertSame('INVALID_USER_PAYLOAD', $dupEmailRes->getData(true)['code']);
+
+        // c. Toggle user account status (active -> inactive)
+        $toggleReq = new \Illuminate\Http\Request();
+        $toggleReq->setUserResolver(fn () => $adminUser);
+        $toggleRes = $setupController->toggleUserStatus($toggleReq, $createdUserId);
+        $this->assertSame(200, $toggleRes->getStatusCode());
+        $toggleData = $toggleRes->getData(true);
+        $this->assertTrue($toggleData['success']);
+        $this->assertFalse($toggleData['is_active']);
+        $this->assertSame('INACTIVE', $toggleData['status_label']);
+
+        // Self-deactivation prevention for active administrator session returns 422
+        $selfDeactReq = new \Illuminate\Http\Request();
+        $selfDeactReq->setUserResolver(fn () => $adminUser);
+        $selfDeactRes = $setupController->toggleUserStatus($selfDeactReq, $adminUser->id);
+        $this->assertSame(422, $selfDeactRes->getStatusCode());
+        $this->assertSame('CANNOT_DEACTIVATE_SELF', $selfDeactRes->getData(true)['code']);
     }
 }

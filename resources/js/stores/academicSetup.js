@@ -432,6 +432,70 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     }
   }
 
+  async function fetchFacultyAssignments(facultyId, termId = null) {
+    try {
+      const url = termId
+        ? `/api/admin/setup/faculty/${facultyId}/assignments?academic_term_id=${termId}`
+        : `/api/admin/setup/faculty/${facultyId}/assignments`;
+      const res = await fetch(url, {
+        headers: getApiHeaders(),
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || 'Failed to fetch faculty teaching assignments.');
+      }
+      return await res.json();
+    } catch (e) {
+      error.value = e.message;
+      throw e;
+    }
+  }
+
+  async function updateUser(userId, payload) {
+    actionBusy.value = true;
+    error.value = null;
+    try {
+      const res = await fetch(`/api/admin/setup/users/${userId}`, {
+        method: 'PUT',
+        headers: getApiHeaders(),
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to update user account.');
+      }
+      await fetchOverview(selectedTermId.value);
+      return data;
+    } catch (e) {
+      error.value = e.message;
+      throw e;
+    } finally {
+      actionBusy.value = false;
+    }
+  }
+
+  async function toggleUserStatus(userId) {
+    actionBusy.value = true;
+    error.value = null;
+    try {
+      const res = await fetch(`/api/admin/setup/users/${userId}/toggle-status`, {
+        method: 'POST',
+        headers: getApiHeaders(),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to toggle user account status.');
+      }
+      await fetchOverview(selectedTermId.value);
+      return data;
+    } catch (e) {
+      error.value = e.message;
+      throw e;
+    } finally {
+      actionBusy.value = false;
+    }
+  }
+
   return {
     overview,
     loading,
@@ -466,8 +530,11 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     assignFaculty,
     deleteSection,
     createUser,
+    updateUser,
+    toggleUserStatus,
     fetchQuestionnaire,
     fetchStudentEnrollment,
     fetchSectionRoster,
+    fetchFacultyAssignments,
   };
 });

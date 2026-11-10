@@ -89,6 +89,9 @@ Route::middleware(['role:admin'])->group(function (): void {
     Route::post('/admin/setup/sections', [AdminSetupController::class, 'createSection']);
     Route::post('/admin/setup/assign-faculty', [AdminSetupController::class, 'assignFaculty']);
     Route::post('/admin/setup/users', [AdminSetupController::class, 'createUser']);
+    Route::match(['PUT', 'POST'], '/admin/setup/users/{id}', [AdminSetupController::class, 'updateUser']);
+    Route::post('/admin/setup/users/{id}/toggle-status', [AdminSetupController::class, 'toggleUserStatus']);
+    Route::get('/admin/setup/faculty/{id}/assignments', [AdminSetupController::class, 'facultyAssignments']);
     Route::match(['DELETE', 'POST'], '/admin/setup/sections/{id}/delete', [AdminSetupController::class, 'deleteSection']);
     Route::get('/admin/setup/questionnaire', [AdminSetupController::class, 'questionnaire']);
     Route::get('/admin/setup/students/{id}/enrollment', [AdminSetupController::class, 'studentEnrollment']);
