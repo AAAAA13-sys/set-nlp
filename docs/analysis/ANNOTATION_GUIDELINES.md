@@ -74,3 +74,4 @@ Comments are mapped to the 5 institutional Likert clusters when addressing facul
 - **Split Proportions:** 70% Development Partition (560 rows) / 30% Untouched Held-Out Test Partition (240 rows).
 - **Duplicate Handling:** Exact duplicate rows (ID 202 and ID 636: *"Makatarungan ang ibinigay na marka batay sa ipinakitang husay sa pag-uulat at pagsusulit."*) are strictly bound to the Development partition to prevent test set data leakage.
 - **Reference Independence:** Reference ratings and human sentiment labels are strictly withheld from prediction model inputs during inference and testing.
+

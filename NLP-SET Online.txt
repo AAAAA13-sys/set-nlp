@@ -4,9 +4,9 @@
 
 In higher education institutions, the Student Evaluation of Teachers (SET) functions as an administrative mechanism for measuring pedagogical effectiveness, determining faculty tenure or promotion, and driving continuous curriculum refinement. Historically executed using manual paper questionnaires, these evaluations were plagued by administrative burdens, including high printing costs, slow physical distribution, manual optical mark recognition (OMR) tabulation bottlenecks, and transcription errors. To modernize this process, educational institutions transitioned toward web-based evaluation platforms integrated into student information systems.
 
-Despite digitizing the survey instruments, online evaluation periods remain fraught with structural, behavioral, and technological vulnerabilities. In most university models, the evaluation period is restricted to a narrow, high-stakes operational window (typically 7 to 14 days preceding midterm or final examinations). To achieve viable institutional response rates, academic administrations frequently impose mandatory administrative hurdles, such as gating final grade releases or digital examination permits behind evaluation completion.
+Despite digitizing the survey instruments, online evaluation periods remain fraught with structural, behavioral, and technological vulnerabilities. In legacy university models, the evaluation period was often artificially tied to coercive administrative hurdles, such as attempting to gate examination permits or marks behind evaluation completion. At Pamantasan ng Lungsod ng Pasig (PLP), examination permits are strictly never gated on student evaluations. Instead, institutional governance relies on non-coercive, transparent **Evaluation Participation Tracking**—systematically tracking completion progress by course, section, department, and college to identify students who have not yet finished evaluating for targeted administrative follow-up, while issuing cryptographic completion clearance certificates that strictly decouple student identities from anonymous feedback.
 
-Mandatory gating triggers acute concurrency spikes on institutional servers as thousands of enrolled students attempt to complete evaluations simultaneously. The resulting traffic surges frequently trigger server timeouts, lost submissions, and database locking deadlocks. Furthermore, coercive completion requirements induce survey fatigue, prompting students to resort to "speed-running"—submitting identical Likert-scale ratings (e.g., straight 5s or straight 1s) and low-effort or blank qualitative comments within seconds merely to unlock examination clearances. Concurrently, students often fear potential grade retaliation from instructors, leading to inflated, inauthentic scores if platform anonymity is perceived as compromised. At the administrative level, Deans and Department Chairs receive consolidated evaluation reports weeks or months after academic terms have concluded, rendering the collected feedback reactive rather than proactive.
+Coercive gating practices in legacy systems triggered acute concurrency spikes on institutional servers as thousands of enrolled students attempted to complete evaluations simultaneously under duress. The resulting traffic surges frequently triggered server timeouts, lost submissions, and database locking deadlocks. Furthermore, coercive completion requirements induced severe survey fatigue, prompting students to resort to "speed-running"—submitting identical Likert-scale ratings (e.g., straight 5s or straight 1s) and low-effort or blank qualitative comments within seconds merely to bypass forms. Concurrently, students often fear potential grade retaliation from instructors, leading to inflated, inauthentic scores if platform anonymity is perceived as compromised. At the administrative level, Deans and Department Chairs receive consolidated evaluation reports weeks or months after academic terms have concluded, rendering the collected feedback reactive rather than proactive.
 
 To address these vulnerabilities, this study develops and evaluates **EvaluaTech**, an automated Student Evaluation of Teachers (SET) platform equipped with integrity-guarded completion queues, double-blind cryptographic clearance synchronization, response authenticity validation, and automated sentiment-driven feedback analytics. By decoupling student clearance tokens from anonymized survey payloads, enforcing interaction timers, and utilizing Natural Language Processing (NLP) to parse unstructured student feedback, the platform transforms the evaluation season into an authentic, secure, and immediate feedback ecosystem.
 
@@ -22,7 +22,7 @@ Peter and Mulyawan demonstrated that multi-tier web platforms utilizing secure r
 
 ### Survey Gating, Evaluation Fatigue, and Response Quality
 
-Linking institutional requirements (such as viewing examination permits or final term marks) to survey completion is an established method to boost participation rates. However, research highlights significant behavioral trade-offs. Goos and Salomons demonstrated that mandatory evaluation policies increase nominal completion numbers but elevate measurement error caused by student disengagement. When completing surveys under coercion, students exhibit satisficing behaviors, including uniform rating selections across distinct teaching dimensions (straight-lining) and rapid clicking to bypass forms.
+Historically, legacy institutions attempted to boost participation by linking high-stakes administrative gates (such as examination permits or marks) to survey completion. However, research highlights significant behavioral trade-offs that undermine data validity. Goos and Salomons demonstrated that coercive evaluation policies elevate measurement error caused by student disengagement and resentment. When completing surveys under administrative coercion, students exhibit satisficing behaviors, including uniform rating selections across distinct teaching dimensions (straight-lining) and rapid clicking to bypass forms. Consequently, Pamantasan ng Lungsod ng Pasig strictly rejects examination permit gating, choosing an evidence-based participation tracking architecture that preserves student agency and feedback authenticity.
 
 Spooren et al. surveyed methodological validity in student evaluations, highlighting that non-differentiated responses heavily bias faculty appraisals and distort tenure benchmarks. Addressing satisficing requires real-time algorithmic checks, including page dwell-time validation, inter-item variance calculations, and front-end interaction throttling, which encourage authentic engagement without deadlocking the user's progress.
 
@@ -50,7 +50,7 @@ To evaluate overall software quality, Ratumbuisang and Ratumbuisang and Falco an
 
 This study addresses the operational bottlenecks, data degradation, and security vulnerabilities that occur during institutional Student Evaluation of Teachers (SET) seasons by answering the following research questions:
 
-1. How can a web-based evaluation platform be architected to enable secure, high-concurrency evaluation queuing, instantaneous cryptographic anonymity decoupling, and atomic examination clearance issuance upon survey completion?
+1. How can a web-based evaluation platform be architected to enable secure, high-concurrency evaluation queuing, instantaneous cryptographic anonymity decoupling, evaluation participation tracking, and atomic evaluation completion clearance issuance without examination permits?
 2. To what extent does the integration of real-time response authenticity validation (speed-run detection and zero-variance filtering) alongside NLP-driven sentiment analytics improve the diagnostic utility and reliability of student feedback for academic deans and department chairs?
 3. What is the level of software quality, operational efficiency, and user acceptability of the proposed system, as evaluated through ISO/IEC 25010 quality characteristics, the System Usability Scale (SUS), and automated concurrency transaction benchmarks?
 
@@ -64,7 +64,7 @@ To design, develop, and evaluate **EvaluaTech**, a web-based Student Evaluation 
 
 ### Specific Objectives
 
-1. To engineer a secure, role-based platform that imports academic course-section rosters, dynamically populates individual student evaluation queues, and executes decoupled, atomic transactions that grant examination clearance while anonymizing survey responses.
+1. To engineer a secure, role-based platform that imports academic course-section rosters, dynamically populates individual student evaluation queues, tracks completion progress across departments and colleges, and executes decoupled, atomic transactions that grant evaluation completion clearance while anonymizing survey responses.
 2. To implement data-integrity mechanisms that detect rushed or uniform submissions (straight-lining) and deploy a Python-based NLP pipeline that categorizes open-ended student feedback by sentiment polarity and pedagogical theme.
 3. To construct role-tailored dashboards for Deans, Department Chairs, and Faculty that visualize real-time completion rates, Likert-scale diagnostic summaries, and sentiment-classified feedback trends.
 4. To verify platform performance under simulated concurrent user loads and evaluate the system’s usability and software quality using the System Usability Scale (SUS) and ISO/IEC 25010 evaluation models.
@@ -75,7 +75,7 @@ To design, develop, and evaluate **EvaluaTech**, a web-based Student Evaluation 
 
 * **Academic Administrators (Deans and Department Chairs):** Eliminates manual OMR and spreadsheet tabulation, delivering real-time response heatmaps and immediate diagnostic alerts for faculty members requiring pedagogical interventions.
 * **Faculty Members:** Provides structured, constructive feedback categorized by instructional criteria without exposure to unvetted, abusive, or biased commentary, while guaranteeing that evaluation viewing is temporally locked until grade submission is finalized.
-* **Students:** Offers a streamlined, mobile-responsive evaluation queue that guarantees strict anonymity, protects against grade retaliation, and automatically unlocks institutional exam permits upon completion without administrative delays.
+* **Students:** Offers a streamlined, mobile-responsive evaluation queue that guarantees strict anonymity, protects against grade retaliation, and automatically generates verifiable evaluation participation clearance certificates upon completion without administrative delays or intrusive examination permits.
 * **Software Engineers and Educational Technologists:** Provides a reference architecture demonstrating how cryptographic decoupling, concurrency control, and NLP analytics can be integrated within academic enterprise environments.
 
 ---
@@ -84,7 +84,7 @@ To design, develop, and evaluate **EvaluaTech**, a web-based Student Evaluation 
 
 * **Student Evaluation of Teachers (SET):** The institutional survey process wherein enrolled students assess faculty instructional performance across predefined pedagogical dimensions.
 * **Evaluation Queue:** A personalized list of pending faculty evaluations generated dynamically for a student based on their active course enrollment.
-* **Clearance Token:** A digital credential issued by the system upon completion of all assigned evaluations, updating the student's institutional record to grant access to examination permits or grade sheets.
+* **Clearance Token:** A digital cryptographic credential issued by the system upon completion of assigned course evaluations, certifying 100% completion in the institutional participation tracker and providing proof of participation without gating examination entry.
 * **Cryptographic Decoupling:** The technical separation of the student's identifying metadata from their submitted survey responses using one-way salted hashes and isolated transaction tables.
 * **Mandatory Timing Policy & Response Authenticity:** An institutional policy and validation mechanism that enables students to submit completed evaluations whenever they are ready without individual minimum waiting periods or maximum answering durations, within administrator-defined evaluation windows.
 * **Straight-Lining (Zero Variance):** A satisficing response pattern where a respondent selects identical Likert ratings across all survey items regardless of question phrasing.
@@ -203,8 +203,8 @@ EvaluaTech is engineered using a decoupled, four-tier web architecture that isol
                                         │
                       ┌─────────────────┴─────────────────┐
                       ▼                                   ▼
-          [Clearance Badge Unlocked]          [Async Dispatch to Analytics]
-          - Exam Permit Released               - NLP Sentiment Tagging
+          [Clearance Status Cleared]          [Async Dispatch to Analytics]
+          - Participation Recorded             - NLP Sentiment Tagging
           - Next Teacher in Queue              - Pedagogical Category Clustered
 
 ```
@@ -313,7 +313,7 @@ The development of EvaluaTech is governed by the **Agile Development Methodology
 
 ## Project Capabilities and Operational Workflows (SOP 1)
 
-*How can a web-based evaluation platform be architected to enable secure, high-concurrency evaluation queuing, instantaneous cryptographic anonymity decoupling, and atomic examination clearance issuance upon survey completion?*
+*How can a web-based evaluation platform be architected to enable secure, high-concurrency evaluation queuing, instantaneous cryptographic anonymity decoupling, evaluation participation tracking, and atomic evaluation participation clearance issuance upon survey completion?*
 
 EvaluaTech addresses this problem through coordinated browser presentation, Laravel middleware services, and an ACID-compliant MySQL database layer.
 
@@ -364,7 +364,7 @@ When a student submits an evaluation:
 3. An atomic database transaction executes: the student's institutional record in the clearance table is marked as completed, while the rating data is saved into the decoupled vault table without student identification metadata.
 
 
-4. A signed clearance verification token is issued to the client, unlocking examination clearance while ensuring survey responses remain completely anonymous.
+4. A signed clearance verification token is issued to the client, certifying evaluation participation in the institutional tracker while ensuring survey responses remain completely anonymous.
 
 ---
 

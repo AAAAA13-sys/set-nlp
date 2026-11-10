@@ -19,7 +19,7 @@ Baseline: 8 November 2026. Planning only: no application behavior is implemented
 | Five institutional roles | Dedicated workspaces and server-enforced permissions for System Administrator (Registrar), Dean, Department Chair, Faculty, and Student |
 | Academic catalog & roster ingestion | Atomic CSV and JSON import linking students, instructors, course sections, departments, and active academic terms |
 | Dynamic student evaluation queue (SOP 1) | Personalized queue derived from active term enrollments showing progress count, completion percentage, pending surveys, and signed clearances |
-| Dual-token cryptographic decoupling (SOP 1) | Separate `evaluation_clearances` (tracks student compliance and exam permit status) from `evaluation_vault` (stores stripped, salted survey ratings and comments with zero student foreign keys) |
+| Dual-token cryptographic decoupling (SOP 1) | Separate `evaluation_clearances` (tracks student participation compliance and evaluation clearance status) from `evaluation_vault` (stores stripped, salted survey ratings and comments with zero student foreign keys) |
 | High-concurrency & idempotency (SOP 1) | Row-level pessimistic locking and unique submission keys (`FT-02` check) preventing duplicate submissions or database deadlocks during exam-week traffic spikes |
 | Mandatory Timing Policy & Window Governance | Students submit whenever ready without artificial minimum/maximum delays ($0\text{s+}$ valid, negative blocked); administrator-managed opening/closing window schedules in Asia/Manila |
 | Straight-lining / zero-variance guard (SOP 2) | Server and client population variance calculation across Likert ratings; zero variance ($\sigma^2 = 0$) prompts user confirmation and records an administrative integrity warning flag |
@@ -43,7 +43,7 @@ Proposed stored values: `admin`, `dean`, `chair`, `faculty`, `student`.
 | Toggle Registrar Grade Lock (`registrar_lock`) | Yes | View status | View status | No | No |
 | Mark course section grades submitted | Supervised override | No | No | Own sections only | No |
 | View student evaluation queue & submit SET | No | No | No | No | Own enrolled sections only |
-| Receive signed digital exam clearance permit | Audit all students | View summary | View department summary | No | Own clearance permit |
+| Receive signed digital evaluation clearance certificate | Audit all students | View summary | View department summary | No | Own clearance certificate |
 | View college-wide completion & NLP heatmaps | Operational view | All departments | Own department only | No | No |
 | View Faculty Exception Watchlist ($<3.5$ or $>35\%$ neg) | No | All college faculty | Own department faculty | No | No |
 | View individual faculty aggregated SET report | Metadata only | All college faculty | Own department faculty | Own sections only when Double-Blind unlocked | No |
@@ -100,7 +100,7 @@ Files: `EvaluationClearance` and `EvaluationVault` models; migration `0001_01_01
 - [x] Structure `evaluation_vault` with a random UUID primary key, `course_section_id`, `faculty_id`, `academic_term_id`, `ratings_json`, `mean_score`, `rating_variance`, `is_straight_lined`, `dwell_time_seconds`, `comment_text`, salted `comment_hash`, NLP sentiment fields, and `recorded_date`.
 - [x] Omit `student_id`, `user_id`, `clearance_id`, IP address, user agent, and high-precision timestamps from `evaluation_vault` so no database join or timing analysis can reverse-link a survey to a student.
 - [x] Execute submission inside a single ACID database transaction using row-level pessimistic locking (`SELECT ... FOR UPDATE`) on the student's enrollment and clearance records.
-- [x] Issue a cryptographically signed clearance verification token per completed course and unlock the student's overall Digital Examination Permit once all enrolled courses in the active term reach `CLEARED` status.
+- [x] Issue a cryptographically signed clearance verification token per completed course and certify the student's overall Evaluation Participation Clearance once all enrolled courses in the active term reach `CLEARED` status.
 
 Acceptance: submitting an evaluation marks the student's course clearance as `CLEARED`, issues a verifiable clearance token, writes an anonymized record to `evaluation_vault`, and leaves zero schema or metadata links between the student's identity and the vault row.
 
@@ -158,7 +158,7 @@ Acceptance: sample comments from Chapter III ("Explains complex algorithms very 
 Files: `resources/views/app.blade.php`; `resources/js/app.js`; `resources/js/router/index.js`; Pinia stores `auth.js` and `evaluation.js`; Vue views `LoginView.vue`, `StudentQueueView.vue`, `EvaluationFormView.vue`, `FacultyDashboardView.vue`, `DeanDashboardView.vue`, and `AdminRosterView.vue`; shared components `NavbarHeader.vue`, `DwellTimerBadge.vue`, `StraightLineModal.vue`, and `ClearancePermitCard.vue`.
 
 - [x] Build the institutional header component displaying the active academic term, authenticated user identifier, role badge, and real-time clearance status (`PENDING` vs `CLEARED`).
-- [x] Implement `StudentQueueView.vue` featuring the visual progress bar (`My Evaluation Queue: 3 of 6 Completed`), course status table (`CS-401` through `PHYS-101`), action buttons (`[Start Evaluation]` vs `[Clearance Signed]`), and downloadable digital Examination Permit card once all courses are completed.
+- [x] Implement `StudentQueueView.vue` featuring the visual progress bar (`My Courses: 3 of 6 Completed`), course status table (`CS-401` through `PHYS-101`), action buttons (`[Start Evaluation]` vs `[Receipt 🧾]`), and verifiable digital Evaluation Clearance Certificate card once all courses are completed.
 - [x] Implement `EvaluationFormView.vue` with 5 clusters of 5-point Likert scale items (25 items across Pedagogical Delivery, Assessment & Grading, Classroom Management, Professional Conduct, and Student Support & Mentorship), the 4 structured qualitative professor questions (1. 3 words that describe the experience with the prof; 2. room for improvements of the prof with sub-topics a. topic 1, b. topic 2...; 3. teaching strengths; 4. actionable recommendations; optional 5th observation capped at max 5 questions), client-side zero-variance detection opening `StraightLineModal.vue`, mandatory timing policy (immediate submission allowed, negative durations blocked), and double-submit protection.
 - [x] Implement `FacultyDashboardView.vue` showing the double-blind lock banner when grades or registrar locks are pending, and rendering dimension score cards and sentiment-grouped narrative insights when unlocked.
 - [x] Implement `DeanDashboardView.vue` (and Department Chair view) displaying response rate vs the $>85\%$ target, total submissions logged, average evaluation duration, integrity flag rate, horizontal sentiment polarity distribution bars (Positive, Neutral, Negative), and the **Faculty Exception Watchlist** with primary pedagogical tags.
@@ -182,8 +182,8 @@ Acceptance: all 119 automated test units pass across Frontend, Backend, and Pyth
 - [x] Index `(student_id, course_section_id)` and `submission_key` on `evaluation_clearances`, and index `(course_section_id, faculty_id, academic_term_id)` and `(faculty_id, sentiment_valence, pedagogical_tag)` on `evaluation_vault`.
 - [x] Never expose internal user IDs or clearance keys in Dean, Chair, or Faculty API resources.
 - [x] Neutralize potential CSV formula injection (`=`, `+`, `-`, `@`) on all administrative accreditation and report exports.
-- [x] Cover loading, empty queue, double-blind locked, validation error, zero-variance confirmation, network retry, and completed exam permit states in the Vue.js 3 interface.
-- [x] Preserve keyboard navigation, ARIA labels on Likert radio groups and timers, and print-friendly styling for the Student Examination Clearance Permit and Dean Accreditation Summary.
+- [x] Cover loading, empty queue, double-blind locked, validation error, zero-variance confirmation, network retry, and completed evaluation clearance states in the Vue.js 3 interface.
+- [x] Preserve keyboard navigation, ARIA labels on Likert radio groups and timers, and print-friendly styling for the Student Evaluation Clearance Certificate and Dean Accreditation Summary.
 
 ## Focused multi-tier verification matrix
 
@@ -205,15 +205,15 @@ Acceptance: all 119 automated test units pass across Frontend, Backend, and Pyth
 | Vue.js 3 Portals | Student, Faculty, Chair, Dean, and Admin SPA views pass all 31 DOM test groups |
 | Verification & Load | All 100 automated test units (Vitest, PHPUnit, Pytest) and concurrency checks pass |
 | Accreditation & Action Plans | AACCUP Level III, CHED CMO 46, ISO 25010 (4.77), and Dean action plan resolution tracking live |
-| Permit Verification & Synthesis | Digital exam permit registrar verification and college-wide calamanCy narrative synthesis live |
+| Clearance Verification & Synthesis | Digital evaluation clearance verification and college-wide calamanCy narrative synthesis live |
 | Faculty Action Plan Resolution | Faculty portal pedagogical action plan acknowledgment, rubric interventions, and milestone resolution tracking live |
 | Evaluation Window & Parameter Tuning | Admin evaluation period control (OPEN, SUSPENDED, CLOSED) and dynamic threshold tuning live |
-| Submission Flow & Qualitative Export | End-to-end queue clearance to permit issuance and Dean department filtering with calamanCy JSON/CSV export live |
+| Submission Flow & Qualitative Export | End-to-end queue clearance to completion certificate issuance and Dean department filtering with calamanCy JSON/CSV export live |
 | Dedicated Role Webpages & RBAC Guards | Strict five-role dedicated webpages (/queue, /faculty, /chair, /dean, /admin, /access-denied), dynamic NavbarHeader, and 101 automated test units live |
 | Agency Multi-Agent Optimization | 5 Agency Subagents (DB Optimizer, UX Architect, API Tester, Document Generator, Performance Benchmarker), Print/PDF styles, and 103 automated test units live |
 | Institutional Login & Privacy Portal | PLP institutional LoginView with RA 10173 Data Privacy disclosure, show/hide password toggle, header sign-out workflow, and 104 automated test units live |
 | Interactive calamanCy NLP Lab & A11y Hardening | PlpAnalyticsLabModal mounted in Dean & Chair workspaces, modal Escape key listeners, WCAG 2.2 focus-visible outlines, and 105 automated test units live |
-| Longitudinal Trends & Public Proctor Verification | Longitudinal semester trend analytics (AACCUP Area III), delta KPI indicators, semester comparison matrix, accreditation dossier export bundle, un-gated public proctor exam permit verification, and 108 automated test units live |
+| Longitudinal Trends & Public Verification | Longitudinal semester trend analytics (AACCUP Area III), delta KPI indicators, semester comparison matrix, accreditation dossier export bundle, un-gated public clearance verification, and 108 automated test units live |
 | Department Completion Heatmaps & Accreditation Audit | Section-by-section response heatmaps, color density bands, 8-point AACCUP Area III / CHED CMO 46 compliance audit checklist, and 110 automated test units live |
 | AACCUP Evidence Dossier & Performance Quartiles | Cryptographically sealed SHA-256 accreditation evidence dossier (`PLP-AACCUP3-*`), 95% confidence margin-of-error metrics, and 4-tier faculty performance quartiles live |
 | Production Hardening & Seeder Bearer Auth | Zero demo/cheat buttons anywhere in UI or API, HMAC-SHA256 Bearer token seeder authentication (`EvaluaTechDemoSeeder`), 100% DB-backed workflows, `taste-skill` / `web-design-guidelines` / `awesome-design` UI polish, live `playwright-cli` E2E verification, and 113 automated test units live |

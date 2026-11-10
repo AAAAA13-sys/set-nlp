@@ -130,3 +130,4 @@ With the introduction of `TAG_UNCLASSIFIED` (`Unclassified / Needs Review`) and 
 1. **AACCUP Level III Governance:** Sentiment analytics are strictly designated as **supporting contextual evidence** and cannot independently trigger faculty sanctions or override quantitative Likert evaluations.
 2. **Double-Blind Anonymity Decoupling:** `evaluation_clearances` (student identities) and `evaluation_vault` (ratings and sentiment tags) remain physically separate. Sentiment analysis runs exclusively on scrubbed text without student identifiers.
 3. **Truth in Documentation:** All system documentation (`AGENTS.md`, `WORK_STATUS.md`, API documentation) now explicitly states the measured $62.08\%$ test accuracy and heuristic-fallback runtime status.
+
