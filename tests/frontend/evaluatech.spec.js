@@ -1793,4 +1793,20 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('data-testid="terms-empty-state"'), 'Terms empty state row present');
     });
   });
+
+  describe('Group 63: Department Chair Faculty Directory Search & Standing Filter Scoping', () => {
+    it('verifies search input, standing filter dropdown, and empty state in Chair faculty roster', () => {
+      const chairViewSfc = readResourceFile('views/ChairDashboardView.vue');
+
+      // 1. Search & Standing Filter Controls
+      assert.ok(chairViewSfc.includes('data-testid="chair-faculty-search-input"'), 'Chair faculty search input present');
+      assert.ok(chairViewSfc.includes('data-testid="chair-standing-filter-select"'), 'Chair standing filter select present');
+      assert.ok(chairViewSfc.includes('data-testid="chair-reset-filters-btn"'), 'Chair reset filters button present');
+
+      // 2. Computed Logic & Iteration
+      assert.ok(chairViewSfc.includes('filteredDepartmentFaculty'), 'filteredDepartmentFaculty computed property defined');
+      assert.ok(chairViewSfc.includes('v-for="f in filteredDepartmentFaculty"'), 'Faculty table iterates over filteredDepartmentFaculty');
+      assert.ok(chairViewSfc.includes('data-testid="chair-faculty-empty-state"'), 'Chair faculty empty state row present');
+    });
+  });
 });

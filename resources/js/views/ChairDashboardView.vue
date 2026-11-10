@@ -26,6 +26,9 @@ const endorsementStatusMsg = ref(null);
 const showReportModal = ref(false);
 const selectedFacultyReport = ref(null);
 
+const chairFacultySearchInput = ref('');
+const chairStandingFilter = ref('ALL');
+
 function openFacultyReportModal(faculty) {
   selectedFacultyReport.value = faculty;
   showReportModal.value = true;
@@ -87,7 +90,7 @@ function exportChairFacultyCsv() {
     'Primary Pedagogical Focus',
     'Watchlist Status',
   ];
-  const rows = departmentFaculty.value.map((f) => [
+  const rows = filteredDepartmentFaculty.value.map((f) => [
     sanitizeCsvCell(f.faculty_name),
     sanitizeCsvCell(f.id),
     sanitizeCsvCell(f.course_code),
@@ -152,6 +155,21 @@ const departmentFaculty = computed(() => {
       primary_tag: inst.primary_tag || 'Pedagogical Delivery',
       status: flagged ? 'WATCHLIST_TRIGGERED' : 'NORMAL',
     };
+  });
+});
+
+const filteredDepartmentFaculty = computed(() => {
+  const q = chairFacultySearchInput.value.trim().toLowerCase();
+  return departmentFaculty.value.filter((f) => {
+    if (chairStandingFilter.value === 'WATCHLIST_ACTION' && f.status !== 'WATCHLIST_TRIGGERED') {
+      return false;
+    }
+    if (chairStandingFilter.value === 'GOOD_STANDING' && f.status === 'WATCHLIST_TRIGGERED') {
+      return false;
+    }
+    if (!q) return true;
+    const haystack = `${f.faculty_name || ''} ${f.course_code || ''} ${f.course_title || ''} ${f.section_code || ''} ${f.primary_tag || ''}`.toLowerCase();
+    return haystack.includes(q);
   });
 });
 
@@ -388,7 +406,7 @@ async function endorseActionPlan(item) {
           <span class="eyebrow-badge">FACULTY ROSTER</span>
           <h3 class="section-title">
             {{ departmentName }} Instructors
-            <span class="ui-badge-count">{{ departmentFaculty.length }}</span>
+            <span class="ui-badge-count">{{ filteredDepartmentFaculty.length !== departmentFaculty.length ? `${filteredDepartmentFaculty.length} / ${departmentFaculty.length}` : departmentFaculty.length }}</span>
             <span class="ui-hint" tabindex="0" aria-label="Department instructor summary" data-hint="Summary of student evaluations across all active sections in this department.">?</span>
           </h3>
         </div>
@@ -410,16 +428,45 @@ async function endorseActionPlan(item) {
         </div>
       </div>
 
-      <!-- Academic Supervisor Scope Filters -->
-      <div class="supervisor-filter-bar" style="display: flex; gap: 0.65rem; flex-wrap: wrap; margin-top: 0.75rem; padding: 0.65rem 0.85rem; background: #fbfcfb; border: 1px solid #e1e7e1; border-radius: 8px;">
-        <div style="font-size: 0.8rem;">
-          <span style="color: #64748b; font-weight: 600;">Term:</span>
-          <strong style="margin-left: 0.25rem; color: #103c2e;">1st Semester AY 2026-2027</strong>
-        </div>
-        <div style="font-size: 0.8rem;">
+      <!-- Academic Supervisor Scope & Directory Filters -->
+      <div class="supervisor-filter-bar" style="display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap; margin-top: 0.75rem; padding: 0.65rem 0.85rem; background: #fbfcfb; border: 1px solid #e1e7e1; border-radius: 8px;">
+        <div style="font-size: 0.8rem; margin-right: 0.25rem;">
           <span style="color: #64748b; font-weight: 600;">Scope:</span>
-          <strong style="margin-left: 0.25rem; color: #103c2e;">{{ departmentName }} (Assigned Scope)</strong>
+          <strong style="margin-left: 0.25rem; color: #103c2e;">{{ departmentName }}</strong>
         </div>
+        <div style="flex: 1; min-width: 200px;">
+          <input
+            type="search"
+            v-model="chairFacultySearchInput"
+            class="form-input search-input"
+            placeholder="Search instructor, course code, section…"
+            data-testid="chair-faculty-search-input"
+            aria-label="Search department faculty"
+            style="width: 100%; padding: 0.4rem 0.75rem; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px;"
+          />
+        </div>
+        <div style="min-width: 160px;">
+          <select
+            v-model="chairStandingFilter"
+            class="form-input"
+            data-testid="chair-standing-filter-select"
+            aria-label="Filter faculty by standing status"
+            style="padding: 0.4rem 0.75rem; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px;"
+          >
+            <option value="ALL">All Standings</option>
+            <option value="GOOD_STANDING">✅ Good Standing</option>
+            <option value="WATCHLIST_ACTION">⚠️ Watchlist Action</option>
+          </select>
+        </div>
+        <button
+          v-if="chairFacultySearchInput || chairStandingFilter !== 'ALL'"
+          type="button"
+          class="btn-secondary btn-xs"
+          data-testid="chair-reset-filters-btn"
+          @click="chairFacultySearchInput = ''; chairStandingFilter = 'ALL';"
+        >
+          Reset
+        </button>
       </div>
 
       <!-- Contextual Interpretation Notice -->
@@ -443,7 +490,7 @@ async function endorseActionPlan(item) {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="f in departmentFaculty" :key="f.id" :data-testid="`chair-row-${f.course_code}`">
+            <tr v-for="f in filteredDepartmentFaculty" :key="f.id" :data-testid="`chair-row-${f.course_code}`">
               <td><strong>{{ f.faculty_name }}</strong></td>
               <td>
                 <strong class="course-code-cell">{{ f.course_code }}</strong>
@@ -483,9 +530,9 @@ async function endorseActionPlan(item) {
                 </button>
               </td>
             </tr>
-            <tr v-if="departmentFaculty.length === 0">
+            <tr v-if="filteredDepartmentFaculty.length === 0" data-testid="chair-faculty-empty-state">
               <td colspan="9" style="text-align:center;padding:1.5rem;color:var(--text-muted);">
-                No departmental evaluation records available yet for the active term.
+                {{ departmentFaculty.length === 0 ? 'No departmental evaluation records available yet for the active term.' : 'No faculty records match your search or filter criteria. Try adjusting your query or resetting filters.' }}
               </td>
             </tr>
           </tbody>
