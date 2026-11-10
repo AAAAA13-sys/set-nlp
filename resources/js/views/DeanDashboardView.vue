@@ -283,6 +283,24 @@ const heatmapData = ref({
   sections: [],
 });
 
+const deanHeatmapSearchInput = ref('');
+const deanHeatmapTargetFilter = ref('ALL');
+
+const filteredHeatmapSections = computed(() => {
+  const q = deanHeatmapSearchInput.value.trim().toLowerCase();
+  return (heatmapData.value?.sections || []).filter((s) => {
+    if (deanHeatmapTargetFilter.value === 'TARGET_MET' && !s.target_met) {
+      return false;
+    }
+    if (deanHeatmapTargetFilter.value === 'PENDING_CLEARANCE' && s.target_met) {
+      return false;
+    }
+    if (!q) return true;
+    const haystack = `${s.course_code || ''} ${s.course_title || ''} ${s.section_code || ''} ${s.faculty_name || ''}`.toLowerCase();
+    return haystack.includes(q);
+  });
+});
+
 const showSectionReportModal = ref(false);
 const selectedSectionReport = ref(null);
 
@@ -794,6 +812,43 @@ function exportAccreditationDossier() {
           <span class="status-badge status-flagged">&lt; 70% CRITICAL ({{ heatmapData.band_distribution.CRITICAL }} sections)</span>
         </div>
 
+        <!-- Dean Heatmap Search and Target Filter Controls -->
+        <div class="filter-controls-row" style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-top: 0.85rem; padding: 0.65rem 0.85rem; background: #fbfcfb; border: 1px solid #e1e7e1; border-radius: 8px;">
+          <div style="flex: 1; min-width: 220px;">
+            <input
+              type="search"
+              v-model="deanHeatmapSearchInput"
+              class="form-input search-input"
+              placeholder="Search course code, title, section, instructor…"
+              data-testid="dean-heatmap-search-input"
+              aria-label="Search college heatmap sections"
+              style="width: 100%; padding: 0.4rem 0.75rem; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px;"
+            />
+          </div>
+          <div style="min-width: 170px;">
+            <select
+              v-model="deanHeatmapTargetFilter"
+              class="form-input"
+              data-testid="dean-heatmap-target-filter"
+              aria-label="Filter sections by institutional target"
+              style="padding: 0.4rem 0.75rem; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px;"
+            >
+              <option value="ALL">All Participation Targets</option>
+              <option value="TARGET_MET">🎯 Target Met (&gt;85%)</option>
+              <option value="PENDING_CLEARANCE">⏳ Pending Target</option>
+            </select>
+          </div>
+          <button
+            v-if="deanHeatmapSearchInput || deanHeatmapTargetFilter !== 'ALL'"
+            type="button"
+            class="btn-secondary btn-xs"
+            data-testid="dean-heatmap-reset-filters-btn"
+            @click="deanHeatmapSearchInput = ''; deanHeatmapTargetFilter = 'ALL';"
+          >
+            Reset
+          </button>
+        </div>
+
         <!-- Section Heatmap Table -->
         <div class="table-responsive" style="margin-top: 1rem;">
           <table class="institutional-table tabular-nums" data-testid="heatmap-table">
@@ -810,7 +865,7 @@ function exportAccreditationDossier() {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="sec in heatmapData.sections" :key="sec.section_id" :data-testid="`heatmap-row-${sec.section_id}`">
+              <tr v-for="sec in filteredHeatmapSections" :key="sec.section_id" :data-testid="`heatmap-row-${sec.section_id}`">
                 <td><strong>{{ sec.course_code }}</strong> — {{ sec.course_title }}</td>
                 <td><code>{{ sec.section_code }}</code></td>
                 <td>{{ sec.faculty_name }}</td>
@@ -844,6 +899,11 @@ function exportAccreditationDossier() {
                   >
                     View Report
                   </button>
+                </td>
+              </tr>
+              <tr v-if="filteredHeatmapSections.length === 0" data-testid="dean-heatmap-empty-state">
+                <td colspan="8" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">
+                  {{ (heatmapData.sections || []).length === 0 ? 'No section heatmap records available yet for the active term.' : 'No course sections match your search or target filter. Try adjusting your query or resetting filters.' }}
                 </td>
               </tr>
             </tbody>

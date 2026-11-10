@@ -1809,4 +1809,20 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(chairViewSfc.includes('data-testid="chair-faculty-empty-state"'), 'Chair faculty empty state row present');
     });
   });
+
+  describe('Group 64: College Dean Heatmap Directory Search & Target Filter Scoping', () => {
+    it('verifies search input, target filter dropdown, and empty state in Dean section heatmap', () => {
+      const deanViewSfc = readResourceFile('views/DeanDashboardView.vue');
+
+      // 1. Search & Target Filter Controls
+      assert.ok(deanViewSfc.includes('data-testid="dean-heatmap-search-input"'), 'Dean heatmap search input present');
+      assert.ok(deanViewSfc.includes('data-testid="dean-heatmap-target-filter"'), 'Dean heatmap target filter select present');
+      assert.ok(deanViewSfc.includes('data-testid="dean-heatmap-reset-filters-btn"'), 'Dean heatmap reset filters button present');
+
+      // 2. Computed Logic & Iteration
+      assert.ok(deanViewSfc.includes('filteredHeatmapSections'), 'filteredHeatmapSections computed property defined');
+      assert.ok(deanViewSfc.includes('v-for="sec in filteredHeatmapSections"'), 'Heatmap table iterates over filteredHeatmapSections');
+      assert.ok(deanViewSfc.includes('data-testid="dean-heatmap-empty-state"'), 'Dean heatmap empty state row present');
+    });
+  });
 });
