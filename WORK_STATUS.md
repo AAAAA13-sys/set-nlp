@@ -135,6 +135,11 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
     - Tab 5 (Student Directory): `data-testid="student-reset-filters-btn"` and empty state `data-testid="students-empty-state"`
     - Tab 6 (System Accounts Directory): `data-testid="users-reset-filters-btn"` and empty state `data-testid="users-empty-state"`
   - Added Group 67 to the frontend test suite (71 tests across 68 suites, 100% PASS); confirmed all 148 automated units passing (`148 / 148 PASS`, 932 assertions); rebuilt production bundle with zero `.map` files.
+- [x] **Checkpoint 48:** Campus SET Advocacy Evaluation Standards, Rating Rubric & Anonymity Charter Export (`EvaluationAdvocacyView.vue`, `EvaluationRubricModal.vue`, `tests/frontend/evaluatech.spec.js`, inspired by `student/home.php`, `admin/questionnaire.php`, and `admin/report.php`):
+  - Added Student Evaluation Guidelines & Anonymity Charter section (`data-testid="advocacy-guidelines-section"`) to the Campus SET Advocacy portal (`/advocacy`), detailing the four core pillars of student protection: Complete Cryptographic Anonymity, Immediate Submission Readiness ($0\text{s+}$ dwell time), Double-Blind Grade Protection, and Automatic Digital Examination Permit Unlocking.
+  - Integrated `Rating Rubric 📋` trigger button (`data-testid="advocacy-open-rubric-btn"`) and `EvaluationRubricModal.vue` (`role-title="Student Body & Campus Advocacy"`), providing campus leaders, student councils, and class representatives with on-demand inspection of the accredited 5-point rating scale, performance bands, and 5 pedagogical cluster standards.
+  - Implemented `downloadStudentGuide` (`data-testid="export-advocacy-guide-btn"`), allowing users to export the official plain-text student orientation guide and privacy charter (`PLP_Student_Evaluation_Charter_and_Guidelines.txt`).
+  - Added Group 68 to the frontend test suite (72 tests across 69 suites, 100% PASS); confirmed all 149 automated units passing (`149 / 149 PASS`, 932 assertions); captured live Playwright screenshot artifacts `live_advocacy_guidelines.png` and `live_advocacy_rubric_modal.png`.
 
 ---
 
@@ -143,9 +148,9 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 | Verification Tier | Command Executed | Executed Units | Pass Rate | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (932 assertions) | 35 / 35 | **100% PASS** |
-| **Frontend DOM & UX Suite** | `npm.cmd test` | 67 test groups (71 tests) | 71 / 71 | **100% PASS** |
+| **Frontend DOM & UX Suite** | `npm.cmd test` | 68 test groups (72 tests) | 72 / 72 | **100% PASS** |
 | **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 46 unit tests | 46 / 46 | **100% PASS** |
 | **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 50 PHP files, 205 sources | 100% clean | **100% PASS** |
 | **Vite Production Bundle** | `npm.cmd run build` | 82 modules | Zero `.map` files | **100% PASS** |
-| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 148 automated units | 148 / 148 | **100% PASS** |
+| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 149 automated units | 149 / 149 | **100% PASS** |
 

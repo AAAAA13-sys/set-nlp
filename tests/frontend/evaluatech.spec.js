@@ -1905,4 +1905,32 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('data-testid="users-empty-state"'), 'Users directory empty state row present');
     });
   });
+
+  describe('Group 68: Campus Advocacy Evaluation Standards, Rating Rubric & Anonymity Charter Export', () => {
+    it('verifies advocacy guidelines section, rubric inspection modal, and student charter download handler in EvaluationAdvocacyView', () => {
+      const advocacyViewSfc = readResourceFile('views/EvaluationAdvocacyView.vue');
+
+      // 1. Guidelines & Standards Section Structure
+      assert.ok(advocacyViewSfc.includes('data-testid="advocacy-guidelines-section"'), 'Advocacy guidelines section present');
+      assert.ok(advocacyViewSfc.includes('EVALUATION STANDARDS &amp; CHARTER'), 'Advocacy standards badge present');
+      assert.ok(advocacyViewSfc.includes('Complete Cryptographic Anonymity'), 'Pillar 1 present');
+      assert.ok(advocacyViewSfc.includes('Immediate Submission Readiness'), 'Pillar 2 present');
+      assert.ok(advocacyViewSfc.includes('Double-Blind Grade Protection'), 'Pillar 3 present');
+      assert.ok(advocacyViewSfc.includes('Automatic Examination Permit'), 'Pillar 4 present');
+
+      // 2. Rubric Modal Trigger & Component Integration
+      assert.ok(advocacyViewSfc.includes('data-testid="advocacy-open-rubric-btn"'), 'Advocacy open rubric button present');
+      assert.ok(advocacyViewSfc.includes('import EvaluationRubricModal from'), 'EvaluationRubricModal imported in advocacy view');
+      assert.ok(advocacyViewSfc.includes('<EvaluationRubricModal'), 'EvaluationRubricModal mounted in template');
+      assert.ok(advocacyViewSfc.includes('role-title="Student Body &amp; Campus Advocacy"'), 'EvaluationRubricModal configured with advocacy role title');
+
+      // 3. Student Guide & Anonymity Charter Download Handler
+      assert.ok(advocacyViewSfc.includes('data-testid="export-advocacy-guide-btn"'), 'Download student guide button present');
+      assert.ok(advocacyViewSfc.includes('downloadStudentGuide'), 'downloadStudentGuide method defined');
+      assert.ok(advocacyViewSfc.includes('PLP_Student_Evaluation_Charter_and_Guidelines.txt'), 'Guide filename specified');
+      assert.ok(advocacyViewSfc.includes('ZERO-KNOWLEDGE CRYPTOGRAPHIC ANONYMITY'), 'Guide contains cryptographic anonymity charter');
+      assert.ok(advocacyViewSfc.includes('MANDATORY TIMING POLICY'), 'Guide contains mandatory timing policy');
+      assert.ok(advocacyViewSfc.includes('DOUBLE-BLIND FACULTY VISIBILITY LOCK'), 'Guide contains double-blind faculty lock explanation');
+    });
+  });
 });
