@@ -1759,4 +1759,22 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('usersDepartmentFilter'), 'usersDepartmentFilter ref defined');
     });
   });
+
+  describe('Group 61: Administrator Grade Locks Directory Search, Department Scoping & Status Filter', () => {
+    it('verifies search input, department filter, status filter, and empty state in course grade locks card', () => {
+      const adminRosterSfc = readResourceFile('views/AdminRosterView.vue');
+
+      // 1. Search, Department, and Status Filter Inputs
+      assert.ok(adminRosterSfc.includes('data-testid="admin-locks-search-input"'), 'Grade locks search input present');
+      assert.ok(adminRosterSfc.includes('data-testid="admin-locks-dept-filter"'), 'Grade locks department filter select present');
+      assert.ok(adminRosterSfc.includes('data-testid="admin-locks-status-filter"'), 'Grade locks status filter select present');
+      assert.ok(adminRosterSfc.includes('data-testid="admin-locks-reset-filters-btn"'), 'Grade locks reset filters button present');
+
+      // 2. Computed Logic & Iteration
+      assert.ok(adminRosterSfc.includes('filteredSectionLocks'), 'filteredSectionLocks computed property defined');
+      assert.ok(adminRosterSfc.includes('uniqueLockDepartments'), 'uniqueLockDepartments computed property defined');
+      assert.ok(adminRosterSfc.includes('v-for="sec in filteredSectionLocks"'), 'Section locks table iterates over filteredSectionLocks');
+      assert.ok(adminRosterSfc.includes('filteredSectionLocks.length === 0'), 'Section locks empty state bound to filteredSectionLocks');
+    });
+  });
 });

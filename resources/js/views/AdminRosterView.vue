@@ -41,6 +41,48 @@ const selectedSectionIds = ref([]);
 const bulkActionBusy = ref(false);
 const bulkStatusMessage = ref('');
 
+const locksSearch = ref('');
+const locksDeptFilter = ref('ALL');
+const locksStatusFilter = ref('ALL');
+
+const uniqueLockDepartments = computed(() => {
+  const depts = new Set();
+  (evaluationStore.sectionLocks || []).forEach((s) => {
+    if (s.department_name) depts.add(s.department_name);
+  });
+  return Array.from(depts).sort();
+});
+
+const filteredSectionLocks = computed(() => {
+  const q = locksSearch.value.trim().toLowerCase();
+  return (evaluationStore.sectionLocks || []).filter((s) => {
+    if (locksDeptFilter.value !== 'ALL' && s.department_name !== locksDeptFilter.value) {
+      return false;
+    }
+    if (locksStatusFilter.value === 'LOCKED' && !s.registrar_lock) {
+      return false;
+    }
+    if (locksStatusFilter.value === 'UNLOCKED' && s.registrar_lock) {
+      return false;
+    }
+    if (locksStatusFilter.value === 'GRADES_SUBMITTED' && !s.term_grades_submitted) {
+      return false;
+    }
+    if (locksStatusFilter.value === 'GRADES_PENDING' && s.term_grades_submitted) {
+      return false;
+    }
+    if (!q) return true;
+    const haystack = `${s.course_code || ''} ${s.course_title || ''} ${s.section_code || ''} ${s.instructor_name || ''} ${s.department_name || ''}`.toLowerCase();
+    return haystack.includes(q);
+  });
+});
+
+function resetLocksFilters() {
+  locksSearch.value = '';
+  locksDeptFilter.value = 'ALL';
+  locksStatusFilter.value = 'ALL';
+}
+
 const selectedAdminReportSection = ref(null);
 const showAdminSectionReportModal = ref(false);
 
@@ -61,7 +103,7 @@ function printAdminSectionReport() {
 }
 
 function exportMasterEvaluationSummaryCsv() {
-  const sections = evaluationStore.sectionLocks || [];
+  const sections = filteredSectionLocks.value;
   const sanitize = (val) => {
     let s = String(val ?? '');
     if (/^[=+@-]/i.test(s)) {
@@ -386,17 +428,20 @@ async function setWindowStatusQuick(newStatus) {
 }
 
 const allSectionsSelected = computed(() => {
-  const locks = evaluationStore.sectionLocks || [];
+  const locks = filteredSectionLocks.value;
   if (locks.length === 0) return false;
   return locks.every((s) => selectedSectionIds.value.includes(s.course_section_id));
 });
 
 function toggleSelectAllSections() {
-  const locks = evaluationStore.sectionLocks || [];
+  const locks = filteredSectionLocks.value;
   if (allSectionsSelected.value) {
-    selectedSectionIds.value = [];
+    selectedSectionIds.value = selectedSectionIds.value.filter(
+      (id) => !locks.some((s) => s.course_section_id === id),
+    );
   } else {
-    selectedSectionIds.value = locks.map((s) => s.course_section_id);
+    const idsToAdd = locks.map((s) => s.course_section_id);
+    selectedSectionIds.value = Array.from(new Set([...selectedSectionIds.value, ...idsToAdd]));
   }
 }
 
@@ -763,7 +808,7 @@ async function toggleLock(sectionId, field) {
         <div>
           <h3 id="locks-heading" class="section-title">
             Course Grade Locks
-            <span class="ui-badge-count">{{ (evaluationStore.sectionLocks || []).length }}</span>
+            <span class="ui-badge-count">{{ filteredSectionLocks.length !== (evaluationStore.sectionLocks || []).length ? `${filteredSectionLocks.length} / ${(evaluationStore.sectionLocks || []).length}` : (evaluationStore.sectionLocks || []).length }}</span>
             <span
               class="ui-hint"
               tabindex="0"
@@ -785,6 +830,53 @@ async function toggleLock(sectionId, field) {
             📊 Export Master Summary (CSV)
           </button>
         </div>
+      </div>
+
+      <div class="locks-filters-toolbar" style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-top: 0.75rem; margin-bottom: 0.75rem;">
+        <div style="flex: 1; min-width: 220px;">
+          <input
+            type="search"
+            v-model="locksSearch"
+            class="form-control"
+            placeholder="Search course code, title, section, instructor..."
+            data-testid="admin-locks-search-input"
+            aria-label="Search course sections"
+          />
+        </div>
+        <div style="min-width: 180px;">
+          <select
+            v-model="locksDeptFilter"
+            class="form-select"
+            data-testid="admin-locks-dept-filter"
+            aria-label="Filter by department"
+          >
+            <option value="ALL">All Departments</option>
+            <option v-for="dept in uniqueLockDepartments" :key="dept" :value="dept">{{ dept }}</option>
+          </select>
+        </div>
+        <div style="min-width: 160px;">
+          <select
+            v-model="locksStatusFilter"
+            class="form-select"
+            data-testid="admin-locks-status-filter"
+            aria-label="Filter by lock or grade status"
+          >
+            <option value="ALL">All Statuses</option>
+            <option value="LOCKED">🔒 Locked</option>
+            <option value="UNLOCKED">🔓 Unlocked</option>
+            <option value="GRADES_SUBMITTED">✅ Grades Submitted</option>
+            <option value="GRADES_PENDING">⏳ Grades Pending</option>
+          </select>
+        </div>
+        <button
+          v-if="locksSearch || locksDeptFilter !== 'ALL' || locksStatusFilter !== 'ALL'"
+          type="button"
+          class="btn-secondary btn-sm"
+          data-testid="admin-locks-reset-filters-btn"
+          @click="resetLocksFilters"
+        >
+          Reset
+        </button>
       </div>
 
       <div
@@ -854,7 +946,7 @@ async function toggleLock(sectionId, field) {
           </thead>
           <tbody>
             <tr
-              v-for="sec in evaluationStore.sectionLocks"
+              v-for="sec in filteredSectionLocks"
               :key="sec.course_section_id"
               :data-testid="`admin-lock-row-${sec.course_code}-${sec.section_code || sec.course_section_id}`"
             >
@@ -932,13 +1024,13 @@ async function toggleLock(sectionId, field) {
                 </button>
               </td>
             </tr>
-            <tr v-if="!evaluationStore.sectionLocks || evaluationStore.sectionLocks.length === 0" data-testid="admin-locks-empty">
+            <tr v-if="filteredSectionLocks.length === 0" data-testid="admin-locks-empty">
               <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
                 <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem;">
-                  No Course Sections Configured
+                  {{ (evaluationStore.sectionLocks || []).length === 0 ? 'No Course Sections Configured' : 'No Matching Course Sections Found' }}
                 </div>
                 <p style="margin: 0; font-size: 0.85rem;">
-                  Import academic rosters below to populate course section double-blind lock controls.
+                  {{ (evaluationStore.sectionLocks || []).length === 0 ? 'Import academic rosters below to populate course section double-blind lock controls.' : 'No course sections match your search or filter criteria. Try adjusting your query or resetting filters.' }}
                 </p>
               </td>
             </tr>
