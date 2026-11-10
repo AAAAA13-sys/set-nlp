@@ -17,23 +17,67 @@ class DecoupledEvaluationService
     private PDO $pdo;
     private IntegrityValidatorService $validator;
     private AnalyticsClientService $analytics;
+    private string $appSecret;
 
     public function __construct(
         ?PDO $pdo = null,
         ?IntegrityValidatorService $validator = null,
         ?AnalyticsClientService $analytics = null,
-        private string $appSecret = 'evaluatech-hmac-signing-secret-2026'
+        ?string $appSecret = null
     ) {
+        $this->appSecret = self::resolveSigningSecret($appSecret);
         $this->validator = $validator ?? new IntegrityValidatorService();
         $this->analytics = $analytics ?? new AnalyticsClientService();
         $this->pdo = $pdo ?? self::getSharedPdo();
         $this->initializeSchema($this->pdo);
     }
 
+    /**
+     * Centralized signing secret resolver.
+     * Enforces that production environments MUST have an explicit secret or APP_KEY,
+     * failing clearly when required configuration is missing.
+     */
+    public static function resolveSigningSecret(?string $explicitSecret = null): string
+    {
+        if ($explicitSecret !== null && $explicitSecret !== '' && $explicitSecret !== 'evaluatech-hmac-signing-secret-2026') {
+            return $explicitSecret;
+        }
+
+        $envSecret = getenv('EVALUATECH_SIGNING_SECRET') ?: (getenv('APP_KEY') ?: null);
+        if ($envSecret !== null && $envSecret !== '') {
+            return (string) $envSecret;
+        }
+
+        $appEnv = getenv('APP_ENV') ?: (php_sapi_name() === 'cli-server' ? 'local' : 'production');
+        $isTestingOrLocal = in_array(strtolower($appEnv), ['testing', 'local'], true) || defined('PHPUNIT_RUNNING');
+
+        if ($isTestingOrLocal) {
+            return 'evaluatech-testing-fallback-secret-2026';
+        }
+
+        // Fail clearly in production if signing secret is missing
+        throw new \RuntimeException(
+            'Security Configuration Exception: EVALUATECH_SIGNING_SECRET or APP_KEY is required in production environment. Usable hardcoded defaults are rejected.'
+        );
+    }
+
     public static function getSharedPdo(): PDO
     {
         if (self::$sharedPdo === null) {
-            self::$sharedPdo = new PDO('sqlite::memory:');
+            $appEnv = getenv('APP_ENV') ?: (php_sapi_name() === 'cli-server' ? 'local' : 'production');
+            $isTesting = strtolower($appEnv) === 'testing' || defined('PHPUNIT_RUNNING');
+
+            if ($isTesting) {
+                self::$sharedPdo = new PDO('sqlite::memory:');
+            } else {
+                $storageDir = dirname(__DIR__, 2) . '/storage';
+                if (!is_dir($storageDir)) {
+                    @mkdir($storageDir, 0775, true);
+                }
+                $sqlitePath = $storageDir . '/evaluatech_plp.sqlite';
+                self::$sharedPdo = new PDO('sqlite:' . $sqlitePath);
+            }
+
             self::$sharedPdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             self::$sharedPdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             self::$sharedPdo->exec('PRAGMA foreign_keys = ON');

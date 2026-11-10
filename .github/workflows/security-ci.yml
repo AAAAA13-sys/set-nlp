@@ -38,12 +38,21 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Prepare Laravel storage and bootstrap cache directories
+        run: |
+          mkdir -p bootstrap/cache storage/framework/cache storage/framework/sessions storage/framework/views storage/logs
+          touch storage/evaluatech_plp.sqlite
+          chmod -R 777 bootstrap/cache storage
+          if [ ! -f .env ]; then
+            cp .env.example .env
+          fi
+
       - name: Install Composer Dependencies
         run: |
           if [ -f composer.lock ]; then
-            composer install --no-interaction --prefer-dist --no-progress --ignore-platform-reqs || true
+            composer install --no-interaction --prefer-dist --no-progress
           else
-            composer update --no-interaction --prefer-dist --no-progress --ignore-platform-reqs || true
+            composer update --no-interaction --prefer-dist --no-progress
           fi
 
       - name: Install Python Dependencies

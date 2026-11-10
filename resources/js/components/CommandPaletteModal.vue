@@ -59,7 +59,8 @@ const baseCommands = computed(() => {
   }
 
   cmds.push(
-    { id: 'nav-verify-permit', group: 'Tools', label: 'Verify Examination Permit (Proctor Portal)', hint: '/verify', action: () => router.push('/verify') },
+    { id: 'nav-home', group: 'Navigation', label: 'Institutional Home / Public Overview', hint: '/', action: () => router.push('/') },
+    { id: 'nav-verify-permit', group: 'Tools', label: 'Verify Evaluation Completion Status (Public Portal)', hint: '/verify', action: () => router.push('/verify') },
     { id: 'nav-advocacy', group: 'Help', label: 'Evaluation Advocacy & Anonymity Protocol', hint: '/advocacy', action: () => router.push('/advocacy') },
     {
       id: 'toggle-density',

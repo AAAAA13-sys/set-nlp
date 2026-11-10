@@ -31,6 +31,31 @@ namespace {
         });
     }
 
+    $envFile = dirname(__DIR__) . '/.env';
+    if (is_file($envFile)) {
+        $envLines = @file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
+        foreach ($envLines as $envLine) {
+            $envLine = trim($envLine);
+            if ($envLine === '' || str_starts_with($envLine, '#')) {
+                continue;
+            }
+            $envParts = explode('=', $envLine, 2);
+            if (count($envParts) === 2) {
+                $envKey = trim($envParts[0]);
+                $envVal = trim(trim($envParts[1]), "\"'");
+                if (getenv($envKey) === false) {
+                    putenv("{$envKey}={$envVal}");
+                }
+                if (!isset($_ENV[$envKey])) {
+                    $_ENV[$envKey] = $envVal;
+                }
+                if (!isset($_SERVER[$envKey])) {
+                    $_SERVER[$envKey] = $envVal;
+                }
+            }
+        }
+    }
+
     if (!function_exists('base_path')) {
         function base_path(string $path = ''): string
         {

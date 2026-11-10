@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+putenv('APP_ENV=testing');
+$_ENV['APP_ENV'] = 'testing';
+if (!defined('PHPUNIT_RUNNING')) {
+    define('PHPUNIT_RUNNING', true);
+}
+
 $rootDir = dirname(__DIR__);
 
 if (is_file($rootDir . '/bootstrap/app.php')) {

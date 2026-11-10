@@ -248,12 +248,13 @@ class IntegrityValidatorService
     public function issueStartToken(
         int $studentId,
         int $courseSectionId,
-        string $secret = 'evaluatech-hmac-signing-secret-2026',
+        ?string $secret = null,
         ?int $timestamp = null
     ): string {
+        $resolvedSecret = DecoupledEvaluationService::resolveSigningSecret($secret);
         $issuedAt = $timestamp ?? time();
         $payload = "{$studentId}:{$courseSectionId}:{$issuedAt}";
-        $signature = hash_hmac('sha256', $payload, $secret);
+        $signature = hash_hmac('sha256', $payload, $resolvedSecret);
 
         return base64_encode("{$payload}:{$signature}");
     }
@@ -265,10 +266,11 @@ class IntegrityValidatorService
         string $token,
         int $studentId,
         int $courseSectionId,
-        string $secret = 'evaluatech-hmac-signing-secret-2026',
+        ?string $secret = null,
         int $minDwellSeconds = self::MIN_DWELL_SECONDS_20_ITEMS,
         ?int $nowTimestamp = null
     ): bool {
+        $resolvedSecret = DecoupledEvaluationService::resolveSigningSecret($secret);
         $decoded = base64_decode($token, true);
         if (!is_string($decoded) || $decoded === '') {
             return false;
@@ -337,10 +339,11 @@ class IntegrityValidatorService
         string $commentText,
         int $courseSectionId,
         int $academicTermId,
-        string $secret = 'evaluatech-hmac-signing-secret-2026'
+        ?string $secret = null
     ): string {
+        $resolvedSecret = DecoupledEvaluationService::resolveSigningSecret($secret);
         $normalized = strtolower(trim($commentText));
-        return hash_hmac('sha256', "{$courseSectionId}|{$academicTermId}|{$normalized}", $secret);
+        return hash_hmac('sha256', "{$courseSectionId}|{$academicTermId}|{$normalized}", $resolvedSecret);
     }
 
     /**

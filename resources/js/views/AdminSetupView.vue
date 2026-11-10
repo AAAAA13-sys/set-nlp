@@ -464,6 +464,106 @@ function exportStudentsDirectoryCsv() {
   triggerCsvDownload(headers, rows, 'PLP_Student_Clearance_Roster');
 }
 
+function exportPendingStudentsCsv() {
+  const list = (setupStore.studentsList || []).filter((s) => !s.is_complete && s.enrolled_count > 0);
+  const sanitize = (val) => {
+    let s = String(val ?? '');
+    if (/^[=+@-]/i.test(s)) s = `'${s}`;
+    return `"${s.replace(/"/g, '""')}"`;
+  };
+  const headers = [
+    'Student ID',
+    'Student Name',
+    'Email',
+    'Department',
+    'Enrolled Courses',
+    'Cleared Evaluations',
+    'Pending Evaluations',
+    'Completion Rate %',
+    'Follow-Up Status',
+  ];
+  const rows = list.map((s) => {
+    const pending = Math.max(0, (s.enrolled_count || 0) - (s.cleared_count || 0));
+    const rate = s.enrolled_count > 0 ? Math.round(((s.cleared_count || 0) / s.enrolled_count) * 100) : 0;
+    return [
+      sanitize(s.institutional_id),
+      sanitize(s.name),
+      sanitize(s.email),
+      sanitize(s.department_name || s.department_code || 'College of Computer Studies'),
+      sanitize(s.enrolled_count),
+      sanitize(s.cleared_count),
+      sanitize(pending),
+      sanitize(`${rate}%`),
+      sanitize(pending > 0 ? 'PENDING EVALUATION' : 'CLEARED'),
+    ].join(',');
+  });
+  triggerCsvDownload(headers, rows, 'PLP_Incomplete_Student_Evaluations_FollowUp');
+}
+
+const studentTrackerMetrics = computed(() => {
+  const list = setupStore.studentsList || [];
+  const total = list.length;
+  const cleared = list.filter((s) => s.is_complete).length;
+  const pending = list.filter((s) => !s.is_complete && s.enrolled_count > 0).length;
+  const clearedRate = total > 0 ? Math.round((cleared / total) * 100) : 0;
+  const pendingRate = total > 0 ? Math.round((pending / total) * 100) : 0;
+  return { total, cleared, pending, clearedRate, pendingRate };
+});
+
+const showStudentReminderModal = ref(false);
+const reminderStudent = ref(null);
+const reminderCopied = ref(false);
+
+function openStudentReminderModal(student) {
+  reminderStudent.value = student;
+  reminderCopied.value = false;
+  showStudentReminderModal.value = true;
+}
+
+function closeStudentReminderModal() {
+  showStudentReminderModal.value = false;
+  reminderStudent.value = null;
+  reminderCopied.value = false;
+}
+
+const reminderNoticeText = computed(() => {
+  if (!reminderStudent.value) return '';
+  const s = reminderStudent.value;
+  const pending = Math.max(0, (s.enrolled_count || 0) - (s.cleared_count || 0));
+  const termName = setupStore.selectedTerm?.name || 'Current Academic Term';
+  return `Subject: [PLP SET Notice] Incomplete Faculty Evaluation Reminder — ${s.name}
+
+Dear ${s.name} (${s.institutional_id}),
+
+This is an official notice from the Office of Academic Affairs regarding your Student Evaluation of Teachers (SET) for ${termName}.
+
+Our records show that you have ${pending} of ${s.enrolled_count} course evaluation(s) pending completion.
+
+Please access your student evaluation queue at:
+https://evaluatech.plpasig.edu.ph/queue
+
+Please note that evaluations are 100% confidential and cryptographically decoupled from your student account. Your constructive feedback is essential for continuous instructional improvement at Pamantasan ng Lungsod ng Pasig.
+
+Thank you,
+Office of Academic Affairs
+Pamantasan ng Lungsod ng Pasig`;
+});
+
+async function copyReminderNotice() {
+  if (!reminderNoticeText.value) return;
+  try {
+    if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      await navigator.clipboard.writeText(reminderNoticeText.value);
+    }
+    reminderCopied.value = true;
+    setTimeout(() => {
+      reminderCopied.value = false;
+    }, 2500);
+  } catch (_) {
+    reminderCopied.value = true;
+  }
+}
+
 function exportSystemUsersCsv() {
   const list = setupStore.systemUsers || [];
   const sanitize = (val) => {
@@ -1969,6 +2069,15 @@ async function executeDeleteSection() {
                   >
                     Sections →
                   </button>
+                  <button
+                    type="button"
+                    class="btn-secondary btn-xs"
+                    :data-testid="`edit-faculty-btn-${fac.id}`"
+                    style="display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
+                    @click="openEditUserModal(fac)"
+                  >
+                    Edit ✏️
+                  </button>
                 </div>
               </td>
             </tr>
@@ -2029,7 +2138,16 @@ async function executeDeleteSection() {
             Reset
           </button>
         </div>
-        <div class="actions-group" style="display: flex; gap: 0.5rem; align-items: center;">
+        <div class="actions-group" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+          <button
+            type="button"
+            class="btn-secondary"
+            data-testid="export-pending-students-csv-btn"
+            style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; border: 1px solid #fde68a; background: #fffbeb; color: #b45309; font-weight: 700;"
+            @click="exportPendingStudentsCsv"
+          >
+            ⚠️ Export Pending Evaluators (CSV)
+          </button>
           <button
             type="button"
             class="btn-secondary"
@@ -2037,7 +2155,7 @@ async function executeDeleteSection() {
             style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; font-weight: 600;"
             @click="exportStudentsDirectoryCsv"
           >
-            📊 Export Students (CSV)
+            📊 Export All Students (CSV)
           </button>
           <button
             type="button"
@@ -2051,6 +2169,22 @@ async function executeDeleteSection() {
           <span class="token-chip chip-signed">
             Total Students: {{ setupStore.studentsList.length }}
           </span>
+        </div>
+      </div>
+
+      <!-- EVALUATION PARTICIPATION TRACKER BAR -->
+      <div class="tracker-summary-bar" data-testid="student-tracker-summary-bar" style="display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap;">
+        <div class="tracker-card" style="flex: 1; min-width: 140px; background: #ffffff; border: 1px solid #dce7dc; border-radius: 8px; padding: 0.65rem 0.85rem;">
+          <small style="color: #6b7280; font-size: 0.72rem; text-transform: uppercase; font-weight: 700; display: block;">Total Students</small>
+          <div style="font-size: 1.25rem; font-weight: 800; color: #103c2e;">{{ studentTrackerMetrics.total }}</div>
+        </div>
+        <div class="tracker-card" style="flex: 1; min-width: 140px; background: #ffffff; border: 1px solid #dce7dc; border-radius: 8px; padding: 0.65rem 0.85rem;">
+          <small style="color: #065f46; font-size: 0.72rem; text-transform: uppercase; font-weight: 700; display: block;">✅ Fully Cleared</small>
+          <div style="font-size: 1.25rem; font-weight: 800; color: #059669;">{{ studentTrackerMetrics.cleared }} <span style="font-size: 0.8rem; font-weight: 600;">({{ studentTrackerMetrics.clearedRate }}%)</span></div>
+        </div>
+        <div class="tracker-card" style="flex: 1; min-width: 140px; background: #ffffff; border: 1px solid #fde68a; border-radius: 8px; padding: 0.65rem 0.85rem;">
+          <small style="color: #92400e; font-size: 0.72rem; text-transform: uppercase; font-weight: 700; display: block;">⚠️ Pending Evaluators</small>
+          <div style="font-size: 1.25rem; font-weight: 800; color: #d97706;">{{ studentTrackerMetrics.pending }} <span style="font-size: 0.8rem; font-weight: 600;">({{ studentTrackerMetrics.pendingRate }}%)</span></div>
         </div>
       </div>
 
@@ -2107,7 +2241,7 @@ async function executeDeleteSection() {
                 </span>
               </td>
               <td class="text-right">
-                <div style="display: flex; gap: 0.35rem; justify-content: flex-end; align-items: center;">
+                <div style="display: flex; gap: 0.35rem; justify-content: flex-end; align-items: center; flex-wrap: wrap;">
                   <button
                     type="button"
                     class="btn-secondary btn-xs"
@@ -2117,6 +2251,25 @@ async function executeDeleteSection() {
                   >
                     Courses 📚
                   </button>
+                  <button
+                    v-if="!std.is_complete"
+                    type="button"
+                    class="btn-secondary btn-xs"
+                    :data-testid="`remind-student-btn-${std.id}`"
+                    style="font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 6px; font-weight: 600; color: #b45309; border-color: #fde68a; background: #fffbeb;"
+                    @click="openStudentReminderModal(std)"
+                  >
+                    Remind ✉️
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-secondary btn-xs"
+                    :data-testid="`edit-student-btn-${std.id}`"
+                    style="font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 6px; font-weight: 600;"
+                    @click="openEditUserModal(std)"
+                  >
+                    Edit ✏️
+                  </button>
                   <router-link
                     v-if="std.is_complete"
                     :to="`/verify?id=${encodeURIComponent(std.institutional_id)}`"
@@ -2124,9 +2277,11 @@ async function executeDeleteSection() {
                     :data-testid="`student-permit-verify-btn-${std.id}`"
                     style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
                   >
-                    Permit 📜
+                    Status 📜
                   </router-link>
-                  <span v-else style="font-size: 0.75rem; color: #9ca3af; padding: 0.25rem 0.35rem;">Gated</span>
+                  <span v-else style="font-size: 0.75rem; color: #b45309; font-weight: 600; padding: 0.25rem 0.35rem;">
+                    {{ Math.max(0, std.enrolled_count - std.cleared_count) }} Pending
+                  </span>
                 </div>
               </td>
             </tr>
@@ -4154,6 +4309,86 @@ async function executeDeleteSection() {
             </button>
           </footer>
         </form>
+      </div>
+    </div>
+
+    <!-- STUDENT REMINDER NOTICE MODAL -->
+    <div
+      v-if="showStudentReminderModal && reminderStudent"
+      class="setup-modal-scrim"
+      data-testid="student-reminder-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="student-reminder-title"
+      @click.self="closeStudentReminderModal"
+    >
+      <div class="setup-modal-card" style="max-width: 620px;">
+        <div class="setup-modal-header">
+          <div>
+            <span class="modal-kicker">STUDENT PARTICIPATION FOLLOW-UP</span>
+            <h3 id="student-reminder-title" class="modal-title">Evaluation Reminder Notice</h3>
+          </div>
+          <button
+            type="button"
+            class="modal-close-btn"
+            data-testid="close-reminder-modal-btn"
+            aria-label="Close reminder modal"
+            @click="closeStudentReminderModal"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div class="modal-body" style="padding: 1.25rem 1.5rem;">
+          <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem; flex-wrap: wrap; gap: 0.5rem;">
+              <strong style="color: #92400e; font-size: 0.95rem;">{{ reminderStudent.name }} ({{ reminderStudent.institutional_id }})</strong>
+              <span class="token-chip chip-unsigned" style="font-size: 0.75rem;">
+                {{ Math.max(0, reminderStudent.enrolled_count - reminderStudent.cleared_count) }} Pending Evaluations
+              </span>
+            </div>
+            <div style="font-size: 0.82rem; color: #78350f;">
+              Department: {{ reminderStudent.department_name || reminderStudent.department_code || 'CCS' }} • Email: {{ reminderStudent.email }}
+            </div>
+          </div>
+
+          <label for="reminder-text-area" class="form-label" style="font-size: 0.82rem; font-weight: 700; color: #374151;">
+            Institutional Follow-Up Notice / Email Template:
+          </label>
+          <textarea
+            id="reminder-text-area"
+            readonly
+            class="form-input"
+            rows="10"
+            style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 0.82rem; line-height: 1.5; background: #f9f9f8; resize: vertical;"
+            :value="reminderNoticeText"
+            data-testid="reminder-notice-textarea"
+          ></textarea>
+        </div>
+
+        <div class="setup-modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+          <button
+            type="button"
+            class="btn-secondary"
+            @click="closeStudentReminderModal"
+          >
+            Close
+          </button>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <span v-if="reminderCopied" style="font-size: 0.82rem; color: #059669; font-weight: 700;" data-testid="reminder-copied-indicator">
+              Notice Copied to Clipboard! ✓
+            </span>
+            <button
+              type="button"
+              class="btn-primary"
+              data-testid="copy-reminder-btn"
+              style="padding: 0.45rem 1rem; font-weight: 700;"
+              @click="copyReminderNotice"
+            >
+              Copy Reminder Notice 📋
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </main>

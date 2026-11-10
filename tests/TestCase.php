@@ -3,6 +3,11 @@
 declare(strict_types=1);
 
 namespace Tests\Harness {
+    putenv('APP_ENV=testing');
+    $_ENV['APP_ENV'] = 'testing';
+    if (!defined('PHPUNIT_RUNNING')) {
+        define('PHPUNIT_RUNNING', true);
+    }
     if (!class_exists(AssertionFailedError::class)) {
         class AssertionFailedError extends \RuntimeException {}
     }

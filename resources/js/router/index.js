@@ -9,6 +9,7 @@ import DeanDashboardView from '../views/DeanDashboardView.vue';
 import EvaluationAdvocacyView from '../views/EvaluationAdvocacyView.vue';
 import EvaluationFormView from '../views/EvaluationFormView.vue';
 import FacultyDashboardView from '../views/FacultyDashboardView.vue';
+import LandingView from '../views/LandingView.vue';
 import LoginView from '../views/LoginView.vue';
 import NotFoundView from '../views/NotFoundView.vue';
 import PermitVerifyView from '../views/PermitVerifyView.vue';
@@ -17,17 +18,9 @@ import StudentQueueView from '../views/StudentQueueView.vue';
 export const routes = [
   {
     path: '/',
-    redirect: () => {
-      try {
-        const authStore = useAuthStore();
-        if (!authStore.isAuthenticated) {
-          return '/login';
-        }
-        return getDefaultRouteForRole(authStore.currentRole);
-      } catch (_) {
-        return '/login';
-      }
-    },
+    name: 'landing',
+    component: LandingView,
+    meta: { public: true, title: 'EvaluaTech — Automated Faculty Evaluation System | Pamantasan ng Lungsod ng Pasig' },
   },
   {
     path: '/login',

@@ -281,6 +281,7 @@ class AcademicSetupService
         foreach ($rawStudents as $s) {
             $enrolled = (int) $s['enrolled_count'];
             $cleared = (int) $s['cleared_count'];
+            $pending = max(0, $enrolled - $cleared);
             $isComplete = $enrolled > 0 && $cleared >= $enrolled;
             $students[] = [
                 'id' => (int) $s['id'],
@@ -292,10 +293,25 @@ class AcademicSetupService
                 'department_name' => $s['department_name'] ?: 'College of Computer Studies',
                 'enrolled_count' => $enrolled,
                 'cleared_count' => $cleared,
+                'pending_count' => $pending,
                 'is_complete' => $isComplete,
                 'clearance_status' => $enrolled === 0 ? 'NO ENROLLMENT' : ($isComplete ? 'CLEARED' : "PENDING ({$cleared}/{$enrolled})"),
             ];
         }
+
+        $totalStudents = count($students);
+        $clearedStudents = count(array_filter($students, static fn ($s) => $s['is_complete']));
+        $pendingStudents = count(array_filter($students, static fn ($s) => !$s['is_complete'] && $s['enrolled_count'] > 0));
+        $noEnrollmentStudents = count(array_filter($students, static fn ($s) => $s['enrolled_count'] === 0));
+        $turnoutRate = $totalStudents > 0 ? round(($clearedStudents / $totalStudents) * 100, 1) : 0.0;
+
+        $studentsSummary = [
+            'total_students' => $totalStudents,
+            'cleared_students' => $clearedStudents,
+            'pending_students' => $pendingStudents,
+            'no_enrollment_students' => $noEnrollmentStudents,
+            'turnout_rate_pct' => $turnoutRate,
+        ];
 
         // 8. Fetch all institutional system users (Inspired by admin/user_list.php)
         $userStmt = $this->pdo->query("
@@ -383,6 +399,7 @@ class AcademicSetupService
             'courses' => $courses,
             'faculty' => $faculty,
             'students' => $students,
+            'students_summary' => $studentsSummary,
             'system_users' => $systemUsers,
             'sections' => $sections,
             'readiness_summary' => $readinessSummary,
@@ -1677,6 +1694,119 @@ class AcademicSetupService
             'is_active' => $newStatus,
             'status_label' => $newStatus ? 'ACTIVE' : 'INACTIVE',
             'message' => "User account '{$existing['name']}' is now " . ($newStatus ? 'ACTIVE' : 'INACTIVE') . '.',
+        ];
+    }
+
+    /**
+     * Get detailed tracker of students who have not completed evaluations for an academic term.
+     * Includes list of specific course sections each student still needs to evaluate.
+     *
+     * @param int|null $academicTermId
+     * @param int|null $departmentId
+     * @return array<string, mixed>
+     */
+    public function getPendingStudentsTracker(?int $academicTermId = null, ?int $departmentId = null): array
+    {
+        $termId = $academicTermId ?: $this->getActiveTermId();
+
+        $termStmt = $this->pdo->prepare('SELECT id, code, name, academic_year FROM academic_terms WHERE id = :id LIMIT 1');
+        $termStmt->execute([':id' => $termId]);
+        $term = $termStmt->fetch(PDO::FETCH_ASSOC);
+        if (!$term) {
+            throw new RuntimeException("Academic term ID {$termId} does not exist.");
+        }
+
+        $sql = "
+            SELECT
+                u.id AS student_id,
+                u.institutional_id,
+                u.name,
+                u.email,
+                u.department_id,
+                d.code AS department_code,
+                d.name AS department_name,
+                COUNT(DISTINCT e.course_section_id) AS enrolled_count,
+                COUNT(DISTINCT ec.course_section_id) AS cleared_count
+            FROM users u
+            LEFT JOIN departments d ON d.id = u.department_id
+            JOIN enrollments e ON e.student_id = u.id AND e.academic_term_id = :term_id
+            LEFT JOIN evaluation_clearances ec ON ec.student_id = u.id AND ec.course_section_id = e.course_section_id
+            WHERE u.role = 'student' AND u.is_active = 1
+        ";
+        $params = [':term_id' => $termId];
+
+        if ($departmentId !== null && $departmentId > 0) {
+            $sql .= ' AND u.department_id = :dept_id';
+            $params[':dept_id'] = $departmentId;
+        }
+
+        $sql .= "
+            GROUP BY u.id, u.institutional_id, u.name, u.email, u.department_id, d.code, d.name
+            HAVING COUNT(DISTINCT ec.course_section_id) < COUNT(DISTINCT e.course_section_id)
+            ORDER BY (COUNT(DISTINCT e.course_section_id) - COUNT(DISTINCT ec.course_section_id)) DESC, u.name ASC
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        $rawPending = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $pendingStudents = [];
+        $secStmt = $this->pdo->prepare("
+            SELECT
+                cs.id AS course_section_id,
+                cs.section_code,
+                c.code AS course_code,
+                c.title AS course_title,
+                f.name AS faculty_name
+            FROM enrollments e
+            JOIN course_sections cs ON cs.id = e.course_section_id
+            JOIN courses c ON c.id = cs.course_id
+            LEFT JOIN users f ON f.id = cs.faculty_id
+            LEFT JOIN evaluation_clearances ec ON ec.student_id = e.student_id AND ec.course_section_id = cs.id
+            WHERE e.student_id = :std_id AND e.academic_term_id = :term_id AND ec.id IS NULL
+            ORDER BY c.code ASC
+        ");
+
+        foreach ($rawPending as $p) {
+            $enrolled = (int) $p['enrolled_count'];
+            $cleared = (int) $p['cleared_count'];
+            $pendingCount = max(0, $enrolled - $cleared);
+            $completionRate = $enrolled > 0 ? round(($cleared / $enrolled) * 100, 1) : 0.0;
+
+            $secStmt->execute([':std_id' => $p['student_id'], ':term_id' => $termId]);
+            $pendingSections = $secStmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $pendingStudents[] = [
+                'student_id' => (int) $p['student_id'],
+                'institutional_id' => (string) $p['institutional_id'],
+                'name' => (string) $p['name'],
+                'email' => (string) $p['email'],
+                'department_id' => $p['department_id'] !== null ? (int) $p['department_id'] : null,
+                'department_code' => (string) ($p['department_code'] ?: 'CCS'),
+                'department_name' => (string) ($p['department_name'] ?: 'College of Computer Studies'),
+                'enrolled_count' => $enrolled,
+                'cleared_count' => $cleared,
+                'pending_count' => $pendingCount,
+                'completion_rate_pct' => $completionRate,
+                'pending_courses' => array_map(function ($cs) {
+                    return [
+                        'course_section_id' => (int) $cs['course_section_id'],
+                        'section_code' => (string) $cs['section_code'],
+                        'course_code' => (string) $cs['course_code'],
+                        'course_title' => (string) $cs['course_title'],
+                        'instructor' => (string) ($cs['faculty_name'] ?: 'To Be Assigned'),
+                    ];
+                }, $pendingSections),
+            ];
+        }
+
+        return [
+            'academic_term_id' => (int) $termId,
+            'term_code' => (string) $term['code'],
+            'term_name' => (string) $term['name'],
+            'academic_year' => (string) $term['academic_year'],
+            'total_pending_students' => count($pendingStudents),
+            'pending_students' => $pendingStudents,
         ];
     }
 }

@@ -506,4 +506,25 @@ class AdminSetupController extends Controller
             ], 404);
         }
     }
+
+    public function pendingStudentsTracker(Request $request): JsonResponse
+    {
+        if ($authError = $this->verifyAdminRole($request)) {
+            return $authError;
+        }
+
+        $termId = $request->input('academic_term_id') !== null ? (int) $request->input('academic_term_id') : null;
+        $deptId = $request->input('department_id') !== null ? (int) $request->input('department_id') : null;
+
+        try {
+            $data = $this->setupService->getPendingStudentsTracker($termId, $deptId);
+            return new JsonResponse($data, 200);
+        } catch (RuntimeException $e) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'ACADEMIC_TERM_NOT_FOUND',
+                'message' => $e->getMessage(),
+            ], 404);
+        }
+    }
 }

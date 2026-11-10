@@ -2944,7 +2944,7 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertSame(200, $delEmptyTermRes->getStatusCode());
         $delTermData = $delEmptyTermRes->getData(true);
         $this->assertTrue($delTermData['success']);
-        $this->assertSame($emptyTermId, $delTermData['term_id']);
+        $this->assertSame((int) $emptyTermId, (int) $delTermData['term_id']);
 
         // 15. Faculty Teaching Assignments Inspection & User Account Profile & Status Lifecycle (Inspired by admin/manage_user.php and admin/manage_restriction.php)
         // a. Retrieve faculty teaching assignments
@@ -2957,7 +2957,7 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertArrayHasKey('term', $facAssignData);
         $this->assertArrayHasKey('summary', $facAssignData);
         $this->assertArrayHasKey('sections', $facAssignData);
-        $this->assertSame(5, $facAssignData['faculty']['id']);
+        $this->assertSame(5, (int) $facAssignData['faculty']['id']);
         $this->assertGreaterThanOrEqual(1, $facAssignData['summary']['total_sections']);
 
         // Non-existent faculty returns 404
@@ -3011,5 +3011,38 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $selfDeactRes = $setupController->toggleUserStatus($selfDeactReq, $adminUser->id);
         $this->assertSame(422, $selfDeactRes->getStatusCode());
         $this->assertSame('CANNOT_DEACTIVATE_SELF', $selfDeactRes->getData(true)['code']);
+
+        // 16. Student Evaluation Participation Tracker & Pending Evaluators Follow-Up Inspection
+        $pendingReq = new \Illuminate\Http\Request(['academic_term_id' => 1]);
+        $pendingReq->setUserResolver(fn () => $adminUser);
+        $pendingRes = $setupController->pendingStudentsTracker($pendingReq);
+        $this->assertSame(200, $pendingRes->getStatusCode());
+        $pendingData = $pendingRes->getData(true);
+        $this->assertArrayHasKey('total_pending_students', $pendingData);
+        $this->assertArrayHasKey('pending_students', $pendingData);
+        $this->assertIsArray($pendingData['pending_students']);
+        if ($pendingData['total_pending_students'] > 0) {
+            $firstPending = $pendingData['pending_students'][0];
+            $this->assertArrayHasKey('student_id', $firstPending);
+            $this->assertArrayHasKey('institutional_id', $firstPending);
+            $this->assertArrayHasKey('name', $firstPending);
+            $this->assertArrayHasKey('email', $firstPending);
+            $this->assertArrayHasKey('enrolled_count', $firstPending);
+            $this->assertArrayHasKey('cleared_count', $firstPending);
+            $this->assertArrayHasKey('pending_count', $firstPending);
+            $this->assertArrayHasKey('pending_courses', $firstPending);
+            $this->assertGreaterThan(0, $firstPending['pending_count']);
+        }
+
+        // Overview includes students_summary participation metrics
+        $overviewReq = new \Illuminate\Http\Request(['academic_term_id' => 1]);
+        $overviewReq->setUserResolver(fn () => $adminUser);
+        $overviewRes = $setupController->overview($overviewReq);
+        $this->assertSame(200, $overviewRes->getStatusCode());
+        $overviewData = $overviewRes->getData(true);
+        $this->assertArrayHasKey('students_summary', $overviewData);
+        $this->assertArrayHasKey('total_students', $overviewData['students_summary']);
+        $this->assertArrayHasKey('cleared_students', $overviewData['students_summary']);
+        $this->assertArrayHasKey('pending_students', $overviewData['students_summary']);
     }
 }

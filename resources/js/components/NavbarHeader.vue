@@ -34,7 +34,7 @@ const canUseQuivrBrain = computed(() =>
 
 const homeDestination = computed(() => {
   if (!authStore.isAuthenticated) {
-    return '/login';
+    return '/';
   }
   const role = String(authStore.currentRole || '').toLowerCase();
   if (role === 'student') return '/queue';
@@ -279,7 +279,16 @@ async function handleLogout() {
             style="font-size: 0.82rem; font-weight: 700; color: #103c2e; padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid #103c2e; text-decoration: none; background: #ffffff;"
             data-testid="navbar-verify-permit-btn"
           >
-            Verify Permit 🔍
+            Verify Status 🔍
+          </router-link>
+          <router-link
+            v-if="route?.path !== '/login'"
+            to="/login"
+            class="sch-nav-pill"
+            style="font-size: 0.82rem; font-weight: 700; background: #f4cd42; color: #103c2e; padding: 0.35rem 0.75rem; border-radius: 8px; text-decoration: none; border: 1px solid #f4cd42;"
+            data-testid="navbar-signin-btn"
+          >
+            Sign In →
           </router-link>
         </template>
       </div>

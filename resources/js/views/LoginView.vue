@@ -263,14 +263,22 @@ const handleLogin = throttle(() => {
           <span class="sr-only">Cryptographic Decoupling</span>
         </p>
 
-        <div style="margin-top: 1rem; text-align: center;">
+        <div style="margin-top: 1rem; text-align: center; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+          <router-link
+            to="/"
+            class="login-home-link"
+            style="font-size: 0.82rem; font-weight: 600; color: #4b5563; text-decoration: underline;"
+            data-testid="login-home-link"
+          >
+            ← Public Home
+          </router-link>
           <router-link
             to="/verify"
             class="proctor-verify-link"
             style="font-size: 0.82rem; font-weight: 600; color: #103c2e; text-decoration: underline; display: inline-flex; align-items: center; gap: 0.35rem;"
             data-testid="proctor-verify-link"
           >
-            🔍 Proctor Examination Permit Verification
+            🔍 Check Evaluation Completion Status
           </router-link>
         </div>
       </div>

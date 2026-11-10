@@ -392,7 +392,7 @@ class SecurityAuditService
     ): array {
         $resolvedSecret = $secret !== ''
             ? $secret
-            : (getenv('EVALUATECH_WEBHOOK_SECRET') ?: (getenv('EVALUATECH_SIGNING_SECRET') ?: 'evaluatech-hmac-signing-secret-2026'));
+            : DecoupledEvaluationService::resolveSigningSecret(getenv('EVALUATECH_WEBHOOK_SECRET') ?: null);
 
         $cleanSig = trim(preg_replace('/^sha256=/i', '', trim($signatureHeader)) ?? '');
         $cleanNonce = trim($nonce);

@@ -2021,4 +2021,47 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('confirmToggleUserStatus'), 'confirmToggleUserStatus method defined');
     });
   });
+
+  describe('Group 72: Public Institutional Landing Page, Student Evaluation Participation Tracker & Follow-Up Notice Modal', () => {
+    it('verifies public landing page layout, participation tracker KPI bar, pending students CSV export, and follow-up reminder modal', () => {
+      const landingViewSfc = readResourceFile('views/LandingView.vue');
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+      const setupStoreSrc = readResourceFile('stores/academicSetup.js');
+      const routerSrc = readResourceFile('router/index.js');
+
+      // 1. Public Institutional Landing Page (LandingView.vue & router)
+      assert.ok(routerSrc.includes("import LandingView from '../views/LandingView.vue'"), 'LandingView imported in router');
+      assert.ok(routerSrc.includes("component: LandingView"), 'LandingView registered as component for root path');
+      assert.ok(landingViewSfc.includes('data-testid="landing-view-page"'), 'Landing page container present');
+      assert.ok(landingViewSfc.includes('data-testid="landing-hero-section"'), 'Landing hero section present');
+      assert.ok(landingViewSfc.includes('data-testid="landing-signin-btn"'), 'Landing sign in button present');
+      assert.ok(landingViewSfc.includes('data-testid="landing-guidelines-btn"'), 'Landing guidelines button present');
+      assert.ok(landingViewSfc.includes('data-testid="landing-verify-status-btn"'), 'Landing verify status button present');
+      assert.ok(landingViewSfc.includes('data-testid="landing-steps-section"'), 'Landing workflow steps section present');
+      assert.ok(landingViewSfc.includes('data-testid="landing-safeguards-section"'), 'Landing institutional safeguards section present');
+      assert.ok(landingViewSfc.includes('data-testid="landing-footer-section"'), 'Landing institutional footer present');
+
+      // 2. Student Evaluation Participation Tracker Bar (Tab 5 in AdminSetupView.vue)
+      assert.ok(setupViewSfc.includes('data-testid="student-tracker-summary-bar"'), 'Student participation tracker bar present');
+      assert.ok(setupViewSfc.includes('studentTrackerMetrics'), 'studentTrackerMetrics computed property present');
+      assert.ok(setupViewSfc.includes('data-testid="export-pending-students-csv-btn"'), 'Export pending students CSV button present');
+      assert.ok(setupViewSfc.includes('exportPendingStudentsCsv'), 'exportPendingStudentsCsv method defined');
+      assert.ok(setupStoreSrc.includes('studentsSummary'), 'Store exports studentsSummary');
+      assert.ok(setupStoreSrc.includes('fetchPendingStudents'), 'Store defines fetchPendingStudents');
+      assert.ok(setupStoreSrc.includes('/api/admin/setup/students/pending'), 'Pending students tracker endpoint path');
+
+      // 3. Student Evaluation Reminder Notice Modal
+      assert.ok(setupViewSfc.includes('remind-student-btn-'), 'Remind student trigger button in table row');
+      assert.ok(setupViewSfc.includes('data-testid="student-reminder-modal"'), 'Student reminder notice modal present');
+      assert.ok(setupViewSfc.includes('data-testid="close-reminder-modal-btn"'), 'Close reminder modal button present');
+      assert.ok(setupViewSfc.includes('data-testid="reminder-notice-textarea"'), 'Reminder notice textarea present');
+      assert.ok(setupViewSfc.includes('data-testid="copy-reminder-btn"'), 'Copy reminder notice button present');
+      assert.ok(setupViewSfc.includes('reminderNoticeText'), 'reminderNoticeText computed property defined');
+      assert.ok(setupViewSfc.includes('copyReminderNotice'), 'copyReminderNotice handler defined');
+
+      // 4. Directory Inline User Edit Actions
+      assert.ok(setupViewSfc.includes(':data-testid="`edit-faculty-btn-${fac.id}`"'), 'Edit faculty button in Tab 4 present');
+      assert.ok(setupViewSfc.includes(':data-testid="`edit-student-btn-${std.id}`"'), 'Edit student button in Tab 5 present');
+    });
+  });
 });

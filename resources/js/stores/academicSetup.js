@@ -54,6 +54,7 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
   const courses = computed(() => overview.value.courses || []);
   const facultyList = computed(() => overview.value.faculty || []);
   const studentsList = computed(() => overview.value.students || []);
+  const studentsSummary = computed(() => overview.value.students_summary || {});
   const systemUsers = computed(() => overview.value.system_users || []);
   const readinessSummary = computed(() => overview.value.readiness_summary || {});
   const isCycleReady = computed(() => Boolean(readinessSummary.value.is_cycle_ready));
@@ -496,6 +497,30 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     }
   }
 
+  async function fetchPendingStudents(termId = null, departmentId = null) {
+    try {
+      actionBusy.value = true;
+      const params = new URLSearchParams();
+      const tId = termId || selectedTermId.value || overview.value.selected_term_id;
+      if (tId) params.append('academic_term_id', String(tId));
+      if (departmentId && departmentId !== 'ALL') params.append('department_id', String(departmentId));
+
+      const res = await fetch(`/api/admin/setup/students/pending?${params.toString()}`, {
+        headers: getApiHeaders(),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to fetch pending students tracker');
+      }
+      return data;
+    } catch (e) {
+      error.value = e.message;
+      throw e;
+    } finally {
+      actionBusy.value = false;
+    }
+  }
+
   return {
     overview,
     loading,
@@ -515,6 +540,7 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     courses,
     facultyList,
     studentsList,
+    studentsSummary,
     systemUsers,
     readinessSummary,
     isCycleReady,
@@ -536,5 +562,6 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     fetchStudentEnrollment,
     fetchSectionRoster,
     fetchFacultyAssignments,
+    fetchPendingStudents,
   };
 });
