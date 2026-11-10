@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
+import EvaluationRubricModal from '../components/EvaluationRubricModal.vue';
 import PlpAnalyticsLabModal from '../components/PlpAnalyticsLabModal.vue';
 import QuivrNlpBrainDrawer from '../components/QuivrNlpBrainDrawer.vue';
 import { useAuthStore } from '../stores/auth.js';
@@ -8,6 +9,7 @@ import { evaluateWatchlistFlag, sanitizeCsvCell } from '../utils/evaluationMath.
 const authStore = useAuthStore();
 const showAnalyticsLab = ref(false);
 const showQuivrBrain = ref(false);
+const showRubricModal = ref(false);
 
 const overviewData = ref(null);
 const longitudinalData = ref(null);
@@ -321,6 +323,14 @@ async function endorseActionPlan(item) {
             {{ departmentName }} sections only
           </div>
           <div style="margin-top: 0.6rem; display: flex; flex-wrap: wrap; gap: 0.45rem;">
+            <button
+              type="button"
+              class="btn-secondary btn-xs"
+              data-testid="chair-open-rubric-btn"
+              @click="showRubricModal = true"
+            >
+              <span>Rating Rubric 📋</span>
+            </button>
             <button
               type="button"
               class="btn-secondary btn-xs"
@@ -903,6 +913,12 @@ async function endorseActionPlan(item) {
     <QuivrNlpBrainDrawer
       :visible="showQuivrBrain"
       @close="showQuivrBrain = false"
+    />
+
+    <EvaluationRubricModal
+      :visible="showRubricModal"
+      role-title="Department Chair"
+      @close="showRubricModal = false"
     />
   </main>
 </template>

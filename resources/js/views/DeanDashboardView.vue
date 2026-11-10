@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
+import EvaluationRubricModal from '../components/EvaluationRubricModal.vue';
 import PlpAnalyticsLabModal from '../components/PlpAnalyticsLabModal.vue';
 import QuivrNlpBrainDrawer from '../components/QuivrNlpBrainDrawer.vue';
 import ReusableDataTable from '../components/ReusableDataTable.vue';
@@ -16,6 +17,7 @@ const evaluationStore = useEvaluationStore();
 const activeTab = ref('overview'); // 'overview' | 'longitudinal' | 'quality' | 'qualitative'
 const showAnalyticsLab = ref(false);
 const showQuivrBrain = ref(false);
+const showRubricModal = ref(false);
 
 const overview = computed(() => evaluationStore.deanOverview);
 
@@ -619,6 +621,14 @@ function exportAccreditationDossier() {
         </div>
 
         <div style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.45rem;">
+          <button
+            type="button"
+            class="btn-secondary btn-sm"
+            data-testid="dean-open-rubric-btn"
+            @click="showRubricModal = true"
+          >
+            Rating Rubric 📋
+          </button>
           <button
             type="button"
             class="btn-primary btn-sm"
@@ -1753,6 +1763,12 @@ function exportAccreditationDossier() {
     <QuivrNlpBrainDrawer
       :visible="showQuivrBrain"
       @close="showQuivrBrain = false"
+    />
+
+    <EvaluationRubricModal
+      :visible="showRubricModal"
+      role-title="College Dean"
+      @close="showRubricModal = false"
     />
   </main>
 </template>

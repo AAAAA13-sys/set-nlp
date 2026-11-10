@@ -1699,4 +1699,30 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.equal(facultyViewSfc.includes('ip_address'), false, 'Zero ip_address in faculty view');
     });
   });
+
+  describe('Group 58: Academic Supervisor Evaluation Rating Rubric & Standards Inspection Modal', () => {
+    it('verifies EvaluationRubricModal component, 5-point rubric table, and Chair/Dean open triggers', () => {
+      const rubricModalSfc = readResourceFile('components/EvaluationRubricModal.vue');
+      const chairViewSfc = readResourceFile('views/ChairDashboardView.vue');
+      const deanViewSfc = readResourceFile('views/DeanDashboardView.vue');
+
+      // 1. Reusable EvaluationRubricModal Structure
+      assert.ok(rubricModalSfc.includes('data-testid="evaluation-rubric-modal"'), 'Rubric modal backdrop');
+      assert.ok(rubricModalSfc.includes('data-testid="modal-rubric-table"'), 'Rubric 5-point table');
+      assert.ok(rubricModalSfc.includes('data-testid="print-rubric-modal-btn"'), 'Print rubric trigger button');
+      assert.ok(rubricModalSfc.includes('data-testid="close-rubric-modal-btn"'), 'Close rubric trigger button');
+      assert.ok(rubricModalSfc.includes('Five Core Pedagogical Clusters'), 'Pedagogical clusters strip');
+      assert.ok(rubricModalSfc.includes('Mean Likert &lt; 3.50'), 'Administrative threshold rule');
+
+      // 2. Department Chair Integration
+      assert.ok(chairViewSfc.includes('EvaluationRubricModal'), 'EvaluationRubricModal imported in Chair');
+      assert.ok(chairViewSfc.includes('data-testid="chair-open-rubric-btn"'), 'Chair open rubric button');
+      assert.ok(chairViewSfc.includes('showRubricModal = true'), 'Chair showRubricModal trigger');
+
+      // 3. College Dean Integration
+      assert.ok(deanViewSfc.includes('EvaluationRubricModal'), 'EvaluationRubricModal imported in Dean');
+      assert.ok(deanViewSfc.includes('data-testid="dean-open-rubric-btn"'), 'Dean open rubric button');
+      assert.ok(deanViewSfc.includes('showRubricModal = true'), 'Dean showRubricModal trigger');
+    });
+  });
 });
