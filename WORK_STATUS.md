@@ -145,6 +145,14 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
   - Registered REST routes in `routes/api.php` and standalone router in `public/index.php` (`PUT /api/admin/setup/courses/{id}`, `DELETE/POST /api/admin/setup/courses/{id}/delete`).
   - Added `Edit ✏️` (`data-testid="edit-course-btn-${c.id}"`) and `Delete 🗑️` (`data-testid="delete-course-btn-${c.id}"`) action buttons in Tab 3 of `AdminSetupView.vue`, backed by interactive Edit Course Offering modal (`data-testid="edit-course-modal"`).
   - Added Group 69 to the frontend test suite (73 tests across 70 suites, 100% PASS) and expanded `test_35` in PHPUnit backend suite (942 assertions); confirmed all 150 automated units passing (`150 / 150 PASS`); captured live Playwright screenshot artifacts `live_admin_course_actions.png` and `live_admin_course_edit_modal.png`.
+- [x] **Checkpoint 50:** Academic Term Deletion & Lifecycle Safety Management (`AcademicSetupService.php`, `AdminSetupController.php`, `AdminSetupView.vue`, `academicSetup.js`, `routes/api.php`, `public/index.php`, `tests/Feature/EvaluaTechBackendSuiteTest.php`, `tests/frontend/evaluatech.spec.js`, inspired by `admin/academic_list.php` and `admin/manage_academic.php`):
+  - Implemented `deleteTerm(int $termId)` in `AcademicSetupService` and `AdminSetupController` enforcing strict relational and operational invariants:
+    - Invariant 1: Prevents deleting the currently active academic term (`CANNOT_DELETE_ACTIVE_TERM` - HTTP 422).
+    - Invariant 2: Prevents deleting historical academic terms with associated course sections or evaluation data (`CANNOT_DELETE_TERM_WITH_DATA` - HTTP 422).
+    - Invariant 3: Safely removes empty, inactive terms along with their window schedule configuration, recording full administrative security audit telemetry (`ACADEMIC_TERM_DELETED`).
+  - Registered REST routes in `routes/api.php` and standalone router in `public/index.php` (`DELETE/POST /api/admin/setup/terms/{id}/delete`) with five-role RBAC enforcement (`admin` only).
+  - Added `Delete 🗑️` action button (`data-testid="delete-term-btn-${t.id}"`) in Tab 2 of `AdminSetupView.vue` for inactive terms with dynamic status awareness and confirmation dialog.
+  - Added Group 70 to the frontend test suite (74 tests across 71 suites, 100% PASS) and expanded `test_35` step 14 in PHPUnit backend suite (949 assertions); updated `scripts/verify-all.ps1` to 151 automated units (`151 / 151 PASS`); captured live Playwright screenshot artifact `live_admin_terms_actions.png`.
 
 ---
 
@@ -152,10 +160,10 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 
 | Verification Tier | Command Executed | Executed Units | Pass Rate | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (942 assertions) | 35 / 35 | **100% PASS** |
-| **Frontend DOM & UX Suite** | `npm.cmd test` | 69 test groups (73 tests) | 73 / 73 | **100% PASS** |
+| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (949 assertions) | 35 / 35 | **100% PASS** |
+| **Frontend DOM & UX Suite** | `npm.cmd test` | 71 test groups (74 tests) | 74 / 74 | **100% PASS** |
 | **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 46 unit tests | 46 / 46 | **100% PASS** |
 | **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 50 PHP files, 205 sources | 100% clean | **100% PASS** |
 | **Vite Production Bundle** | `npm.cmd run build` | 82 modules | Zero `.map` files | **100% PASS** |
-| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 150 automated units | 150 / 150 | **100% PASS** |
+| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 151 automated units | 151 / 151 | **100% PASS** |
 

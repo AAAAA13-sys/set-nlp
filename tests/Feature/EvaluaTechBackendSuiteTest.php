@@ -2912,5 +2912,37 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $delCourseData = $delCourseRes->getData(true);
         $this->assertTrue($delCourseData['success']);
         $this->assertSame($newCourseId, $delCourseData['course_id']);
+
+        // 14. Academic Term Lifecycle Deletion & Safety Rules (Inspired by academic_list.php)
+        // Rule 1: Cannot delete active term ($newTermId is active)
+        $delActiveTermReq = new \Illuminate\Http\Request();
+        $delActiveTermReq->setUserResolver(fn () => $adminUser);
+        $delActiveTermRes = $setupController->deleteTerm($delActiveTermReq, $newTermId);
+        $this->assertSame(422, $delActiveTermRes->getStatusCode());
+        $this->assertSame('CANNOT_DELETE_ACTIVE_TERM', $delActiveTermRes->getData(true)['code']);
+
+        // Rule 2: Cannot delete term with active course sections or evaluations (term 1 has sections/vault data)
+        $delTermWithSecReq = new \Illuminate\Http\Request();
+        $delTermWithSecReq->setUserResolver(fn () => $adminUser);
+        $delTermWithSecRes = $setupController->deleteTerm($delTermWithSecReq, 1);
+        $this->assertSame(422, $delTermWithSecRes->getStatusCode());
+        $this->assertSame('CANNOT_DELETE_TERM_WITH_DATA', $delTermWithSecRes->getData(true)['code']);
+
+        // Rule 3: Safe deletion of empty, inactive academic term
+        $emptyTerm = $setupService->createOrUpdateTerm([
+            'academic_year' => '2028-2029',
+            'name' => 'Summer Term AY 2028-2029',
+            'code' => 'SUM-2028',
+            'is_active' => false,
+        ]);
+        $emptyTermId = (int) $emptyTerm['term_id'];
+
+        $delEmptyTermReq = new \Illuminate\Http\Request();
+        $delEmptyTermReq->setUserResolver(fn () => $adminUser);
+        $delEmptyTermRes = $setupController->deleteTerm($delEmptyTermReq, $emptyTermId);
+        $this->assertSame(200, $delEmptyTermRes->getStatusCode());
+        $delTermData = $delEmptyTermRes->getData(true);
+        $this->assertTrue($delTermData['success']);
+        $this->assertSame($emptyTermId, $delTermData['term_id']);
     }
 }

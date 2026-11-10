@@ -316,6 +316,9 @@ if ($isApiRoute) {
         } elseif (preg_match('#^/api/admin/setup/terms/(\d+)/set-active$#', $uriPath, $m) === 1 && $method === 'POST') {
             $tId = (int) $m[1];
             $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->setActiveTerm($req, $tId));
+        } elseif (preg_match('#^/api/admin/setup/terms/(\d+)/delete$#', $uriPath, $m) === 1 && in_array($method, ['POST', 'DELETE'], true)) {
+            $tId = (int) $m[1];
+            $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->deleteTerm($req, $tId));
         } elseif ($uriPath === '/api/admin/setup/courses' && $method === 'POST') {
             $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->createCourse($req));
         } elseif (preg_match('#^/api/admin/setup/courses/(\d+)$#', $uriPath, $m) === 1 && in_array($method, ['PUT', 'POST'], true)) {

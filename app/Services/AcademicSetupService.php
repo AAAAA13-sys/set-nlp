@@ -540,6 +540,69 @@ class AcademicSetupService
     }
 
     /**
+     * Delete an un-evaluated, inactive academic term cycle.
+     *
+     * @param int $termId
+     * @return array<string, mixed>
+     */
+    public function deleteTerm(int $termId): array
+    {
+        if ($termId <= 0) {
+            throw new InvalidArgumentException('Valid academic_term_id is required.');
+        }
+
+        $stmt = $this->pdo->prepare('SELECT id, code, name, is_active FROM academic_terms WHERE id = :id LIMIT 1');
+        $stmt->execute([':id' => $termId]);
+        $term = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$term) {
+            throw new InvalidArgumentException("Academic term ID {$termId} does not exist.");
+        }
+
+        if (!empty($term['is_active'])) {
+            throw new RuntimeException("Cannot delete active academic term '{$term['name']}'. Set another term as active first.");
+        }
+
+        // Safety check: sections count
+        $secStmt = $this->pdo->prepare('SELECT COUNT(*) FROM course_sections WHERE academic_term_id = :tid');
+        $secStmt->execute([':tid' => $termId]);
+        $secCount = (int) $secStmt->fetchColumn();
+
+        // Safety check: clearances count
+        $clrStmt = $this->pdo->prepare('SELECT COUNT(*) FROM evaluation_clearances WHERE academic_term_id = :tid');
+        $clrStmt->execute([':tid' => $termId]);
+        $clrCount = (int) $clrStmt->fetchColumn();
+
+        if ($secCount > 0 || $clrCount > 0) {
+            throw new RuntimeException("Cannot delete academic term '{$term['name']}' because it contains {$secCount} course section(s) or active evaluation records. Archive the term instead.");
+        }
+
+        $this->pdo->beginTransaction();
+        try {
+            $delWin = $this->pdo->prepare('DELETE FROM evaluation_window_configs WHERE academic_term_id = :tid');
+            $delWin->execute([':tid' => $termId]);
+
+            $delTerm = $this->pdo->prepare('DELETE FROM academic_terms WHERE id = :id');
+            $delTerm->execute([':id' => $termId]);
+
+            $this->pdo->commit();
+
+            return [
+                'success' => true,
+                'term_id' => $termId,
+                'term_code' => $term['code'],
+                'term_name' => $term['name'],
+                'message' => "Academic term '{$term['name']}' deleted successfully.",
+            ];
+        } catch (\Throwable $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            throw $e;
+        }
+    }
+
+    /**
      * Create a new course offering.
      *
      * @param array<string, mixed> $data

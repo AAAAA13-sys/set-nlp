@@ -206,6 +206,27 @@ async function handleSetActiveTerm(termId) {
   }
 }
 
+async function confirmDeleteTerm(t) {
+  if (t.is_active) {
+    flashError(`Cannot delete active academic term "${t.name}". Set another term as active first.`);
+    return;
+  }
+  if (t.total_sections > 0) {
+    flashError(`Cannot delete academic term "${t.name}": It contains ${t.total_sections} course section(s). Archive the term instead.`);
+    return;
+  }
+  if (typeof window !== 'undefined' && typeof window.confirm === 'function') {
+    const ok = window.confirm(`Are you sure you want to delete academic term "${t.code} - ${t.name}"?`);
+    if (!ok) return;
+  }
+  try {
+    await setupStore.deleteTerm(t.id);
+    flashSuccess(`Academic term "${t.name}" deleted successfully.`);
+  } catch (err) {
+    flashError(err.message || 'Failed to delete academic term.');
+  }
+}
+
 function openNewTermModal() {
   termForm.value = {
     id: null,
@@ -1544,6 +1565,15 @@ async function executeDeleteSection() {
                     Set as Active
                   </button>
                   <span v-else class="text-active-label">Current Active</span>
+                  <button
+                    v-if="!t.is_active"
+                    type="button"
+                    class="btn-secondary-sm text-danger"
+                    :data-testid="`delete-term-btn-${t.id}`"
+                    @click="confirmDeleteTerm(t)"
+                  >
+                    Delete 🗑️
+                  </button>
                 </div>
               </td>
             </tr>

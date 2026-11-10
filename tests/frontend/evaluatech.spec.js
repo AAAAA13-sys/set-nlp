@@ -1964,4 +1964,23 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('active course section(s). Remove or reassign sections first'), 'Validation message for course with active sections');
     });
   });
+
+  describe('Group 70: Academic Term Deletion & Lifecycle Safety Management', () => {
+    it('verifies term delete action button, store deleteTerm method, and active/data safety guards', () => {
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+      const setupStoreSrc = readResourceFile('stores/academicSetup.js');
+
+      // 1. Store Delete Term Method
+      assert.ok(setupStoreSrc.includes('async function deleteTerm('), 'Academic setup store defines deleteTerm');
+      assert.ok(setupStoreSrc.includes('/api/admin/setup/terms/${encodeURIComponent(termId)}/delete'), 'Delete term endpoint path');
+
+      // 2. Tab 2 Actions Column Button
+      assert.ok(setupViewSfc.includes(':data-testid="`delete-term-btn-${t.id}`"'), 'Delete term button present in table');
+      assert.ok(setupViewSfc.includes('confirmDeleteTerm(t)'), 'Delete term button triggers confirmDeleteTerm');
+
+      // 3. Safety Guard Logic in View
+      assert.ok(setupViewSfc.includes('Cannot delete active academic term'), 'Guard prevents deleting active term');
+      assert.ok(setupViewSfc.includes('It contains ${t.total_sections} course section(s)'), 'Guard prevents deleting term with sections');
+    });
+  });
 });

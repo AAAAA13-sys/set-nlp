@@ -182,6 +182,30 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     }
   }
 
+  async function deleteTerm(termId) {
+    actionBusy.value = true;
+    error.value = null;
+    try {
+      const res = await fetch(`/api/admin/setup/terms/${encodeURIComponent(termId)}/delete`, {
+        method: 'POST',
+        headers: getApiHeaders(),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to delete academic term.');
+      }
+
+      await fetchOverview();
+      return data;
+    } catch (e) {
+      error.value = e.message;
+      throw e;
+    } finally {
+      actionBusy.value = false;
+    }
+  }
+
   async function createCourse(payload) {
     actionBusy.value = true;
     error.value = null;
@@ -434,6 +458,7 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     fetchOverview,
     createOrUpdateTerm,
     setActiveTerm,
+    deleteTerm,
     createCourse,
     updateCourse,
     deleteCourse,

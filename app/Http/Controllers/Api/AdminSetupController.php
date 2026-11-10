@@ -105,6 +105,50 @@ class AdminSetupController extends Controller
         }
     }
 
+    public function deleteTerm(Request $request, int $id = 0): JsonResponse
+    {
+        if ($authError = $this->verifyAdminRole($request)) {
+            return $authError;
+        }
+
+        $termId = $id > 0 ? $id : (int) $request->input('academic_term_id', 0);
+        if ($termId <= 0) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'INVALID_TERM_ID',
+                'message' => 'Valid academic_term_id is required.',
+            ], 422);
+        }
+
+        try {
+            $result = $this->setupService->deleteTerm($termId);
+            (new SecurityAuditService())->logEvent(
+                $this->setupService->getPdo(),
+                'ACADEMIC_TERM_DELETED',
+                'INFO',
+                ['term_id' => $termId, 'term_code' => $result['term_code'] ?? null],
+                'admin',
+                '/api/admin/setup/terms/' . $termId . '/delete'
+            );
+            return new JsonResponse($result, 200);
+        } catch (RuntimeException $e) {
+            $code = str_contains($e->getMessage(), 'active academic term')
+                ? 'CANNOT_DELETE_ACTIVE_TERM'
+                : 'CANNOT_DELETE_TERM_WITH_DATA';
+            return new JsonResponse([
+                'success' => false,
+                'code' => $code,
+                'message' => $e->getMessage(),
+            ], 422);
+        } catch (InvalidArgumentException $e) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'TERM_NOT_FOUND',
+                'message' => $e->getMessage(),
+            ], 404);
+        }
+    }
+
     public function createCourse(Request $request): JsonResponse
     {
         if ($authError = $this->verifyAdminRole($request)) {
