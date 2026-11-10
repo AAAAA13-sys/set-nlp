@@ -1678,4 +1678,25 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(deanViewSfc.includes('data-testid="print-dean-report-btn"'), 'Print dean report button present');
     });
   });
+
+  describe('Group 57: Faculty Section Evaluation Summary CSV Export & Portfolio Documentation', () => {
+    it('verifies faculty CSV export button, formula injection neutralization, and zero PII anonymity', () => {
+      const facultyViewSfc = readResourceFile('views/FacultyDashboardView.vue');
+
+      // 1. Export CSV Trigger Button
+      assert.ok(facultyViewSfc.includes('data-testid="export-faculty-section-csv-btn"'), 'Faculty CSV export button present');
+      assert.ok(facultyViewSfc.includes('@click="exportFacultySectionCsv"'), 'exportFacultySectionCsv click binding');
+      assert.ok(facultyViewSfc.includes('exportFacultySectionCsv'), 'exportFacultySectionCsv handler defined');
+
+      // 2. Formula Injection Neutralization & Helper Integration
+      assert.ok(facultyViewSfc.includes('sanitizeCsvCell'), 'sanitizeCsvCell imported and used');
+      assert.ok(facultyViewSfc.includes('getPerformanceRatingText'), 'getPerformanceRatingText rubric mapper defined');
+      assert.ok(facultyViewSfc.includes('PLP_Faculty_Evaluation_'), 'Accredited filename prefix pattern');
+
+      // 3. Strict Student Anonymity Preservation (Zero PII in Faculty View)
+      assert.equal(facultyViewSfc.includes('student_id'), false, 'Zero student_id in faculty view');
+      assert.equal(facultyViewSfc.includes('clearance_id'), false, 'Zero clearance_id in faculty view');
+      assert.equal(facultyViewSfc.includes('ip_address'), false, 'Zero ip_address in faculty view');
+    });
+  });
 });

@@ -4,7 +4,7 @@ import ErrorRecoveryBanner from '../components/ErrorRecoveryBanner.vue';
 import SkeletonLoader from '../components/SkeletonLoader.vue';
 import { useAuthStore } from '../stores/auth.js';
 import { useEvaluationStore } from '../stores/evaluation.js';
-import { canFacultyViewEvaluation } from '../utils/evaluationMath.js';
+import { canFacultyViewEvaluation, sanitizeCsvCell } from '../utils/evaluationMath.js';
 
 const authStore = useAuthStore();
 const evaluationStore = useEvaluationStore();
@@ -162,6 +162,104 @@ async function updateFacultyPlanStatus(newStatus) {
     });
     await evaluationStore.fetchFacultySectionReport(secId);
   } catch (_) {}
+}
+
+function getPerformanceRatingText(score) {
+  const num = Number(score || 0);
+  if (num >= 4.5) return 'Outstanding';
+  if (num >= 4.0) return 'Very Satisfactory';
+  if (num >= 3.5) return 'Satisfactory';
+  if (num >= 3.0) return 'Fair';
+  return 'Needs Improvement';
+}
+
+function exportFacultySectionCsv() {
+  if (!activeSection.value || !isUnlocked.value) return;
+
+  const courseCode = activeSection.value.course_code || 'COURSE';
+  const sectionCode = activeSection.value.section_code || 'SEC';
+  const termCode = authStore.activeTerm?.replace(/[^a-zA-Z0-9_-]/g, '_') || '1st_Sem_AY2026-2027';
+  const facultyName = authStore.user?.name || activeSection.value.instructor_name || 'Faculty';
+  const facultyInstId = authStore.user?.institutional_id || 'FAC';
+
+  const enrolled = Number(activeSection.value.enrolled_count || 0);
+  const evaluated = Number(responseCount.value || 0);
+  const turnoutPct = enrolled > 0 ? ((evaluated / enrolled) * 100).toFixed(1) : '100.0';
+  const meanScore = overallMeanScore.value.toFixed(2);
+  const ratingText = getPerformanceRatingText(overallMeanScore.value);
+
+  const clusters = dimensionScores.value || {};
+  const cPed = Number(clusters['Pedagogical Delivery'] || 0).toFixed(2);
+  const cAssess = Number(clusters['Assessment & Grading'] || 0).toFixed(2);
+  const cMgmt = Number(clusters['Classroom Management'] || 0).toFixed(2);
+  const cConduct = Number(clusters['Professional Conduct'] || 0).toFixed(2);
+  const cSupport = Number(clusters['Student Support & Mentorship'] || 0).toFixed(2);
+
+  const topDesc = (profQuestionnaireSummary.value?.top_descriptors || [])
+    .slice(0, 3)
+    .map((d) => `${d.word} (x${d.count})`)
+    .join('; ');
+
+  const strength = profQuestionnaireSummary.value?.key_strengths?.[0] || 'N/A';
+  const rec = profQuestionnaireSummary.value?.key_recommendations?.[0] || 'N/A';
+  const planStatus = sectionActionPlan.value?.status || 'N/A';
+
+  const headers = [
+    'Academic Term',
+    'Faculty Name',
+    'Faculty ID',
+    'Course Code',
+    'Course Title',
+    'Section Code',
+    'Enrolled Students',
+    'Completed Evaluations',
+    'Turnout Rate (%)',
+    'Composite Mean Score (1-5)',
+    'Performance Adjective',
+    'Pedagogical Delivery (1-5)',
+    'Assessment & Grading (1-5)',
+    'Classroom Management (1-5)',
+    'Professional Conduct (1-5)',
+    'Student Support & Mentorship (1-5)',
+    'Top Student Descriptors',
+    'Key Teaching Strength',
+    'Actionable Recommendation',
+    'Pedagogical Action Plan Status',
+  ];
+
+  const row = [
+    sanitizeCsvCell(authStore.activeTerm || '1st Semester AY 2026-2027'),
+    sanitizeCsvCell(facultyName),
+    sanitizeCsvCell(facultyInstId),
+    sanitizeCsvCell(courseCode),
+    sanitizeCsvCell(activeSection.value.course_title || ''),
+    sanitizeCsvCell(sectionCode),
+    enrolled,
+    evaluated,
+    turnoutPct,
+    meanScore,
+    sanitizeCsvCell(ratingText),
+    cPed,
+    cAssess,
+    cMgmt,
+    cConduct,
+    cSupport,
+    sanitizeCsvCell(topDesc),
+    sanitizeCsvCell(strength),
+    sanitizeCsvCell(rec),
+    sanitizeCsvCell(planStatus),
+  ];
+
+  const csvContent = [headers.join(','), row.join(',')].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `PLP_Faculty_Evaluation_${courseCode}_${sectionCode}_${termCode}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
 function printEvaluationReport() {
@@ -328,7 +426,16 @@ function printEvaluationReport() {
             Overall Section Mean: <strong>{{ overallMeanScore.toFixed(2) }} / 5.00</strong>
           </p>
         </div>
-        <div class="unlocked-header-actions">
+        <div class="unlocked-header-actions" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+          <button
+            type="button"
+            class="btn-secondary"
+            data-testid="export-faculty-section-csv-btn"
+            style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.45rem 0.85rem; font-size: 0.85rem; font-weight: 600;"
+            @click="exportFacultySectionCsv"
+          >
+            <span>📥 Export CSV</span>
+          </button>
           <button
             type="button"
             class="btn-primary"
