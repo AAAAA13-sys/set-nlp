@@ -1725,4 +1725,20 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(deanViewSfc.includes('showRubricModal = true'), 'Dean showRubricModal trigger');
     });
   });
+
+  describe('Group 59: Student Evaluation Clearance Checklist CSV Export & Verification Alignment', () => {
+    it('verifies student queue checklist export button, formula injection neutralization, and clearance proof integration', () => {
+      const queueViewSfc = readResourceFile('views/StudentQueueView.vue');
+
+      // 1. Export Checklist Button
+      assert.ok(queueViewSfc.includes('data-testid="export-student-queue-csv-btn"'), 'Student queue CSV export button present');
+      assert.ok(queueViewSfc.includes('@click="exportStudentChecklistCsv"'), 'exportStudentChecklistCsv click binding');
+      assert.ok(queueViewSfc.includes('exportStudentChecklistCsv'), 'exportStudentChecklistCsv handler defined');
+
+      // 2. Formula Injection Neutralization & Proof Token Inclusion
+      assert.ok(queueViewSfc.includes('sanitizeCsvCell'), 'sanitizeCsvCell imported and used');
+      assert.ok(queueViewSfc.includes('PLP_Student_Evaluation_Checklist_'), 'Checklist export filename pattern');
+      assert.ok(queueViewSfc.includes('Clearance Proof Token'), 'Clearance Proof Token column included');
+    });
+  });
 });

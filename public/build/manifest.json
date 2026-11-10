@@ -11,7 +11,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-ByUMqXmI.js",
+    "file": "assets/app-BfX8xmK4.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -19,7 +19,7 @@
       "node_modules/jquery/dist-module/jquery.module.js"
     ],
     "css": [
-      "assets/app-CgsVISCc.css"
+      "assets/app-BOLbhUTh.css"
     ]
   }
 }

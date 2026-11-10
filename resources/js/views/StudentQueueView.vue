@@ -6,6 +6,7 @@ import ErrorRecoveryBanner from '../components/ErrorRecoveryBanner.vue';
 import SkeletonLoader from '../components/SkeletonLoader.vue';
 import { useAuthStore } from '../stores/auth.js';
 import { useEvaluationStore } from '../stores/evaluation.js';
+import { sanitizeCsvCell } from '../utils/evaluationMath.js';
 import { debounce } from '../utils/uxHelpers.js';
 
 const router = useRouter();
@@ -33,6 +34,49 @@ function printQueueReceipt() {
   if (typeof window !== 'undefined' && typeof window.print === 'function') {
     window.print();
   }
+}
+
+function exportStudentChecklistCsv() {
+  const courses = Array.isArray(evaluationStore.courses) ? evaluationStore.courses : [];
+  const termName = evaluationStore.evaluationWindow?.term_name || authStore.activeTerm || '1st Semester AY 2026-2027';
+  const studentId = authStore.user?.institutional_id || 'PLP-STUDENT';
+  const studentName = authStore.user?.name || 'PLP Student';
+  const termCode = termName.replace(/[^a-zA-Z0-9_-]/g, '_');
+
+  const headers = [
+    'Academic Term',
+    'Student ID',
+    'Student Name',
+    'Course Code',
+    'Course Title',
+    'Section',
+    'Instructor Name',
+    'Evaluation Status',
+    'Clearance Proof Token',
+  ];
+
+  const rows = courses.map((c) => [
+    sanitizeCsvCell(termName),
+    sanitizeCsvCell(studentId),
+    sanitizeCsvCell(studentName),
+    sanitizeCsvCell(c.course_code),
+    sanitizeCsvCell(c.course_title),
+    sanitizeCsvCell(c.section_code || 'SEC-A'),
+    sanitizeCsvCell(c.instructor_name),
+    sanitizeCsvCell(c.status),
+    sanitizeCsvCell(c.clearance_token || 'PENDING_EVALUATION'),
+  ]);
+
+  const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `PLP_Student_Evaluation_Checklist_${termCode}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
 const progress = computed(() => evaluationStore.queueProgress);
@@ -210,6 +254,18 @@ function startEvaluation(course) {
             @click="statusFilter = 'COMPLETED'"
           >
             Completed ({{ progress.completed }})
+          </button>
+        </div>
+
+        <div style="margin-left: auto; display: flex; align-items: center; gap: 0.5rem;">
+          <button
+            type="button"
+            class="btn-secondary btn-xs"
+            data-testid="export-student-queue-csv-btn"
+            style="display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 600; padding: 0.35rem 0.75rem;"
+            @click="exportStudentChecklistCsv"
+          >
+            📥 Export Checklist (CSV)
           </button>
         </div>
       </div>
