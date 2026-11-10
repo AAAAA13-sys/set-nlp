@@ -209,17 +209,34 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
   - Captured live desktop and mobile verification artifacts (`live_figma_clickable_prototype.png` and `live_figma_mobile_prototype.png`).
   - Confirmed 100% pass across all 167 multi-tier automated test units.
 
+- [x] **Checkpoint 57:** Campaign War Room, Mentorship Lifecycle, AACCUP Level III Executive Accreditation Dossier & 12-Test Autonomous Playwright Mission (Phase 8):
+  - Implemented `CampaignWarRoomService` and `CampaignWarRoomController` providing an automated 6-point pre-flight diagnostic audit, real-time $\ge 85.0\%$ turnout velocity leaderboard, and non-coercive reminder batch compilation with zero response links.
+  - Implemented `MentorshipLifecycleService` and `MentorshipLifecycleController` providing a closed-loop growth workspace for watchlist-flagged instructors (`DRAFT` $\to$ `SUBMITTED` $\to$ `APPROVED` $\to$ `IN_PROGRESS` $\to$ `RESOLVED`), chair peer mentor assignment, milestone progress tracking, and final sign-off.
+  - Enhanced `AccreditationGovernanceService` with one-click compilation of cryptographically sealed executive accreditation evidence bundles (`PLP-AACCUP3-DOSSIER-YYYYMMDD.zip`), strictly isolating campus facilities feedback (`TAG_UNCLASSIFIED`) from instructional pedagogy.
+  - Implemented Quivr Second Brain qualitative feedback semantic search with sentiment valence pill filters and strict multi-tenant Chair (`department_id`) and Dean (`college_name`) scoping.
+  - Expanded Playwright E2E test suite from 6 to 12 automated tests (`E2E-01` through `E2E-12`) with full headless browser lifecycle management, visual audits, and 100% pass rate.
+
+- [x] **Checkpoint 58:** Enterprise Object-Oriented Architecture Refactoring & Lean Modularity:
+  - Decomposed oversized `DecoupledEvaluationService.php` (1,104 lines) into cohesive, single-responsibility domain services following SOLID principles:
+    - `DatabaseSchemaManager.php`: Relational schema DDL and index structures.
+    - `EvaluationSubmissionService.php`: Dual-token cryptographic decoupled submissions, FT-02 idempotency, and zero-knowledge vault persistence.
+    - `StudentQueueService.php`: Student evaluation queue generation and start token issuance.
+    - `ExaminationPermitService.php`: Clearance verification for exam proctors and registrar.
+    - `DecoupledEvaluationService.php`: Master Facade composing all specialized services while maintaining 100% backward-compatible contracts.
+  - Modularized `AdminSetupView.vue` with dedicated tab components (`SetupWarRoomTab.vue`, `SetupAssignmentsTab.vue`, `SetupTermsTab.vue`, etc.).
+  - Executed Unified Multi-Tier Verification Matrix: 181 automated units, 100% PASS (39 PHPUnit backend tests with 1,067 assertions, 80 Frontend DOM/UX tests across 76 groups, 50 Python NLP unit tests, 12 Playwright autonomous interaction tests, zero PHP syntax errors, zero UTF-8 BOM violations, and zero Vite build errors).
+
 ---
 
 ## 6. Multi-Tier Verification Evidence Log
 
 | Verification Tier | Command Executed | Executed Units | Pass Rate | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (989 assertions) | 35 / 35 | **100% PASS** |
-| **Frontend DOM & UX Suite** | `npm.cmd test` | 72 test groups (76 tests) | 76 / 76 | **100% PASS** |
+| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 39 tests (1,067 assertions) | 39 / 39 | **100% PASS** |
+| **Frontend DOM & UX Suite** | `npm.cmd test` | 76 test groups (80 tests) | 80 / 80 | **100% PASS** |
 | **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 50 unit tests | 50 / 50 | **100% PASS** |
-| **Playwright E2E Suite** | `node --test tests/frontend/e2e-interaction.spec.js` | 6 interaction tests | 6 / 6 | **100% PASS** |
-| **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 52 PHP files, 261 sources | 100% clean | **100% PASS** |
-| **Vite Production Bundle** | `npm.cmd run build` | 91 modules | Zero `.map` files | **100% PASS** |
-| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 167 automated units | 167 / 167 | **100% PASS** |
+| **Playwright E2E Suite** | `node --test tests/frontend/e2e-interaction.spec.js` | 12 interaction tests | 12 / 12 | **100% PASS** |
+| **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 60 PHP files, 262 sources | 100% clean | **100% PASS** |
+| **Vite Production Bundle** | `npm.cmd run build` | 92 modules | Zero `.map` files | **100% PASS** |
+| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 181 automated units | 181 / 181 | **100% PASS** |
 

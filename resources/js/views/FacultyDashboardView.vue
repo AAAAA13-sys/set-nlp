@@ -272,7 +272,7 @@ function printEvaluationReport() {
 </script>
 
 <template>
-  <main class="workspace-main faculty-dashboard-workspace" aria-labelledby="faculty-heading">
+  <main class="workspace-main faculty-dashboard-workspace" aria-labelledby="faculty-heading" data-testid="faculty-workspace">
     <ErrorRecoveryBanner
       :visible="Boolean(reportNetworkError)"
       title="Couldn't load faculty evaluation report"

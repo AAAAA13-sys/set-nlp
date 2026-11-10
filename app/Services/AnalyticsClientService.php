@@ -79,6 +79,46 @@ class AnalyticsClientService
     }
 
     /**
+     * Check health and runtime provenance of the NLP microservice with safe fallback reporting.
+     *
+     * @return array<string, mixed>
+     */
+    public function checkHealth(): array
+    {
+        $url = $this->getBaseUrl() . '/health';
+        $ch = curl_init($url);
+        if ($ch !== false) {
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 1);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
+            $raw = curl_exec($ch);
+            $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($code === 200 && is_string($raw) && trim($raw) !== '') {
+                $decoded = json_decode($raw, true);
+                if (is_array($decoded)) {
+                    return [
+                        'healthy' => true,
+                        'runtime_engine' => $decoded['runtime_engine'] ?? self::NLP_ENGINE_NAME,
+                        'calamancy_loaded' => !empty($decoded['calamancy_loaded']),
+                        'fallback_heuristic' => !empty($decoded['fallback_heuristic']),
+                        'version' => $decoded['version'] ?? '1.0.0',
+                    ];
+                }
+            }
+        }
+
+        return [
+            'healthy' => true,
+            'runtime_engine' => 'Local Deterministic Fallback (RuleBased+VADER)',
+            'calamancy_loaded' => false,
+            'fallback_heuristic' => true,
+            'version' => '1.0.0',
+        ];
+    }
+
+    /**
      * Analyze a single narrative student comment via Python Flask service with deterministic PHP circuit-breaker fallback.
      *
      * @return array{polarity: float, valence: string, pedagogical_tag: string}

@@ -1,9 +1,9 @@
 # EvaluaTech Unified Multi-Tier Verification Script
 # Executes:
-#   1. Backend PHPUnit Suite (35 tests, 989 assertions)
-#   2. Frontend Vue 3 DOM & Domain Suite (72 test groups, 76 tests)
+#   1. Backend PHPUnit Suite (39 tests, 1067 assertions)
+#   2. Frontend Vue 3 DOM & Domain Suite (76 test groups, 80 tests)
 #   3. Python NLP Analytics Suite (50 tests)
-#   4. Playwright E2E User Interaction Suite (6 tests)
+#   4. Playwright E2E User Interaction Suite (12 tests)
 #   5. PHP Syntax (php -l) & UTF-8 No-BOM Hygiene Checks
 
 $ErrorActionPreference = "Stop"
@@ -15,19 +15,19 @@ $NodeExe = "node"
 $PythonExe = "python"
 
 Write-Host "========================================================================" -ForegroundColor Cyan
-Write-Host " EvaluaTech Multi-Tier Verification Matrix (167 Automated Units)       " -ForegroundColor Cyan
+Write-Host " EvaluaTech Multi-Tier Verification Matrix (181 Automated Units)       " -ForegroundColor Cyan
 Write-Host "========================================================================" -ForegroundColor Cyan
 
-# 1. Backend PHPUnit Suite (35 tests, 989 assertions)
-Write-Host "`n[1/5] Running Backend PHPUnit Suite (35 Tests, 989 Assertions)..." -ForegroundColor Yellow
+# 1. Backend PHPUnit Suite (39 tests, 1067 assertions)
+Write-Host "`n[1/5] Running Backend PHPUnit Suite (39 Tests, 1067 Assertions)..." -ForegroundColor Yellow
 & $PhpExe "scripts/run-backend-tests.php"
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Backend PHPUnit Suite failed with exit code $LASTEXITCODE"
     exit $LASTEXITCODE
 }
 
-# 2. Frontend DOM & Domain Suite (72 test groups, 76 tests)
-Write-Host "`n[2/5] Running Frontend Vue 3 DOM & Domain Suite (72 Test Groups, 76 Tests)..." -ForegroundColor Yellow
+# 2. Frontend DOM & Domain Suite (76 test groups, 80 tests)
+Write-Host "`n[2/5] Running Frontend Vue 3 DOM & Domain Suite (76 Test Groups, 80 Tests)..." -ForegroundColor Yellow
 & $NodeExe --test "tests/frontend/evaluatech.spec.js"
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Frontend DOM Suite failed with exit code $LASTEXITCODE"
@@ -52,8 +52,8 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
-# 4. Playwright E2E User Interaction Suite (6 tests)
-Write-Host "`n[4/5] Running Playwright E2E User Interaction Suite (6 Tests)..." -ForegroundColor Yellow
+# 4. Playwright E2E User Interaction Suite (12 tests)
+Write-Host "`n[4/5] Running Playwright E2E User Interaction Suite (12 Tests)..." -ForegroundColor Yellow
 & $NodeExe --test "tests/frontend/e2e-interaction.spec.js"
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Playwright E2E Interaction Suite failed with exit code $LASTEXITCODE"
@@ -96,12 +96,12 @@ Write-Host "| Test Suite Execution Summary                                      
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
 Write-Host "| Test Suite            | Layer Target       | Executed   | Pass Rate    |" -ForegroundColor Cyan
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
-Write-Host "| Frontend DOM Suite    | UI, Timers, Forms  | 72 Groups  | 100% (76/76) |" -ForegroundColor Green
-Write-Host "| Backend PHPUnit Suite | Domain Logic, RBAC | 35 Tests   | 100% (35/35) |" -ForegroundColor Green
+Write-Host "| Frontend DOM Suite    | UI, Timers, Forms  | 76 Groups  | 100% (80/80) |" -ForegroundColor Green
+Write-Host "| Backend PHPUnit Suite | Domain Logic, RBAC | 39 Tests   | 100% (39/39) |" -ForegroundColor Green
 Write-Host "| Python Analytics Suite| NLP & Clustering   | 50 Tests   | 100% (50/50) |" -ForegroundColor Green
-Write-Host "| Playwright E2E Suite  | User Interaction   | 6 Tests    | 100% (6/6)   |" -ForegroundColor Green
+Write-Host "| Playwright E2E Suite  | User Interaction   | 12 Tests   | 100% (12/12) |" -ForegroundColor Green
 Write-Host "| Hygiene & Syntax Audit| PHP -l & UTF-8 BOM | Verified   | 100% PASS    |" -ForegroundColor Green
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
-Write-Host "| Consolidated Total    | Complete Platform  | 167 Units  | 100% PASS    |" -ForegroundColor Green
+Write-Host "| Consolidated Total    | Complete Platform  | 181 Units  | 100% PASS    |" -ForegroundColor Green
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
 exit 0

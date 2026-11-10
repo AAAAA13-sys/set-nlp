@@ -5,8 +5,10 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\AdminRosterController;
 use App\Http\Controllers\Api\AdminSetupController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CampaignWarRoomController;
 use App\Http\Controllers\Api\DeanAnalyticsController;
 use App\Http\Controllers\Api\FacultyPortalController;
+use App\Http\Controllers\Api\MentorshipLifecycleController;
 use App\Http\Controllers\Api\StudentEvaluationController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +38,9 @@ Route::middleware(['role:faculty'])->group(function (): void {
     Route::get('/faculty/sections/{sectionId}/report', [FacultyPortalController::class, 'sectionReport'])
         ->middleware('double_blind');
     Route::post('/faculty/action-plan/status', [FacultyPortalController::class, 'updateActionPlanStatus']);
+    Route::get('/faculty/action-plan', [MentorshipLifecycleController::class, 'getFacultyActionPlan']);
+    Route::post('/faculty/action-plan/reflection', [MentorshipLifecycleController::class, 'submitFacultyReflection']);
+    Route::post('/faculty/action-plan/milestone', [MentorshipLifecycleController::class, 'updateMilestoneProgress']);
 });
 
 // Dean & Department Chair Diagnostic Analytics & Watchlist (SOP 2 & SOP 3)
@@ -56,6 +61,7 @@ Route::middleware(['role:dean,chair,admin'])->group(function (): void {
     Route::post('/dean/sus/evaluate', [DeanAnalyticsController::class, 'evaluateLiveSus']);
     Route::post('/dean/export-csv', [DeanAnalyticsController::class, 'exportCsv']);
     Route::get('/dean/insights-search', [DeanAnalyticsController::class, 'insightsSearch']);
+    Route::post('/dean/accreditation/compile', [DeanAnalyticsController::class, 'compileAccreditationDossier']);
 
     // Dedicated Chair Workspace Endpoints (SOP 2)
     Route::get('/chair/overview', [DeanAnalyticsController::class, 'overview']);
@@ -66,6 +72,10 @@ Route::middleware(['role:dean,chair,admin'])->group(function (): void {
     Route::get('/chair/longitudinal-trends', [DeanAnalyticsController::class, 'longitudinalTrends']);
     Route::get('/chair/insights-search', [DeanAnalyticsController::class, 'insightsSearch']);
     Route::post('/chair/action-plan/status', [DeanAnalyticsController::class, 'updateActionPlanStatus']);
+    Route::get('/chair/mentorship-overview', [MentorshipLifecycleController::class, 'getDepartmentMentorshipDashboard']);
+    Route::post('/chair/action-plan/assign-mentor', [MentorshipLifecycleController::class, 'assignMentorAndApprove']);
+    Route::post('/chair/action-plan/resolve', [MentorshipLifecycleController::class, 'signOffAndResolve']);
+    Route::post('/chair/accreditation/compile', [DeanAnalyticsController::class, 'compileAccreditationDossier']);
 });
 
 // System Administrator / Registrar Roster & Grade-Lock Management
@@ -97,4 +107,10 @@ Route::middleware(['role:admin'])->group(function (): void {
     Route::get('/admin/setup/students/{id}/enrollment', [AdminSetupController::class, 'studentEnrollment']);
     Route::get('/admin/setup/students/pending', [AdminSetupController::class, 'pendingStudentsTracker']);
     Route::get('/admin/setup/sections/{id}/roster', [AdminSetupController::class, 'sectionRoster']);
+
+    // Campaign War Room & Pre-Flight Operations
+    Route::get('/admin/war-room/preflight', [CampaignWarRoomController::class, 'preFlightAudit']);
+    Route::get('/admin/war-room/leaderboard', [CampaignWarRoomController::class, 'turnoutLeaderboard']);
+    Route::get('/admin/war-room/remind-batch', [CampaignWarRoomController::class, 'pendingReminderBatch']);
+    Route::post('/admin/governance/aaccup-dossier/compile', [DeanAnalyticsController::class, 'compileAccreditationDossier']);
 });

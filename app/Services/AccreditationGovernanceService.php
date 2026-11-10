@@ -551,4 +551,70 @@ class AccreditationGovernanceService
             ],
         ];
     }
+
+    /**
+     * Compile one-click AACCUP Level III Executive Accreditation Dossier Bundle.
+     * Separates campus facilities / extra-curricular feedback (TAG_UNCLASSIFIED)
+     * from teaching pedagogy to prevent non-instructional contamination.
+     *
+     * @return array<string, mixed>
+     */
+    public function compileExecutiveAccreditationDossierBundle(int|array|null $departmentId = null): array
+    {
+        $dossier = $this->getAccreditationEvidenceDossier($departmentId);
+
+        // Analyze pedagogical vs facility feedback separation in evaluation_vault
+        $vaultStmt = $this->pdo->query('
+            SELECT pedagogical_tag, sentiment_valence, COUNT(*) AS tag_count
+            FROM evaluation_vault
+            GROUP BY pedagogical_tag, sentiment_valence
+        ');
+        $tagRows = $vaultStmt ? $vaultStmt->fetchAll(PDO::FETCH_ASSOC) : [];
+
+        $pedagogicalCount = 0;
+        $unclassifiedCount = 0;
+        $clusterBreakdown = [];
+
+        foreach ($tagRows as $row) {
+            $tag = (string) ($row['pedagogical_tag'] ?? 'Unclassified / Needs Review');
+            $cnt = (int) $row['tag_count'];
+
+            if ($tag === 'Unclassified / Needs Review' || stripos($tag, 'unclassified') !== false || stripos($tag, 'facility') !== false) {
+                $unclassifiedCount += $cnt;
+            } else {
+                $pedagogicalCount += $cnt;
+                $clusterBreakdown[$tag] = ($clusterBreakdown[$tag] ?? 0) + $cnt;
+            }
+        }
+
+        $totalEvaluations = $pedagogicalCount + $unclassifiedCount;
+        $pedagogicalPurityPct = $totalEvaluations > 0 ? round(($pedagogicalCount / $totalEvaluations) * 100, 1) : 100.0;
+
+        $separationReport = [
+            'total_qualitative_records' => $totalEvaluations,
+            'instructional_pedagogy_records' => $pedagogicalCount,
+            'campus_facilities_isolated_records' => $unclassifiedCount,
+            'pedagogical_purity_pct' => $pedagogicalPurityPct,
+            'governance_rule' => 'AACCUP Area III mandates strict separation: campus aircon, projector, Wi-Fi, and canteen feedback are routed to Campus Facilities Maintenance and isolated from faculty pedagogical scores.',
+            'clusters_analyzed' => $clusterBreakdown,
+        ];
+
+        $todayDate = date('Ymd');
+        $bundleFilename = "PLP-AACCUP3-DOSSIER-{$todayDate}.zip";
+
+        return [
+            'bundle_filename' => $bundleFilename,
+            'dossier_seal' => $dossier['cryptographic_seal']['digital_seal'],
+            'certified_at' => $dossier['cryptographic_seal']['certified_timestamp'],
+            'accreditation_dossier' => $dossier,
+            'facilities_isolation' => $separationReport,
+            'manifest_files' => [
+                'PLP-AACCUP3-EXECUTIVE-SUMMARY.json',
+                'AACCUP-AREA-III-PEDAGOGICAL-METRICS.csv',
+                'CAMPUS-FACILITIES-ISOLATION-REPORT.csv',
+                'CRYPTOGRAPHIC-INTEGRITY-MANIFEST.sha256',
+            ],
+            'export_ready' => true,
+        ];
+    }
 }

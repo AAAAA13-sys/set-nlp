@@ -1627,6 +1627,7 @@ class EvaluationReportingService
             'synthesis_summary' => $synthesisHeadline,
             'zero_student_identity_verified' => true,
             'results' => array_slice($matches, 0, 25),
+            'matches' => array_slice($matches, 0, 25),
         ];
     }
 }

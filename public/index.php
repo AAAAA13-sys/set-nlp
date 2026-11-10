@@ -233,6 +233,12 @@ if ($isApiRoute) {
             $response = $withRoles('faculty,admin', static fn (Request $req) => (new FacultyPortalController($service))->submitTermGrades($req, $sectionId));
         } elseif ($uriPath === '/api/faculty/action-plan/status' && $method === 'POST') {
             $response = $withRoles('faculty,dean,chair,admin', static fn (Request $req) => (new FacultyPortalController($service))->updateActionPlanStatus($req));
+        } elseif ($uriPath === '/api/faculty/action-plan' && $method === 'GET') {
+            $response = $withRoles('faculty,admin', static fn (Request $req) => (new \App\Http\Controllers\Api\MentorshipLifecycleController())->getFacultyActionPlan($req));
+        } elseif ($uriPath === '/api/faculty/action-plan/reflection' && $method === 'POST') {
+            $response = $withRoles('faculty,admin', static fn (Request $req) => (new \App\Http\Controllers\Api\MentorshipLifecycleController())->submitFacultyReflection($req));
+        } elseif ($uriPath === '/api/faculty/action-plan/milestone' && $method === 'POST') {
+            $response = $withRoles('faculty,admin', static fn (Request $req) => (new \App\Http\Controllers\Api\MentorshipLifecycleController())->updateMilestoneProgress($req));
         }
         // Dean & Department Chair Analytical Workspace Endpoints (Role: dean, chair, admin)
         elseif (($uriPath === '/api/dean/overview' || $uriPath === '/api/chair/overview') && $method === 'GET') {
@@ -255,6 +261,14 @@ if ($isApiRoute) {
             $response = $withRoles('dean,chair,admin', static fn (Request $req) => (new DeanAnalyticsController($service))->insightsSearch($req));
         } elseif ($uriPath === '/api/dean/export-qualitative-csv' && $method === 'POST') {
             $response = $withRoles('dean,chair,admin', static fn (Request $req) => (new DeanAnalyticsController($service))->exportQualitativeCsv($req));
+        } elseif (($uriPath === '/api/dean/accreditation/compile' || $uriPath === '/api/chair/accreditation/compile' || $uriPath === '/api/admin/governance/aaccup-dossier/compile') && $method === 'POST') {
+            $response = $withRoles('dean,chair,admin', static fn (Request $req) => (new DeanAnalyticsController($service))->compileAccreditationDossier($req));
+        } elseif ($uriPath === '/api/chair/mentorship-overview' && $method === 'GET') {
+            $response = $withRoles('chair,dean,admin', static fn (Request $req) => (new \App\Http\Controllers\Api\MentorshipLifecycleController())->getDepartmentMentorshipDashboard($req));
+        } elseif ($uriPath === '/api/chair/action-plan/assign-mentor' && $method === 'POST') {
+            $response = $withRoles('chair,dean,admin', static fn (Request $req) => (new \App\Http\Controllers\Api\MentorshipLifecycleController())->assignMentorAndApprove($req));
+        } elseif ($uriPath === '/api/chair/action-plan/resolve' && $method === 'POST') {
+            $response = $withRoles('chair,dean,admin', static fn (Request $req) => (new \App\Http\Controllers\Api\MentorshipLifecycleController())->signOffAndResolve($req));
         } elseif ($uriPath === '/api/dean/export-dossier-bundle' && ($method === 'POST' || $method === 'GET')) {
             $response = $withRoles('dean,chair,admin', static fn (Request $req) => (new DeanAnalyticsController($service))->exportAccreditationDossier($req));
         } elseif ($uriPath === '/api/dean/quality-metrics' && $method === 'GET') {
@@ -309,6 +323,12 @@ if ($isApiRoute) {
             $response = $withRoles('student,faculty,chair,dean,admin', static fn (Request $req) => (new AdminRosterController(null, $service))->getEvaluationWindow($req));
         } elseif ($uriPath === '/api/admin/evaluation-window' && $method === 'POST') {
             $response = $withRoles('admin', static fn (Request $req) => (new AdminRosterController(null, $service))->updateEvaluationWindow($req));
+        } elseif ($uriPath === '/api/admin/war-room/preflight' && $method === 'GET') {
+            $response = $withRoles('admin,dean', static fn (Request $req) => (new \App\Http\Controllers\Api\CampaignWarRoomController())->preFlightAudit($req));
+        } elseif ($uriPath === '/api/admin/war-room/leaderboard' && $method === 'GET') {
+            $response = $withRoles('admin,dean,chair', static fn (Request $req) => (new \App\Http\Controllers\Api\CampaignWarRoomController())->turnoutLeaderboard($req));
+        } elseif ($uriPath === '/api/admin/war-room/remind-batch' && $method === 'GET') {
+            $response = $withRoles('admin,dean,chair', static fn (Request $req) => (new \App\Http\Controllers\Api\CampaignWarRoomController())->pendingReminderBatch($req));
         } elseif ($uriPath === '/api/admin/setup/overview' && $method === 'GET') {
             $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->overview($req));
         } elseif ($uriPath === '/api/admin/setup/terms' && $method === 'POST') {

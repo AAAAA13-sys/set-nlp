@@ -3045,4 +3045,272 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertArrayHasKey('cleared_students', $overviewData['students_summary']);
         $this->assertArrayHasKey('pending_students', $overviewData['students_summary']);
     }
+
+    /**
+     * Test 36: Campaign Pre-Flight & Operations War Room (6-point audit, velocity leaderboard, reminder batches).
+     */
+    public function test_36_campaign_war_room_preflight_diagnostics_and_turnout_velocity_leaderboard(): void
+    {
+        $warRoomService = new \App\Services\CampaignWarRoomService($this->pdo);
+        $controller = new \App\Http\Controllers\Api\CampaignWarRoomController($warRoomService);
+
+        // 1. 6-point pre-launch diagnostic audit
+        $preflightReq = new \Illuminate\Http\Request(['academic_term_id' => 1]);
+        $preflightRes = $controller->preFlightAudit($preflightReq);
+        $this->assertSame(200, $preflightRes->getStatusCode(), 'Preflight Error: ' . json_encode($preflightRes->getData(true)));
+        $preflightData = $preflightRes->getData(true);
+
+        $this->assertSame(1, $preflightData['academic_term_id']);
+        $this->assertArrayHasKey('overall_verdict', $preflightData);
+        $this->assertArrayHasKey('readiness_score_pct', $preflightData);
+        $this->assertSame(6, $preflightData['total_checks']);
+        $this->assertCount(6, $preflightData['checks']);
+
+        $checks = $preflightData['checks'];
+        $this->assertArrayHasKey('check_term_schedule', $checks);
+        $this->assertArrayHasKey('check_faculty_assignments', $checks);
+        $this->assertArrayHasKey('check_roster_enrollments', $checks);
+        $this->assertArrayHasKey('check_instrument_integrity', $checks);
+        $this->assertArrayHasKey('check_double_blind_locks', $checks);
+        $this->assertArrayHasKey('check_nlp_microservice', $checks);
+
+        $this->assertSame(25, $checks['check_instrument_integrity']['details']['total_likert_items']);
+        $this->assertSame(5, $checks['check_instrument_integrity']['details']['pedagogical_clusters']);
+
+        // 2. Real-time turnout velocity leaderboard
+        $leaderboardReq = new \Illuminate\Http\Request(['academic_term_id' => 1]);
+        $leaderboardRes = $controller->turnoutLeaderboard($leaderboardReq);
+        $this->assertSame(200, $leaderboardRes->getStatusCode());
+        $leaderboardData = $leaderboardRes->getData(true);
+
+        $this->assertArrayHasKey('institutional_summary', $leaderboardData);
+        $this->assertArrayHasKey('velocity_projection', $leaderboardData);
+        $this->assertArrayHasKey('department_leaderboard', $leaderboardData);
+
+        $this->assertEqualsWithDelta(85.0, $leaderboardData['velocity_projection']['target_turnout_pct'], 0.1);
+        $this->assertIsArray($leaderboardData['department_leaderboard']);
+        if (!empty($leaderboardData['department_leaderboard'])) {
+            $firstDept = $leaderboardData['department_leaderboard'][0];
+            $this->assertArrayHasKey('department_name', $firstDept);
+            $this->assertArrayHasKey('turnout_pct', $firstDept);
+            $this->assertArrayHasKey('target_pct', $firstDept);
+            $this->assertArrayHasKey('rank', $firstDept);
+            $this->assertSame(1, $firstDept['rank']);
+        }
+
+        // 3. Non-coercive reminder batches for pending evaluators
+        $remindReq = new \Illuminate\Http\Request(['academic_term_id' => 1]);
+        $remindRes = $controller->pendingReminderBatch($remindReq);
+        $this->assertSame(200, $remindRes->getStatusCode());
+        $remindData = $remindRes->getData(true);
+
+        $this->assertArrayHasKey('total_pending_students', $remindData);
+        $this->assertArrayHasKey('total_pending_evaluations', $remindData);
+        $this->assertArrayHasKey('reminder_subject', $remindData);
+        $this->assertArrayHasKey('reminder_template', $remindData);
+        $this->assertArrayHasKey('recipients', $remindData);
+        $this->assertStringContainsString('Pamantasan ng Lungsod ng Pasig', $remindData['reminder_template']);
+        $this->assertStringContainsString('100% anonymous', $remindData['reminder_template']);
+    }
+
+    /**
+     * Test 37: Faculty Pedagogical Action Plan & Mentorship Lifecycle (State machine, milestones, peer assignment).
+     */
+    public function test_37_faculty_action_plan_mentorship_lifecycle_state_machine_and_milestones(): void
+    {
+        $mentorshipService = new \App\Services\MentorshipLifecycleService($this->pdo);
+        $controller = new \App\Http\Controllers\Api\MentorshipLifecycleController($mentorshipService);
+
+        // Ensure an action plan exists for Faculty ID 6 (Prof. Alan Turing)
+        $existing = $mentorshipService->getFacultyActionPlan(6);
+        if ($existing === null) {
+            $planId = 'PLAN-FAC-6-' . time();
+            $stmt = $this->pdo->prepare('
+                INSERT INTO faculty_action_plans (
+                    plan_id, faculty_id, department_id, primary_cluster,
+                    status, urgency_level, mean_score, negative_sentiment_pct,
+                    interventions_json, created_at, updated_at
+                ) VALUES (
+                    ?, 6, 1, "Pedagogical Delivery",
+                    "DRAFT", "MODERATE", 3.10, 38.0,
+                    ?, datetime("now"), datetime("now")
+                )
+            ');
+            $stmt->execute([$planId, json_encode(['milestones' => []])]);
+            $existing = $mentorshipService->getFacultyActionPlan(6);
+        }
+        $this->assertNotNull($existing);
+        $planId = $existing['plan_id'];
+
+        // 1. Faculty retrieves their own action plan
+        $facultyUser = (object) ['id' => 6, 'role' => 'faculty'];
+        $getReq = new \Illuminate\Http\Request(['faculty_id' => 6]);
+        $getReq->setUserResolver(fn () => $facultyUser);
+        $getRes = $controller->getFacultyActionPlan($getReq);
+        $this->assertSame(200, $getRes->getStatusCode());
+        $this->assertTrue($getRes->getData(true)['found']);
+
+        // 2. Faculty submits self-reflection and milestone commitments
+        $reflectReq = new \Illuminate\Http\Request([
+            'faculty_id' => 6,
+            'faculty_reflection' => 'I acknowledge student feedback regarding paced lectures and plan to integrate active learning exercises.',
+            'milestones' => [
+                ['id' => 'ms-1', 'title' => 'Attend Outcome-Based Education Workshop', 'target_date' => '2026-12-01'],
+                ['id' => 'ms-2', 'title' => 'Implement mid-term formative quizzes', 'target_date' => '2026-12-15'],
+            ],
+        ]);
+        $reflectReq->setUserResolver(fn () => $facultyUser);
+        $reflectRes = $controller->submitFacultyReflection($reflectReq);
+        $this->assertSame(200, $reflectRes->getStatusCode());
+        $reflectData = $reflectRes->getData(true);
+        $this->assertTrue($reflectData['success']);
+        $this->assertSame(\App\Services\MentorshipLifecycleService::STATE_SUBMITTED, $reflectData['action_plan']['status']);
+        $this->assertCount(2, $reflectData['action_plan']['milestones']);
+
+        // 3. Department Chair assigns senior faculty peer mentor (Faculty ID 7) and approves plan
+        $chairUser = (object) ['id' => 3, 'role' => 'chair', 'department_id' => 1];
+        $assignReq = new \Illuminate\Http\Request([
+            'plan_id' => $planId,
+            'mentor_faculty_id' => 7,
+            'chair_notes' => 'Assigned Dr. Grace Hopper as peer mentor for syllabus realignment.',
+        ]);
+        $assignReq->setUserResolver(fn () => $chairUser);
+        $assignRes = $controller->assignMentorAndApprove($assignReq);
+        $this->assertSame(200, $assignRes->getStatusCode());
+        $assignData = $assignRes->getData(true);
+        $this->assertTrue($assignData['success']);
+        $this->assertSame(\App\Services\MentorshipLifecycleService::STATE_APPROVED, $assignData['action_plan']['status']);
+        $this->assertSame(7, $assignData['action_plan']['mentor_faculty_id']);
+
+        // 4. Milestone progress update shifts plan to IN_PROGRESS
+        $msReq = new \Illuminate\Http\Request([
+            'plan_id' => $planId,
+            'milestone_id' => 'ms-1',
+            'is_completed' => true,
+            'notes' => 'Completed 8-hour OBE workshop certificate on file.',
+        ]);
+        $msRes = $controller->updateMilestoneProgress($msReq);
+        $this->assertSame(200, $msRes->getStatusCode());
+        $msData = $msRes->getData(true);
+        $this->assertTrue($msData['success']);
+        $this->assertSame(\App\Services\MentorshipLifecycleService::STATE_IN_PROGRESS, $msData['action_plan']['status']);
+        $this->assertEqualsWithDelta(50.0, $msData['action_plan']['milestone_progress_pct'], 0.1);
+
+        // 5. Chair/Dean signs off and resolves action plan
+        $resolveReq = new \Illuminate\Http\Request([
+            'plan_id' => $planId,
+            'resolution_notes' => 'All milestones verified by peer mentor. Classroom observation demonstrates marked pedagogical improvement.',
+        ]);
+        $resolveReq->setUserResolver(fn () => $chairUser);
+        $resolveRes = $controller->signOffAndResolve($resolveReq);
+        $this->assertSame(200, $resolveRes->getStatusCode());
+        $resolveData = $resolveRes->getData(true);
+        $this->assertTrue($resolveData['success']);
+        $this->assertSame(\App\Services\MentorshipLifecycleService::STATE_RESOLVED, $resolveData['action_plan']['status']);
+        $this->assertNotNull($resolveData['action_plan']['signed_off_at']);
+
+        // 6. Department Chair mentorship dashboard overview
+        $dashReq = new \Illuminate\Http\Request(['department_id' => 1]);
+        $dashReq->setUserResolver(fn () => $chairUser);
+        $dashRes = $controller->getDepartmentMentorshipDashboard($dashReq);
+        $this->assertSame(200, $dashRes->getStatusCode());
+        $dashData = $dashRes->getData(true);
+        $this->assertArrayHasKey('total_action_plans', $dashData);
+        $this->assertArrayHasKey('resolved_action_plans', $dashData);
+        $this->assertArrayHasKey('resolution_rate_pct', $dashData);
+        $this->assertArrayHasKey('status_breakdown', $dashData);
+    }
+
+    /**
+     * Test 38: AACCUP Level III Executive Accreditation Dossier Bundle Compilation & Facilities Separation.
+     */
+    public function test_38_aaccup_level_iii_executive_dossier_compilation_and_facilities_separation(): void
+    {
+        $service = new \App\Services\DecoupledEvaluationService($this->pdo);
+        $controller = new \App\Http\Controllers\Api\DeanAnalyticsController($service);
+
+        $adminUser = (object) ['id' => 1, 'role' => 'admin'];
+        $compileReq = new \Illuminate\Http\Request(['department_id' => 1]);
+        $compileReq->setUserResolver(fn () => $adminUser);
+
+        $compileRes = $controller->compileAccreditationDossier($compileReq);
+        $this->assertSame(200, $compileRes->getStatusCode());
+        $data = $compileRes->getData(true);
+
+        $this->assertArrayHasKey('bundle_filename', $data);
+        $this->assertStringStartsWith('PLP-AACCUP3-DOSSIER-', $data['bundle_filename']);
+        $this->assertArrayHasKey('dossier_seal', $data);
+        $this->assertStringStartsWith('PLP-AACCUP3-', $data['dossier_seal']);
+        $this->assertArrayHasKey('manifest_files', $data);
+        $this->assertContains('PLP-AACCUP3-EXECUTIVE-SUMMARY.json', $data['manifest_files']);
+        $this->assertContains('CAMPUS-FACILITIES-ISOLATION-REPORT.csv', $data['manifest_files']);
+
+        // Statistical representation validation
+        $stats = $data['accreditation_dossier']['statistical_representation'];
+        $this->assertArrayHasKey('margin_of_error_pct', $stats);
+        $this->assertArrayHasKey('response_rate_pct', $stats);
+        $this->assertEqualsWithDelta(85.0, $stats['target_response_rate_pct'], 0.1);
+
+        // Facilities isolation verification (AACCUP Level III standard)
+        $isolation = $data['facilities_isolation'];
+        $this->assertArrayHasKey('instructional_pedagogy_records', $isolation);
+        $this->assertArrayHasKey('campus_facilities_isolated_records', $isolation);
+        $this->assertArrayHasKey('pedagogical_purity_pct', $isolation);
+        $this->assertStringContainsString('Campus Facilities Maintenance', $isolation['governance_rule']);
+    }
+
+    /**
+     * Test 39: Quivr Second Brain Qualitative Feedback Search with Scoping and Sentiment Filters.
+     */
+    public function test_39_quivr_second_brain_qualitative_feedback_search_scoping_and_valence_filters(): void
+    {
+        $service = new \App\Services\DecoupledEvaluationService($this->pdo);
+        $controller = new \App\Http\Controllers\Api\DeanAnalyticsController($service);
+
+        // Seed an evaluation_vault entry for testing if empty
+        $stmtCheck = $this->pdo->query('SELECT COUNT(*) FROM evaluation_vault');
+        if ((int) $stmtCheck->fetchColumn() === 0) {
+            $stmtVault = $this->pdo->prepare('
+                INSERT INTO evaluation_vault (
+                    id, course_section_id, faculty_id, academic_term_id, ratings_json,
+                    mean_score, rating_variance, is_straight_lined, dwell_time_seconds,
+                    comment_hash, comment_text, sentiment_polarity, sentiment_valence,
+                    pedagogical_tag, recorded_date
+                ) VALUES (
+                    "test-vault-uuid-001", 1, 6, 1, "[5,4,5,4,5]",
+                    4.50, 0.25, 0, 120,
+                    "hash123", "Excellent explanation of algorithms and great mentor.",
+                    0.82, "Positive", "Pedagogical Delivery", date("now")
+                )
+            ');
+            $stmtVault->execute();
+        }
+
+        // 1. Search with keyword and positive sentiment filter
+        $adminUser = (object) ['id' => 1, 'role' => 'admin'];
+        $searchReq = new \Illuminate\Http\Request([
+            'q' => 'algorithms',
+            'valence' => 'Positive',
+            'department_id' => 1,
+        ]);
+        $searchReq->setUserResolver(fn () => $adminUser);
+        $searchRes = $controller->insightsSearch($searchReq);
+        $this->assertSame(200, $searchRes->getStatusCode());
+        $searchData = $searchRes->getData(true);
+
+        $this->assertArrayHasKey('matches', $searchData);
+        $this->assertArrayHasKey('total_matches', $searchData);
+        $this->assertArrayHasKey('valence_distribution', $searchData);
+
+        // 2. Strict IDOR containment: Department Chair (dept_id = 1) cannot probe Department 2
+        $chairUser = (object) ['id' => 3, 'role' => 'chair', 'department_id' => 1];
+        $crossProbeReq = new \Illuminate\Http\Request([
+            'q' => 'test',
+            'department_id' => 2, // cross-tenant probe
+        ]);
+        $crossProbeReq->setUserResolver(fn () => $chairUser);
+        $crossProbeRes = $controller->insightsSearch($crossProbeReq);
+        $this->assertSame(403, $crossProbeRes->getStatusCode());
+        $this->assertSame('FORBIDDEN_DEPARTMENT_SCOPE', $crossProbeRes->getData(true)['code']);
+    }
 }

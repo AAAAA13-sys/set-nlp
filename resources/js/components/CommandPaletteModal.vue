@@ -54,6 +54,7 @@ const baseCommands = computed(() => {
       { id: 'nav-setup-students', group: 'Academic Setup', label: 'Student Directory & Clearance Roster', hint: '/admin/setup?tab=students', action: () => router.push('/admin/setup?tab=students') },
       { id: 'nav-setup-users', group: 'Academic Setup', label: 'System Accounts & Staff Roles', hint: '/admin/setup?tab=users', action: () => router.push('/admin/setup?tab=users') },
       { id: 'nav-setup-questionnaire', group: 'Academic Setup', label: 'Evaluation Questionnaire & Rubric', hint: '/admin/setup?tab=questionnaire', action: () => router.push('/admin/setup?tab=questionnaire') },
+      { id: 'nav-setup-war-room', group: 'Academic Setup', label: 'Operations War Room & Campaign Telemetry', hint: '/admin/setup?tab=war-room', action: () => router.push('/admin/setup?tab=war-room') },
       { id: 'open-quivr', group: 'Analysis', label: "Professor's Evaluation Analysis", hint: 'Feedback Search', action: () => emit('open-quivr-brain') },
     );
   }

@@ -402,7 +402,7 @@ namespace Tests {
                     faculty_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
                     department_id INTEGER NULL REFERENCES departments(id) ON DELETE SET NULL,
                     primary_cluster TEXT NOT NULL DEFAULT 'Pedagogical Delivery',
-                    status TEXT NOT NULL DEFAULT 'PENDING_REVIEW' CHECK(status IN ('PENDING_REVIEW', 'APPROVED', 'IN_PROGRESS', 'RESOLVED')),
+                    status TEXT NOT NULL DEFAULT 'PENDING_REVIEW' CHECK(status IN ('DRAFT', 'SUBMITTED', 'PENDING_REVIEW', 'APPROVED', 'IN_PROGRESS', 'RESOLVED')),
                     urgency_level TEXT NOT NULL DEFAULT 'MODERATE',
                     mean_score REAL NOT NULL,
                     negative_sentiment_pct REAL NOT NULL,

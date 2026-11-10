@@ -2072,4 +2072,83 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes(':data-testid="`edit-student-btn-${std.id}`"'), 'Edit student button in Tab 5 present');
     });
   });
+
+  describe('Group 73: Operations War Room & 6-Point Pre-Flight Diagnostic Telemetry', () => {
+    it('verifies war-room tab, 6-point pre-launch diagnostic audit, readiness score, and checks grid in SetupWarRoomTab', () => {
+      const warRoomSfc = readResourceFile('components/setup/SetupWarRoomTab.vue');
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+
+      // 1. Tab registration in AdminSetupView
+      assert.ok(setupViewSfc.includes('SetupWarRoomTab'), 'SetupWarRoomTab imported in AdminSetupView');
+      assert.ok(setupViewSfc.includes('data-testid="tab-war-room-btn"'), 'War Room tab button in AdminSetupView');
+      assert.ok(setupViewSfc.includes("v-if=\"activeTab === 'war-room'\""), 'SetupWarRoomTab conditionally rendered on war-room tab');
+
+      // 2. 6-point pre-flight diagnostic audit cards
+      assert.ok(warRoomSfc.includes('data-testid="preflight-audit-card"'), 'Preflight audit card present');
+      assert.ok(warRoomSfc.includes('data-testid="preflight-verdict-badge"'), 'Verdict badge present');
+      assert.ok(warRoomSfc.includes('data-testid="readiness-score-text"'), 'Readiness score text present');
+      assert.ok(warRoomSfc.includes('data-testid="audit-checks-grid"'), 'Audit checks grid container present');
+      assert.ok(warRoomSfc.includes('data-testid="btn-refresh-war-room"'), 'Refresh telemetry button present');
+      assert.ok(warRoomSfc.includes('/api/admin/war-room/preflight'), 'Fetches preflight endpoint');
+    });
+  });
+
+  describe('Group 74: Departmental Turnout Velocity Leaderboard & Non-Coercive Reminder Batches', () => {
+    it('verifies leaderboard table, target turnout velocity, and privacy-preserving reminder batch compilation', () => {
+      const warRoomSfc = readResourceFile('components/setup/SetupWarRoomTab.vue');
+
+      // 1. Leaderboard & Velocity Telemetry
+      assert.ok(warRoomSfc.includes('data-testid="turnout-leaderboard-card"'), 'Turnout leaderboard card present');
+      assert.ok(warRoomSfc.includes('data-testid="velocity-target-badge"'), 'Velocity target status badge present');
+      assert.ok(warRoomSfc.includes('data-testid="stat-total-enrolled"'), 'Total enrolled metric display');
+      assert.ok(warRoomSfc.includes('data-testid="stat-completed-evals"'), 'Completed evaluations metric display');
+      assert.ok(warRoomSfc.includes('data-testid="stat-pending-evals"'), 'Pending evaluations metric display');
+      assert.ok(warRoomSfc.includes('data-testid="stat-turnout-pct"'), 'Current turnout percentage display');
+      assert.ok(warRoomSfc.includes('data-testid="departments-table"'), 'Department leaderboard table present');
+
+      // 2. Non-Coercive Reminder Batch Compilation
+      assert.ok(warRoomSfc.includes('data-testid="reminder-batch-card"'), 'Reminder batch card present');
+      assert.ok(warRoomSfc.includes('data-testid="btn-compile-reminders"'), 'Compile reminder button present');
+      assert.ok(warRoomSfc.includes('/api/admin/war-room/remind-batch'), 'Fetches remind-batch endpoint');
+      assert.ok(warRoomSfc.includes('Zero Response Links'), 'Zero response links privacy notice present');
+    });
+  });
+
+  describe('Group 75: Faculty Action Plan Mentorship Lifecycle & Milestone Commitments', () => {
+    it('verifies faculty action plan workspace, status badge, milestone actions, and chair endorsement', () => {
+      const facultyViewSfc = readResourceFile('views/FacultyDashboardView.vue');
+      const chairViewSfc = readResourceFile('views/ChairDashboardView.vue');
+
+      // 1. Faculty Dashboard Action Plan Workspace
+      assert.ok(facultyViewSfc.includes('data-testid="faculty-action-plan-card"'), 'Faculty action plan card present');
+      assert.ok(facultyViewSfc.includes('data-testid="faculty-plan-status-badge"'), 'Plan status badge present');
+      assert.ok(facultyViewSfc.includes('data-testid="faculty-acknowledge-plan-btn"'), 'Faculty acknowledge button present');
+      assert.ok(facultyViewSfc.includes('data-testid="faculty-submit-milestone-btn"'), 'Faculty submit milestone button present');
+      assert.ok(facultyViewSfc.includes('/api/faculty/action-plan/status'), 'Faculty updates plan status via API');
+
+      // 2. Department Chair Review & Endorsement
+      assert.ok(chairViewSfc.includes('data-testid="chair-endorse-plan-btn"'), 'Chair endorse action plan button present');
+      assert.ok(chairViewSfc.includes('/api/chair/action-plan/status'), 'Chair updates action plan status via API');
+    });
+  });
+
+  describe('Group 76: AACCUP Level III Executive Accreditation Dossier Bundle & Quivr NLP Feedback Explorer', () => {
+    it('verifies one-click dossier compilation button, compiled bundle card, facilities separation, and Quivr NLP search', () => {
+      const deanViewSfc = readResourceFile('views/DeanDashboardView.vue');
+      const quivrSfc = readResourceFile('components/QuivrNlpBrainDrawer.vue');
+
+      // 1. AACCUP Level III Dossier Compilation in DeanDashboardView
+      assert.ok(deanViewSfc.includes('data-testid="compile-aaccup-dossier-btn"'), 'Compile AACCUP dossier button present');
+      assert.ok(deanViewSfc.includes('data-testid="compiled-aaccup-bundle-card"'), 'Compiled bundle card present');
+      assert.ok(deanViewSfc.includes('data-testid="compiled-bundle-seal"'), 'Compiled bundle seal present');
+      assert.ok(deanViewSfc.includes('compileAaccupDossier'), 'compileAaccupDossier method defined');
+      assert.ok(deanViewSfc.includes('/api/dean/accreditation/compile'), 'Calls accreditation compile endpoint');
+
+      // 2. Quivr Second Brain Feedback Search Explorer
+      assert.ok(quivrSfc.includes('selectedValence'), 'Valence filter reactive ref in Quivr drawer');
+      assert.ok(quivrSfc.includes('selectedCluster'), 'Cluster filter reactive ref in Quivr drawer');
+      assert.ok(quivrSfc.includes('executeSearch'), 'executeSearch method defined in Quivr drawer');
+      assert.ok(quivrSfc.includes('zero_student_identity_verified'), 'Guarantees zero student identity disclosure');
+    });
+  });
 });

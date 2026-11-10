@@ -549,6 +549,28 @@ function exportAccreditationDossier() {
   });
   triggerDownload('PLP-AACCUP-Area-III-Dossier-AY2026-2027.csv', lines.join('\n'), 'text/csv;charset=utf-8');
 }
+
+const compilingDossier = ref(false);
+const compiledBundle = ref(null);
+
+async function compileAaccupDossier() {
+  compilingDossier.value = true;
+  try {
+    const deptId = selectedDepartment.value === 'ALL' ? null : Number(selectedDepartment.value);
+    const res = await fetch('/api/dean/accreditation/compile', {
+      method: 'POST',
+      headers: authStore.authHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ department_id: deptId }),
+    });
+    if (res.ok) {
+      compiledBundle.value = await res.json();
+    }
+  } catch (err) {
+    console.error('Failed to compile dossier:', err);
+  } finally {
+    compilingDossier.value = false;
+  }
+}
 </script>
 
 <template>
@@ -1332,15 +1354,61 @@ function exportAccreditationDossier() {
               <span class="ui-hint" tabindex="0" aria-label="Semester trend details" data-hint="Comparison of current semester ratings, comment sentiment, and action plan resolution against the prior semester.">?</span>
             </h3>
           </div>
-          <div style="display:flex;gap:0.5rem;align-items:center;">
+          <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
             <button
               type="button"
               class="btn-primary btn-sm"
+              data-testid="compile-aaccup-dossier-btn"
+              :disabled="compilingDossier"
+              @click="compileAaccupDossier"
+            >
+              <span>{{ compilingDossier ? 'Compiling Dossier...' : 'Compile AACCUP Level III Dossier' }}</span>
+            </button>
+            <button
+              type="button"
+              class="btn-secondary btn-sm"
               data-testid="export-dossier-bundle-btn"
               @click="exportAccreditationDossier"
             >
               Export Accreditation Dossier Bundle (CSV)
             </button>
+          </div>
+        </div>
+
+        <!-- Compiled AACCUP Dossier Bundle Card -->
+        <div
+          v-if="compiledBundle"
+          class="card dossier-compiled-bundle-card"
+          style="margin-top: 1rem; background: var(--canvas); border: 1px solid var(--forest); border-radius: 8px; padding: 1rem;"
+          data-testid="compiled-aaccup-bundle-card"
+        >
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom: 0.5rem;">
+            <div>
+              <span class="eyebrow-badge">OFFICIAL ACCREDITATION BUNDLE</span>
+              <h4 style="margin: 0.2rem 0; font-size: 1rem; color: var(--ink);">
+                {{ compiledBundle.bundle_filename }}
+              </h4>
+            </div>
+            <span class="badge-unlocked" data-testid="compiled-bundle-seal">
+              {{ compiledBundle.dossier_seal }}
+            </span>
+          </div>
+
+          <!-- Facilities Separation Banner -->
+          <div style="background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 0.75rem; margin-bottom: 0.75rem; font-size: 0.85rem;">
+            <div style="font-weight: 600; color: var(--forest); margin-bottom: 0.25rem;">
+              Instructional Pedagogy vs Campus Facilities Separation (Purity: {{ compiledBundle.facilities_isolation.pedagogical_purity_pct }}%)
+            </div>
+            <p style="margin: 0; color: var(--ink-muted); font-size: 0.8rem; line-height: 1.4;">
+              {{ compiledBundle.facilities_isolation.governance_rule }} ({{ compiledBundle.facilities_isolation.campus_facilities_isolated_records }} non-instructional comment(s) isolated).
+            </p>
+          </div>
+
+          <div style="font-size: 0.82rem; color: var(--ink-muted); margin-bottom: 0.5rem;">
+            <strong>Manifest Files:</strong>
+            <span class="font-mono text-xs" style="margin-left: 0.5rem;">
+              {{ (compiledBundle.manifest_files || []).join(' • ') }}
+            </span>
           </div>
         </div>
 

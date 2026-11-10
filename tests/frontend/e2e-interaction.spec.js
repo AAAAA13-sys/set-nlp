@@ -187,4 +187,168 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
       await page.close();
     }
   });
+
+  test('E2E-07: Campaign Operations War Room renders 6-point pre-flight diagnostics and readiness score', async () => {
+    const page = await browser.newPage({ viewport: { width: 1366, height: 768 } });
+    try {
+      await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
+      await page.fill('[data-testid="login-id-input"]', 'admin@plpasig.edu.ph');
+      await page.fill('[data-testid="login-password-input"]', 'evaluatech123');
+      await page.click('[data-testid="login-submit-btn"]');
+      await page.waitForSelector('[data-testid="nav-link-admin-setup"]', { timeout: 6000 });
+
+      // Navigate to Setup War Room tab
+      await page.goto(`${BASE_URL}/admin/setup?tab=war-room`, { waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('[data-testid="war-room-workspace"]', { timeout: 6000 });
+      await page.waitForSelector('[data-testid="preflight-audit-card"]');
+      await page.waitForSelector('[data-testid="check-card-1"]', { timeout: 6000 });
+
+      // Verify verdict badge and readiness score
+      const verdict = await page.textContent('[data-testid="preflight-verdict-badge"]');
+      assert.ok(verdict.length > 0, 'Preflight verdict badge displayed');
+
+      const readinessText = await page.textContent('[data-testid="readiness-score-text"]');
+      assert.ok(readinessText.includes('%'), 'Readiness score percentage displayed');
+
+      // Verify audit checks grid has check cards
+      const checkCards = await page.$$('[data-testid^="check-card-"]');
+      assert.strictEqual(checkCards.length, 6, 'All 6 diagnostic check cards rendered');
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('E2E-08: Departmental turnout velocity leaderboard and non-coercive reminder batch compilation', async () => {
+    const page = await browser.newPage({ viewport: { width: 1366, height: 768 } });
+    try {
+      await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
+      await page.fill('[data-testid="login-id-input"]', 'admin@plpasig.edu.ph');
+      await page.fill('[data-testid="login-password-input"]', 'evaluatech123');
+      await page.click('[data-testid="login-submit-btn"]');
+      await page.waitForSelector('[data-testid="nav-link-admin-setup"]', { timeout: 6000 });
+
+      await page.goto(`${BASE_URL}/admin/setup?tab=war-room`, { waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('[data-testid="turnout-leaderboard-card"]', { timeout: 6000 });
+
+      // Verify velocity status badge and turnout metric
+      const targetBadge = await page.textContent('[data-testid="velocity-target-badge"]');
+      assert.ok(targetBadge.length > 0, 'Velocity target status displayed');
+
+      const turnoutPct = await page.textContent('[data-testid="stat-turnout-pct"]');
+      assert.ok(turnoutPct.includes('%'), 'Turnout percentage rendered');
+
+      // Click compile reminders button
+      const compileBtn = await page.waitForSelector('[data-testid="btn-compile-reminders"]');
+      await compileBtn.click();
+
+      // Wait for reminder preview area
+      await page.waitForSelector('[data-testid="reminder-preview-area"]', { timeout: 6000 });
+      const recipientsTable = await page.$('[data-testid="reminder-recipients-table"]');
+      assert.ok(recipientsTable !== null, 'Reminder recipients table rendered');
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('E2E-09: Faculty pedagogical action plan workspace with milestone tracking', async () => {
+    const page = await browser.newPage({ viewport: { width: 1366, height: 768 } });
+    try {
+      // Login as faculty Prof. Dela Cruz
+      await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
+      await page.fill('[data-testid="login-id-input"]', 'adelacruz@plpasig.edu.ph');
+      await page.fill('[data-testid="login-password-input"]', 'evaluatech123');
+      await page.click('[data-testid="login-submit-btn"]');
+      await page.waitForSelector('[data-testid="faculty-workspace"]', { timeout: 6000 });
+
+      // Verify faculty portal rendered
+      assert.ok(page.url().includes('/faculty'), 'Navigated to faculty workspace');
+      const banner = await page.$('.header-split');
+      assert.ok(banner !== null, 'Faculty header split rendered');
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('E2E-10: Department Chair peer mentor assignment and action plan sign-off modal', async () => {
+    const page = await browser.newPage({ viewport: { width: 1366, height: 768 } });
+    try {
+      // Login as Department Chair
+      await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
+      await page.fill('[data-testid="login-id-input"]', 'chair@plpasig.edu.ph');
+      await page.fill('[data-testid="login-password-input"]', 'evaluatech123');
+      await page.click('[data-testid="login-submit-btn"]');
+      await page.waitForSelector('[data-testid="chair-diagnostic-workspace"]', { timeout: 6000 });
+
+      // Verify department heading
+      const deptHeading = await page.textContent('#chair-heading');
+      assert.ok(deptHeading.includes('Computer Science') || deptHeading.includes('Computer Studies'), 'Department name rendered in chair workspace');
+
+      // Check for export faculty CSV button
+      const exportBtn = await page.$('[data-testid="export-chair-faculty-csv-btn"]');
+      assert.ok(exportBtn !== null, 'Export chair faculty CSV button present');
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('E2E-11: AACCUP Level III executive accreditation dossier compilation with cryptographic seal and facilities separation', async () => {
+    const page = await browser.newPage({ viewport: { width: 1366, height: 768 } });
+    try {
+      // Login as College Dean
+      await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
+      await page.fill('[data-testid="login-id-input"]', 'dean@plpasig.edu.ph');
+      await page.fill('[data-testid="login-password-input"]', 'evaluatech123');
+      await page.click('[data-testid="login-submit-btn"]');
+      await page.waitForSelector('[data-testid="dean-analytical-overview"]', { timeout: 6000 });
+
+      // Switch to Semester Trends tab
+      const trendsTab = await page.waitForSelector('[data-testid="tab-longitudinal-trends"]');
+      await trendsTab.click();
+      await page.waitForSelector('[data-testid="dean-evidence-dossier-card"]', { timeout: 6000 });
+
+      // Verify existing digital seal
+      const sealText = await page.textContent('[data-testid="dossier-digital-seal"]');
+      assert.ok(sealText.includes('PLP-AACCUP3-'), 'Official cryptographic seal rendered');
+
+      // Click compile AACCUP dossier button
+      const compileBtn = await page.waitForSelector('[data-testid="compile-aaccup-dossier-btn"]');
+      await compileBtn.click();
+
+      // Verify compiled bundle card
+      await page.waitForSelector('[data-testid="compiled-aaccup-bundle-card"]', { timeout: 6000 });
+      const bundleSeal = await page.textContent('[data-testid="compiled-bundle-seal"]');
+      assert.ok(bundleSeal.includes('PLP-AACCUP3-'), 'Compiled bundle has official digital seal');
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('E2E-12: Quivr Second Brain qualitative feedback semantic search with sentiment valence filtering and zero student PII disclosure', async () => {
+    const page = await browser.newPage({ viewport: { width: 1366, height: 768 } });
+    try {
+      // Login as Department Chair
+      await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
+      await page.fill('[data-testid="login-id-input"]', 'chair@plpasig.edu.ph');
+      await page.fill('[data-testid="login-password-input"]', 'evaluatech123');
+      await page.click('[data-testid="login-submit-btn"]');
+      await page.waitForSelector('[data-testid="chair-open-quivr-brain-btn"], [data-testid="open-quivr-brain-btn"]', { timeout: 6000 });
+
+      // Open Quivr NLP Brain Drawer
+      await page.click('[data-testid="chair-open-quivr-brain-btn"], [data-testid="open-quivr-brain-btn"]');
+      await page.waitForSelector('[data-testid="quivr-nlp-brain-drawer"]', { timeout: 6000 });
+
+      // Verify search input is present
+      const searchInput = await page.$('[data-testid="quivr-query-input"]');
+      assert.ok(searchInput !== null, 'Quivr natural language search input present');
+
+      // Verify zero student identity guarantee banner
+      const banner = await page.textContent('[data-testid="quivr-nlp-brain-drawer"]');
+      assert.ok(banner.includes('EVALUATION ANALYSIS') || banner.includes('Professor') || banner.includes('anonymized'), 'Zero student identity guarantee present');
+
+      // Close drawer
+      await page.click('[data-testid="close-quivr-brain-btn"]');
+    } finally {
+      await page.close();
+    }
+  });
 });

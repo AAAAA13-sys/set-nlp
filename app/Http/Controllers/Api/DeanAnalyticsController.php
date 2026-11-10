@@ -437,6 +437,17 @@ class DeanAnalyticsController extends Controller
         return new JsonResponse($dossier, 200);
     }
 
+    public function compileAccreditationDossier(Request $request): JsonResponse
+    {
+        [$requestedDeptId, $scopeError] = $this->resolveScopedDepartmentId($request);
+        if ($scopeError !== null) {
+            return $scopeError;
+        }
+
+        $bundle = $this->evaluationService->compileExecutiveAccreditationDossierBundle($requestedDeptId);
+        return new JsonResponse($bundle, 200);
+    }
+
     public function performanceQuartiles(Request $request): JsonResponse
     {
         [$requestedDeptId, $scopeError] = $this->resolveScopedDepartmentId($request);

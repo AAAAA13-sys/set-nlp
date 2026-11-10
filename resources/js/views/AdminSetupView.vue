@@ -12,13 +12,14 @@ import SetupFacultyTab from '../components/setup/SetupFacultyTab.vue';
 import SetupStudentsTab from '../components/setup/SetupStudentsTab.vue';
 import SetupUsersTab from '../components/setup/SetupUsersTab.vue';
 import SetupQuestionnaireTab from '../components/setup/SetupQuestionnaireTab.vue';
+import SetupWarRoomTab from '../components/setup/SetupWarRoomTab.vue';
 
 const route = useRoute();
 const router = useRouter();
 const setupStore = useAcademicSetupStore();
 const evalStore = useEvaluationStore();
 
-const VALID_SETUP_TABS = ['assignments', 'terms', 'courses', 'faculty', 'students', 'users', 'questionnaire'];
+const VALID_SETUP_TABS = ['assignments', 'terms', 'courses', 'faculty', 'students', 'users', 'questionnaire', 'war-room'];
 const activeTab = ref(
   route?.query?.tab && VALID_SETUP_TABS.includes(route.query.tab)
     ? route.query.tab
@@ -1421,10 +1422,28 @@ async function executeDeleteSection() {
           </svg>
           <span>Questionnaire Preview (25 Items)</span>
         </button>
+
+        <button
+          type="button"
+          class="setup-tab-btn"
+          :class="{ active: activeTab === 'war-room' }"
+          data-testid="tab-war-room-btn"
+          @click="switchTab('war-room')"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <span>Operations War Room</span>
+        </button>
       </nav>
     </header>
 
     <!-- MODULAR SETUP TABS -->
+    <SetupWarRoomTab
+      v-if="activeTab === 'war-room'"
+      :academic-term-id="setupStore.selectedTermId"
+    />
+
     <SetupAssignmentsTab
       v-if="activeTab === 'assignments'"
       @import-roster="openImportRosterModal"
