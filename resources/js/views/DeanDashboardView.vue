@@ -1664,6 +1664,28 @@ function exportAccreditationDossier() {
           </div>
         </div>
 
+        <!-- Institutional Tripartite Signature Blocks -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed #d1d5db; padding-top: 1.25rem; margin-bottom: 1.25rem; font-size: 0.78rem;">
+          <div style="text-align: center; min-width: 150px;">
+            <div style="border-bottom: 1px solid #111827; padding-bottom: 0.2rem; font-weight: 700; color: #111827;">
+              {{ selectedSectionReport.faculty_name }}
+            </div>
+            <div style="color: #6b7280; margin-top: 0.25rem;">Course Instructor</div>
+          </div>
+          <div style="text-align: center; min-width: 150px;">
+            <div style="border-bottom: 1px solid #111827; padding-bottom: 0.2rem; font-weight: 700; color: #111827;">
+              {{ selectedDepartmentLabel }}
+            </div>
+            <div style="color: #6b7280; margin-top: 0.25rem;">Department Chair Reviewed</div>
+          </div>
+          <div style="text-align: center; min-width: 150px;">
+            <div style="border-bottom: 1px solid #111827; padding-bottom: 0.2rem; font-weight: 700; color: #111827;">
+              OFFICE OF THE COLLEGE DEAN
+            </div>
+            <div style="color: #6b7280; margin-top: 0.25rem;">Dean Approval &amp; Certification</div>
+          </div>
+        </div>
+
         <!-- Footer / Print actions -->
         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 1rem; flex-wrap: wrap; gap: 0.5rem;">
           <small style="font-size: 0.72rem; color: #6b7280;">

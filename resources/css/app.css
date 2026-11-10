@@ -2023,6 +2023,36 @@ textarea:focus-visible,
   .print-permit-auth-block {
     display: block !important;
   }
+
+  .setup-modal-scrim,
+  .modal-backdrop,
+  .report-modal-overlay {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    inset: auto !important;
+    z-index: auto !important;
+  }
+
+  .setup-modal-box,
+  .modal-card,
+  .print-report-card {
+    max-width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    border: 1.5px solid #103c2e !important;
+    padding: 1.5rem !important;
+  }
+
+  .modal-close-btn,
+  .setup-modal-footer button,
+  .modal-footer button,
+  .unlocked-header-actions,
+  button[data-testid*="close-"],
+  button[data-testid*="print-"] {
+    display: none !important;
+  }
 }
 
 /* =========================================================================

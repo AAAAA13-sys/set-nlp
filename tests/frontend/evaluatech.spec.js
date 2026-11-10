@@ -1641,4 +1641,26 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(chairViewSfc.includes('Watchlist Status'), 'CSV header includes Watchlist Status');
     });
   });
+
+  describe('Group 55: Department Chair Heatmap Section Evaluation Reports & Tripartite Accreditation Signatures', () => {
+    it('verifies chair heatmap report triggers, section report mapping, and tripartite signature blocks in chair and dean portals', () => {
+      const chairViewSfc = readResourceFile('views/ChairDashboardView.vue');
+      const deanViewSfc = readResourceFile('views/DeanDashboardView.vue');
+      const appCss = readResourceFile('../css/app.css');
+
+      // 1. Chair Completion Heatmap Report Button & Handler (Inspired by report.php)
+      assert.ok(chairViewSfc.includes('data-testid="`chair-heatmap-report-btn-${sec.course_code}`"'), 'Chair heatmap section report trigger button');
+      assert.ok(chairViewSfc.includes('openSectionHeatmapReport'), 'openSectionHeatmapReport handler defined in ChairDashboardView');
+
+      // 2. Tripartite Institutional Accreditation Signature Blocks in Chair & Dean Modals
+      assert.ok(chairViewSfc.includes('Department Chair Attested'), 'Chair modal tripartite signature block includes Chair attestation');
+      assert.ok(chairViewSfc.includes('Course Instructor'), 'Chair modal includes Course Instructor signature');
+      assert.ok(deanViewSfc.includes('OFFICE OF THE COLLEGE DEAN'), 'Dean modal tripartite signature block includes Dean certification');
+      assert.ok(deanViewSfc.includes('Department Chair Reviewed'), 'Dean modal includes Chair review line');
+
+      // 3. Print Styles for Official Evaluation Reports
+      assert.ok(appCss.includes('.setup-modal-scrim'), 'Modal scrim print style reset');
+      assert.ok(appCss.includes('.print-report-card'), 'Print report card border and padding reset');
+    });
+  });
 });
