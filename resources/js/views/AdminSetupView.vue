@@ -1429,6 +1429,7 @@ async function executeDeleteSection() {
               <th scope="col">Enrolled Courses</th>
               <th scope="col">Evaluation Progress</th>
               <th scope="col">Clearance Status</th>
+              <th scope="col" class="text-right">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -1469,9 +1470,21 @@ async function executeDeleteSection() {
                   {{ std.clearance_status }}
                 </span>
               </td>
+              <td class="text-right">
+                <router-link
+                  v-if="std.is_complete"
+                  :to="`/verify?id=${encodeURIComponent(std.institutional_id)}`"
+                  class="btn-secondary btn-xs"
+                  :data-testid="`student-permit-verify-btn-${std.id}`"
+                  style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
+                >
+                  Permit 📜
+                </router-link>
+                <span v-else style="font-size: 0.75rem; color: #9ca3af;">Gated</span>
+              </td>
             </tr>
             <tr v-if="filteredStudentsDirectory.length === 0">
-              <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+              <td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">
                 No student records match your search criteria for this academic term.
               </td>
             </tr>

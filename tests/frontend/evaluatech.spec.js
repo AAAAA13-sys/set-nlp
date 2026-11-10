@@ -1356,6 +1356,8 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('data-testid="student-status-filter-select"'), 'Student status filter select');
       assert.ok(setupViewSfc.includes('data-testid="student-directory-table"'), 'Student directory table');
       assert.ok(setupViewSfc.includes('student-clearance-status-'), 'Student clearance status badge');
+      assert.ok(setupViewSfc.includes('data-testid="`student-permit-verify-btn-${std.id}`"'), 'Student permit verification link button');
+      assert.ok(setupViewSfc.includes('/verify?id='), 'Direct link to public verification portal');
       assert.ok(setupViewSfc.includes('filteredStudentsDirectory'), 'Computed filtered students directory');
 
       // 2. Academic Setup Pinia Store Student Integration
