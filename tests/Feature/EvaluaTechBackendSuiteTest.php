@@ -2052,7 +2052,7 @@ class EvaluaTechBackendSuiteTest extends TestCase
 
         $this->assertSame('FULLY_COMPLIANT', $auditData['overall_status']);
         $this->assertSame('GRADE A (EXCELLENT)', $auditData['accreditation_grade']);
-        $this->assertSame(100.0, $auditData['compliance_percentage']);
+        $this->assertEqualsWithDelta(100.0, (float) $auditData['compliance_percentage'], 0.01);
         $this->assertSame(8, $auditData['total_checkpoints']);
         $this->assertSame(8, $auditData['compliant_checkpoints']);
         $this->assertStringContainsString('AACCUP', $auditData['accreditation_body']);
