@@ -130,6 +130,17 @@ async function copyText(text, key) {
           <div v-else class="token-placeholder">
             <span>Complete a course evaluation to generate your clearance code.</span>
           </div>
+
+          <div style="margin-top: 0.85rem;">
+            <router-link
+              to="/verify"
+              class="btn-secondary"
+              style="font-size: 0.82rem; padding: 0.4rem 0.8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;"
+              data-testid="advocacy-verify-portal-btn"
+            >
+              🔍 Open Public Verification Portal
+            </router-link>
+          </div>
         </div>
       </div>
     </section>

@@ -1506,15 +1506,19 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       const routerSrc = readResourceFile('router/index.js');
       const loginViewSfc = readResourceFile('views/LoginView.vue');
       const verifyViewSfc = readResourceFile('views/PermitVerifyView.vue');
+      const navbarSfc = readResourceFile('components/NavbarHeader.vue');
+      const advocacySfc = readResourceFile('views/EvaluationAdvocacyView.vue');
 
       // 1. Route Registration in Vue Router
       assert.ok(routerSrc.includes("path: '/verify'"), 'Permit verify path registered in router');
       assert.ok(routerSrc.includes("alias: '/permit/verify'"), 'Permit verify alias registered in router');
       assert.ok(routerSrc.includes('PermitVerifyView'), 'PermitVerifyView component imported and mounted');
 
-      // 2. Direct Proctor Verification Link in Login View
+      // 2. Direct Proctor Verification Link in Login View & Navbar & Advocacy Hub
       assert.ok(loginViewSfc.includes('data-testid="proctor-verify-link"'), 'Proctor permit verification link in login view');
       assert.ok(loginViewSfc.includes('to="/verify"'), 'Link directs to /verify');
+      assert.ok(navbarSfc.includes('data-testid="navbar-verify-permit-btn"'), 'Unauthenticated topbar verify permit button');
+      assert.ok(advocacySfc.includes('data-testid="advocacy-verify-portal-btn"'), 'Advocacy hub open public verification portal button');
 
       // 3. Permit Verification View Structure & Cryptographic Display
       assert.ok(verifyViewSfc.includes('data-testid="permit-verify-page"'), 'Permit verify main page container');

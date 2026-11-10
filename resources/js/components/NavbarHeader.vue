@@ -271,6 +271,17 @@ async function handleLogout() {
             Sign Out
           </button>
         </template>
+        <template v-else>
+          <router-link
+            v-if="route?.path !== '/verify'"
+            to="/verify"
+            class="sch-nav-pill"
+            style="font-size: 0.82rem; font-weight: 700; color: #103c2e; padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid #103c2e; text-decoration: none; background: #ffffff;"
+            data-testid="navbar-verify-permit-btn"
+          >
+            Verify Permit 🔍
+          </router-link>
+        </template>
       </div>
     </div>
 
