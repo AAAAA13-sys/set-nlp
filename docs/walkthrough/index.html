@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EvaluaTech — Real User Walkthrough & Recording Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-forest-dark: #0b3322;
+      --color-emerald-base: #103c2e;
+      --color-emerald-light: #164e3c;
+      --color-gold-accent: #f4cd42;
+      --color-gold-warm: #eab308;
+      --color-offwhite-canvas: #f9f9f8;
+      --color-card-bg: #ffffff;
+      --color-border-subtle: #e2e8f0;
+      --color-text-main: #0f172a;
+      --color-text-muted: #475569;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--color-offwhite-canvas);
+      color: var(--color-text-main);
+      line-height: 1.6;
+      padding-bottom: 5rem;
+    }
+    header.studio-header {
+      background: linear-gradient(135deg, var(--color-forest-dark) 0%, var(--color-emerald-base) 100%);
+      color: #ffffff;
+      padding: 2.2rem 2.5rem;
+      border-bottom: 3px solid var(--color-gold-accent);
+      box-shadow: 0 4px 20px rgba(11, 51, 34, 0.15);
+    }
+    .header-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      color: var(--color-gold-accent);
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+    .header-title {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .header-desc {
+      font-size: 1rem;
+      color: #e2e8f0;
+      max-width: 900px;
+      margin-top: 0.5rem;
+    }
+    .stats-bar {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .stat-chip {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.45rem 0.9rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-chip strong { color: var(--color-gold-accent); }
+    main.studio-content {
+      max-width: 1440px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    .video-section {
+      background: #ffffff;
+      border: 1px solid var(--color-border-subtle);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+    .video-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .video-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-emerald-base);
+    }
+    .video-player-container {
+      position: relative;
+      background: #000000;
+      border-radius: 8px;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      max-height: 680px;
+    }
+    video.walkthrough-video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .phase-filters {
+      display: flex;
+      gap: 0.6rem;
+      overflow-x: auto;
+      padding-bottom: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .phase-pill {
+      background: #ffffff;
+      border: 1px solid var(--color-border-subtle);
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .phase-pill:hover, .phase-pill.active {
+      background: var(--color-emerald-base);
+      color: #ffffff;
+      border-color: var(--color-emerald-base);
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 1.5rem;
+    }
+    .gallery-card {
+      background: #ffffff;
+      border: 1px solid var(--color-border-subtle);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .gallery-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+    .card-media {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      background: #f1f5f9;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .card-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      transition: transform 0.3s ease;
+    }
+    .card-media:hover img {
+      transform: scale(1.03);
+    }
+    .card-badge {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      background: rgba(16, 60, 46, 0.9);
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      backdrop-filter: blur(4px);
+    }
+    .card-body {
+      padding: 1.25rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .card-phase {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      color: var(--color-emerald-base);
+      margin-bottom: 0.3rem;
+    }
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--color-text-main);
+      margin-bottom: 0.45rem;
+    }
+    .card-desc {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      flex: 1;
+    }
+    .card-footer {
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #f1f5f9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-filename {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: #64748b;
+    }
+    .btn-view {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--color-emerald-base);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .lightbox {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(11, 51, 34, 0.94);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .lightbox.active { display: flex; }
+    .lightbox-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      color: #ffffff;
+      font-size: 2.2rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    .lightbox-img-wrapper {
+      max-width: 90vw;
+      max-height: 82vh;
+      overflow: auto;
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .lightbox-img-wrapper img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .lightbox-caption {
+      color: #ffffff;
+      margin-top: 1rem;
+      font-size: 1.05rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header class="studio-header">
+    <div class="header-eyebrow">PAMANTASAN NG LUNGSOD NG PASIG · EVALUATECH</div>
+    <h1 class="header-title">End-to-End Real User Walkthrough & Recording Studio</h1>
+    <p class="header-desc">
+      Empirical visual walkthrough covering all 6 core institutional phases. Every screen, state, and workflow was navigated
+      as authentic university personas (Student, Faculty, Chair, Dean, Administrator) without artificial cheat buttons.
+    </p>
+    <div class="stats-bar">
+      <div class="stat-chip">Total Screenshots: <strong>35</strong></div>
+      <div class="stat-chip">User Phases: <strong>6 Phases</strong></div>
+      <div class="stat-chip">Video Recording: <strong>Captured (WEBM)</strong></div>
+      <div class="stat-chip">Verification Standards: <strong>AACCUP Level III & ISO 25010</strong></div>
+    </div>
+  </header>
+
+  <main class="studio-content">
+    
+    <section class="video-section">
+      <div class="video-header">
+        <h2 class="video-title">Full User Journey Session Recording</h2>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:#64748b;">evalua_tech_walkthrough.webm</span>
+      </div>
+      <div class="video-player-container">
+        <video class="walkthrough-video" controls poster="screenshots/01_public_landing_hero.png">
+          <source src="videos/evalua_tech_walkthrough.webm" type="video/webm">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </section>
+    
+
+    <nav class="phase-filters" aria-label="Walkthrough Phase Filter">
+      <button class="phase-pill active" onclick="filterPhase('ALL')">All Phases (35)</button>
+      <button class="phase-pill" onclick="filterPhase('Phase 1: Public Portal')">Phase 1: Public Portal</button><button class="phase-pill" onclick="filterPhase('Phase 2: Student Journey')">Phase 2: Student Journey</button><button class="phase-pill" onclick="filterPhase('Phase 3: Faculty Journey')">Phase 3: Faculty Journey</button><button class="phase-pill" onclick="filterPhase('Phase 4: Chair Management')">Phase 4: Chair Management</button><button class="phase-pill" onclick="filterPhase('Phase 5: Dean Executive')">Phase 5: Dean Executive</button><button class="phase-pill" onclick="filterPhase('Phase 6: Admin Command')">Phase 6: Admin Command</button>
+    </nav>
+
+    <div class="gallery-grid" id="gallery-grid">
+      
+        <article class="gallery-card" data-phase="Phase 1: Public Portal">
+          <div class="card-media" onclick="openLightbox('screenshots/01_public_landing_hero.png', 'Public Landing Page Hero & Navigation')">
+            <img src="screenshots/01_public_landing_hero.png" alt="Public Landing Page Hero & Navigation" loading="lazy">
+            <span class="card-badge">#01</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 1: Public Portal</span>
+            <h3 class="card-title">Public Landing Page Hero & Navigation</h3>
+            <p class="card-desc">PLP institutional branding, mission headline, and top-bar navigation bar.</p>
+            <div class="card-footer">
+              <span class="card-filename">01_public_landing_hero.png</span>
+              <a href="screenshots/01_public_landing_hero.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 1: Public Portal">
+          <div class="card-media" onclick="openLightbox('screenshots/02_public_landing_governance.png', 'AACCUP Level III Governance & Anonymity Charter')">
+            <img src="screenshots/02_public_landing_governance.png" alt="AACCUP Level III Governance & Anonymity Charter" loading="lazy">
+            <span class="card-badge">#02</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 1: Public Portal</span>
+            <h3 class="card-title">AACCUP Level III Governance & Anonymity Charter</h3>
+            <p class="card-desc">Cryptographic decoupling charter, zero student-identifying vault invariant, and academic safeguards.</p>
+            <div class="card-footer">
+              <span class="card-filename">02_public_landing_governance.png</span>
+              <a href="screenshots/02_public_landing_governance.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 1: Public Portal">
+          <div class="card-media" onclick="openLightbox('screenshots/03_public_landing_participation.png', 'Student Participation Tracking & Academic Integrity')">
+            <img src="screenshots/03_public_landing_participation.png" alt="Student Participation Tracking & Academic Integrity" loading="lazy">
+            <span class="card-badge">#03</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 1: Public Portal</span>
+            <h3 class="card-title">Student Participation Tracking & Academic Integrity</h3>
+            <p class="card-desc">Participation monitoring charter without gating examination permits.</p>
+            <div class="card-footer">
+              <span class="card-filename">03_public_landing_participation.png</span>
+              <a href="screenshots/03_public_landing_participation.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 1: Public Portal">
+          <div class="card-media" onclick="openLightbox('screenshots/04_public_verification_hub.png', 'Public Examination Clearance & Status Verification Hub')">
+            <img src="screenshots/04_public_verification_hub.png" alt="Public Examination Clearance & Status Verification Hub" loading="lazy">
+            <span class="card-badge">#04</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 1: Public Portal</span>
+            <h3 class="card-title">Public Examination Clearance & Status Verification Hub</h3>
+            <p class="card-desc">Official registrar verification interface allowing students and proctors to verify clearance authenticity.</p>
+            <div class="card-footer">
+              <span class="card-filename">04_public_verification_hub.png</span>
+              <a href="screenshots/04_public_verification_hub.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 1: Public Portal">
+          <div class="card-media" onclick="openLightbox('screenshots/05_public_verification_token_entry.png', 'Verification Input with Signed Institutional Token')">
+            <img src="screenshots/05_public_verification_token_entry.png" alt="Verification Input with Signed Institutional Token" loading="lazy">
+            <span class="card-badge">#05</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 1: Public Portal</span>
+            <h3 class="card-title">Verification Input with Signed Institutional Token</h3>
+            <p class="card-desc">HMAC-SHA256 signed permit verification query interface.</p>
+            <div class="card-footer">
+              <span class="card-filename">05_public_verification_token_entry.png</span>
+              <a href="screenshots/05_public_verification_token_entry.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 1: Public Portal">
+          <div class="card-media" onclick="openLightbox('screenshots/06_mobile_landing_page.png', 'Mobile Viewport (375x812) Responsive Landing Page')">
+            <img src="screenshots/06_mobile_landing_page.png" alt="Mobile Viewport (375x812) Responsive Landing Page" loading="lazy">
+            <span class="card-badge">#06</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 1: Public Portal</span>
+            <h3 class="card-title">Mobile Viewport (375x812) Responsive Landing Page</h3>
+            <p class="card-desc">Zero-overflow responsive mobile layout with accessible typography and touch CTAs.</p>
+            <div class="card-footer">
+              <span class="card-filename">06_mobile_landing_page.png</span>
+              <a href="screenshots/06_mobile_landing_page.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 2: Student Journey">
+          <div class="card-media" onclick="openLightbox('screenshots/08_student_login_screen.png', 'Academic Tech Split-Screen Login')">
+            <img src="screenshots/08_student_login_screen.png" alt="Academic Tech Split-Screen Login" loading="lazy">
+            <span class="card-badge">#07</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 2: Student Journey</span>
+            <h3 class="card-title">Academic Tech Split-Screen Login</h3>
+            <p class="card-desc">Forest-green geometric narrative panel and RA 10173 data privacy notice.</p>
+            <div class="card-footer">
+              <span class="card-filename">08_student_login_screen.png</span>
+              <a href="screenshots/08_student_login_screen.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 2: Student Journey">
+          <div class="card-media" onclick="openLightbox('screenshots/09_student_credentials_entered.png', 'Student Credentials Entered in Form')">
+            <img src="screenshots/09_student_credentials_entered.png" alt="Student Credentials Entered in Form" loading="lazy">
+            <span class="card-badge">#08</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 2: Student Journey</span>
+            <h3 class="card-title">Student Credentials Entered in Form</h3>
+            <p class="card-desc">Standard institutional login via seeded PLP student credentials.</p>
+            <div class="card-footer">
+              <span class="card-filename">09_student_credentials_entered.png</span>
+              <a href="screenshots/09_student_credentials_entered.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 2: Student Journey">
+          <div class="card-media" onclick="openLightbox('screenshots/10_student_queue_workspace.png', 'Student Evaluation Queue Workspace')">
+            <img src="screenshots/10_student_queue_workspace.png" alt="Student Evaluation Queue Workspace" loading="lazy">
+            <span class="card-badge">#09</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 2: Student Journey</span>
+            <h3 class="card-title">Student Evaluation Queue Workspace</h3>
+            <p class="card-desc">Course roster (CS-401 through PHYS-101), completion progress bar, and digital clearance certificate.</p>
+            <div class="card-footer">
+              <span class="card-filename">10_student_queue_workspace.png</span>
+              <a href="screenshots/10_student_queue_workspace.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 2: Student Journey">
+          <div class="card-media" onclick="openLightbox('screenshots/11_student_rubric_modal.png', 'Student Queue Rating Rubric Guidance Modal')">
+            <img src="screenshots/11_student_rubric_modal.png" alt="Student Queue Rating Rubric Guidance Modal" loading="lazy">
+            <span class="card-badge">#10</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 2: Student Journey</span>
+            <h3 class="card-title">Student Queue Rating Rubric Guidance Modal</h3>
+            <p class="card-desc">In-context rubric guidance ensuring fair, evidence-based student ratings.</p>
+            <div class="card-footer">
+              <span class="card-filename">11_student_rubric_modal.png</span>
+              <a href="screenshots/11_student_rubric_modal.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 2: Student Journey">
+          <div class="card-media" onclick="openLightbox('screenshots/12_student_evaluation_step1_likert.png', 'Evaluation Stepper Part I: 25 Likert Questions Answered')">
+            <img src="screenshots/12_student_evaluation_step1_likert.png" alt="Evaluation Stepper Part I: 25 Likert Questions Answered" loading="lazy">
+            <span class="card-badge">#11</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 2: Student Journey</span>
+            <h3 class="card-title">Evaluation Stepper Part I: 25 Likert Questions Answered</h3>
+            <p class="card-desc">All 25 items across 5 pedagogical clusters scored with varied genuine ratings.</p>
+            <div class="card-footer">
+              <span class="card-filename">12_student_evaluation_step1_likert.png</span>
+              <a href="screenshots/12_student_evaluation_step1_likert.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 2: Student Journey">
+          <div class="card-media" onclick="openLightbox('screenshots/13_student_evaluation_step2_qualitative.png', 'Evaluation Stepper Part II: Qualitative Feedback Completed')">
+            <img src="screenshots/13_student_evaluation_step2_qualitative.png" alt="Evaluation Stepper Part II: Qualitative Feedback Completed" loading="lazy">
+            <span class="card-badge">#12</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 2: Student Journey</span>
+            <h3 class="card-title">Evaluation Stepper Part II: Qualitative Feedback Completed</h3>
+            <p class="card-desc">Structured 3 descriptors, teaching strengths, constructive improvement, and Taglish narrative.</p>
+            <div class="card-footer">
+              <span class="card-filename">13_student_evaluation_step2_qualitative.png</span>
+              <a href="screenshots/13_student_evaluation_step2_qualitative.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 2: Student Journey">
+          <div class="card-media" onclick="openLightbox('screenshots/14_student_queue_updated.png', 'Evaluation Submitted & Signed Clearance Token Issued')">
+            <img src="screenshots/14_student_queue_updated.png" alt="Evaluation Submitted & Signed Clearance Token Issued" loading="lazy">
+            <span class="card-badge">#13</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 2: Student Journey</span>
+            <h3 class="card-title">Evaluation Submitted & Signed Clearance Token Issued</h3>
+            <p class="card-desc">Signed cryptographic clearance token issued, progress updated, zero student PII stored in vault.</p>
+            <div class="card-footer">
+              <span class="card-filename">14_student_queue_updated.png</span>
+              <a href="screenshots/14_student_queue_updated.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 3: Faculty Journey">
+          <div class="card-media" onclick="openLightbox('screenshots/15_faculty_dashboard_overview.png', 'Faculty Workspace Overview')">
+            <img src="screenshots/15_faculty_dashboard_overview.png" alt="Faculty Workspace Overview" loading="lazy">
+            <span class="card-badge">#14</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 3: Faculty Journey</span>
+            <h3 class="card-title">Faculty Workspace Overview</h3>
+            <p class="card-desc">Assigned course sections, academic term info, and double-blind protection status.</p>
+            <div class="card-footer">
+              <span class="card-filename">15_faculty_dashboard_overview.png</span>
+              <a href="screenshots/15_faculty_dashboard_overview.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 3: Faculty Journey">
+          <div class="card-media" onclick="openLightbox('screenshots/17_faculty_action_plan_workspace.png', 'Faculty Pedagogical Action Plan Workspace')">
+            <img src="screenshots/17_faculty_action_plan_workspace.png" alt="Faculty Pedagogical Action Plan Workspace" loading="lazy">
+            <span class="card-badge">#15</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 3: Faculty Journey</span>
+            <h3 class="card-title">Faculty Pedagogical Action Plan Workspace</h3>
+            <p class="card-desc">Continuous professional development: growth milestone commitments and peer mentorship tracking.</p>
+            <div class="card-footer">
+              <span class="card-filename">17_faculty_action_plan_workspace.png</span>
+              <a href="screenshots/17_faculty_action_plan_workspace.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 4: Chair Management">
+          <div class="card-media" onclick="openLightbox('screenshots/18_chair_dashboard_faculty_roster.png', 'Department Chair Management Portal')">
+            <img src="screenshots/18_chair_dashboard_faculty_roster.png" alt="Department Chair Management Portal" loading="lazy">
+            <span class="card-badge">#16</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 4: Chair Management</span>
+            <h3 class="card-title">Department Chair Management Portal</h3>
+            <p class="card-desc">Department of Computer Science faculty performance roster, search, and standing filters.</p>
+            <div class="card-footer">
+              <span class="card-filename">18_chair_dashboard_faculty_roster.png</span>
+              <a href="screenshots/18_chair_dashboard_faculty_roster.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 4: Chair Management">
+          <div class="card-media" onclick="openLightbox('screenshots/19_chair_faculty_search.png', 'Department Chair Faculty Search Filter')">
+            <img src="screenshots/19_chair_faculty_search.png" alt="Department Chair Faculty Search Filter" loading="lazy">
+            <span class="card-badge">#17</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 4: Chair Management</span>
+            <h3 class="card-title">Department Chair Faculty Search Filter</h3>
+            <p class="card-desc">Targeted search for specific faculty evaluations within assigned department.</p>
+            <div class="card-footer">
+              <span class="card-filename">19_chair_faculty_search.png</span>
+              <a href="screenshots/19_chair_faculty_search.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 4: Chair Management">
+          <div class="card-media" onclick="openLightbox('screenshots/20_chair_mentorship_workspace.png', 'Chair Action Plan & Mentorship Assignment')">
+            <img src="screenshots/20_chair_mentorship_workspace.png" alt="Chair Action Plan & Mentorship Assignment" loading="lazy">
+            <span class="card-badge">#18</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 4: Chair Management</span>
+            <h3 class="card-title">Chair Action Plan & Mentorship Assignment</h3>
+            <p class="card-desc">Assigning peer mentors and signing off on pedagogical growth milestones.</p>
+            <div class="card-footer">
+              <span class="card-filename">20_chair_mentorship_workspace.png</span>
+              <a href="screenshots/20_chair_mentorship_workspace.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 4: Chair Management">
+          <div class="card-media" onclick="openLightbox('screenshots/21_chair_quivr_drawer_opened.png', 'Quivr Second Brain Qualitative Explorer Drawer')">
+            <img src="screenshots/21_chair_quivr_drawer_opened.png" alt="Quivr Second Brain Qualitative Explorer Drawer" loading="lazy">
+            <span class="card-badge">#19</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 4: Chair Management</span>
+            <h3 class="card-title">Quivr Second Brain Qualitative Explorer Drawer</h3>
+            <p class="card-desc">Natural language qualitative inquiry tool with sentiment valence pill filters.</p>
+            <div class="card-footer">
+              <span class="card-filename">21_chair_quivr_drawer_opened.png</span>
+              <a href="screenshots/21_chair_quivr_drawer_opened.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 4: Chair Management">
+          <div class="card-media" onclick="openLightbox('screenshots/22_chair_quivr_search_results.png', 'Quivr Department Scoped NLP Inquiry Results')">
+            <img src="screenshots/22_chair_quivr_search_results.png" alt="Quivr Department Scoped NLP Inquiry Results" loading="lazy">
+            <span class="card-badge">#20</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 4: Chair Management</span>
+            <h3 class="card-title">Quivr Department Scoped NLP Inquiry Results</h3>
+            <p class="card-desc">Synthesized qualitative feedback scoped strictly to Department of Computer Science (HTTP 403 on cross-tenant probes).</p>
+            <div class="card-footer">
+              <span class="card-filename">22_chair_quivr_search_results.png</span>
+              <a href="screenshots/22_chair_quivr_search_results.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 5: Dean Executive">
+          <div class="card-media" onclick="openLightbox('screenshots/23_dean_dashboard_overview.png', 'College Dean Executive Portal')">
+            <img src="screenshots/23_dean_dashboard_overview.png" alt="College Dean Executive Portal" loading="lazy">
+            <span class="card-badge">#21</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 5: Dean Executive</span>
+            <h3 class="card-title">College Dean Executive Portal</h3>
+            <p class="card-desc">College response rate (91.4%), 4,821 submissions, and exception watchlist.</p>
+            <div class="card-footer">
+              <span class="card-filename">23_dean_dashboard_overview.png</span>
+              <a href="screenshots/23_dean_dashboard_overview.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 5: Dean Executive">
+          <div class="card-media" onclick="openLightbox('screenshots/24_dean_completion_heatmap.png', 'Department Section Completion Heatmap Matrix')">
+            <img src="screenshots/24_dean_completion_heatmap.png" alt="Department Section Completion Heatmap Matrix" loading="lazy">
+            <span class="card-badge">#22</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 5: Dean Executive</span>
+            <h3 class="card-title">Department Section Completion Heatmap Matrix</h3>
+            <p class="card-desc">Live course section completion matrix with threshold highlights.</p>
+            <div class="card-footer">
+              <span class="card-filename">24_dean_completion_heatmap.png</span>
+              <a href="screenshots/24_dean_completion_heatmap.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 5: Dean Executive">
+          <div class="card-media" onclick="openLightbox('screenshots/25_dean_compiled_aaccup_dossier.png', 'Official AACCUP Level III Dossier Bundle Compiled')">
+            <img src="screenshots/25_dean_compiled_aaccup_dossier.png" alt="Official AACCUP Level III Dossier Bundle Compiled" loading="lazy">
+            <span class="card-badge">#23</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 5: Dean Executive</span>
+            <h3 class="card-title">Official AACCUP Level III Dossier Bundle Compiled</h3>
+            <p class="card-desc">One-click sealed dossier (PLP-AACCUP3-DOSSIER-YYYYMMDD.zip) strictly separating facilities feedback.</p>
+            <div class="card-footer">
+              <span class="card-filename">25_dean_compiled_aaccup_dossier.png</span>
+              <a href="screenshots/25_dean_compiled_aaccup_dossier.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 6: Admin Command">
+          <div class="card-media" onclick="openLightbox('screenshots/26_admin_operations_war_room.png', 'Campaign Operations War Room')">
+            <img src="screenshots/26_admin_operations_war_room.png" alt="Campaign Operations War Room" loading="lazy">
+            <span class="card-badge">#24</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 6: Admin Command</span>
+            <h3 class="card-title">Campaign Operations War Room</h3>
+            <p class="card-desc">6-point pre-flight diagnostics, 100% readiness score bar, and turnout velocity leaderboard.</p>
+            <div class="card-footer">
+              <span class="card-filename">26_admin_operations_war_room.png</span>
+              <a href="screenshots/26_admin_operations_war_room.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 6: Admin Command">
+          <div class="card-media" onclick="openLightbox('screenshots/27_admin_academic_terms_tab.png', 'Academic Terms Directory & Schedule Controls')">
+            <img src="screenshots/27_admin_academic_terms_tab.png" alt="Academic Terms Directory & Schedule Controls" loading="lazy">
+            <span class="card-badge">#25</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 6: Admin Command</span>
+            <h3 class="card-title">Academic Terms Directory & Schedule Controls</h3>
+            <p class="card-desc">Evaluation window opening/closing schedule management with Asia/Manila timezone.</p>
+            <div class="card-footer">
+              <span class="card-filename">27_admin_academic_terms_tab.png</span>
+              <a href="screenshots/27_admin_academic_terms_tab.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 6: Admin Command">
+          <div class="card-media" onclick="openLightbox('screenshots/28_admin_teaching_assignments_tab.png', 'Faculty Teaching Assignments Matrix')">
+            <img src="screenshots/28_admin_teaching_assignments_tab.png" alt="Faculty Teaching Assignments Matrix" loading="lazy">
+            <span class="card-badge">#26</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 6: Admin Command</span>
+            <h3 class="card-title">Faculty Teaching Assignments Matrix</h3>
+            <p class="card-desc">Course section assignments and bulk registrar grade-lock synchronization.</p>
+            <div class="card-footer">
+              <span class="card-filename">28_admin_teaching_assignments_tab.png</span>
+              <a href="screenshots/28_admin_teaching_assignments_tab.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 6: Admin Command">
+          <div class="card-media" onclick="openLightbox('screenshots/29_admin_student_participation_tracker.png', 'Student Participation Tracker Bar')">
+            <img src="screenshots/29_admin_student_participation_tracker.png" alt="Student Participation Tracker Bar" loading="lazy">
+            <span class="card-badge">#27</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 6: Admin Command</span>
+            <h3 class="card-title">Student Participation Tracker Bar</h3>
+            <p class="card-desc">Monitoring pending evaluations and turnout progress without gating examination permits.</p>
+            <div class="card-footer">
+              <span class="card-filename">29_admin_student_participation_tracker.png</span>
+              <a href="screenshots/29_admin_student_participation_tracker.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 6: Admin Command">
+          <div class="card-media" onclick="openLightbox('screenshots/30_admin_student_reminder_modal.png', 'Non-Coercive Student Reminder Notice Modal')">
+            <img src="screenshots/30_admin_student_reminder_modal.png" alt="Non-Coercive Student Reminder Notice Modal" loading="lazy">
+            <span class="card-badge">#28</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 6: Admin Command</span>
+            <h3 class="card-title">Non-Coercive Student Reminder Notice Modal</h3>
+            <p class="card-desc">Polite institutional reminder copyable to clipboard with zero response links.</p>
+            <div class="card-footer">
+              <span class="card-filename">30_admin_student_reminder_modal.png</span>
+              <a href="screenshots/30_admin_student_reminder_modal.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 6: Admin Command">
+          <div class="card-media" onclick="openLightbox('screenshots/31_admin_courses_tab.png', 'Institutional Course Offerings Catalog')">
+            <img src="screenshots/31_admin_courses_tab.png" alt="Institutional Course Offerings Catalog" loading="lazy">
+            <span class="card-badge">#29</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 6: Admin Command</span>
+            <h3 class="card-title">Institutional Course Offerings Catalog</h3>
+            <p class="card-desc">Departmental course units, code registry, and offering lifecycle.</p>
+            <div class="card-footer">
+              <span class="card-filename">31_admin_courses_tab.png</span>
+              <a href="screenshots/31_admin_courses_tab.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 6: Admin Command">
+          <div class="card-media" onclick="openLightbox('screenshots/32_admin_questionnaire_rubric_tab.png', '5-Cluster Rating Scale Rubric Preview')">
+            <img src="screenshots/32_admin_questionnaire_rubric_tab.png" alt="5-Cluster Rating Scale Rubric Preview" loading="lazy">
+            <span class="card-badge">#30</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 6: Admin Command</span>
+            <h3 class="card-title">5-Cluster Rating Scale Rubric Preview</h3>
+            <p class="card-desc">Full preview of 25 Likert items and 4-to-5 qualitative professor questions.</p>
+            <div class="card-footer">
+              <span class="card-filename">32_admin_questionnaire_rubric_tab.png</span>
+              <a href="screenshots/32_admin_questionnaire_rubric_tab.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 6: Admin Command">
+          <div class="card-media" onclick="openLightbox('screenshots/33_admin_command_palette_modal.png', 'Universal Command Palette & Quick Navigation')">
+            <img src="screenshots/33_admin_command_palette_modal.png" alt="Universal Command Palette & Quick Navigation" loading="lazy">
+            <span class="card-badge">#31</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 6: Admin Command</span>
+            <h3 class="card-title">Universal Command Palette & Quick Navigation</h3>
+            <p class="card-desc">Fast shortcut search across all workspaces, directories, and institutional actions.</p>
+            <div class="card-footer">
+              <span class="card-filename">33_admin_command_palette_modal.png</span>
+              <a href="screenshots/33_admin_command_palette_modal.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 6: Admin Command">
+          <div class="card-media" onclick="openLightbox('screenshots/34_admin_setup_mobile_responsive.png', 'Mobile Viewport (375x812) Admin Setup Console')">
+            <img src="screenshots/34_admin_setup_mobile_responsive.png" alt="Mobile Viewport (375x812) Admin Setup Console" loading="lazy">
+            <span class="card-badge">#32</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 6: Admin Command</span>
+            <h3 class="card-title">Mobile Viewport (375x812) Admin Setup Console</h3>
+            <p class="card-desc">Zero horizontal overflow and responsive table wrapping on mobile devices.</p>
+            <div class="card-footer">
+              <span class="card-filename">34_admin_setup_mobile_responsive.png</span>
+              <a href="screenshots/34_admin_setup_mobile_responsive.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 6: Admin Command">
+          <div class="card-media" onclick="openLightbox('screenshots/35_mobile_topbar_menu_dropdown.png', 'Accessible Mobile Dropdown Navigation Menu')">
+            <img src="screenshots/35_mobile_topbar_menu_dropdown.png" alt="Accessible Mobile Dropdown Navigation Menu" loading="lazy">
+            <span class="card-badge">#33</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 6: Admin Command</span>
+            <h3 class="card-title">Accessible Mobile Dropdown Navigation Menu</h3>
+            <p class="card-desc">Top navigation expanding directly beneath top bar with zero side rails.</p>
+            <div class="card-footer">
+              <span class="card-filename">35_mobile_topbar_menu_dropdown.png</span>
+              <a href="screenshots/35_mobile_topbar_menu_dropdown.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 6: Admin Command">
+          <div class="card-media" onclick="openLightbox('screenshots/36_admin_campus_advocacy_view.png', 'Campus Advocacy Evaluation Standards & Guidelines')">
+            <img src="screenshots/36_admin_campus_advocacy_view.png" alt="Campus Advocacy Evaluation Standards & Guidelines" loading="lazy">
+            <span class="card-badge">#34</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 6: Admin Command</span>
+            <h3 class="card-title">Campus Advocacy Evaluation Standards & Guidelines</h3>
+            <p class="card-desc">Official university evaluation standards, student anonymity charter, and rubrics.</p>
+            <div class="card-footer">
+              <span class="card-filename">36_admin_campus_advocacy_view.png</span>
+              <a href="screenshots/36_admin_campus_advocacy_view.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+        <article class="gallery-card" data-phase="Phase 6: Admin Command">
+          <div class="card-media" onclick="openLightbox('screenshots/37_admin_advocacy_rubric_modal.png', '5-Point Likert Rating Rubric Inspection Modal')">
+            <img src="screenshots/37_admin_advocacy_rubric_modal.png" alt="5-Point Likert Rating Rubric Inspection Modal" loading="lazy">
+            <span class="card-badge">#35</span>
+          </div>
+          <div class="card-body">
+            <span class="card-phase">Phase 6: Admin Command</span>
+            <h3 class="card-title">5-Point Likert Rating Rubric Inspection Modal</h3>
+            <p class="card-desc">Transparent rubric descriptors from Outstanding (5) down to Poor (1).</p>
+            <div class="card-footer">
+              <span class="card-filename">37_admin_advocacy_rubric_modal.png</span>
+              <a href="screenshots/37_admin_advocacy_rubric_modal.png" target="_blank" class="btn-view">Inspect Image &rarr;</a>
+            </div>
+          </div>
+        </article>
+      
+    </div>
+  </main>
+
+  <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+    <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+    <div class="lightbox-img-wrapper">
+      <img id="lightbox-img" src="" alt="Enlarged screenshot">
+    </div>
+    <div class="lightbox-caption" id="lightbox-caption"></div>
+  </div>
+
+  <script>
+    function filterPhase(phase) {
+      document.querySelectorAll('.phase-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.includes(phase) || (phase === 'ALL' && btn.textContent.includes('All')));
+      });
+      document.querySelectorAll('.gallery-card').forEach(card => {
+        if (phase === 'ALL' || card.getAttribute('data-phase') === phase) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function openLightbox(src, caption) {
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('lightbox-caption').textContent = caption;
+      document.getElementById('lightbox').classList.add('active');
+    }
+
+    function closeLightbox(e) {
+      if (!e || e.target.id === 'lightbox' || e.target.classList.contains('lightbox-close')) {
+        document.getElementById('lightbox').classList.remove('active');
+      }
+    }
+  </script>
+</body>
+</html>

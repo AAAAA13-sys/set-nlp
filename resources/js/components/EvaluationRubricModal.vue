@@ -1,8 +1,12 @@
 <script setup>
-import { onMounted, onUnmounted } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps({
   visible: {
+    type: Boolean,
+    default: false,
+  },
+  show: {
     type: Boolean,
     default: false,
   },
@@ -14,8 +18,10 @@ const props = defineProps({
 
 const emit = defineEmits(['close']);
 
+const isModalOpen = computed(() => Boolean(props.visible || props.show));
+
 function handleKeyDown(event) {
-  if (event.key === 'Escape' && props.visible) {
+  if (event.key === 'Escape' && isModalOpen.value) {
     emit('close');
   }
 }
@@ -37,7 +43,7 @@ function printRubric() {
 
 <template>
   <div
-    v-if="visible"
+    v-if="isModalOpen"
     class="modal-backdrop"
     style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 1rem;"
     role="dialog"

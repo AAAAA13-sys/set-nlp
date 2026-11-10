@@ -310,7 +310,7 @@ async function copyText(text, key) {
 
     <!-- Evaluation Rubric Modal -->
     <EvaluationRubricModal
-      :show="showAdvocacyRubricModal"
+      :visible="showAdvocacyRubricModal"
       role-title="Student Body &amp; Campus Advocacy"
       @close="closeAdvocacyRubricModal"
     />

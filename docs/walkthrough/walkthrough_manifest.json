@@ -1,0 +1,252 @@
+{
+  "generated_at": "2026-11-10T14:28:16.922Z",
+  "video_file": "evalua_tech_walkthrough.webm",
+  "total_screenshots": 35,
+  "screenshots": [
+    {
+      "filename": "01_public_landing_hero.png",
+      "title": "Public Landing Page Hero & Navigation",
+      "phase": "Phase 1: Public Portal",
+      "description": "PLP institutional branding, mission headline, and top-bar navigation bar.",
+      "timestamp": "2026-11-10T14:27:33.058Z"
+    },
+    {
+      "filename": "02_public_landing_governance.png",
+      "title": "AACCUP Level III Governance & Anonymity Charter",
+      "phase": "Phase 1: Public Portal",
+      "description": "Cryptographic decoupling charter, zero student-identifying vault invariant, and academic safeguards.",
+      "timestamp": "2026-11-10T14:27:34.343Z"
+    },
+    {
+      "filename": "03_public_landing_participation.png",
+      "title": "Student Participation Tracking & Academic Integrity",
+      "phase": "Phase 1: Public Portal",
+      "description": "Participation monitoring charter without gating examination permits.",
+      "timestamp": "2026-11-10T14:27:35.524Z"
+    },
+    {
+      "filename": "04_public_verification_hub.png",
+      "title": "Public Examination Clearance & Status Verification Hub",
+      "phase": "Phase 1: Public Portal",
+      "description": "Official registrar verification interface allowing students and proctors to verify clearance authenticity.",
+      "timestamp": "2026-11-10T14:27:36.437Z"
+    },
+    {
+      "filename": "05_public_verification_token_entry.png",
+      "title": "Verification Input with Signed Institutional Token",
+      "phase": "Phase 1: Public Portal",
+      "description": "HMAC-SHA256 signed permit verification query interface.",
+      "timestamp": "2026-11-10T14:27:37.037Z"
+    },
+    {
+      "filename": "06_mobile_landing_page.png",
+      "title": "Mobile Viewport (375x812) Responsive Landing Page",
+      "phase": "Phase 1: Public Portal",
+      "description": "Zero-overflow responsive mobile layout with accessible typography and touch CTAs.",
+      "timestamp": "2026-11-10T14:27:37.896Z"
+    },
+    {
+      "filename": "08_student_login_screen.png",
+      "title": "Academic Tech Split-Screen Login",
+      "phase": "Phase 2: Student Journey",
+      "description": "Forest-green geometric narrative panel and RA 10173 data privacy notice.",
+      "timestamp": "2026-11-10T14:27:38.702Z"
+    },
+    {
+      "filename": "09_student_credentials_entered.png",
+      "title": "Student Credentials Entered in Form",
+      "phase": "Phase 2: Student Journey",
+      "description": "Standard institutional login via seeded PLP student credentials.",
+      "timestamp": "2026-11-10T14:27:39.311Z"
+    },
+    {
+      "filename": "10_student_queue_workspace.png",
+      "title": "Student Evaluation Queue Workspace",
+      "phase": "Phase 2: Student Journey",
+      "description": "Course roster (CS-401 through PHYS-101), completion progress bar, and digital clearance certificate.",
+      "timestamp": "2026-11-10T14:27:40.467Z"
+    },
+    {
+      "filename": "11_student_rubric_modal.png",
+      "title": "Student Queue Rating Rubric Guidance Modal",
+      "phase": "Phase 2: Student Journey",
+      "description": "In-context rubric guidance ensuring fair, evidence-based student ratings.",
+      "timestamp": "2026-11-10T14:27:41.268Z"
+    },
+    {
+      "filename": "12_student_evaluation_step1_likert.png",
+      "title": "Evaluation Stepper Part I: 25 Likert Questions Answered",
+      "phase": "Phase 2: Student Journey",
+      "description": "All 25 items across 5 pedagogical clusters scored with varied genuine ratings.",
+      "timestamp": "2026-11-10T14:27:44.974Z"
+    },
+    {
+      "filename": "13_student_evaluation_step2_qualitative.png",
+      "title": "Evaluation Stepper Part II: Qualitative Feedback Completed",
+      "phase": "Phase 2: Student Journey",
+      "description": "Structured 3 descriptors, teaching strengths, constructive improvement, and Taglish narrative.",
+      "timestamp": "2026-11-10T14:27:46.446Z"
+    },
+    {
+      "filename": "14_student_queue_updated.png",
+      "title": "Evaluation Submitted & Signed Clearance Token Issued",
+      "phase": "Phase 2: Student Journey",
+      "description": "Signed cryptographic clearance token issued, progress updated, zero student PII stored in vault.",
+      "timestamp": "2026-11-10T14:27:48.364Z"
+    },
+    {
+      "filename": "15_faculty_dashboard_overview.png",
+      "title": "Faculty Workspace Overview",
+      "phase": "Phase 3: Faculty Journey",
+      "description": "Assigned course sections, academic term info, and double-blind protection status.",
+      "timestamp": "2026-11-10T14:27:50.788Z"
+    },
+    {
+      "filename": "17_faculty_action_plan_workspace.png",
+      "title": "Faculty Pedagogical Action Plan Workspace",
+      "phase": "Phase 3: Faculty Journey",
+      "description": "Continuous professional development: growth milestone commitments and peer mentorship tracking.",
+      "timestamp": "2026-11-10T14:27:51.934Z"
+    },
+    {
+      "filename": "18_chair_dashboard_faculty_roster.png",
+      "title": "Department Chair Management Portal",
+      "phase": "Phase 4: Chair Management",
+      "description": "Department of Computer Science faculty performance roster, search, and standing filters.",
+      "timestamp": "2026-11-10T14:27:53.801Z"
+    },
+    {
+      "filename": "19_chair_faculty_search.png",
+      "title": "Department Chair Faculty Search Filter",
+      "phase": "Phase 4: Chair Management",
+      "description": "Targeted search for specific faculty evaluations within assigned department.",
+      "timestamp": "2026-11-10T14:27:54.500Z"
+    },
+    {
+      "filename": "20_chair_mentorship_workspace.png",
+      "title": "Chair Action Plan & Mentorship Assignment",
+      "phase": "Phase 4: Chair Management",
+      "description": "Assigning peer mentors and signing off on pedagogical growth milestones.",
+      "timestamp": "2026-11-10T14:27:56.125Z"
+    },
+    {
+      "filename": "21_chair_quivr_drawer_opened.png",
+      "title": "Quivr Second Brain Qualitative Explorer Drawer",
+      "phase": "Phase 4: Chair Management",
+      "description": "Natural language qualitative inquiry tool with sentiment valence pill filters.",
+      "timestamp": "2026-11-10T14:27:56.978Z"
+    },
+    {
+      "filename": "22_chair_quivr_search_results.png",
+      "title": "Quivr Department Scoped NLP Inquiry Results",
+      "phase": "Phase 4: Chair Management",
+      "description": "Synthesized qualitative feedback scoped strictly to Department of Computer Science (HTTP 403 on cross-tenant probes).",
+      "timestamp": "2026-11-10T14:27:57.967Z"
+    },
+    {
+      "filename": "23_dean_dashboard_overview.png",
+      "title": "College Dean Executive Portal",
+      "phase": "Phase 5: Dean Executive",
+      "description": "College response rate (91.4%), 4,821 submissions, and exception watchlist.",
+      "timestamp": "2026-11-10T14:28:00.147Z"
+    },
+    {
+      "filename": "24_dean_completion_heatmap.png",
+      "title": "Department Section Completion Heatmap Matrix",
+      "phase": "Phase 5: Dean Executive",
+      "description": "Live course section completion matrix with threshold highlights.",
+      "timestamp": "2026-11-10T14:28:01.360Z"
+    },
+    {
+      "filename": "25_dean_compiled_aaccup_dossier.png",
+      "title": "Official AACCUP Level III Dossier Bundle Compiled",
+      "phase": "Phase 5: Dean Executive",
+      "description": "One-click sealed dossier (PLP-AACCUP3-DOSSIER-YYYYMMDD.zip) strictly separating facilities feedback.",
+      "timestamp": "2026-11-10T14:28:03.177Z"
+    },
+    {
+      "filename": "26_admin_operations_war_room.png",
+      "title": "Campaign Operations War Room",
+      "phase": "Phase 6: Admin Command",
+      "description": "6-point pre-flight diagnostics, 100% readiness score bar, and turnout velocity leaderboard.",
+      "timestamp": "2026-11-10T14:28:06.032Z"
+    },
+    {
+      "filename": "27_admin_academic_terms_tab.png",
+      "title": "Academic Terms Directory & Schedule Controls",
+      "phase": "Phase 6: Admin Command",
+      "description": "Evaluation window opening/closing schedule management with Asia/Manila timezone.",
+      "timestamp": "2026-11-10T14:28:06.781Z"
+    },
+    {
+      "filename": "28_admin_teaching_assignments_tab.png",
+      "title": "Faculty Teaching Assignments Matrix",
+      "phase": "Phase 6: Admin Command",
+      "description": "Course section assignments and bulk registrar grade-lock synchronization.",
+      "timestamp": "2026-11-10T14:28:07.563Z"
+    },
+    {
+      "filename": "29_admin_student_participation_tracker.png",
+      "title": "Student Participation Tracker Bar",
+      "phase": "Phase 6: Admin Command",
+      "description": "Monitoring pending evaluations and turnout progress without gating examination permits.",
+      "timestamp": "2026-11-10T14:28:08.451Z"
+    },
+    {
+      "filename": "30_admin_student_reminder_modal.png",
+      "title": "Non-Coercive Student Reminder Notice Modal",
+      "phase": "Phase 6: Admin Command",
+      "description": "Polite institutional reminder copyable to clipboard with zero response links.",
+      "timestamp": "2026-11-10T14:28:09.117Z"
+    },
+    {
+      "filename": "31_admin_courses_tab.png",
+      "title": "Institutional Course Offerings Catalog",
+      "phase": "Phase 6: Admin Command",
+      "description": "Departmental course units, code registry, and offering lifecycle.",
+      "timestamp": "2026-11-10T14:28:10.356Z"
+    },
+    {
+      "filename": "32_admin_questionnaire_rubric_tab.png",
+      "title": "5-Cluster Rating Scale Rubric Preview",
+      "phase": "Phase 6: Admin Command",
+      "description": "Full preview of 25 Likert items and 4-to-5 qualitative professor questions.",
+      "timestamp": "2026-11-10T14:28:11.293Z"
+    },
+    {
+      "filename": "33_admin_command_palette_modal.png",
+      "title": "Universal Command Palette & Quick Navigation",
+      "phase": "Phase 6: Admin Command",
+      "description": "Fast shortcut search across all workspaces, directories, and institutional actions.",
+      "timestamp": "2026-11-10T14:28:12.102Z"
+    },
+    {
+      "filename": "34_admin_setup_mobile_responsive.png",
+      "title": "Mobile Viewport (375x812) Admin Setup Console",
+      "phase": "Phase 6: Admin Command",
+      "description": "Zero horizontal overflow and responsive table wrapping on mobile devices.",
+      "timestamp": "2026-11-10T14:28:13.374Z"
+    },
+    {
+      "filename": "35_mobile_topbar_menu_dropdown.png",
+      "title": "Accessible Mobile Dropdown Navigation Menu",
+      "phase": "Phase 6: Admin Command",
+      "description": "Top navigation expanding directly beneath top bar with zero side rails.",
+      "timestamp": "2026-11-10T14:28:14.169Z"
+    },
+    {
+      "filename": "36_admin_campus_advocacy_view.png",
+      "title": "Campus Advocacy Evaluation Standards & Guidelines",
+      "phase": "Phase 6: Admin Command",
+      "description": "Official university evaluation standards, student anonymity charter, and rubrics.",
+      "timestamp": "2026-11-10T14:28:15.358Z"
+    },
+    {
+      "filename": "37_admin_advocacy_rubric_modal.png",
+      "title": "5-Point Likert Rating Rubric Inspection Modal",
+      "phase": "Phase 6: Admin Command",
+      "description": "Transparent rubric descriptors from Outstanding (5) down to Poor (1).",
+      "timestamp": "2026-11-10T14:28:16.079Z"
+    }
+  ]
+}
