@@ -40,6 +40,7 @@ const errorMessage = ref('');
 const showNewTermModal = ref(false);
 const showNewSectionModal = ref(false);
 const showNewCourseModal = ref(false);
+const showEditCourseModal = ref(false);
 const sectionToDelete = ref(null);
 
 // Forms
@@ -60,6 +61,14 @@ const sectionForm = ref({
 });
 
 const courseForm = ref({
+  department_id: 1,
+  code: '',
+  title: '',
+  units: 3,
+});
+
+const editCourseForm = ref({
+  id: 0,
   department_id: 1,
   code: '',
   title: '',
@@ -298,6 +307,49 @@ async function submitNewCourse() {
     }
   } catch (err) {
     flashError(err.message || 'Failed to create course offering.');
+  }
+}
+
+function openEditCourseModal(c) {
+  editCourseForm.value = {
+    id: c.id,
+    department_id: c.department_id || setupStore.departments[0]?.id || 1,
+    code: c.code || '',
+    title: c.title || '',
+    units: c.units || 3,
+  };
+  showEditCourseModal.value = true;
+}
+
+async function submitEditCourse() {
+  if (!editCourseForm.value.code || !editCourseForm.value.title) {
+    flashError('Course code and Course title are required.');
+    return;
+  }
+  try {
+    const res = await setupStore.updateCourse(editCourseForm.value.id, editCourseForm.value);
+    showEditCourseModal.value = false;
+    flashSuccess(`Course "${res.code} - ${res.title}" updated successfully.`);
+  } catch (err) {
+    flashError(err.message || 'Failed to update course offering.');
+  }
+}
+
+async function confirmDeleteCourse(c) {
+  const sections = getCourseSections(c.id);
+  if (sections.length > 0) {
+    flashError(`Cannot delete course "${c.code}": It has ${sections.length} active course section(s). Remove or reassign sections first.`);
+    return;
+  }
+  if (typeof window !== 'undefined' && typeof window.confirm === 'function') {
+    const ok = window.confirm(`Are you sure you want to delete course "${c.code} - ${c.title}" from the catalog?`);
+    if (!ok) return;
+  }
+  try {
+    await setupStore.deleteCourse(c.id);
+    flashSuccess(`Course "${c.code}" deleted from academic catalog.`);
+  } catch (err) {
+    flashError(err.message || 'Failed to delete course offering.');
   }
 }
 
@@ -1619,6 +1671,22 @@ async function executeDeleteSection() {
                   >
                     + Add Section
                   </button>
+                  <button
+                    type="button"
+                    class="btn-secondary-sm"
+                    :data-testid="`edit-course-btn-${c.id}`"
+                    @click="openEditCourseModal(c)"
+                  >
+                    Edit ✏️
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-secondary-sm text-danger"
+                    :data-testid="`delete-course-btn-${c.id}`"
+                    @click="confirmDeleteCourse(c)"
+                  >
+                    Delete 🗑️
+                  </button>
                 </div>
               </td>
             </tr>
@@ -2478,6 +2546,91 @@ async function executeDeleteSection() {
             <button type="button" class="btn-secondary" @click="showNewCourseModal = false">Cancel</button>
             <button type="submit" class="btn-primary" :disabled="setupStore.actionBusy">
               {{ setupStore.actionBusy ? 'Adding...' : 'Add Course' }}
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL: Edit Course Offering (Inspired by admin/manage_subject.php) -->
+    <div
+      v-if="showEditCourseModal"
+      class="setup-modal-scrim"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="edit-course-modal-title"
+      data-testid="edit-course-modal"
+    >
+      <div class="setup-modal-box">
+        <header class="setup-modal-header">
+          <h2 id="edit-course-modal-title">Edit Course Offering</h2>
+          <button type="button" class="modal-close-btn" @click="showEditCourseModal = false">&times;</button>
+        </header>
+
+        <form class="setup-modal-form" @submit.prevent="submitEditCourse">
+          <div class="form-group">
+            <label for="edit-course-dept">Department:</label>
+            <select
+              id="edit-course-dept"
+              v-model="editCourseForm.department_id"
+              class="form-input"
+              data-testid="edit-course-dept-select"
+              required
+            >
+              <option
+                v-for="d in setupStore.departments"
+                :key="d.id"
+                :value="d.id"
+              >
+                {{ d.code }} — {{ d.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-course-code">Course Code:</label>
+            <input
+              id="edit-course-code"
+              v-model="editCourseForm.code"
+              type="text"
+              class="form-input font-mono"
+              placeholder="e.g., CS-420"
+              data-testid="edit-course-code-input"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="edit-course-title">Course Title:</label>
+            <input
+              id="edit-course-title"
+              v-model="editCourseForm.title"
+              type="text"
+              class="form-input"
+              placeholder="e.g., Information Assurance & Security"
+              data-testid="edit-course-title-input"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="edit-course-units">Units:</label>
+            <input
+              id="edit-course-units"
+              v-model.number="editCourseForm.units"
+              type="number"
+              min="1"
+              max="12"
+              class="form-input"
+              data-testid="edit-course-units-input"
+              required
+            />
+          </div>
+
+          <footer class="setup-modal-footer">
+            <button type="button" class="btn-secondary" @click="showEditCourseModal = false">Cancel</button>
+            <button type="submit" class="btn-primary" data-testid="edit-course-save-btn" :disabled="setupStore.actionBusy">
+              {{ setupStore.actionBusy ? 'Saving...' : 'Save Changes' }}
             </button>
           </footer>
         </form>

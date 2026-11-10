@@ -318,6 +318,12 @@ if ($isApiRoute) {
             $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->setActiveTerm($req, $tId));
         } elseif ($uriPath === '/api/admin/setup/courses' && $method === 'POST') {
             $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->createCourse($req));
+        } elseif (preg_match('#^/api/admin/setup/courses/(\d+)$#', $uriPath, $m) === 1 && in_array($method, ['PUT', 'POST'], true)) {
+            $courseId = (int) $m[1];
+            $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->updateCourse($req, $courseId));
+        } elseif (preg_match('#^/api/admin/setup/courses/(\d+)/delete$#', $uriPath, $m) === 1 && in_array($method, ['POST', 'DELETE'], true)) {
+            $courseId = (int) $m[1];
+            $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->deleteCourse($req, $courseId));
         } elseif ($uriPath === '/api/admin/setup/sections' && $method === 'POST') {
             $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->createSection($req));
         } elseif ($uriPath === '/api/admin/setup/assign-faculty' && $method === 'POST') {

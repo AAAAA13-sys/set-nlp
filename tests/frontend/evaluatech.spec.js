@@ -1933,4 +1933,35 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(advocacyViewSfc.includes('DOUBLE-BLIND FACULTY VISIBILITY LOCK'), 'Guide contains double-blind faculty lock explanation');
     });
   });
+
+  describe('Group 69: Course Catalog Update & Safe Relational Deletion Management', () => {
+    it('verifies course edit modal, edit and delete action triggers, store methods, and relational safety checks', () => {
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+      const setupStoreSrc = readResourceFile('stores/academicSetup.js');
+
+      // 1. Store Update & Delete Methods
+      assert.ok(setupStoreSrc.includes('async function updateCourse('), 'Academic setup store defines updateCourse');
+      assert.ok(setupStoreSrc.includes('async function deleteCourse('), 'Academic setup store defines deleteCourse');
+      assert.ok(setupStoreSrc.includes('/api/admin/setup/courses/${encodeURIComponent(courseId)}'), 'Update course endpoint path');
+      assert.ok(setupStoreSrc.includes('/api/admin/setup/courses/${encodeURIComponent(courseId)}/delete'), 'Delete course endpoint path');
+
+      // 2. Tab 3 Actions Column Buttons
+      assert.ok(setupViewSfc.includes(':data-testid="`edit-course-btn-${c.id}`"'), 'Edit course button present in table');
+      assert.ok(setupViewSfc.includes(':data-testid="`delete-course-btn-${c.id}`"'), 'Delete course button present in table');
+      assert.ok(setupViewSfc.includes('openEditCourseModal(c)'), 'Edit button triggers openEditCourseModal');
+      assert.ok(setupViewSfc.includes('confirmDeleteCourse(c)'), 'Delete button triggers confirmDeleteCourse');
+
+      // 3. Edit Course Modal Structure
+      assert.ok(setupViewSfc.includes('data-testid="edit-course-modal"'), 'Edit course modal present');
+      assert.ok(setupViewSfc.includes('data-testid="edit-course-dept-select"'), 'Edit course department select present');
+      assert.ok(setupViewSfc.includes('data-testid="edit-course-code-input"'), 'Edit course code input present');
+      assert.ok(setupViewSfc.includes('data-testid="edit-course-title-input"'), 'Edit course title input present');
+      assert.ok(setupViewSfc.includes('data-testid="edit-course-units-input"'), 'Edit course units input present');
+      assert.ok(setupViewSfc.includes('data-testid="edit-course-save-btn"'), 'Edit course save button present');
+
+      // 4. Safe Relational Guard Logic in View
+      assert.ok(setupViewSfc.includes('getCourseSections(c.id)'), 'confirmDeleteCourse checks getCourseSections');
+      assert.ok(setupViewSfc.includes('active course section(s). Remove or reassign sections first'), 'Validation message for course with active sections');
+    });
+  });
 });

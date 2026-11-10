@@ -2878,5 +2878,39 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertSame(1, $rosterData['section']['id']);
         $this->assertGreaterThanOrEqual(0, $rosterData['section']['enrolled_count']);
         $this->assertIsArray($rosterData['students']);
+
+        // 13. Course Catalog Update & Safe Relational Deletion (Inspired by subject_list.php)
+        $nonAdminCourseUpdReq = new \Illuminate\Http\Request(['title' => 'Hacked Title']);
+        $nonAdminCourseUpdReq->setUserResolver(fn () => $facultyUser);
+        $nonAdminCourseUpdRes = $setupController->updateCourse($nonAdminCourseUpdReq, $newCourseId);
+        $this->assertSame(403, $nonAdminCourseUpdRes->getStatusCode());
+
+        $validCourseUpdReq = new \Illuminate\Http\Request([
+            'title' => 'Software Security Auditing and Formal Verification',
+            'units' => 4,
+        ]);
+        $validCourseUpdReq->setUserResolver(fn () => $adminUser);
+        $validCourseUpdRes = $setupController->updateCourse($validCourseUpdReq, $newCourseId);
+        $this->assertSame(200, $validCourseUpdRes->getStatusCode());
+        $updCourseData = $validCourseUpdRes->getData(true);
+        $this->assertTrue($updCourseData['success']);
+        $this->assertSame('Software Security Auditing and Formal Verification', $updCourseData['title']);
+        $this->assertSame(4, $updCourseData['units']);
+
+        // Safe deletion guard: Cannot delete course with active sections
+        $delCourseWithSecReq = new \Illuminate\Http\Request();
+        $delCourseWithSecReq->setUserResolver(fn () => $adminUser);
+        $delCourseWithSecRes = $setupController->deleteCourse($delCourseWithSecReq, 1);
+        $this->assertSame(422, $delCourseWithSecRes->getStatusCode());
+        $this->assertSame('CANNOT_DELETE_ACTIVE_COURSE', $delCourseWithSecRes->getData(true)['code']);
+
+        // Delete unassigned course safely
+        $delCourseReq = new \Illuminate\Http\Request();
+        $delCourseReq->setUserResolver(fn () => $adminUser);
+        $delCourseRes = $setupController->deleteCourse($delCourseReq, $newCourseId);
+        $this->assertSame(200, $delCourseRes->getStatusCode());
+        $delCourseData = $delCourseRes->getData(true);
+        $this->assertTrue($delCourseData['success']);
+        $this->assertSame($newCourseId, $delCourseData['course_id']);
     }
 }

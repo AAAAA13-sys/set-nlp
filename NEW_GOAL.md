@@ -99,11 +99,11 @@ Every role uses one Vue single-page website with button/link navigation through 
 
 ## Verified Results & Handoff Evidence (10 November 2026)
 
-- **Backend PHPUnit Suite:** 35 feature & domain tests, 932 assertions (`100% PASS` in 3.6s via SQLite in-memory PDO).
-- **Frontend DOM & Domain Suite:** 68 test groups (72 tests) covering all 5 role workspaces, single-page top-bar navigation, immediate submission policy (0s+ dwell time), 7 Academic Setup tabs, Course Catalog & Sections, Faculty Directory, Student Directory, System Accounts Directory, Institutional Overview Stats Ribbon, multi-tier CSV Exports with formula-injection neutralization, Section Evaluation Breakdown Modals with Tripartite Accreditation Signatures, Student Clearance Receipts, Cross-Role Rating Scale Rubric Modal (`EvaluationRubricModal.vue`), Deep Tab URL Synchronization, cross-directory reset filter buttons, and Campus Advocacy Evaluation Standards & Anonymity Charter Export (`100% PASS` in 0.3s).
-- **Python NLP Microservice Suite:** 46 unit tests verifying VADER compound polarity bounds ($[-1.0, +1.0]$), 5 pedagogical cluster tagging, multi-questionnaire structured qualitative synthesis, pedagogical action plans, and PII/prompt-delimiter scrubbing (`100% PASS` in 2.5s).
+- **Backend PHPUnit Suite:** 35 feature & domain tests, 942 assertions (`100% PASS` in 4.6s via SQLite in-memory PDO).
+- **Frontend DOM & Domain Suite:** 69 test groups (73 tests) covering all 5 role workspaces, single-page top-bar navigation, immediate submission policy (0s+ dwell time), 7 Academic Setup tabs, Course Catalog & Sections, Faculty Directory, Student Directory, System Accounts Directory, Institutional Overview Stats Ribbon, multi-tier CSV Exports with formula-injection neutralization, Section Evaluation Breakdown Modals with Tripartite Accreditation Signatures, Student Clearance Receipts, Cross-Role Rating Scale Rubric Modal (`EvaluationRubricModal.vue`), Deep Tab URL Synchronization, cross-directory reset filter buttons, Campus Advocacy Evaluation Standards & Anonymity Charter Export, and Course Catalog Update & Safe Relational Deletion Management (`100% PASS` in 0.4s).
+- **Python NLP Microservice Suite:** 46 unit tests verifying VADER compound polarity bounds ($[-1.0, +1.0]$), 5 pedagogical cluster tagging, multi-questionnaire structured qualitative synthesis, pedagogical action plans, and PII/prompt-delimiter scrubbing (`100% PASS` in 2.3s).
 - **Hygiene & Syntax Audit:** 50 PHP files clean (`php -l`), 205 source files UTF-8 No-BOM, 0 git diff warnings.
-- **Consolidated Multi-Tier Matrix:** **149 Automated Test Units (100% PASS)** via `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1`.
+- **Consolidated Multi-Tier Matrix:** **150 Automated Test Units (100% PASS)** via `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1`.
 - **Production Bundle:** `npm run build` compiled 82 modules cleanly with zero `.map` files in `public/build/`.
 - **Live Playwright Browser Captures:**
   - `live_student_eval_desktop.png` & `live_student_eval_mobile.png`: Top back button pill (`← Back to My Courses`), clean header branding, zero autosave text, zero fullscreen toggle, and enlarged root typography (`17.5px; line-height: 1.62;`).
@@ -115,6 +115,7 @@ Every role uses one Vue single-page website with button/link navigation through 
   - `live_section_roster_modal.png`: Section Class Roster & Student Clearance Checklist modal with search, clearance status filter, direct permit verification, and CSV export.
   - `live_student_enrollment_modal.png`: Student Enrollment & Course Clearance Checklist modal with instructor assignments, evaluation status pills, and cryptographic clearance proof tokens.
   - `live_course_sections_modal.png`: Course Sections & Term Offerings modal detailing total enrollment, turnout rate %, instructor assignments, and inline section evaluation report links.
+  - `live_admin_course_actions.png` & `live_admin_course_edit_modal.png`: Course Catalog in Tab 3 with `+ Add Section`, `Edit ✏️`, and `Delete 🗑️` actions, plus interactive Edit Course Offering modal with relational safety checks.
   - `live_questionnaire_rubric.png`: Accredited 5-point evaluation rating rubric card and performance bands table in Tab 7.
   - `live_chair_heatmap_report_modal.png` & `live_dean_sentiment_report_modal.png`: Section evaluation breakdown reports with 5 pedagogical cluster bars, NLP sentiment metrics, and official Tripartite Accreditation Signature Blocks.
   - `live_faculty_rubric_btn.png` & `live_faculty_rubric_modal.png`: Unlocked faculty dashboard evaluation header with `Rating Rubric 📋` action and accredited 5-point standards modal.

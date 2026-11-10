@@ -83,6 +83,8 @@ Route::middleware(['role:admin'])->group(function (): void {
     Route::post('/admin/setup/terms', [AdminSetupController::class, 'createOrUpdateTerm']);
     Route::post('/admin/setup/terms/{id}/set-active', [AdminSetupController::class, 'setActiveTerm']);
     Route::post('/admin/setup/courses', [AdminSetupController::class, 'createCourse']);
+    Route::match(['PUT', 'POST'], '/admin/setup/courses/{id}', [AdminSetupController::class, 'updateCourse']);
+    Route::match(['DELETE', 'POST'], '/admin/setup/courses/{id}/delete', [AdminSetupController::class, 'deleteCourse']);
     Route::post('/admin/setup/sections', [AdminSetupController::class, 'createSection']);
     Route::post('/admin/setup/assign-faculty', [AdminSetupController::class, 'assignFaculty']);
     Route::post('/admin/setup/users', [AdminSetupController::class, 'createUser']);

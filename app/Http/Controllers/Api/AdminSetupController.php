@@ -123,6 +123,82 @@ class AdminSetupController extends Controller
         }
     }
 
+    public function updateCourse(Request $request, int $id = 0): JsonResponse
+    {
+        if ($authError = $this->verifyAdminRole($request)) {
+            return $authError;
+        }
+
+        $courseId = $id > 0 ? $id : (int) $request->input('course_id', 0);
+        if ($courseId <= 0) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'INVALID_COURSE_ID',
+                'message' => 'Valid course_id is required.',
+            ], 422);
+        }
+
+        try {
+            $result = $this->setupService->updateCourse($courseId, $request->all());
+            (new SecurityAuditService())->logEvent(
+                $this->setupService->getPdo(),
+                'COURSE_UPDATED',
+                'INFO',
+                ['course_id' => $courseId, 'code' => $result['code'] ?? null],
+                'admin',
+                '/api/admin/setup/courses/' . $courseId
+            );
+            return new JsonResponse($result, 200);
+        } catch (InvalidArgumentException $e) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'INVALID_COURSE_PAYLOAD',
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+    }
+
+    public function deleteCourse(Request $request, int $id = 0): JsonResponse
+    {
+        if ($authError = $this->verifyAdminRole($request)) {
+            return $authError;
+        }
+
+        $courseId = $id > 0 ? $id : (int) $request->input('course_id', 0);
+        if ($courseId <= 0) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'INVALID_COURSE_ID',
+                'message' => 'Valid course_id is required.',
+            ], 422);
+        }
+
+        try {
+            $result = $this->setupService->deleteCourse($courseId);
+            (new SecurityAuditService())->logEvent(
+                $this->setupService->getPdo(),
+                'COURSE_DELETED',
+                'INFO',
+                ['course_id' => $courseId, 'code' => $result['code'] ?? null],
+                'admin',
+                '/api/admin/setup/courses/' . $courseId . '/delete'
+            );
+            return new JsonResponse($result, 200);
+        } catch (RuntimeException $e) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'CANNOT_DELETE_ACTIVE_COURSE',
+                'message' => $e->getMessage(),
+            ], 422);
+        } catch (InvalidArgumentException $e) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'COURSE_NOT_FOUND',
+                'message' => $e->getMessage(),
+            ], 404);
+        }
+    }
+
     public function createSection(Request $request): JsonResponse
     {
         if ($authError = $this->verifyAdminRole($request)) {

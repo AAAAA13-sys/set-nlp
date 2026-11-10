@@ -140,6 +140,11 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
   - Integrated `Rating Rubric 📋` trigger button (`data-testid="advocacy-open-rubric-btn"`) and `EvaluationRubricModal.vue` (`role-title="Student Body & Campus Advocacy"`), providing campus leaders, student councils, and class representatives with on-demand inspection of the accredited 5-point rating scale, performance bands, and 5 pedagogical cluster standards.
   - Implemented `downloadStudentGuide` (`data-testid="export-advocacy-guide-btn"`), allowing users to export the official plain-text student orientation guide and privacy charter (`PLP_Student_Evaluation_Charter_and_Guidelines.txt`).
   - Added Group 68 to the frontend test suite (72 tests across 69 suites, 100% PASS); confirmed all 149 automated units passing (`149 / 149 PASS`, 932 assertions); captured live Playwright screenshot artifacts `live_advocacy_guidelines.png` and `live_advocacy_rubric_modal.png`.
+- [x] **Checkpoint 49:** Course Catalog Update, Edit Modal & Safe Relational Deletion Management (`AcademicSetupService.php`, `AdminSetupController.php`, `AdminSetupView.vue`, `academicSetup.js`, `routes/api.php`, `public/index.php`, `tests/Feature/EvaluaTechBackendSuiteTest.php`, `tests/frontend/evaluatech.spec.js`, inspired by `admin/subject_list.php` and `admin/manage_subject.php`):
+  - Added `updateCourse` and safe `deleteCourse` in `AcademicSetupService` and `AdminSetupController`, providing complete operational lifecycle management over course offerings with code-uniqueness verification and relational safety protection (`CANNOT_DELETE_ACTIVE_COURSE` when active sections exist).
+  - Registered REST routes in `routes/api.php` and standalone router in `public/index.php` (`PUT /api/admin/setup/courses/{id}`, `DELETE/POST /api/admin/setup/courses/{id}/delete`).
+  - Added `Edit ✏️` (`data-testid="edit-course-btn-${c.id}"`) and `Delete 🗑️` (`data-testid="delete-course-btn-${c.id}"`) action buttons in Tab 3 of `AdminSetupView.vue`, backed by interactive Edit Course Offering modal (`data-testid="edit-course-modal"`).
+  - Added Group 69 to the frontend test suite (73 tests across 70 suites, 100% PASS) and expanded `test_35` in PHPUnit backend suite (942 assertions); confirmed all 150 automated units passing (`150 / 150 PASS`); captured live Playwright screenshot artifacts `live_admin_course_actions.png` and `live_admin_course_edit_modal.png`.
 
 ---
 
@@ -147,10 +152,10 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 
 | Verification Tier | Command Executed | Executed Units | Pass Rate | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (932 assertions) | 35 / 35 | **100% PASS** |
-| **Frontend DOM & UX Suite** | `npm.cmd test` | 68 test groups (72 tests) | 72 / 72 | **100% PASS** |
+| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (942 assertions) | 35 / 35 | **100% PASS** |
+| **Frontend DOM & UX Suite** | `npm.cmd test` | 69 test groups (73 tests) | 73 / 73 | **100% PASS** |
 | **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 46 unit tests | 46 / 46 | **100% PASS** |
 | **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 50 PHP files, 205 sources | 100% clean | **100% PASS** |
 | **Vite Production Bundle** | `npm.cmd run build` | 82 modules | Zero `.map` files | **100% PASS** |
-| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 149 automated units | 149 / 149 | **100% PASS** |
+| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 150 automated units | 150 / 150 | **100% PASS** |
 

@@ -595,6 +595,114 @@ class AcademicSetupService
     }
 
     /**
+     * Update an existing course offering in the catalog.
+     *
+     * @param int $courseId
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    public function updateCourse(int $courseId, array $data): array
+    {
+        if ($courseId <= 0) {
+            throw new InvalidArgumentException('Valid course_id is required.');
+        }
+
+        $chkStmt = $this->pdo->prepare('SELECT id, code, title, units, department_id FROM courses WHERE id = :id LIMIT 1');
+        $chkStmt->execute([':id' => $courseId]);
+        $existing = $chkStmt->fetch(PDO::FETCH_ASSOC);
+        if (!$existing) {
+            throw new InvalidArgumentException("Course with ID {$courseId} not found.");
+        }
+
+        $code = strtoupper(trim((string) ($data['code'] ?? $existing['code'])));
+        $title = trim((string) ($data['title'] ?? $existing['title']));
+        $units = isset($data['units']) ? (int) $data['units'] : (int) $existing['units'];
+        $deptId = isset($data['department_id']) ? (int) $data['department_id'] : (int) $existing['department_id'];
+
+        if ($code === '' || $title === '') {
+            throw new InvalidArgumentException('Course code and title are required.');
+        }
+        if ($units < 1 || $units > 12) {
+            throw new InvalidArgumentException('Units must be between 1 and 12.');
+        }
+
+        $chkDept = $this->pdo->prepare('SELECT id FROM departments WHERE id = :id LIMIT 1');
+        $chkDept->execute([':id' => $deptId]);
+        if (!$chkDept->fetch()) {
+            throw new InvalidArgumentException('Selected department does not exist.');
+        }
+
+        // Prevent collision with another course
+        $chkCollision = $this->pdo->prepare('SELECT id FROM courses WHERE code = :code AND id != :id LIMIT 1');
+        $chkCollision->execute([':code' => $code, ':id' => $courseId]);
+        if ($chkCollision->fetch()) {
+            throw new InvalidArgumentException("Another course with code '{$code}' already exists.");
+        }
+
+        $now = date('Y-m-d H:i:s');
+        $stmt = $this->pdo->prepare('
+            UPDATE courses
+            SET department_id = :dept_id, code = :code, title = :title, units = :units, updated_at = :updated_at
+            WHERE id = :id
+        ');
+        $stmt->execute([
+            ':dept_id' => $deptId,
+            ':code' => $code,
+            ':title' => $title,
+            ':units' => $units,
+            ':updated_at' => $now,
+            ':id' => $courseId,
+        ]);
+
+        return [
+            'success' => true,
+            'course_id' => $courseId,
+            'code' => $code,
+            'title' => $title,
+            'units' => $units,
+            'department_id' => $deptId,
+        ];
+    }
+
+    /**
+     * Delete an unassigned course record, protecting relational integrity.
+     *
+     * @param int $courseId
+     * @return array<string, mixed>
+     */
+    public function deleteCourse(int $courseId): array
+    {
+        if ($courseId <= 0) {
+            throw new InvalidArgumentException('Valid course_id is required.');
+        }
+
+        $chkStmt = $this->pdo->prepare('SELECT id, code, title FROM courses WHERE id = :id LIMIT 1');
+        $chkStmt->execute([':id' => $courseId]);
+        $existing = $chkStmt->fetch(PDO::FETCH_ASSOC);
+        if (!$existing) {
+            throw new InvalidArgumentException("Course with ID {$courseId} not found.");
+        }
+
+        // Check if sections exist
+        $secStmt = $this->pdo->prepare('SELECT COUNT(*) FROM course_sections WHERE course_id = :id');
+        $secStmt->execute([':id' => $courseId]);
+        $secCount = (int) $secStmt->fetchColumn();
+        if ($secCount > 0) {
+            throw new RuntimeException("Cannot delete course '{$existing['code']}' because it has {$secCount} active course section(s). Remove or reassign sections first.");
+        }
+
+        $delStmt = $this->pdo->prepare('DELETE FROM courses WHERE id = :id');
+        $delStmt->execute([':id' => $courseId]);
+
+        return [
+            'success' => true,
+            'course_id' => $courseId,
+            'code' => $existing['code'],
+            'message' => "Course '{$existing['code']}' deleted successfully.",
+        ];
+    }
+
+    /**
      * Create a new course section under an academic term.
      *
      * @param array<string, mixed> $data

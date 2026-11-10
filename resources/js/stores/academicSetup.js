@@ -207,6 +207,55 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     }
   }
 
+  async function updateCourse(courseId, payload) {
+    actionBusy.value = true;
+    error.value = null;
+    try {
+      const res = await fetch(`/api/admin/setup/courses/${encodeURIComponent(courseId)}`, {
+        method: 'PUT',
+        headers: getApiHeaders(true),
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to update course offering.');
+      }
+
+      await fetchOverview(selectedTermId.value);
+      return data;
+    } catch (e) {
+      error.value = e.message;
+      throw e;
+    } finally {
+      actionBusy.value = false;
+    }
+  }
+
+  async function deleteCourse(courseId) {
+    actionBusy.value = true;
+    error.value = null;
+    try {
+      const res = await fetch(`/api/admin/setup/courses/${encodeURIComponent(courseId)}/delete`, {
+        method: 'POST',
+        headers: getApiHeaders(),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to delete course offering.');
+      }
+
+      await fetchOverview(selectedTermId.value);
+      return data;
+    } catch (e) {
+      error.value = e.message;
+      throw e;
+    } finally {
+      actionBusy.value = false;
+    }
+  }
+
   async function createSection(payload) {
     actionBusy.value = true;
     error.value = null;
@@ -386,6 +435,8 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     createOrUpdateTerm,
     setActiveTerm,
     createCourse,
+    updateCourse,
+    deleteCourse,
     createSection,
     assignFaculty,
     deleteSection,
