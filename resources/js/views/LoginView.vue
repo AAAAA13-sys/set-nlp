@@ -262,6 +262,17 @@ const handleLogin = throttle(() => {
           Protected under RA 10173 Data Privacy. Your identity is never attached to your evaluations.
           <span class="sr-only">Cryptographic Decoupling</span>
         </p>
+
+        <div style="margin-top: 1rem; text-align: center;">
+          <router-link
+            to="/verify"
+            class="proctor-verify-link"
+            style="font-size: 0.82rem; font-weight: 600; color: #103c2e; text-decoration: underline; display: inline-flex; align-items: center; gap: 0.35rem;"
+            data-testid="proctor-verify-link"
+          >
+            🔍 Proctor Examination Permit Verification
+          </router-link>
+        </div>
       </div>
     </section>
   </main>

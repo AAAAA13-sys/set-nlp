@@ -11,6 +11,7 @@ import EvaluationFormView from '../views/EvaluationFormView.vue';
 import FacultyDashboardView from '../views/FacultyDashboardView.vue';
 import LoginView from '../views/LoginView.vue';
 import NotFoundView from '../views/NotFoundView.vue';
+import PermitVerifyView from '../views/PermitVerifyView.vue';
 import StudentQueueView from '../views/StudentQueueView.vue';
 
 export const routes = [
@@ -113,6 +114,16 @@ export const routes = [
     meta: {
       public: true,
       title: '403 Forbidden — Institutional Role Access Restricted',
+    },
+  },
+  {
+    path: '/verify',
+    alias: '/permit/verify',
+    name: 'permit-verify',
+    component: PermitVerifyView,
+    meta: {
+      public: true,
+      title: 'Examination Permit Verification — Pamantasan ng Lungsod ng Pasig',
     },
   },
   {

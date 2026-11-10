@@ -1500,4 +1500,32 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('closeSetupSectionReport'), 'Close setup section report handler');
     });
   });
+
+  describe('Group 51: Public Proctor Examination Permit Verification Portal & Direct Login Linkage', () => {
+    it('verifies public permit verification route, login shortcut link, and verification view structure', () => {
+      const routerSrc = readResourceFile('router/index.js');
+      const loginViewSfc = readResourceFile('views/LoginView.vue');
+      const verifyViewSfc = readResourceFile('views/PermitVerifyView.vue');
+
+      // 1. Route Registration in Vue Router
+      assert.ok(routerSrc.includes("path: '/verify'"), 'Permit verify path registered in router');
+      assert.ok(routerSrc.includes("alias: '/permit/verify'"), 'Permit verify alias registered in router');
+      assert.ok(routerSrc.includes('PermitVerifyView'), 'PermitVerifyView component imported and mounted');
+
+      // 2. Direct Proctor Verification Link in Login View
+      assert.ok(loginViewSfc.includes('data-testid="proctor-verify-link"'), 'Proctor permit verification link in login view');
+      assert.ok(loginViewSfc.includes('to="/verify"'), 'Link directs to /verify');
+
+      // 3. Permit Verification View Structure & Cryptographic Display
+      assert.ok(verifyViewSfc.includes('data-testid="permit-verify-page"'), 'Permit verify main page container');
+      assert.ok(verifyViewSfc.includes('data-testid="permit-token-input"'), 'Permit token or student ID input');
+      assert.ok(verifyViewSfc.includes('data-testid="verify-permit-btn"'), 'Verify permit submit button');
+      assert.ok(verifyViewSfc.includes('data-testid="verified-permit-card"'), 'Verified permit success card');
+      assert.ok(verifyViewSfc.includes('data-testid="permit-verified-badge"'), 'Permit verified clearance badge');
+      assert.ok(verifyViewSfc.includes('data-testid="permit-security-hash"'), 'Registrar cryptographic security hash proof');
+      assert.ok(verifyViewSfc.includes('data-testid="print-verified-permit-btn"'), 'Print verified permit certificate button');
+      assert.ok(verifyViewSfc.includes('data-testid="permit-invalid-alert"'), 'Invalid or gated permit error alert');
+      assert.ok(verifyViewSfc.includes('executeVerification'), 'Verification execution handler function');
+    });
+  });
 });

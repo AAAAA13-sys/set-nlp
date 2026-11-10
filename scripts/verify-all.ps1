@@ -14,7 +14,7 @@ $NodeExe = "node"
 $PythonExe = "python"
 
 Write-Host "========================================================================" -ForegroundColor Cyan
-Write-Host " EvaluaTech Multi-Tier Verification Matrix (131 Automated Test Units)   " -ForegroundColor Cyan
+Write-Host " EvaluaTech Multi-Tier Verification Matrix (132 Automated Test Units)   " -ForegroundColor Cyan
 Write-Host "========================================================================" -ForegroundColor Cyan
 
 # 1. Backend PHPUnit Suite (35 tests)
@@ -25,8 +25,8 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
-# 2. Frontend DOM & Domain Suite (50 test groups)
-Write-Host "`n[2/4] Running Frontend Vue 3 DOM & Domain Suite (50 Test Groups)..." -ForegroundColor Yellow
+# 2. Frontend DOM & Domain Suite (51 test groups)
+Write-Host "`n[2/4] Running Frontend Vue 3 DOM & Domain Suite (51 Test Groups)..." -ForegroundColor Yellow
 & $NodeExe --test "tests/frontend/evaluatech.spec.js"
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Frontend DOM Suite failed with exit code $LASTEXITCODE"
@@ -87,11 +87,11 @@ Write-Host "| Test Suite Execution Summary                                      
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
 Write-Host "| Test Suite            | Layer Target       | Executed   | Pass Rate    |" -ForegroundColor Cyan
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
-Write-Host "| Frontend DOM Suite    | UI, Timers, Forms  | 50 Groups  | 100% (50/50) |" -ForegroundColor Green
+Write-Host "| Frontend DOM Suite    | UI, Timers, Forms  | 51 Groups  | 100% (51/51) |" -ForegroundColor Green
 Write-Host "| Backend PHPUnit Suite | Domain Logic, RBAC | 35 Tests   | 100% (35/35) |" -ForegroundColor Green
 Write-Host "| Python Analytics Suite| NLP & Clustering   | 46 Tests   | 100% (46/46) |" -ForegroundColor Green
 Write-Host "| Hygiene & Syntax Audit| PHP -l & UTF-8 BOM | Verified   | 100% PASS    |" -ForegroundColor Green
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
-Write-Host "| Consolidated Total    | Complete Platform  | 131 Units  | 100% PASS    |" -ForegroundColor Green
+Write-Host "| Consolidated Total    | Complete Platform  | 132 Units  | 100% PASS    |" -ForegroundColor Green
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
 exit 0
