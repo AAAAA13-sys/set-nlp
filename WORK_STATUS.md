@@ -98,6 +98,7 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 - [x] **Checkpoint 20:** System User Accounts & Staff Directory Tab in Academic Setup (`AdminSetupView.vue`, `AcademicSetupService.php`, `academicSetup.js`, inspired by `admin/user_list.php`): Added 7th tab `System Accounts` (`data-testid="tab-users-btn"`, `pane-users`) listing verified institutional user accounts across all 5 roles (`admin`, `dean`, `chair`, `faculty`, `student`) with search input, role filter dropdown (`data-testid="users-role-filter-select"`), role badges, departmental affiliations, and active status indicators (`128 / 128 PASS`, 906 assertions).
 - [x] **Checkpoint 21:** Institutional Overview Stats Ribbon & Course Catalog CSV Export in Academic Setup (`AdminSetupView.vue`, inspired by `admin/home.php` and `admin/subject_list.php`): Added responsive institutional stats ribbon (`data-testid="admin-stats-ribbon"`) with 5 interactive overview KPI cards (`stat-card-courses`, `stat-card-sections`, `stat-card-faculty`, `stat-card-students`, `stat-card-users`) providing instant tab switching and metrics visualization; added formula-injection-safe Course Catalog CSV export (`data-testid="export-courses-csv-btn"`) (`129 / 129 PASS`).
 - [x] **Checkpoint 22:** Comprehensive Institutional CSV Export Suite across Academic Setup (`AdminSetupView.vue`, `tests/frontend/evaluatech.spec.js`): Added formula-injection-neutralized institutional CSV exports across Faculty Assignments Matrix (`data-testid="export-assignments-csv-btn"`), Faculty Directory (`data-testid="export-faculty-csv-btn"`), Student Clearance Roster (`data-testid="export-students-csv-btn"`), and System Users Directory (`data-testid="export-users-csv-btn"`), backed by shared sanitized CSV streaming utility (`triggerCsvDownload`); expanded frontend test matrix with Group 49 (51 tests / 50 suites); verified multi-tier suite passing with 130 automated test units (`130 / 130 PASS`, 906 assertions).
+- [x] **Checkpoint 23:** Evaluation Questionnaire Instrument CSV Export (`AdminSetupView.vue`, `tests/frontend/evaluatech.spec.js`, inspired by `admin/questionnaire.php`): Added accredited questionnaire export button (`data-testid="export-questionnaire-csv-btn"`) streaming all 25 Likert scale items across 5 pedagogical clusters and 4 qualitative professor inquiry prompts with formula-injection neutralization (`PLP_AACCUP3_Evaluation_Instrument_YYYYMMDD.csv`); expanded Group 49 assertions to 52 tests; verified 130 automated test units passing (`130 / 130 PASS`, 906 assertions).
 
 ---
 
@@ -106,9 +107,9 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 | Verification Tier | Command Executed | Executed Units | Pass Rate | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (906 assertions) | 35 / 35 | **100% PASS** |
-| **Frontend DOM & UX Suite** | `npm.cmd test` | 48 test groups (50 tests) | 50 / 50 | **100% PASS** |
+| **Frontend DOM & UX Suite** | `npm.cmd test` | 49 test groups (52 tests) | 52 / 52 | **100% PASS** |
 | **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 46 unit tests | 46 / 46 | **100% PASS** |
 | **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 50 PHP files, 203 sources | 100% clean | **100% PASS** |
 | **Vite Production Bundle** | `npm.cmd run build` | 79 modules | Zero `.map` files | **100% PASS** |
-| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 129 automated units | 129 / 129 | **100% PASS** |
+| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 130 automated units | 130 / 130 | **100% PASS** |
 

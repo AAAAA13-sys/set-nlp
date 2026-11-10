@@ -1465,5 +1465,14 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('exportSystemUsersCsv'), 'Export system users CSV handler');
       assert.ok(setupViewSfc.includes('PLP_System_Users_Directory'), 'System users CSV filename prefix');
     });
+
+    it('verifies evaluation questionnaire instrument CSV export action in Academic Setup', () => {
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+
+      // 6. Questionnaire Instrument Export
+      assert.ok(setupViewSfc.includes('data-testid="export-questionnaire-csv-btn"'), 'Export questionnaire CSV button');
+      assert.ok(setupViewSfc.includes('exportQuestionnaireInstrumentCsv'), 'Export questionnaire CSV handler');
+      assert.ok(setupViewSfc.includes('PLP_AACCUP3_Evaluation_Instrument'), 'Questionnaire instrument CSV filename prefix');
+    });
   });
 });

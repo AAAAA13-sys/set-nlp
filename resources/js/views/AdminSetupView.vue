@@ -360,6 +360,41 @@ function exportAssignmentsMatrixCsv() {
   triggerCsvDownload(headers, rows, 'PLP_Faculty_Assignments_Matrix');
 }
 
+function exportQuestionnaireInstrumentCsv() {
+  const preview = setupStore.questionnairePreview;
+  if (!preview) return;
+  const sanitize = (val) => {
+    let s = String(val ?? '');
+    if (/^[=+@-]/i.test(s)) s = `'${s}`;
+    return `"${s.replace(/"/g, '""')}"`;
+  };
+  const headers = ['Part', 'Cluster ID', 'Cluster Name', 'Question Number', 'Prompt / Question Text', 'Scale / Response Format'];
+  const rows = [];
+  (preview.clusters || []).forEach((c) => {
+    (c.items || []).forEach((item) => {
+      rows.push([
+        sanitize('Part I: 5-Point Likert Scale'),
+        sanitize(c.cluster_id),
+        sanitize(c.name || c.title),
+        sanitize(item.id || item.item_number),
+        sanitize(item.text || item.prompt),
+        sanitize('1 (Strongly Disagree) to 5 (Strongly Agree)'),
+      ].join(','));
+    });
+  });
+  (preview.professor_qualitative_questions || []).forEach((q, idx) => {
+    rows.push([
+      sanitize('Part II: Qualitative Feedback'),
+      sanitize('N/A'),
+      sanitize('Professor Constructive Feedback'),
+      sanitize(idx + 1),
+      sanitize(q.question || q.title),
+      sanitize(q.format || q.description || 'Open Qualitative Text'),
+    ].join(','));
+  });
+  triggerCsvDownload(headers, rows, 'PLP_AACCUP3_Evaluation_Instrument');
+}
+
 const facultySearchInput = ref('');
 
 const filteredFacultyDirectory = computed(() => {
@@ -1438,9 +1473,20 @@ async function executeDeleteSection() {
     <!-- TAB 7: QUESTIONNAIRE PREVIEW (Inspired by questionnaire.php) -->
     <section v-if="activeTab === 'questionnaire'" class="tab-pane" data-testid="pane-questionnaire">
       <div class="questionnaire-header-banner">
-        <div class="questionnaire-badge-row">
-          <span class="accreditation-seal">PLP AACCUP Level III Accredited Instrument</span>
-          <span class="scale-legend">Scale: 1 (Strongly Disagree) to 5 (Strongly Agree)</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+          <div class="questionnaire-badge-row">
+            <span class="accreditation-seal">PLP AACCUP Level III Accredited Instrument</span>
+            <span class="scale-legend">Scale: 1 (Strongly Disagree) to 5 (Strongly Agree)</span>
+          </div>
+          <button
+            type="button"
+            class="btn-secondary"
+            data-testid="export-questionnaire-csv-btn"
+            style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; font-weight: 600;"
+            @click="exportQuestionnaireInstrumentCsv"
+          >
+            📊 Export Instrument (CSV)
+          </button>
         </div>
         <p class="questionnaire-note">
           This 25-item evaluation instrument is standardized across all academic colleges. Items are categorized into five core pedagogical clusters plus four qualitative professor response fields. Questions are read-only under institutional policy.
