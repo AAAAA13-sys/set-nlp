@@ -11,6 +11,11 @@
 
 EvaluaTech is the official Student Evaluation of Teachers (SET) platform for Pamantasan ng Lungsod ng Pasig. In accordance with the Project Lead's Memorandum on stabilization and interface redesign, this document establishes the complete screen inventory, design tokens, responsive states, and clickable navigation flows prior to frontend visual implementation.
 
+### Live Clickable Prototype Access
+- **Interactive Canvas & Prototype (Live Web Server):** `http://127.0.0.1:8000/prototype/`
+- **Standalone Source Files:** [`public/prototype/index.html`](file:///c:/Users/Ivan/Music/NLP%20SET/public/prototype/index.html) and [`docs/prototype/index.html`](file:///c:/Users/Ivan/Music/NLP%20SET/docs/prototype/index.html)
+- **Features:** Single-page Figma-style canvas featuring all 11 screen frames side-by-side, interactive device click-through flows, viewport toggle (Desktop 1366×768 vs Mobile 375×812), system state inspection (Normal, Loading Shimmer, Empty Roster, Validation Error, Double-Blind Locked Report), and inspectable PLP institutional tokens.
+
 ### Core Design Principles
 1. **School-Based Institutional Restraint:** Eliminate generic SaaS clichés, decorative dashboards, floating particles, and oversized marketing headings. Design for purposeful academic administration.
 2. **Universal Top-Bar Single-Page Navigation:** Every page and role is reached through a consistent, responsive top navigation bar. No sidebars, no collapsible side rails, and no mobile navigation drawers.

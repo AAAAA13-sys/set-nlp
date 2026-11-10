@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EvaluaTech — Official Figma Design Draft & Clickable Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --figma-bg: #1e1e1e;
+      --figma-panel: #2c2c2c;
+      --figma-border: #3c3c3c;
+      --figma-text: #e0e0e0;
+      --figma-text-muted: #8e8e8e;
+      --figma-accent: #0d99ff;
+
+      --color-forest-dark: #0b3322;
+      --color-emerald-base: #103c2e;
+      --color-emerald-hover: #0a271e;
+      --color-gold-accent: #f4cd42;
+      --color-gold-warm: #eab308;
+      --color-offwhite-canvas: #f9f9f8;
+      --color-card-bg: #ffffff;
+      --color-border-subtle: #e5e7eb;
+      --color-border-institutional: #dce7dc;
+      --color-text-primary: #111827;
+      --color-text-secondary: #4b5563;
+      --color-text-muted: #6b7280;
+      --color-success-bg: #ecfdf5;
+      --color-success-text: #065f46;
+      --color-warning-bg: #fffbeb;
+      --color-warning-text: #92400e;
+      --color-error-bg: #fef2f2;
+      --color-error-text: #991b1b;
+      
+      --font-sans: 'Public Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-serif: 'Newsreader', Georgia, serif;
+      --font-mono: 'JetBrains Mono', "SF Mono", Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--figma-bg);
+      color: var(--figma-text);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TOP FIGMA TOOLBAR */
+    .figma-toolbar {
+      height: 48px;
+      background: var(--figma-panel);
+      border-bottom: 1px solid var(--figma-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      user-select: none;
+      z-index: 100;
+    }
+    .figma-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: -0.01em;
+    }
+    .figma-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #103c2e 0%, #0b3322 100%);
+      border: 1px solid #f4cd42;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      color: #f4cd42;
+      font-weight: 800;
+    }
+    .figma-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .figma-btn {
+      background: #383838;
+      border: 1px solid #484848;
+      color: #e0e0e0;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: background 0.15s;
+    }
+    .figma-btn:hover {
+      background: #444444;
+    }
+    .figma-btn.active {
+      background: var(--figma-accent);
+      color: #ffffff;
+      border-color: var(--figma-accent);
+    }
+    .figma-select {
+      background: #383838;
+      border: 1px solid #484848;
+      color: #e0e0e0;
+      padding: 0.35rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* MAIN WORKSPACE LAYOUT */
+    .figma-workspace {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* LEFT SIDEBAR: LAYERS & SCREENS */
+    .figma-sidebar {
+      width: 260px;
+      background: var(--figma-panel);
+      border-right: 1px solid var(--figma-border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      user-select: none;
+      font-size: 0.8rem;
+    }
+    .sidebar-section-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--figma-text-muted);
+      padding: 0.75rem 1rem 0.35rem;
+      font-weight: 700;
+    }
+    .screen-item {
+      padding: 0.45rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #cccccc;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+    }
+    .screen-item:hover {
+      background: #353535;
+      color: #ffffff;
+    }
+    .screen-item.active {
+      background: #233544;
+      color: #70b8ff;
+      border-left-color: var(--figma-accent);
+      font-weight: 600;
+    }
+    .token-chip-pill {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+      background: #383838;
+      color: #a0a0a0;
+      margin-left: auto;
+    }
+
+    /* DESIGN TOKENS PANEL IN SIDEBAR */
+    .token-preview-grid {
+      padding: 0.5rem 1rem;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.4rem;
+    }
+    .token-swatch {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.7rem;
+      color: #bbbbbb;
+    }
+    .swatch-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid #555;
+    }
+
+    /* CENTER CANVAS AREA */
+    .figma-canvas {
+      flex: 1;
+      overflow: auto;
+      background-color: #121212;
+      background-image: 
+        radial-gradient(#252525 1px, transparent 1px);
+      background-size: 20px 20px;
+      position: relative;
+      padding: 3rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    /* CANVAS GRID OF ALL FRAMES (ONE FIGMA PAGE) */
+    .canvas-frames-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(680px, 1fr));
+      gap: 3rem;
+      width: 100%;
+      max-width: 2200px;
+    }
+
+    /* DEVICE WRAPPER */
+    .figma-frame-card {
+      background: var(--color-offwhite-canvas);
+      border-radius: 12px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.45);
+      border: 1px solid rgba(255,255,255,0.08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform 0.2s ease, width 0.3s ease;
+    }
+    .frame-badge-bar {
+      background: #252525;
+      color: #aaaaaa;
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #333333;
+      user-select: none;
+    }
+    .frame-tag {
+      font-family: var(--font-mono);
+      color: var(--figma-accent);
+      background: rgba(13, 153, 255, 0.15);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+    }
+
+    /* SCREEN FRAME CONTENT */
+    .screen-content {
+      color: var(--color-text-primary);
+      background: var(--color-offwhite-canvas);
+      min-height: 580px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* NATIVE PROTOTYPE STYLES (MATCHING APP) */
+    .proto-navbar {
+      background: var(--color-forest-dark);
+      color: #ffffff;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--color-gold-accent);
+    }
+    .proto-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .proto-logo {
+      width: 28px;
+      height: 28px;
+      background: #103c2e;
+      border: 1px solid #f4cd42;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.75rem;
+      color: #f4cd42;
+    }
+    .proto-univ-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      line-height: 1.15;
+    }
+    .proto-sub-title {
+      font-size: 0.68rem;
+      color: #a7f3d0;
+      line-height: 1.15;
+    }
+    .proto-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .proto-link {
+      color: #d1fae5;
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .proto-link:hover, .proto-link.active {
+      color: #ffffff;
+      background: rgba(255,255,255,0.1);
+    }
+    .proto-cta-btn {
+      background: var(--color-gold-accent);
+      color: #103c2e;
+      border: none;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* SCREEN 1: LANDING */
+    .landing-hero {
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+      background: linear-gradient(180deg, #ffffff 0%, #f9f9f8 100%);
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .landing-kicker {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #065f46;
+      background: #ecfdf5;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      display: inline-block;
+      margin-bottom: 0.75rem;
+    }
+    .landing-title {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--color-forest-dark);
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      max-width: 650px;
+      margin: 0 auto 0.75rem;
+    }
+    .landing-desc {
+      font-size: 0.95rem;
+      color: var(--color-text-secondary);
+      max-width: 580px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.55;
+    }
+    .landing-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .btn-emerald {
+      background: var(--color-emerald-base);
+      color: #ffffff;
+      border: 1px solid var(--color-emerald-base);
+      padding: 0.55rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .btn-secondary {
+      background: #ffffff;
+      color: #374151;
+      border: 1px solid #d1d5db;
+      padding: 0.55rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .landing-steps-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      padding: 1.5rem;
+      background: #ffffff;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .step-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 0.85rem;
+      text-align: left;
+    }
+    .step-num {
+      width: 22px;
+      height: 22px;
+      background: #ecfdf5;
+      color: #065f46;
+      font-weight: 800;
+      font-size: 0.72rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.4rem;
+    }
+    .step-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 0.2rem;
+    }
+    .step-text {
+      font-size: 0.72rem;
+      color: #6b7280;
+      line-height: 1.4;
+    }
+
+    /* SCREEN 2: SPLIT LOGIN */
+    .split-login-container {
+      display: flex;
+      min-height: 580px;
+    }
+    .login-narrative-panel {
+      flex: 1;
+      background: linear-gradient(135deg, #0b3322 0%, #103c2e 100%);
+      color: #ffffff;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+    .narrative-quote {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-style: italic;
+      line-height: 1.45;
+      color: #e5e7eb;
+      margin-top: 2rem;
+    }
+    .login-form-panel {
+      flex: 1.1;
+      background: var(--color-offwhite-canvas);
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .login-card-inner {
+      background: #ffffff;
+      border: 1px solid var(--color-border-subtle);
+      border-radius: 12px;
+      padding: 1.75rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+    .input-field {
+      margin-bottom: 1rem;
+    }
+    .input-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+    .form-input-box {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.85rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    /* SCREEN 3: STUDENT QUEUE */
+    .student-queue-body {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .queue-progress-box {
+      background: #ffffff;
+      border: 1px solid var(--color-border-institutional);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+    .progress-bar-wrap {
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.75rem;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: #059669;
+      width: 60%;
+    }
+    .course-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      background: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--color-border-subtle);
+    }
+    .course-table th {
+      background: #f3f4f6;
+      text-align: left;
+      padding: 0.6rem 0.85rem;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      color: #4b5563;
+      font-weight: 700;
+    }
+    .course-table td {
+      padding: 0.75rem 0.85rem;
+      border-top: 1px solid #e5e7eb;
+      color: #1f2937;
+    }
+
+    /* PARTICIPATION TRACKER BAR */
+    .tracker-metrics-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .tracker-metric-card {
+      background: #ffffff;
+      border: 1px solid #dce7dc;
+      border-radius: 8px;
+      padding: 0.75rem;
+    }
+    .tracker-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #6b7280;
+    }
+    .tracker-value {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #103c2e;
+      margin-top: 0.2rem;
+    }
+
+    /* CLEARANCE BADGE */
+    .clearance-cert-card {
+      background: #ffffff;
+      border: 1px solid #dce7dc;
+      border-left: 4px solid #059669;
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 0.82rem;
+    }
+    .cert-token {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      background: #f3f4f6;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      display: inline-block;
+      margin-top: 0.35rem;
+    }
+
+    /* DOUBLE-BLIND LOCK BANNER */
+    .locked-report-banner {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 1rem;
+      color: #92400e;
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    /* SHIMMER SKELETON (FOR LOADING STATE) */
+    .skeleton-box {
+      background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 4px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* VIEWPORT MODES */
+    .viewport-mobile .figma-frame-card {
+      max-width: 375px !important;
+      min-height: 812px !important;
+    }
+    .viewport-mobile .landing-title {
+      font-size: 1.35rem !important;
+    }
+    .viewport-mobile .landing-steps-row {
+      grid-template-columns: 1fr !important;
+    }
+    .viewport-mobile .split-login-container {
+      flex-direction: column !important;
+    }
+    .viewport-mobile .proto-nav-links {
+      display: none !important;
+    }
+
+    /* INTERACTIVE MODE FULLSCREEN */
+    .interactive-viewport {
+      display: none;
+      width: 100%;
+      max-width: 1366px;
+      height: 768px;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+      overflow-y: auto;
+    }
+    body.is-interactive-mode .canvas-frames-grid {
+      display: none;
+    }
+    body.is-interactive-mode .interactive-viewport {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP TOOLBAR -->
+  <header class="figma-toolbar">
+    <div class="figma-brand">
+      <div class="figma-icon">EV</div>
+      <span>EvaluaTech — Figma Interactive Canvas Prototype (v2.0)</span>
+      <span class="token-chip-pill" style="background: #103c2e; color: #f4cd42; border: 1px solid #f4cd42;">PAMANTASAN NG LUNGSOD NG PASIG</span>
+    </div>
+
+    <div class="figma-controls">
+      <button type="button" id="btn-mode-canvas" class="figma-btn active" onclick="setMode('canvas')">
+        <span>⊞ Canvas (11 Frames)</span>
+      </button>
+      <button type="button" id="btn-mode-interactive" class="figma-btn" onclick="setMode('interactive')">
+        <span>▶ Interactive Prototype</span>
+      </button>
+
+      <div style="width: 1px; height: 18px; background: #444; margin: 0 0.25rem;"></div>
+
+      <button type="button" id="btn-vp-desktop" class="figma-btn active" onclick="setViewport('desktop')">
+        <span>💻 Desktop (1366×768)</span>
+      </button>
+      <button type="button" id="btn-vp-mobile" class="figma-btn" onclick="setViewport('mobile')">
+        <span>📱 Mobile (375×812)</span>
+      </button>
+
+      <div style="width: 1px; height: 18px; background: #444; margin: 0 0.25rem;"></div>
+
+      <select id="state-selector" class="figma-select" onchange="applyState(this.value)">
+        <option value="normal">State: Normal / Default</option>
+        <option value="loading">State: Loading (Skeleton Shimmer)</option>
+        <option value="empty">State: Empty Roster</option>
+        <option value="error">State: Validation / Error Alert</option>
+        <option value="locked">State: Double-Blind Locked Report</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- WORKSPACE -->
+  <div class="figma-workspace">
+
+    <!-- LEFT SIDEBAR: SCREEN INVENTORY & DESIGN TOKENS -->
+    <aside class="figma-sidebar">
+      <div class="sidebar-section-title">Screen Inventory (11 Frames)</div>
+      <div class="screen-item active" onclick="scrollToFrame('scr-01')">
+        <span>SCR-01</span> Public Landing Page
+        <span class="token-chip-pill">/</span>
+      </div>
+      <div class="screen-item" onclick="scrollToFrame('scr-02')">
+        <span>SCR-02</span> Split-Screen Sign In
+        <span class="token-chip-pill">/login</span>
+      </div>
+      <div class="screen-item" onclick="scrollToFrame('scr-03')">
+        <span>SCR-03</span> Student Evaluation Queue
+        <span class="token-chip-pill">/queue</span>
+      </div>
+      <div class="screen-item" onclick="scrollToFrame('scr-04')">
+        <span>SCR-04</span> 2-Step Evaluation Form
+        <span class="token-chip-pill">/evaluate</span>
+      </div>
+      <div class="screen-item" onclick="scrollToFrame('scr-05')">
+        <span>SCR-05</span> Faculty Evaluation Dashboard
+        <span class="token-chip-pill">/faculty</span>
+      </div>
+      <div class="screen-item" onclick="scrollToFrame('scr-06')">
+        <span>SCR-06</span> Department Chair Portal
+        <span class="token-chip-pill">/chair</span>
+      </div>
+      <div class="screen-item" onclick="scrollToFrame('scr-07')">
+        <span>SCR-07</span> College Dean Governance
+        <span class="token-chip-pill">/dean</span>
+      </div>
+      <div class="screen-item" onclick="scrollToFrame('scr-08')">
+        <span>SCR-08</span> Academic Setup &amp; Tracker
+        <span class="token-chip-pill">/admin/setup</span>
+      </div>
+      <div class="screen-item" onclick="scrollToFrame('scr-09')">
+        <span>SCR-09</span> Registrar Locks &amp; Schedule
+        <span class="token-chip-pill">/admin</span>
+      </div>
+      <div class="screen-item" onclick="scrollToFrame('scr-10')">
+        <span>SCR-10</span> Campus Advocacy Charter
+        <span class="token-chip-pill">/advocacy</span>
+      </div>
+      <div class="screen-item" onclick="scrollToFrame('scr-11')">
+        <span>SCR-11</span> Clearance Verification Portal
+        <span class="token-chip-pill">/verify</span>
+      </div>
+
+      <div class="sidebar-section-title" style="margin-top: 1rem;">PLP Institutional Tokens</div>
+      <div class="token-preview-grid">
+        <div class="token-swatch"><div class="swatch-color" style="background: #103c2e;"></div> #103c2e Emerald</div>
+        <div class="token-swatch"><div class="swatch-color" style="background: #0b3322;"></div> #0b3322 Forest</div>
+        <div class="token-swatch"><div class="swatch-color" style="background: #f4cd42;"></div> #f4cd42 Gold</div>
+        <div class="token-swatch"><div class="swatch-color" style="background: #f9f9f8;"></div> #f9f9f8 Canvas</div>
+      </div>
+
+      <div class="sidebar-section-title" style="margin-top: 0.5rem;">Governance Guardrails</div>
+      <div style="padding: 0 1rem 1rem; font-size: 0.72rem; color: #aaaaaa; line-height: 1.45;">
+        <p style="margin-bottom: 0.5rem;">• <strong>Zero Permits Policy</strong>: PLP does not gate exam permits on evaluations.</p>
+        <p style="margin-bottom: 0.5rem;">• <strong>Participation Tracking</strong>: Identifies pending evaluators without exposing student responses.</p>
+        <p>• <strong>Top-Bar Universal Navigation</strong>: Zero sidebars or quick tool cheat shortcuts.</p>
+      </div>
+    </aside>
+
+    <!-- MAIN CANVAS -->
+    <main class="figma-canvas" id="canvas-container">
+
+      <!-- INTERACTIVE PROTOTYPE CONTAINER -->
+      <div class="interactive-viewport" id="interactive-screen">
+        <!-- Injected via JavaScript based on current route -->
+      </div>
+
+      <!-- CANVAS VIEW: ALL 11 FRAMES (ONE FIGMA PAGE) -->
+      <div class="canvas-frames-grid" id="frames-grid">
+
+        <!-- FRAME 01: PUBLIC LANDING PAGE -->
+        <article class="figma-frame-card" id="scr-01">
+          <div class="frame-badge-bar">
+            <span>SCR-01 · Public Institutional Landing Page</span>
+            <span class="frame-tag">ROUTE: /</span>
+          </div>
+          <div class="screen-content">
+            <header class="proto-navbar">
+              <div class="proto-brand">
+                <div class="proto-logo">🏛</div>
+                <div>
+                  <div class="proto-univ-title">PAMANTASAN NG LUNGSOD NG PASIG</div>
+                  <div class="proto-sub-title">EvaluaTech · Student Evaluation of Teachers</div>
+                </div>
+              </div>
+              <div class="proto-nav-links">
+                <span class="proto-link" onclick="jumpTo('scr-10')">Advocacy &amp; Standards</span>
+                <span class="proto-link" onclick="jumpTo('scr-11')">Verify Clearance</span>
+                <button type="button" class="proto-cta-btn" onclick="jumpTo('scr-02')">Sign In →</button>
+              </div>
+            </header>
+
+            <section class="landing-hero">
+              <span class="landing-kicker">Office of Academic Affairs · Institutional Quality</span>
+              <h1 class="landing-title">Automated Student Evaluation of Teachers (EvaluaTech)</h1>
+              <p class="landing-desc">
+                A secure, anonymous, and school-based faculty evaluation platform for Pamantasan ng Lungsod ng Pasig, upholding AACCUP Level III accreditation standards with cryptographic student privacy.
+              </p>
+              <div class="landing-actions">
+                <button type="button" class="btn-emerald" onclick="jumpTo('scr-02')">Sign In to Institutional Portal →</button>
+                <button type="button" class="btn-secondary" onclick="jumpTo('scr-10')">Review Evaluation Charter 📋</button>
+              </div>
+            </section>
+
+            <section class="landing-steps-row">
+              <div class="step-card">
+                <div class="step-num">1</div>
+                <div class="step-title">Institutional Sign In</div>
+                <div class="step-text">Sign in securely using your registered PLP student or faculty credentials.</div>
+              </div>
+              <div class="step-card">
+                <div class="step-num">2</div>
+                <div class="step-title">Review Enrolled Queue</div>
+                <div class="step-text">View your active semester course queue with dynamic participation progress.</div>
+              </div>
+              <div class="step-card">
+                <div class="step-num">3</div>
+                <div class="step-title">Complete 2-Step Form</div>
+                <div class="step-text">Assess 25 Likert questions across 5 pedagogical clusters + qualitative feedback.</div>
+              </div>
+              <div class="step-card">
+                <div class="step-num">4</div>
+                <div class="step-title">Clearance Certificate</div>
+                <div class="step-text">Receive verifiable cryptographic proof of evaluation completion.</div>
+              </div>
+            </section>
+          </div>
+        </article>
+
+        <!-- FRAME 02: SPLIT-SCREEN LOGIN -->
+        <article class="figma-frame-card" id="scr-02">
+          <div class="frame-badge-bar">
+            <span>SCR-02 · Academic Tech Split-Screen Login</span>
+            <span class="frame-tag">ROUTE: /login</span>
+          </div>
+          <div class="screen-content">
+            <div class="split-login-container">
+              <div class="login-narrative-panel">
+                <div>
+                  <div class="proto-logo" style="margin-bottom: 1rem;">🏛</div>
+                  <h2 style="font-size: 1.4rem; font-weight: 800; line-height: 1.25;">Pamantasan ng Lungsod ng Pasig</h2>
+                  <p style="font-size: 0.8rem; color: #a7f3d0; margin-top: 0.35rem;">Official Student Evaluation of Teachers (SET)</p>
+                  <div class="narrative-quote">
+                    "Upholding pedagogical excellence, objective student feedback, and AACCUP Level III institutional governance."
+                  </div>
+                </div>
+                <div style="font-size: 0.72rem; color: #6ee7b7;">
+                  RA 10173 Data Privacy Compliant · Dual-Token Cryptographic Decoupling
+                </div>
+              </div>
+
+              <div class="login-form-panel">
+                <div class="login-card-inner">
+                  <h3 style="font-size: 1.15rem; font-weight: 800; color: #103c2e; margin-bottom: 0.25rem;">Portal Sign In</h3>
+                  <p style="font-size: 0.78rem; color: #6b7280; margin-bottom: 1.25rem;">Enter your institutional ID and password to access your workspace.</p>
+
+                  <div class="input-field">
+                    <label class="input-label">Institutional ID or Email:</label>
+                    <input type="text" class="form-input-box" value="2024-10892" readonly>
+                  </div>
+                  <div class="input-field">
+                    <label class="input-label">Password:</label>
+                    <input type="password" class="form-input-box" value="••••••••••••" readonly>
+                  </div>
+                  <button type="button" class="btn-emerald" style="width: 100%; justify-content: center; margin-top: 0.5rem;" onclick="jumpTo('scr-03')">
+                    Sign In to Portal →
+                  </button>
+                  <p style="font-size: 0.7rem; color: #6b7280; text-align: center; margin-top: 1rem;">
+                    Zero demo shortcuts in production · Ephemeral session storage
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- FRAME 03: STUDENT EVALUATION QUEUE -->
+        <article class="figma-frame-card" id="scr-03">
+          <div class="frame-badge-bar">
+            <span>SCR-03 · Student Evaluation Queue &amp; Clearance</span>
+            <span class="frame-tag">ROUTE: /queue</span>
+          </div>
+          <div class="screen-content">
+            <header class="proto-navbar">
+              <div class="proto-brand">
+                <div class="proto-logo">🏛</div>
+                <div class="proto-univ-title">My Courses · Evaluation Queue</div>
+              </div>
+              <div class="proto-nav-links">
+                <span class="proto-link active">Queue (3/5)</span>
+                <span class="proto-link" onclick="jumpTo('scr-10')">Advocacy</span>
+                <span class="proto-link" onclick="jumpTo('scr-02')">Sign Out</span>
+              </div>
+            </header>
+
+            <div class="student-queue-body">
+              <div class="queue-progress-box">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <h3 style="font-size: 1.05rem; font-weight: 800; color: #103c2e;">Enrolled Course Evaluations</h3>
+                    <p style="font-size: 0.78rem; color: #4b5563;">Term: <strong>1st Semester AY 2026-2027</strong> · Deadline: <strong>Dec 15, 2026 (Asia/Manila)</strong></p>
+                  </div>
+                  <span style="font-size: 0.82rem; font-weight: 700; color: #065f46; background: #ecfdf5; padding: 0.25rem 0.65rem; border-radius: 9999px;">
+                    Progress: 3 of 5 Completed (60%)
+                  </span>
+                </div>
+                <div class="progress-bar-wrap">
+                  <div class="progress-bar-fill"></div>
+                </div>
+              </div>
+
+              <table class="course-table">
+                <thead>
+                  <tr>
+                    <th>Course Code</th>
+                    <th>Course Title</th>
+                    <th>Faculty Instructor</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>CS-401</strong></td>
+                    <td>Software Engineering II</td>
+                    <td>Prof. Maria Dela Cruz</td>
+                    <td><span style="color: #059669; font-weight: 700;">✓ Completed</span></td>
+                    <td><button type="button" class="btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Receipt 🧾</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>CS-405</strong></td>
+                    <td>Computer Networks</td>
+                    <td>Dr. Manuel Santos</td>
+                    <td><span style="color: #d97706; font-weight: 700;">⏳ Pending</span></td>
+                    <td><button type="button" class="btn-emerald" style="padding: 0.25rem 0.65rem; font-size: 0.75rem;" onclick="jumpTo('scr-04')">Start Evaluation</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>ENG-102</strong></td>
+                    <td>Technical Communication</td>
+                    <td>Prof. Teresa Rivera</td>
+                    <td><span style="color: #d97706; font-weight: 700;">⏳ Pending</span></td>
+                    <td><button type="button" class="btn-emerald" style="padding: 0.25rem 0.65rem; font-size: 0.75rem;" onclick="jumpTo('scr-04')">Start Evaluation</button></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- CLEARANCE PARTICIPATION CARD -->
+              <div class="clearance-cert-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                  <div>
+                    <strong style="color: #065f46; font-size: 0.85rem;">Evaluation Participation Clearance Certificate</strong>
+                    <p style="font-size: 0.75rem; color: #4b5563; margin-top: 0.2rem;">
+                      PLP tracks evaluation participation to ensure student feedback. Examination permits are never gated.
+                    </p>
+                    <span class="cert-token">CLEARANCE-TOKEN: EVAL-PLP-2024-10892-FALL2026-PARTIAL</span>
+                  </div>
+                  <button type="button" class="btn-secondary" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;" onclick="jumpTo('scr-11')">
+                    Verify Clearance 🔍
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- FRAME 04: 2-STEP EVALUATION STEPPER FORM -->
+        <article class="figma-frame-card" id="scr-04">
+          <div class="frame-badge-bar">
+            <span>SCR-04 · 2-Step Student Evaluation Stepper Form</span>
+            <span class="frame-tag">ROUTE: /evaluate/sec-405</span>
+          </div>
+          <div class="screen-content">
+            <header class="proto-navbar">
+              <div class="proto-brand">
+                <span class="proto-link" onclick="jumpTo('scr-03')">← Back to My Courses</span>
+                <span style="font-size: 0.8rem; font-weight: 700; margin-left: 0.5rem;">CS-405 · Dr. Manuel Santos</span>
+              </div>
+              <span style="font-size: 0.75rem; color: #f4cd42; font-weight: 600;">Immediate Submission Enabled (0s+)</span>
+            </header>
+
+            <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+              <div style="display: flex; gap: 0.5rem;">
+                <div style="flex: 1; padding: 0.6rem; background: #ecfdf5; border-radius: 6px; font-weight: 700; font-size: 0.78rem; color: #065f46; text-align: center;">
+                  Step 1: 25 Likert Questions (Active)
+                </div>
+                <div style="flex: 1; padding: 0.6rem; background: #f3f4f6; border-radius: 6px; font-weight: 600; font-size: 0.78rem; color: #6b7280; text-align: center;">
+                  Step 2: Written Feedback
+                </div>
+              </div>
+
+              <!-- SAMPLE LIKERT CARD -->
+              <div style="background: #ffffff; border: 1px solid var(--color-border-subtle); border-radius: 8px; padding: 1rem;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #065f46; text-transform: uppercase;">Cluster 1: Pedagogical Delivery (Item 1 of 25)</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: #111827; margin: 0.35rem 0 0.75rem;">
+                  "The instructor clearly explains complex course concepts and syllabus objectives."
+                </div>
+                <div style="display: flex; gap: 0.5rem; justify-content: space-between;">
+                  <label style="font-size: 0.75rem; display: flex; align-items: center; gap: 0.25rem;"><input type="radio" name="item1"> 1 - Poor</label>
+                  <label style="font-size: 0.75rem; display: flex; align-items: center; gap: 0.25rem;"><input type="radio" name="item1"> 2 - Fair</label>
+                  <label style="font-size: 0.75rem; display: flex; align-items: center; gap: 0.25rem;"><input type="radio" name="item1"> 3 - Satisfactory</label>
+                  <label style="font-size: 0.75rem; display: flex; align-items: center; gap: 0.25rem;"><input type="radio" name="item1"> 4 - Very Satisfactory</label>
+                  <label style="font-size: 0.75rem; display: flex; align-items: center; gap: 0.25rem;"><input type="radio" name="item1" checked> 5 - Outstanding</label>
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                <span style="font-size: 0.75rem; color: #6b7280;">Auto-saved locally (zero PII in storage)</span>
+                <button type="button" class="btn-emerald" onclick="jumpTo('scr-03')">Proceed to Part II: Written Feedback →</button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- FRAME 05: FACULTY EVALUATION DASHBOARD -->
+        <article class="figma-frame-card" id="scr-05">
+          <div class="frame-badge-bar">
+            <span>SCR-05 · Faculty Evaluation Dashboard &amp; Double-Blind Lock</span>
+            <span class="frame-tag">ROUTE: /faculty</span>
+          </div>
+          <div class="screen-content">
+            <header class="proto-navbar">
+              <div class="proto-brand">
+                <div class="proto-logo">🏛</div>
+                <div class="proto-univ-title">Faculty Portal · Dr. Manuel Santos</div>
+              </div>
+              <div class="proto-nav-links">
+                <span class="proto-link active">My Ratings</span>
+                <span class="proto-link" onclick="jumpTo('scr-10')">Advocacy &amp; Standards</span>
+                <span class="proto-link" onclick="jumpTo('scr-02')">Sign Out</span>
+              </div>
+            </header>
+
+            <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+              <!-- DOUBLE-BLIND LOCK NOTICE -->
+              <div class="locked-report-banner">
+                <div style="font-size: 1.25rem;">🔒</div>
+                <div>
+                  <strong>Report Status: Locked (Awaiting Registrar Grade Verification)</strong>
+                  <div style="font-size: 0.75rem; margin-top: 0.15rem;">
+                    In accordance with PLP double-blind protection, evaluation reports unlock only when term grades are submitted AND locked by the University Registrar.
+                  </div>
+                </div>
+              </div>
+
+              <div style="background: #ffffff; border: 1px solid var(--color-border-subtle); border-radius: 8px; padding: 1.25rem;">
+                <h4 style="font-size: 0.95rem; font-weight: 700; color: #111827; margin-bottom: 0.5rem;">Assigned Teaching Sections (AY 2026-2027)</h4>
+                <table class="course-table">
+                  <thead>
+                    <tr>
+                      <th>Subject Code</th>
+                      <th>Section</th>
+                      <th>Turnout</th>
+                      <th>Grades Submitted</th>
+                      <th>Registrar Lock</th>
+                      <th>Report Access</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>CS-405</td>
+                      <td>SEC-A</td>
+                      <td>85% (34/40)</td>
+                      <td><span style="color: #059669; font-weight: 700;">✓ Yes</span></td>
+                      <td><span style="color: #d97706; font-weight: 700;">⏳ Pending</span></td>
+                      <td><span style="color: #92400e; font-weight: 600;">🔒 Locked</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- FRAME 06: DEPARTMENT CHAIR PORTAL -->
+        <article class="figma-frame-card" id="scr-06">
+          <div class="frame-badge-bar">
+            <span>SCR-06 · Department Chair Operational Portal</span>
+            <span class="frame-tag">ROUTE: /chair</span>
+          </div>
+          <div class="screen-content">
+            <header class="proto-navbar">
+              <div class="proto-brand">
+                <div class="proto-logo">🏛</div>
+                <div class="proto-univ-title">Department Chair · Computer Science</div>
+              </div>
+              <div class="proto-nav-links">
+                <span class="proto-link active">Department Overview</span>
+                <span class="proto-link" onclick="jumpTo('scr-07')">Dean Analytics</span>
+                <span class="proto-link" onclick="jumpTo('scr-02')">Sign Out</span>
+              </div>
+            </header>
+
+            <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <h3 style="font-size: 1.1rem; font-weight: 800; color: #103c2e;">Computer Science Department Overview</h3>
+                  <p style="font-size: 0.78rem; color: #6b7280;">Scoped strictly to Department ID: 1 (Computer Science)</p>
+                </div>
+                <button type="button" class="btn-secondary" style="font-size: 0.75rem;">Export Department Summary (CSV)</button>
+              </div>
+
+              <div class="tracker-metrics-bar">
+                <div class="tracker-metric-card">
+                  <div class="tracker-label">Department Turnout</div>
+                  <div class="tracker-value">88.4%</div>
+                </div>
+                <div class="tracker-metric-card">
+                  <div class="tracker-label">Active Instructors</div>
+                  <div class="tracker-value">14 Faculty</div>
+                </div>
+                <div class="tracker-metric-card">
+                  <div class="tracker-label">Watchlist Flagged</div>
+                  <div class="tracker-value" style="color: #d97706;">1 Flagged</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- FRAME 07: COLLEGE DEAN GOVERNANCE PORTAL -->
+        <article class="figma-frame-card" id="scr-07">
+          <div class="frame-badge-bar">
+            <span>SCR-07 · College Dean Governance &amp; Sentiment Explorer</span>
+            <span class="frame-tag">ROUTE: /dean</span>
+          </div>
+          <div class="screen-content">
+            <header class="proto-navbar">
+              <div class="proto-brand">
+                <div class="proto-logo">🏛</div>
+                <div class="proto-univ-title">College Dean · College of Computer Studies</div>
+              </div>
+              <div class="proto-nav-links">
+                <span class="proto-link active">College Heatmap</span>
+                <span class="proto-link" onclick="jumpTo('scr-08')">Academic Setup</span>
+                <span class="proto-link" onclick="jumpTo('scr-02')">Sign Out</span>
+              </div>
+            </header>
+
+            <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+              <div>
+                <h3 style="font-size: 1.1rem; font-weight: 800; color: #103c2e;">College-Wide Completion &amp; Exception Watchlist</h3>
+                <p style="font-size: 0.78rem; color: #6b7280;">Automatic College Scoping: College of Computer Studies (CCS)</p>
+              </div>
+
+              <!-- WATCHLIST CARD -->
+              <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 1rem;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #b45309; text-transform: uppercase;">Dean Exception Watchlist (Threshold: Mean &lt; 3.50 OR Negative Sentiment &gt; 35%)</div>
+                <div style="font-size: 0.85rem; font-weight: 700; color: #111827; margin-top: 0.35rem;">
+                  1 Instructor Flagged for Instructional Support
+                </div>
+                <div style="font-size: 0.75rem; color: #4b5563; margin-top: 0.2rem;">
+                  Faculty ID: FAC-003 · Mean Score: 3.24 · Negative Share: 38.2% · Primary Cluster: Assessment &amp; Grading
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- FRAME 08: ACADEMIC SETUP & PARTICIPATION TRACKER -->
+        <article class="figma-frame-card" id="scr-08">
+          <div class="frame-badge-bar">
+            <span>SCR-08 · Academic Setup &amp; Student Participation Tracker</span>
+            <span class="frame-tag">ROUTE: /admin/setup</span>
+          </div>
+          <div class="screen-content">
+            <header class="proto-navbar">
+              <div class="proto-brand">
+                <div class="proto-logo">🏛</div>
+                <div class="proto-univ-title">Academic Setup &amp; Cycle Management</div>
+              </div>
+              <div class="proto-nav-links">
+                <span class="proto-link active">Setup Workspace</span>
+                <span class="proto-link" onclick="jumpTo('scr-09')">Registrar Console</span>
+                <span class="proto-link" onclick="jumpTo('scr-02')">Sign Out</span>
+              </div>
+            </header>
+
+            <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+              <!-- 7 MODULAR TABS HEADER -->
+              <div style="display: flex; gap: 0.35rem; border-bottom: 2px solid #e5e7eb; overflow-x: auto;">
+                <span class="proto-link">Assignments (12)</span>
+                <span class="proto-link">Terms (3)</span>
+                <span class="proto-link">Courses (18)</span>
+                <span class="proto-link">Faculty (14)</span>
+                <span class="proto-link active" style="color: #103c2e; border-bottom: 2px solid #103c2e; font-weight: 700;">Students &amp; Tracker (1,500)</span>
+                <span class="proto-link">Accounts (42)</span>
+                <span class="proto-link">Questionnaire (25)</span>
+              </div>
+
+              <!-- PARTICIPATION TRACKER METRICS BAR -->
+              <div class="tracker-metrics-bar">
+                <div class="tracker-metric-card">
+                  <div class="tracker-label">Total Enrolled Students</div>
+                  <div class="tracker-value">1,500</div>
+                </div>
+                <div class="tracker-metric-card" style="border-color: #d1fae5;">
+                  <div class="tracker-label" style="color: #065f46;">✓ Fully Cleared (100%)</div>
+                  <div class="tracker-value" style="color: #059669;">1,220 (81.3%)</div>
+                </div>
+                <div class="tracker-metric-card" style="border-color: #fde68a;">
+                  <div class="tracker-label" style="color: #92400e;">⚠️ Pending Evaluators</div>
+                  <div class="tracker-value" style="color: #d97706;">280 (18.7%)</div>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 0.5rem; justify-content: space-between; align-items: center;">
+                <input type="text" class="form-input-box" placeholder="Filter pending evaluators by student ID or department…" style="max-width: 320px;">
+                <div style="display: flex; gap: 0.5rem;">
+                  <button type="button" class="btn-secondary" style="font-size: 0.75rem; background: #fffbeb; color: #b45309; border-color: #fde68a; font-weight: 700;">
+                    ⚠️ Export Pending Evaluators (CSV)
+                  </button>
+                  <button type="button" class="btn-emerald" style="font-size: 0.75rem;">+ New Student</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- FRAME 09: REGISTRAR CONSOLE & GRADE LOCKS -->
+        <article class="figma-frame-card" id="scr-09">
+          <div class="frame-badge-bar">
+            <span>SCR-09 · Registrar Evaluation Schedule &amp; Grade Locks</span>
+            <span class="frame-tag">ROUTE: /admin</span>
+          </div>
+          <div class="screen-content">
+            <header class="proto-navbar">
+              <div class="proto-brand">
+                <div class="proto-logo">🏛</div>
+                <div class="proto-univ-title">Registrar Console · Evaluation Schedules &amp; Locks</div>
+              </div>
+              <div class="proto-nav-links">
+                <span class="proto-link" onclick="jumpTo('scr-08')">← Academic Setup</span>
+                <span class="proto-link" onclick="jumpTo('scr-02')">Sign Out</span>
+              </div>
+            </header>
+
+            <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <h3 style="font-size: 1.1rem; font-weight: 800; color: #103c2e;">Evaluation Period Controls</h3>
+                  <p style="font-size: 0.78rem; color: #6b7280;">Active Window: <strong>OPEN</strong> (Closes Dec 15, 2026 23:59 Asia/Manila)</p>
+                </div>
+                <button type="button" class="btn-secondary" style="font-size: 0.75rem;">Extend / Reopen Window</button>
+              </div>
+
+              <div style="background: #ffffff; border: 1px solid var(--color-border-subtle); border-radius: 8px; padding: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                  <strong style="font-size: 0.85rem; color: #111827;">Course Section Grade Locks (Bulk Controls)</strong>
+                  <button type="button" class="btn-emerald" style="font-size: 0.75rem;">🔒 Bulk Lock Selected</button>
+                </div>
+                <table class="course-table">
+                  <thead>
+                    <tr>
+                      <th>Select</th>
+                      <th>Course Code</th>
+                      <th>Section</th>
+                      <th>Instructor</th>
+                      <th>Grades Status</th>
+                      <th>Registrar Lock</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><input type="checkbox" checked></td>
+                      <td>CS-401</td>
+                      <td>SEC-A</td>
+                      <td>Prof. Maria Dela Cruz</td>
+                      <td><span style="color: #059669; font-weight: 700;">Submitted</span></td>
+                      <td><span style="background: #ecfdf5; color: #065f46; padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 700;">🔒 LOCKED</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- FRAME 10: CAMPUS SET ADVOCACY -->
+        <article class="figma-frame-card" id="scr-10">
+          <div class="frame-badge-bar">
+            <span>SCR-10 · Campus SET Advocacy &amp; Privacy Charter</span>
+            <span class="frame-tag">ROUTE: /advocacy</span>
+          </div>
+          <div class="screen-content">
+            <header class="proto-navbar">
+              <div class="proto-brand">
+                <div class="proto-logo">🏛</div>
+                <div class="proto-univ-title">Student Evaluation Advocacy &amp; Privacy Standards</div>
+              </div>
+              <div class="proto-nav-links">
+                <span class="proto-link" onclick="jumpTo('scr-01')">Home</span>
+                <span class="proto-link" onclick="jumpTo('scr-02')">Sign In</span>
+              </div>
+            </header>
+
+            <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+              <div>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #103c2e;">The Four Pillars of Student Protection</h3>
+                <p style="font-size: 0.78rem; color: #6b7280;">Pamantasan ng Lungsod ng Pasig SET Student Protection Charter</p>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;">
+                <div style="background: #ffffff; border: 1px solid var(--color-border-subtle); border-radius: 8px; padding: 0.85rem;">
+                  <strong style="color: #065f46; font-size: 0.82rem;">1. Complete Cryptographic Anonymity</strong>
+                  <p style="font-size: 0.72rem; color: #4b5563; margin-top: 0.25rem;">No student IDs or IP addresses are ever stored in the evaluation vault.</p>
+                </div>
+                <div style="background: #ffffff; border: 1px solid var(--color-border-subtle); border-radius: 8px; padding: 0.85rem;">
+                  <strong style="color: #065f46; font-size: 0.82rem;">2. Immediate Submission Readiness</strong>
+                  <p style="font-size: 0.72rem; color: #4b5563; margin-top: 0.25rem;">Submit whenever ready (0s+ duration) without artificial countdown delays.</p>
+                </div>
+                <div style="background: #ffffff; border: 1px solid var(--color-border-subtle); border-radius: 8px; padding: 0.85rem;">
+                  <strong style="color: #065f46; font-size: 0.82rem;">3. Double-Blind Grade Protection</strong>
+                  <p style="font-size: 0.72rem; color: #4b5563; margin-top: 0.25rem;">Faculty cannot view feedback until term marks are finalized and locked.</p>
+                </div>
+                <div style="background: #ffffff; border: 1px solid var(--color-border-subtle); border-radius: 8px; padding: 0.85rem;">
+                  <strong style="color: #065f46; font-size: 0.82rem;">4. Non-Coercive Participation Tracking</strong>
+                  <p style="font-size: 0.72rem; color: #4b5563; margin-top: 0.25rem;">PLP does not gate exam permits on student evaluations.</p>
+                </div>
+              </div>
+
+              <button type="button" class="btn-secondary" style="font-size: 0.75rem; align-self: flex-start;">
+                📥 Download Student Privacy Charter (TXT)
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- FRAME 11: CLEARANCE VERIFICATION PORTAL -->
+        <article class="figma-frame-card" id="scr-11">
+          <div class="frame-badge-bar">
+            <span>SCR-11 · Evaluation Clearance Verification Portal</span>
+            <span class="frame-tag">ROUTE: /verify</span>
+          </div>
+          <div class="screen-content">
+            <header class="proto-navbar">
+              <div class="proto-brand">
+                <div class="proto-logo">🏛</div>
+                <div class="proto-univ-title">Evaluation Clearance Verification Portal</div>
+              </div>
+              <div class="proto-nav-links">
+                <span class="proto-link" onclick="jumpTo('scr-01')">Home</span>
+                <span class="proto-link" onclick="jumpTo('scr-02')">Sign In</span>
+              </div>
+            </header>
+
+            <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+              <div style="background: #ffffff; border: 1px solid var(--color-border-subtle); border-radius: 8px; padding: 1.25rem;">
+                <h4 style="font-size: 0.95rem; font-weight: 700; color: #103c2e; margin-bottom: 0.35rem;">Real-Time Evaluation Clearance Lookup</h4>
+                <p style="font-size: 0.75rem; color: #6b7280; margin-bottom: 1rem;">
+                  Enter an evaluation clearance token or institutional ID to verify completion standing.
+                </p>
+
+                <div style="display: flex; gap: 0.5rem;">
+                  <input type="text" class="form-input-box" value="2024-10892" readonly>
+                  <button type="button" class="btn-emerald" style="white-space: nowrap;">🔍 Verify Status</button>
+                </div>
+
+                <!-- VERIFIED BADGE -->
+                <div style="margin-top: 1rem; padding: 0.85rem; background: #ecfdf5; border: 1px solid #d1fae5; border-radius: 6px;">
+                  <strong style="color: #065f46; font-size: 0.82rem;">✓ VERIFIED: Evaluation Obligations Complete</strong>
+                  <p style="font-size: 0.72rem; color: #4b5563; margin-top: 0.2rem;">
+                    Student 2024-10892 has evaluated 5 of 5 assigned courses for 1st Semester AY 2026-2027.
+                  </p>
+                  <span class="cert-token">SEAL: PLP-REGISTRAR-AUTHENTICATED · AY 2026-2027</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function setViewport(vp) {
+      document.getElementById('btn-vp-desktop').classList.toggle('active', vp === 'desktop');
+      document.getElementById('btn-vp-mobile').classList.toggle('active', vp === 'mobile');
+      document.getElementById('frames-grid').classList.toggle('viewport-mobile', vp === 'mobile');
+    }
+
+    function setMode(mode) {
+      document.getElementById('btn-mode-canvas').classList.toggle('active', mode === 'canvas');
+      document.getElementById('btn-mode-interactive').classList.toggle('active', mode === 'interactive');
+      document.body.classList.toggle('is-interactive-mode', mode === 'interactive');
+      if (mode === 'interactive') {
+        renderInteractiveScreen('scr-01');
+      }
+    }
+
+    function scrollToFrame(frameId) {
+      const el = document.getElementById(frameId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.querySelectorAll('.screen-item').forEach(item => item.classList.remove('active'));
+        const activeItem = Array.from(document.querySelectorAll('.screen-item')).find(item => item.textContent.includes(frameId.toUpperCase()));
+        if (activeItem) activeItem.classList.add('active');
+      }
+    }
+
+    function jumpTo(frameId) {
+      if (document.body.classList.contains('is-interactive-mode')) {
+        renderInteractiveScreen(frameId);
+      } else {
+        scrollToFrame(frameId);
+      }
+    }
+
+    function renderInteractiveScreen(frameId) {
+      const srcEl = document.getElementById(frameId);
+      const container = document.getElementById('interactive-screen');
+      if (srcEl && container) {
+        const content = srcEl.querySelector('.screen-content').innerHTML;
+        container.innerHTML = `
+          <div style="background: #222; color: #fff; padding: 0.4rem 1rem; font-size: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+            <span>ACTIVE SCREEN: <strong>${frameId.toUpperCase()}</strong></span>
+            <button type="button" class="figma-btn" style="padding: 0.2rem 0.5rem;" onclick="setMode('canvas')">Close Prototype ✕</button>
+          </div>
+          ${content}
+        `;
+      }
+    }
+
+    function applyState(state) {
+      const cards = document.querySelectorAll('.figma-frame-card');
+      cards.forEach(card => {
+        if (state === 'loading') {
+          // add shimmer class or indicators
+        }
+      });
+    }
+  </script>
+</body>
+</html>
