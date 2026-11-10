@@ -1879,4 +1879,30 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(commandPaletteSfc.includes("id: 'nav-setup-questionnaire'"), 'Command palette has nav-setup-questionnaire shortcut');
     });
   });
+
+  describe('Group 67: Academic Setup Cross-Directory Reset Filters & Empty State Integrity', () => {
+    it('verifies reset filter triggers and empty states across Assignments, Courses, Faculty, Students, and Users directories', () => {
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+
+      // 1. Tab 1: Assignments Matrix Filters & Empty State
+      assert.ok(setupViewSfc.includes('data-testid="assignments-reset-filters-btn"'), 'Assignments reset filters button present');
+      assert.ok(setupViewSfc.includes('data-testid="assignments-empty-state"'), 'Assignments empty state row present');
+
+      // 2. Tab 3: Course Catalog Filters & Empty State
+      assert.ok(setupViewSfc.includes('data-testid="courses-reset-filters-btn"'), 'Courses reset filters button present');
+      assert.ok(setupViewSfc.includes('data-testid="courses-empty-state"'), 'Courses empty state row present');
+
+      // 3. Tab 4: Faculty Directory Filters & Empty State
+      assert.ok(setupViewSfc.includes('data-testid="faculty-reset-filters-btn"'), 'Faculty directory reset filters button present');
+      assert.ok(setupViewSfc.includes('data-testid="faculty-empty-state"'), 'Faculty directory empty state row present');
+
+      // 4. Tab 5: Student Directory Filters & Empty State
+      assert.ok(setupViewSfc.includes('data-testid="student-reset-filters-btn"'), 'Student directory reset filters button present');
+      assert.ok(setupViewSfc.includes('data-testid="students-empty-state"'), 'Student directory empty state row present');
+
+      // 5. Tab 6: System Accounts Filters & Empty State
+      assert.ok(setupViewSfc.includes('data-testid="users-reset-filters-btn"'), 'Users directory reset filters button present');
+      assert.ok(setupViewSfc.includes('data-testid="users-empty-state"'), 'Users directory empty state row present');
+    });
+  });
 });

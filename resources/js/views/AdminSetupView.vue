@@ -1180,6 +1180,17 @@ async function executeDeleteSection() {
               Section: {{ c }}
             </option>
           </select>
+
+          <button
+            v-if="setupStore.filterSearch || setupStore.filterDepartmentId !== 'ALL' || setupStore.filterAssignment !== 'ALL' || setupStore.filterSectionCode !== 'ALL'"
+            type="button"
+            class="btn-secondary btn-sm"
+            data-testid="assignments-reset-filters-btn"
+            style="padding: 0.35rem 0.65rem; font-size: 0.78rem;"
+            @click="setupStore.filterSearch = ''; setupStore.filterDepartmentId = 'ALL'; setupStore.filterAssignment = 'ALL'; setupStore.filterSectionCode = 'ALL'"
+          >
+            Reset
+          </button>
         </div>
 
         <div class="pane-actions-group">
@@ -1342,7 +1353,7 @@ async function executeDeleteSection() {
                 </div>
               </td>
             </tr>
-            <tr v-if="setupStore.filteredSections.length === 0">
+            <tr v-if="setupStore.filteredSections.length === 0" data-testid="assignments-empty-state">
               <td colspan="8" class="empty-state-cell">
                 No course sections match your filters.
               </td>
@@ -1525,6 +1536,16 @@ async function executeDeleteSection() {
               {{ d.code }} — {{ d.name }}
             </option>
           </select>
+          <button
+            v-if="courseSearchInput || courseDepartmentFilter !== 'ALL'"
+            type="button"
+            class="btn-secondary btn-sm"
+            data-testid="courses-reset-filters-btn"
+            style="padding: 0.35rem 0.65rem; font-size: 0.78rem;"
+            @click="courseSearchInput = ''; courseDepartmentFilter = 'ALL'"
+          >
+            Reset
+          </button>
         </div>
         <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
           <button
@@ -1601,7 +1622,7 @@ async function executeDeleteSection() {
                 </div>
               </td>
             </tr>
-            <tr v-if="filteredCoursesCatalog.length === 0">
+            <tr v-if="filteredCoursesCatalog.length === 0" data-testid="courses-empty-state">
               <td colspan="6" class="empty-state-cell">
                 No course offerings match your search criteria.
               </td>
@@ -1637,6 +1658,16 @@ async function executeDeleteSection() {
               {{ d.code }} — {{ d.name }}
             </option>
           </select>
+          <button
+            v-if="facultySearchInput || facultyDepartmentFilter !== 'ALL'"
+            type="button"
+            class="btn-secondary btn-sm"
+            data-testid="faculty-reset-filters-btn"
+            style="padding: 0.35rem 0.65rem; font-size: 0.78rem;"
+            @click="facultySearchInput = ''; facultyDepartmentFilter = 'ALL'"
+          >
+            Reset
+          </button>
         </div>
         <div class="actions-group" style="display: flex; gap: 0.5rem; align-items: center;">
           <button
@@ -1720,7 +1751,7 @@ async function executeDeleteSection() {
                 </div>
               </td>
             </tr>
-            <tr v-if="filteredFacultyDirectory.length === 0">
+            <tr v-if="filteredFacultyDirectory.length === 0" data-testid="faculty-empty-state">
               <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
                 No faculty members match your search criteria.
               </td>
@@ -1766,6 +1797,16 @@ async function executeDeleteSection() {
               {{ d.code }} — {{ d.name }}
             </option>
           </select>
+          <button
+            v-if="studentSearchInput || studentStatusFilter !== 'ALL' || studentDepartmentFilter !== 'ALL'"
+            type="button"
+            class="btn-secondary btn-sm"
+            data-testid="student-reset-filters-btn"
+            style="padding: 0.35rem 0.65rem; font-size: 0.78rem;"
+            @click="studentSearchInput = ''; studentStatusFilter = 'ALL'; studentDepartmentFilter = 'ALL'"
+          >
+            Reset
+          </button>
         </div>
         <div class="actions-group" style="display: flex; gap: 0.5rem; align-items: center;">
           <button
@@ -1868,7 +1909,7 @@ async function executeDeleteSection() {
                 </div>
               </td>
             </tr>
-            <tr v-if="filteredStudentsDirectory.length === 0">
+            <tr v-if="filteredStudentsDirectory.length === 0" data-testid="students-empty-state">
               <td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">
                 No student records match your search criteria for this academic term.
               </td>
@@ -1917,6 +1958,16 @@ async function executeDeleteSection() {
               {{ d.code }} — {{ d.name }}
             </option>
           </select>
+          <button
+            v-if="usersSearchInput || usersRoleFilter !== 'ALL' || usersDepartmentFilter !== 'ALL'"
+            type="button"
+            class="btn-secondary btn-sm"
+            data-testid="users-reset-filters-btn"
+            style="padding: 0.35rem 0.65rem; font-size: 0.78rem;"
+            @click="usersSearchInput = ''; usersRoleFilter = 'ALL'; usersDepartmentFilter = 'ALL'"
+          >
+            Reset
+          </button>
         </div>
         <div class="actions-group" style="display: flex; gap: 0.5rem; align-items: center;">
           <button
@@ -2009,7 +2060,7 @@ async function executeDeleteSection() {
                 </span>
               </td>
             </tr>
-            <tr v-if="filteredSystemUsers.length === 0">
+            <tr v-if="filteredSystemUsers.length === 0" data-testid="users-empty-state">
               <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">
                 No system user accounts match the specified search or role filter.
               </td>

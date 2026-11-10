@@ -127,6 +127,14 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
   - Implemented deep URL query parameter synchronization (`?tab=terms`, `?tab=courses`, etc.) and `switchTab` navigation in `AdminSetupView.vue`, maintaining clean browser history and direct bookmarkability across all 7 academic setup tabs.
   - Expanded `CommandPaletteModal.vue` with direct keyboard shortcuts for all 7 Academic Setup tabs (`nav-setup-assignments`, `nav-setup-terms`, `nav-setup-courses`, `nav-setup-faculty`, `nav-setup-students`, `nav-setup-users`, `nav-setup-questionnaire`).
   - Added Groups 65 and 66 to the frontend test suite (70 tests / 67 suites, 100% PASS); confirmed all 140 multi-tier automated test units passing (`140 / 140 PASS`, 932 assertions); captured live Playwright screenshot artifacts `live_student_rubric_btn.png`, `live_student_rubric_modal.png`, and `live_admin_setup_terms_tab.png`.
+- [x] **Checkpoint 47:** Academic Setup Cross-Directory Reset Filters & Empty State Integrity (`AdminSetupView.vue`, `tests/frontend/evaluatech.spec.js`, inspired by `admin/manage_restriction.php`, `admin/subject_list.php`, `admin/faculty_list.php`, `admin/student_list.php`, and `admin/user_list.php`):
+  - Added responsive reset filter buttons and empty states across all remaining operational setup directories in `AdminSetupView.vue`:
+    - Tab 1 (Assignments Matrix): `data-testid="assignments-reset-filters-btn"` and empty state `data-testid="assignments-empty-state"`
+    - Tab 3 (Course Catalog): `data-testid="courses-reset-filters-btn"` and empty state `data-testid="courses-empty-state"`
+    - Tab 4 (Faculty Directory): `data-testid="faculty-reset-filters-btn"` and empty state `data-testid="faculty-empty-state"`
+    - Tab 5 (Student Directory): `data-testid="student-reset-filters-btn"` and empty state `data-testid="students-empty-state"`
+    - Tab 6 (System Accounts Directory): `data-testid="users-reset-filters-btn"` and empty state `data-testid="users-empty-state"`
+  - Added Group 67 to the frontend test suite (71 tests across 68 suites, 100% PASS); confirmed all 148 automated units passing (`148 / 148 PASS`, 932 assertions); rebuilt production bundle with zero `.map` files.
 
 ---
 
@@ -135,9 +143,9 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 | Verification Tier | Command Executed | Executed Units | Pass Rate | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (932 assertions) | 35 / 35 | **100% PASS** |
-| **Frontend DOM & UX Suite** | `npm.cmd test` | 66 test groups (70 tests) | 70 / 70 | **100% PASS** |
+| **Frontend DOM & UX Suite** | `npm.cmd test` | 67 test groups (71 tests) | 71 / 71 | **100% PASS** |
 | **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 46 unit tests | 46 / 46 | **100% PASS** |
 | **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 50 PHP files, 205 sources | 100% clean | **100% PASS** |
 | **Vite Production Bundle** | `npm.cmd run build` | 82 modules | Zero `.map` files | **100% PASS** |
-| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 140 automated units | 140 / 140 | **100% PASS** |
+| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 148 automated units | 148 / 148 | **100% PASS** |
 
