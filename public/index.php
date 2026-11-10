@@ -329,6 +329,9 @@ if ($isApiRoute) {
             $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->deleteSection($req, $secId));
         } elseif ($uriPath === '/api/admin/setup/questionnaire' && $method === 'GET') {
             $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->questionnaire($req));
+        } elseif (preg_match('#^/api/admin/setup/students/(\d+)/enrollment$#', $uriPath, $m) === 1 && $method === 'GET') {
+            $stdId = (int) $m[1];
+            $response = $withRoles('admin', static fn (Request $req) => (new \App\Http\Controllers\Api\AdminSetupController())->studentEnrollment($req, $stdId));
         }
         // Security & Zero-Knowledge Vault Audit Endpoints (Role: admin, dean)
         elseif ($uriPath === '/api/security/vault-audit' && $method === 'GET') {

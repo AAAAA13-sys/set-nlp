@@ -529,6 +529,24 @@ function quickAssignFaculty(faculty) {
 const studentSearchInput = ref('');
 const studentStatusFilter = ref('ALL');
 
+const showStudentEnrollmentModal = ref(false);
+const studentEnrollmentLoading = ref(false);
+const selectedStudentEnrollment = ref(null);
+
+async function openStudentEnrollmentModal(std) {
+  selectedStudentEnrollment.value = null;
+  showStudentEnrollmentModal.value = true;
+  studentEnrollmentLoading.value = true;
+  try {
+    const details = await setupStore.fetchStudentEnrollment(std.id, setupStore.selectedTermId);
+    selectedStudentEnrollment.value = details;
+  } catch (err) {
+    flashError(err.message || 'Failed to fetch student enrollment checklist.');
+  } finally {
+    studentEnrollmentLoading.value = false;
+  }
+}
+
 const filteredStudentsDirectory = computed(() => {
   const query = studentSearchInput.value.trim().toLowerCase();
   const filter = studentStatusFilter.value;
@@ -1503,16 +1521,27 @@ async function executeDeleteSection() {
                 </span>
               </td>
               <td class="text-right">
-                <router-link
-                  v-if="std.is_complete"
-                  :to="`/verify?id=${encodeURIComponent(std.institutional_id)}`"
-                  class="btn-secondary btn-xs"
-                  :data-testid="`student-permit-verify-btn-${std.id}`"
-                  style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
-                >
-                  Permit 📜
-                </router-link>
-                <span v-else style="font-size: 0.75rem; color: #9ca3af;">Gated</span>
+                <div style="display: flex; gap: 0.35rem; justify-content: flex-end; align-items: center;">
+                  <button
+                    type="button"
+                    class="btn-secondary btn-xs"
+                    :data-testid="`student-courses-btn-${std.id}`"
+                    style="font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 6px; font-weight: 600;"
+                    @click="openStudentEnrollmentModal(std)"
+                  >
+                    Courses 📚
+                  </button>
+                  <router-link
+                    v-if="std.is_complete"
+                    :to="`/verify?id=${encodeURIComponent(std.institutional_id)}`"
+                    class="btn-secondary btn-xs"
+                    :data-testid="`student-permit-verify-btn-${std.id}`"
+                    style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
+                  >
+                    Permit 📜
+                  </router-link>
+                  <span v-else style="font-size: 0.75rem; color: #9ca3af; padding: 0.25rem 0.35rem;">Gated</span>
+                </div>
               </td>
             </tr>
             <tr v-if="filteredStudentsDirectory.length === 0">
@@ -2592,6 +2621,148 @@ async function executeDeleteSection() {
         </div>
       </div>
     </div>
+
+    <!-- MODAL: Student Enrollment & Evaluation Clearance Checklist -->
+    <div
+      v-if="showStudentEnrollmentModal"
+      class="setup-modal-scrim"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="student-enrollment-modal-title"
+      data-testid="student-enrollment-modal"
+      @click.self="showStudentEnrollmentModal = false"
+    >
+      <div class="setup-modal-box" style="max-width: 820px; padding: 1.5rem; max-height: 90vh; overflow-y: auto;">
+        <header class="setup-modal-header" style="border-bottom: 1px solid #e5e7eb; padding-bottom: 0.85rem;">
+          <div>
+            <h2 id="student-enrollment-modal-title" style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #103c2e;">
+              Student Evaluation & Course Clearance Checklist
+            </h2>
+            <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #6b7280;">
+              Pamantasan ng Lungsod ng Pasig — Institutional Academic Clearance Roster
+            </p>
+          </div>
+          <button type="button" class="modal-close-btn" @click="showStudentEnrollmentModal = false">&times;</button>
+        </header>
+
+        <div v-if="studentEnrollmentLoading" style="text-align: center; padding: 3rem 1rem;">
+          <div class="spinner" style="margin: 0 auto 1rem;"></div>
+          <p style="color: #6b7280; font-size: 0.9rem;">Loading student enrollment and clearance checklist…</p>
+        </div>
+
+        <div v-else-if="selectedStudentEnrollment" style="padding: 1.25rem 0; display: flex; flex-direction: column; gap: 1.25rem;">
+          <!-- Student Summary Info Card -->
+          <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div>
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Student Name</div>
+              <div style="font-weight: 700; font-size: 1.05rem; color: #111827;" data-testid="student-enrollment-name">
+                {{ selectedStudentEnrollment.student.name }}
+              </div>
+              <div style="font-size: 0.85rem; color: #4b5563;">
+                {{ selectedStudentEnrollment.student.email }}
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Institutional ID</div>
+              <div style="font-family: monospace; font-weight: 700; font-size: 1rem; color: #047857;" data-testid="student-enrollment-id">
+                {{ selectedStudentEnrollment.student.institutional_id }}
+              </div>
+              <div style="font-size: 0.82rem; color: #4b5563;">
+                {{ selectedStudentEnrollment.student.department_name }} ({{ selectedStudentEnrollment.student.department_code }})
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Overall Clearance</div>
+              <div style="margin-top: 0.25rem;">
+                <span
+                  class="token-chip"
+                  :class="selectedStudentEnrollment.exam_permit_unlocked ? 'chip-signed' : 'chip-unsigned'"
+                  data-testid="student-enrollment-clearance-status"
+                >
+                  {{ selectedStudentEnrollment.overall_clearance_status === 'CLEARED' ? 'CLEARED (100%)' : `PENDING (${selectedStudentEnrollment.completed_count} / ${selectedStudentEnrollment.total_count})` }}
+                </span>
+              </div>
+              <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.35rem;">
+                Progress: {{ selectedStudentEnrollment.completion_percentage }}%
+              </div>
+            </div>
+          </div>
+
+          <!-- Enrolled Sections Table -->
+          <div>
+            <h3 style="font-size: 0.95rem; font-weight: 700; color: #1f2937; margin: 0 0 0.5rem;">
+              Enrolled Course Sections ({{ (selectedStudentEnrollment.courses || []).length }})
+            </h3>
+            <div class="table-responsive-wrapper" style="max-height: 280px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px;">
+              <table class="setup-data-table" data-testid="student-enrollment-courses-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Course Code</th>
+                    <th scope="col">Course Title</th>
+                    <th scope="col">Section</th>
+                    <th scope="col">Faculty Instructor</th>
+                    <th scope="col">Evaluation Status</th>
+                    <th scope="col">Clearance Proof Token</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="crs in selectedStudentEnrollment.courses"
+                    :key="crs.course_section_id"
+                    :data-testid="`student-enrollment-course-row-${crs.course_section_id}`"
+                  >
+                    <td><strong class="font-mono text-emerald">{{ crs.course_code }}</strong></td>
+                    <td>{{ crs.course_title }}</td>
+                    <td><span class="dept-badge">{{ crs.section_code }}</span></td>
+                    <td>{{ crs.faculty_name || 'Prof. Unassigned' }}</td>
+                    <td>
+                      <span
+                        class="token-chip"
+                        :class="crs.clearance_status === 'CLEARED' ? 'chip-signed' : 'chip-unsigned'"
+                        style="font-size: 0.75rem;"
+                      >
+                        {{ crs.clearance_status === 'CLEARED' ? '✅ Evaluated' : '⏳ Pending' }}
+                      </span>
+                    </td>
+                    <td>
+                      <code v-if="crs.clearance_token" style="font-size: 0.72rem; color: #047857;">
+                        {{ crs.clearance_token.substring(0, 16) }}…
+                      </code>
+                      <span v-else style="font-size: 0.75rem; color: #9ca3af;">—</span>
+                    </td>
+                  </tr>
+                  <tr v-if="!selectedStudentEnrollment.courses || selectedStudentEnrollment.courses.length === 0">
+                    <td colspan="6" class="empty-state-cell">No enrolled courses found for this academic term.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <footer class="setup-modal-footer" style="border-top: 1px solid #e5e7eb; padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <router-link
+              v-if="selectedStudentEnrollment && selectedStudentEnrollment.exam_permit_unlocked"
+              :to="`/verify?id=${encodeURIComponent(selectedStudentEnrollment.student.institutional_id)}`"
+              class="btn-primary"
+              data-testid="student-enrollment-view-permit-btn"
+              style="text-decoration: none; font-size: 0.85rem; padding: 0.45rem 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem;"
+            >
+              📜 View Official Examination Permit
+            </router-link>
+          </div>
+          <button
+            type="button"
+            class="btn-secondary"
+            data-testid="close-student-enrollment-btn"
+            @click="showStudentEnrollmentModal = false"
+          >
+            Close
+          </button>
+        </footer>
+      </div>
+    </div>
   </main>
 </template>
 
@@ -3406,7 +3577,7 @@ async function executeDeleteSection() {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 99;
+  z-index: 9999;
   padding: 1rem;
 }
 

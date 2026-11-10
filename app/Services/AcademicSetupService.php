@@ -1034,4 +1034,54 @@ class AcademicSetupService
             ],
         ];
     }
+
+    /**
+     * Retrieve detailed course-by-course enrollment and evaluation clearance status for a student.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function getStudentEnrollmentDetails(int $studentId, ?int $academicTermId = null): ?array
+    {
+        $studStmt = $this->pdo->prepare('
+            SELECT
+                u.id,
+                u.institutional_id,
+                u.name,
+                u.email,
+                u.department_id,
+                d.code AS department_code,
+                d.name AS department_name
+            FROM users u
+            LEFT JOIN departments d ON d.id = u.department_id
+            WHERE u.id = :id AND u.role = \'student\'
+            LIMIT 1
+        ');
+        $studStmt->execute([':id' => $studentId]);
+        $student = $studStmt->fetch(PDO::FETCH_ASSOC);
+        if (!$student) {
+            return null;
+        }
+
+        $selectedTermId = $academicTermId ?? $this->getActiveTermId();
+        $queueData = $this->evaluationService->getStudentQueue($studentId, $selectedTermId);
+
+        return [
+            'student' => [
+                'id' => (int) $student['id'],
+                'institutional_id' => (string) $student['institutional_id'],
+                'name' => (string) $student['name'],
+                'email' => (string) $student['email'],
+                'department_code' => (string) ($student['department_code'] ?: 'CCS'),
+                'department_name' => (string) ($student['department_name'] ?: 'College of Computer Studies'),
+            ],
+            'term_id' => $selectedTermId,
+            'completed_count' => (int) ($queueData['completed_count'] ?? 0),
+            'total_count' => (int) ($queueData['total_count'] ?? 0),
+            'completion_percentage' => (float) ($queueData['completion_percentage'] ?? 0.0),
+            'overall_clearance_status' => (string) ($queueData['overall_clearance_status'] ?? 'PENDING'),
+            'exam_permit_unlocked' => (bool) ($queueData['exam_permit_unlocked'] ?? false),
+            'exam_permit_token' => $queueData['exam_permit_token'] ?? null,
+            'courses' => $queueData['queue'] ?? [],
+        ];
+    }
 }

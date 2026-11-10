@@ -2831,5 +2831,28 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $nonAdminUserReq->setUserResolver(fn () => $facultyUser);
         $nonAdminUserRes = $setupController->createUser($nonAdminUserReq);
         $this->assertSame(403, $nonAdminUserRes->getStatusCode());
+
+        // 11. Student Enrollment & Course Clearance Checklist (Inspired by student_list.php)
+        $nonAdminEnrollReq = new \Illuminate\Http\Request();
+        $nonAdminEnrollReq->setUserResolver(fn () => $facultyUser);
+        $nonAdminEnrollRes = $setupController->studentEnrollment($nonAdminEnrollReq, 7);
+        $this->assertSame(403, $nonAdminEnrollRes->getStatusCode());
+
+        $notFoundEnrollReq = new \Illuminate\Http\Request();
+        $notFoundEnrollReq->setUserResolver(fn () => $adminUser);
+        $notFoundEnrollRes = $setupController->studentEnrollment($notFoundEnrollReq, 99999);
+        $this->assertSame(404, $notFoundEnrollRes->getStatusCode());
+        $this->assertSame('STUDENT_NOT_FOUND', $notFoundEnrollRes->getData(true)['code']);
+
+        $validEnrollReq = new \Illuminate\Http\Request(['academic_term_id' => 1]);
+        $validEnrollReq->setUserResolver(fn () => $adminUser);
+        $validEnrollRes = $setupController->studentEnrollment($validEnrollReq, 11);
+        $this->assertSame(200, $validEnrollRes->getStatusCode());
+        $enrollData = $validEnrollRes->getData(true);
+        $this->assertIsArray($enrollData);
+        $this->assertArrayHasKey('student', $enrollData);
+        $this->assertArrayHasKey('courses', $enrollData);
+        $this->assertSame(11, $enrollData['student']['id']);
+        $this->assertGreaterThan(0, $enrollData['total_count']);
     }
 }

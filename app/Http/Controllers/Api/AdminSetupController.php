@@ -241,4 +241,23 @@ class AdminSetupController extends Controller
             ], 422);
         }
     }
+
+    public function studentEnrollment(Request $request, int $id = 0): JsonResponse
+    {
+        if ($authError = $this->verifyAdminRole($request)) {
+            return $authError;
+        }
+
+        $termId = $request->query('academic_term_id') ? (int) $request->query('academic_term_id') : null;
+        $details = $this->setupService->getStudentEnrollmentDetails($id, $termId);
+        if (!$details) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'STUDENT_NOT_FOUND',
+                'message' => 'Student record not found.',
+            ], 404);
+        }
+
+        return new JsonResponse($details, 200);
+    }
 }

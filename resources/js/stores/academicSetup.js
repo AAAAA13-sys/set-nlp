@@ -326,6 +326,23 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     return null;
   }
 
+  async function fetchStudentEnrollment(studentId, termId = null) {
+    try {
+      const qs = termId ? `?academic_term_id=${encodeURIComponent(termId)}` : '';
+      const res = await fetch(`/api/admin/setup/students/${studentId}/enrollment${qs}`, {
+        headers: getApiHeaders(),
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || 'Failed to fetch student enrollment details.');
+      }
+      return await res.json();
+    } catch (e) {
+      error.value = e.message;
+      throw e;
+    }
+  }
+
   return {
     overview,
     loading,
@@ -358,5 +375,6 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     deleteSection,
     createUser,
     fetchQuestionnaire,
+    fetchStudentEnrollment,
   };
 });

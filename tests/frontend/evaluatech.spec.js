@@ -1359,6 +1359,11 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('data-testid="student-status-filter-select"'), 'Student status filter select');
       assert.ok(setupViewSfc.includes('data-testid="student-directory-table"'), 'Student directory table');
       assert.ok(setupViewSfc.includes('student-clearance-status-'), 'Student clearance status badge');
+      assert.ok(setupViewSfc.includes('student-courses-btn-'), 'Student courses checklist trigger button');
+      assert.ok(setupViewSfc.includes('data-testid="student-enrollment-modal"'), 'Student enrollment & clearance modal');
+      assert.ok(setupViewSfc.includes('data-testid="student-enrollment-courses-table"'), 'Enrolled courses checklist table');
+      assert.ok(setupViewSfc.includes('data-testid="close-student-enrollment-btn"'), 'Close student enrollment modal button');
+      assert.ok(setupViewSfc.includes('openStudentEnrollmentModal'), 'Open student enrollment checklist handler');
       assert.ok(setupViewSfc.includes('data-testid="`student-permit-verify-btn-${std.id}`"'), 'Student permit verification link button');
       assert.ok(setupViewSfc.includes('/verify?id='), 'Direct link to public verification portal');
       assert.ok(setupViewSfc.includes('filteredStudentsDirectory'), 'Computed filtered students directory');
@@ -1366,6 +1371,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       // 2. Academic Setup Pinia Store Student Integration
       assert.ok(setupStoreSrc.includes('studentsList'), 'Academic setup store exposes studentsList');
       assert.ok(setupStoreSrc.includes('overview.value.students'), 'Computed students from overview');
+      assert.ok(setupStoreSrc.includes('fetchStudentEnrollment'), 'Academic setup store fetchStudentEnrollment action');
     });
   });
 
