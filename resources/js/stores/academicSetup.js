@@ -35,6 +35,7 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
   const filterSearch = ref('');
   const filterDepartmentId = ref('ALL');
   const filterAssignment = ref('ALL'); // 'ALL' | 'UNASSIGNED' | 'ASSIGNED'
+  const filterSectionCode = ref('ALL');
 
   function getApiHeaders(jsonBody = false) {
     try {
@@ -58,6 +59,16 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
   const isCycleReady = computed(() => Boolean(readinessSummary.value.is_cycle_ready));
   const questionnairePreview = computed(() => overview.value.questionnaire_preview || null);
 
+  const uniqueSectionCodes = computed(() => {
+    const set = new Set();
+    (overview.value.sections || []).forEach((sec) => {
+      if (sec.section_code) {
+        set.add(String(sec.section_code).trim());
+      }
+    });
+    return Array.from(set).sort();
+  });
+
   const filteredSections = computed(() => {
     let list = sections.value;
 
@@ -78,6 +89,10 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
       list = list.filter((sec) => !sec.is_assigned || !sec.faculty_id);
     } else if (filterAssignment.value === 'ASSIGNED') {
       list = list.filter((sec) => sec.is_assigned && sec.faculty_id);
+    }
+
+    if (filterSectionCode.value !== 'ALL') {
+      list = list.filter((sec) => String(sec.section_code).trim() === filterSectionCode.value);
     }
 
     return list;
@@ -295,6 +310,8 @@ export const useAcademicSetupStore = defineStore('academicSetup', () => {
     filterSearch,
     filterDepartmentId,
     filterAssignment,
+    filterSectionCode,
+    uniqueSectionCodes,
     terms,
     selectedTerm,
     sections,

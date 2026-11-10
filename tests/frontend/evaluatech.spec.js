@@ -1532,4 +1532,27 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(verifyViewSfc.includes('executeVerification'), 'Verification execution handler function');
     });
   });
+
+  describe('Group 52: Class / Section Code Filter & Consolidated Faculty Evaluation Dossier in Academic Setup', () => {
+    it('verifies class filter dropdown in assignments tab and consolidated faculty evaluation dossier modal', () => {
+      const setupStoreSrc = readResourceFile('stores/academicSetup.js');
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+
+      // 1. Class / Section Code Filter in Store & View (Inspired by admin/class_list.php)
+      assert.ok(setupStoreSrc.includes('filterSectionCode'), 'filterSectionCode in setup store');
+      assert.ok(setupStoreSrc.includes('uniqueSectionCodes'), 'uniqueSectionCodes computed in setup store');
+      assert.ok(setupViewSfc.includes('data-testid="class-filter-select"'), 'Class filter select in assignments tab');
+      assert.ok(setupViewSfc.includes('setupStore.filterSectionCode'), 'Bound to filterSectionCode');
+
+      // 2. Faculty Evaluation Dossier in Faculty Directory (Inspired by admin/report.php)
+      assert.ok(setupViewSfc.includes('data-testid="`faculty-dossier-report-btn-${fac.id}`"'), 'Faculty dossier report button in table');
+      assert.ok(setupViewSfc.includes('data-testid="faculty-consolidated-eval-modal"'), 'Faculty consolidated evaluation modal');
+      assert.ok(setupViewSfc.includes('data-testid="faculty-dossier-target-status"'), 'Faculty dossier target turnout status badge');
+      assert.ok(setupViewSfc.includes('data-testid="faculty-dossier-adjective"'), 'Faculty dossier AACCUP performance adjective');
+      assert.ok(setupViewSfc.includes('data-testid="print-faculty-dossier-btn"'), 'Print faculty dossier button');
+      assert.ok(setupViewSfc.includes('data-testid="close-faculty-dossier-modal-btn"'), 'Close faculty dossier modal button');
+      assert.ok(setupViewSfc.includes('openFacultyDossier'), 'openFacultyDossier handler');
+      assert.ok(setupViewSfc.includes('closeFacultyDossier'), 'closeFacultyDossier handler');
+    });
+  });
 });
