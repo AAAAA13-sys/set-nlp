@@ -1460,6 +1460,14 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(setupViewSfc.includes('data-testid="export-courses-csv-btn"'), 'Export courses CSV button');
       assert.ok(setupViewSfc.includes('exportCoursesCatalogCsv'), 'Export courses CSV handler');
       assert.ok(setupViewSfc.includes('PLP_Course_Catalog'), 'Course catalog CSV filename pattern');
+
+      // 3. Course Catalog Search & Sections Modal (Inspired by subject_list.php & class_list.php)
+      assert.ok(setupViewSfc.includes('data-testid="course-search-input"'), 'Course search input');
+      assert.ok(setupViewSfc.includes('data-testid="course-dept-filter-select"'), 'Course department filter select');
+      assert.ok(setupViewSfc.includes('data-testid="course-sections-modal"'), 'Course sections offerings modal');
+      assert.ok(setupViewSfc.includes('course-sections-btn-'), 'Course offered sections button');
+      assert.ok(setupViewSfc.includes('openCourseSectionsModal'), 'Open course sections modal handler');
+      assert.ok(setupViewSfc.includes('closeCourseSectionsModal'), 'Close course sections modal handler');
     });
   });
 

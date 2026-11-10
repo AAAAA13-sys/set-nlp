@@ -526,6 +526,48 @@ function quickAssignFaculty(faculty) {
   activeTab.value = 'assignments';
 }
 
+const courseSearchInput = ref('');
+const courseDepartmentFilter = ref('ALL');
+
+const filteredCoursesCatalog = computed(() => {
+  const query = courseSearchInput.value.trim().toLowerCase();
+  const depFilter = courseDepartmentFilter.value;
+  let list = setupStore.courses || [];
+  if (depFilter !== 'ALL') {
+    list = list.filter((c) => String(c.department_id) === String(depFilter) || c.department_code === depFilter);
+  }
+  if (!query) return list;
+  return list.filter((c) => {
+    const text = `${c.code || ''} ${c.title || ''} ${c.department_code || ''} ${c.department_name || ''}`.toLowerCase();
+    return text.includes(query);
+  });
+});
+
+function getCourseSections(courseId) {
+  return (setupStore.sections || []).filter((s) => Number(s.course_id) === Number(courseId));
+}
+
+function getCourseEnrolledTotal(courseId) {
+  return getCourseSections(courseId).reduce((sum, s) => sum + (Number(s.enrolled_count) || 0), 0);
+}
+
+function getCourseClearedTotal(courseId) {
+  return getCourseSections(courseId).reduce((sum, s) => sum + (Number(s.cleared_count || s.vault_count) || 0), 0);
+}
+
+const showCourseSectionsModal = ref(false);
+const selectedCourseForModal = ref(null);
+
+function openCourseSectionsModal(course) {
+  selectedCourseForModal.value = course;
+  showCourseSectionsModal.value = true;
+}
+
+function closeCourseSectionsModal() {
+  selectedCourseForModal.value = null;
+  showCourseSectionsModal.value = false;
+}
+
 const studentSearchInput = ref('');
 const studentStatusFilter = ref('ALL');
 
@@ -1260,10 +1302,29 @@ async function executeDeleteSection() {
     <!-- TAB 3: COURSE CATALOG (Inspired by subject_list.php) -->
     <section v-if="activeTab === 'courses'" class="tab-pane" data-testid="pane-courses">
       <div class="pane-controls-bar">
-        <div class="pane-description">
-          <p>
-            University course offerings, academic departments, and credit unit weights.
-          </p>
+        <div class="search-filter-group" style="display: flex; gap: 0.65rem; flex-wrap: wrap; align-items: center;">
+          <input
+            v-model="courseSearchInput"
+            type="search"
+            class="form-input search-input"
+            placeholder="Search course code, title, or department…"
+            data-testid="course-search-input"
+          />
+          <select
+            v-model="courseDepartmentFilter"
+            class="form-input"
+            style="width: auto; min-width: 170px;"
+            data-testid="course-dept-filter-select"
+          >
+            <option value="ALL">All Departments</option>
+            <option
+              v-for="d in setupStore.departments"
+              :key="d.id"
+              :value="d.id"
+            >
+              {{ d.code }} — {{ d.name }}
+            </option>
+          </select>
         </div>
         <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
           <button
@@ -1294,12 +1355,13 @@ async function executeDeleteSection() {
               <th scope="col">Course Title</th>
               <th scope="col">Academic Department</th>
               <th scope="col" class="text-center">Units</th>
+              <th scope="col" class="text-center">Active Offerings</th>
               <th scope="col" class="text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             <tr
-              v-for="c in setupStore.courses"
+              v-for="c in filteredCoursesCatalog"
               :key="c.id"
               :data-testid="`course-row-${c.id}`"
             >
@@ -1314,20 +1376,34 @@ async function executeDeleteSection() {
               <td class="text-center">
                 <span class="enrolled-badge">{{ c.units }} Units</span>
               </td>
-              <td class="text-right">
+              <td class="text-center">
                 <button
                   type="button"
-                  class="btn-secondary-sm"
-                  :data-testid="`add-section-for-course-btn-${c.id}`"
-                  @click="openNewSectionModalForCourse(c)"
+                  class="token-chip"
+                  :class="getCourseSections(c.id).length > 0 ? 'chip-signed' : 'chip-unsigned'"
+                  style="cursor: pointer; border: none; font-size: 0.78rem;"
+                  :data-testid="`course-sections-btn-${c.id}`"
+                  @click="openCourseSectionsModal(c)"
                 >
-                  + Add Section
+                  {{ getCourseSections(c.id).length }} Sections 📋
                 </button>
               </td>
+              <td class="text-right">
+                <div style="display: flex; gap: 0.35rem; justify-content: flex-end; align-items: center;">
+                  <button
+                    type="button"
+                    class="btn-secondary-sm"
+                    :data-testid="`add-section-for-course-btn-${c.id}`"
+                    @click="openNewSectionModalForCourse(c)"
+                  >
+                    + Add Section
+                  </button>
+                </div>
+              </td>
             </tr>
-            <tr v-if="setupStore.courses.length === 0">
-              <td colspan="5" class="empty-state-cell">
-                No course offerings cataloged.
+            <tr v-if="filteredCoursesCatalog.length === 0">
+              <td colspan="6" class="empty-state-cell">
+                No course offerings match your search criteria.
               </td>
             </tr>
           </tbody>
@@ -2843,6 +2919,142 @@ async function executeDeleteSection() {
             class="btn-secondary"
             data-testid="close-student-enrollment-btn"
             @click="showStudentEnrollmentModal = false"
+          >
+            Close
+          </button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- MODAL: Course Sections & Active Term Offerings (Inspired by subject_list.php & class_list.php) -->
+    <div
+      v-if="showCourseSectionsModal && selectedCourseForModal"
+      class="setup-modal-scrim"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="course-sections-modal-title"
+      data-testid="course-sections-modal"
+      @click.self="closeCourseSectionsModal"
+    >
+      <div class="setup-modal-box" style="max-width: 820px; padding: 1.5rem; max-height: 90vh; overflow-y: auto;">
+        <header class="setup-modal-header" style="border-bottom: 1px solid #e5e7eb; padding-bottom: 0.85rem;">
+          <div>
+            <h2 id="course-sections-modal-title" style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #103c2e;">
+              Course Sections & Term Offerings
+            </h2>
+            <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #6b7280;">
+              <strong class="font-mono text-emerald">{{ selectedCourseForModal.code }}</strong> — {{ selectedCourseForModal.title }} ({{ selectedCourseForModal.units }} Units) · {{ selectedCourseForModal.department_name }}
+            </p>
+          </div>
+          <button type="button" class="modal-close-btn" @click="closeCourseSectionsModal">&times;</button>
+        </header>
+
+        <div style="padding: 1.25rem 0; display: flex; flex-direction: column; gap: 1.25rem;">
+          <!-- Offering Summary Stats -->
+          <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+            <div>
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Active Term</div>
+              <div style="font-weight: 700; font-size: 0.95rem; color: #111827;">
+                {{ setupStore.selectedTerm?.name || 'Current Term' }}
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Sections Offered</div>
+              <div style="font-weight: 700; font-size: 1.15rem; color: #047857;" data-testid="course-sections-count">
+                {{ getCourseSections(selectedCourseForModal.id).length }} Sections
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Enrolled Students</div>
+              <div style="font-weight: 700; font-size: 1.15rem; color: #111827;">
+                {{ getCourseEnrolledTotal(selectedCourseForModal.id) }} Total
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Evaluations Turnout</div>
+              <div style="font-weight: 700; font-size: 1.15rem; color: #059669;">
+                {{ getCourseEnrolledTotal(selectedCourseForModal.id) > 0 ? Math.round((getCourseClearedTotal(selectedCourseForModal.id) / getCourseEnrolledTotal(selectedCourseForModal.id)) * 100) : 100 }}%
+              </div>
+            </div>
+          </div>
+
+          <!-- Sections Table -->
+          <div>
+            <h3 style="font-size: 0.95rem; font-weight: 700; color: #1f2937; margin: 0 0 0.5rem;">
+              Active Sections for {{ selectedCourseForModal.code }}
+            </h3>
+            <div class="table-responsive-wrapper" style="border: 1px solid #e5e7eb; border-radius: 8px;">
+              <table class="setup-data-table" data-testid="course-sections-list-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Section</th>
+                    <th scope="col">Assigned Instructor</th>
+                    <th scope="col" class="text-center">Enrolled</th>
+                    <th scope="col" class="text-center">Evaluated</th>
+                    <th scope="col" class="text-center">Turnout</th>
+                    <th scope="col" class="text-center">Grade Lock</th>
+                    <th scope="col" class="text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="sec in getCourseSections(selectedCourseForModal.id)"
+                    :key="sec.course_section_id"
+                    :data-testid="`course-modal-section-row-${sec.course_section_id}`"
+                  >
+                    <td><strong class="font-mono text-emerald">{{ sec.section_code }}</strong></td>
+                    <td>{{ sec.instructor_name || 'Prof. Unassigned' }}</td>
+                    <td class="text-center">{{ sec.enrolled_count }}</td>
+                    <td class="text-center">{{ sec.cleared_count || sec.vault_count || 0 }}</td>
+                    <td class="text-center">
+                      {{ sec.enrolled_count > 0 ? Math.round(((sec.cleared_count || sec.vault_count || 0) / sec.enrolled_count) * 100) : 100 }}%
+                    </td>
+                    <td class="text-center">
+                      <span
+                        class="token-chip"
+                        :class="sec.registrar_lock ? 'chip-signed' : 'chip-unsigned'"
+                        style="font-size: 0.72rem; padding: 0.15rem 0.45rem;"
+                      >
+                        {{ sec.registrar_lock ? '🔒 Locked' : '🔓 Inactive' }}
+                      </span>
+                    </td>
+                    <td class="text-right">
+                      <button
+                        type="button"
+                        class="btn-secondary btn-xs"
+                        :data-testid="`course-modal-report-btn-${sec.course_section_id}`"
+                        style="display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
+                        @click="closeCourseSectionsModal(); openSetupSectionReport(sec)"
+                      >
+                        Report 📊
+                      </button>
+                    </td>
+                  </tr>
+                  <tr v-if="getCourseSections(selectedCourseForModal.id).length === 0">
+                    <td colspan="7" class="empty-state-cell">
+                      No sections currently created for this course in this academic term.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <footer class="setup-modal-footer" style="border-top: 1px solid #e5e7eb; padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+          <button
+            type="button"
+            class="btn-primary"
+            data-testid="modal-add-section-for-course-btn"
+            @click="const c = selectedCourseForModal; closeCourseSectionsModal(); openNewSectionModalForCourse(c);"
+          >
+            + Add Another Section
+          </button>
+          <button
+            type="button"
+            class="btn-secondary"
+            data-testid="close-course-sections-btn"
+            @click="closeCourseSectionsModal"
           >
             Close
           </button>
