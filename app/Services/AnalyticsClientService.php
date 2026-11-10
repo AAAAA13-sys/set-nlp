@@ -11,6 +11,7 @@ class AnalyticsClientService
     public const TAG_CLASSROOM_MANAGEMENT = 'Classroom Management';
     public const TAG_PROFESSIONAL_CONDUCT = 'Professional Conduct';
     public const TAG_STUDENT_SUPPORT_MENTORSHIP = 'Student Support & Mentorship';
+    public const TAG_UNCLASSIFIED = 'Unclassified / Needs Review';
 
     public const CALAMANCY_REPO_URL = 'https://github.com/ljvmiranda921/calamanCy';
     public const CALAMANCY_DEFAULT_MODEL = 'tl_calamancy_md-0.1.0';
@@ -586,7 +587,7 @@ class AnalyticsClientService
         arsort($scores);
         $topDomain = (string) array_key_first($scores);
         if ($scores[$topDomain] === 0) {
-            return self::TAG_PEDAGOGICAL_DELIVERY;
+            return self::TAG_UNCLASSIFIED;
         }
 
         return $topDomain;

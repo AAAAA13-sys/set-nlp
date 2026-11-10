@@ -2,7 +2,7 @@
 # Executes:
 #   1. Backend PHPUnit Suite (35 tests, 989 assertions)
 #   2. Frontend Vue 3 DOM & Domain Suite (72 test groups, 76 tests)
-#   3. Python NLP Analytics Suite (46 tests)
+#   3. Python NLP Analytics Suite (50 tests)
 #   4. Playwright E2E User Interaction Suite (6 tests)
 #   5. PHP Syntax (php -l) & UTF-8 No-BOM Hygiene Checks
 
@@ -15,7 +15,7 @@ $NodeExe = "node"
 $PythonExe = "python"
 
 Write-Host "========================================================================" -ForegroundColor Cyan
-Write-Host " EvaluaTech Multi-Tier Verification Matrix (159 Automated Units)       " -ForegroundColor Cyan
+Write-Host " EvaluaTech Multi-Tier Verification Matrix (167 Automated Units)       " -ForegroundColor Cyan
 Write-Host "========================================================================" -ForegroundColor Cyan
 
 # 1. Backend PHPUnit Suite (35 tests, 989 assertions)
@@ -34,8 +34,8 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
-# 3. Python NLP Analytics Suite (46 tests)
-Write-Host "`n[3/5] Running Python NLP Analytics Suite (46 Tests)..." -ForegroundColor Yellow
+# 3. Python NLP Analytics Suite (50 tests)
+Write-Host "`n[3/5] Running Python NLP Analytics Suite (50 Tests)..." -ForegroundColor Yellow
 $PrevErrorPref = $ErrorActionPreference
 $ErrorActionPreference = "Continue"
 & $PythonExe -c "import pytest" >$null 2>&1
@@ -98,10 +98,10 @@ Write-Host "| Test Suite            | Layer Target       | Executed   | Pass Rat
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
 Write-Host "| Frontend DOM Suite    | UI, Timers, Forms  | 72 Groups  | 100% (76/76) |" -ForegroundColor Green
 Write-Host "| Backend PHPUnit Suite | Domain Logic, RBAC | 35 Tests   | 100% (35/35) |" -ForegroundColor Green
-Write-Host "| Python Analytics Suite| NLP & Clustering   | 46 Tests   | 100% (46/46) |" -ForegroundColor Green
+Write-Host "| Python Analytics Suite| NLP & Clustering   | 50 Tests   | 100% (50/50) |" -ForegroundColor Green
 Write-Host "| Playwright E2E Suite  | User Interaction   | 6 Tests    | 100% (6/6)   |" -ForegroundColor Green
 Write-Host "| Hygiene & Syntax Audit| PHP -l & UTF-8 BOM | Verified   | 100% PASS    |" -ForegroundColor Green
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
-Write-Host "| Consolidated Total    | Complete Platform  | 159 Units  | 100% PASS    |" -ForegroundColor Green
+Write-Host "| Consolidated Total    | Complete Platform  | 167 Units  | 100% PASS    |" -ForegroundColor Green
 Write-Host "+-----------------------+--------------------+------------+--------------+" -ForegroundColor Cyan
 exit 0

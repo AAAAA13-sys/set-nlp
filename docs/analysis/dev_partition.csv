@@ -1,0 +1,561 @@
+ID,Feedback_Text,Language,Sentiment,Aspect,Rating_Score
+1,"Napakagaling magpaliwanag ni Sir, kahit mahirap yung math topic nagiging madali.",Tagalog,Positive,Subject Mastery,5
+3,Medyo fast-paced magturo si Ma'am pero approachable naman kapag nagtanong during consultation.,Taglish,Neutral,Teaching Pace,3
+7,He is very considerate and understands students' personal circumstances when submitting requirements.,English,Positive,Empathy,5
+8,"Hindi marunong makinig sa concerns ng klase, laging sariling opinion lang ang nasusunod.",Tagalog,Negative,Communication,2
+9,"Sobrang bait and inspiring magsalita, gaganahan ka talaga pumasok everyday.",Taglish,Positive,Motivation,5
+11,"Maayos naman magturo, sakto lang sa syllabus pero walang masyadong exciting activities.",Taglish,Neutral,Engagement,3
+12,"Hindi nagbibigay ng grade breakdown hanggang matapos ang semester, nakaka-anxious.",Taglish,Negative,Grading Transparency,1
+13,Ang ganda ng discussion palagi kasi may real-world application at case studies.,Taglish,Positive,Relevance,5
+14,"Lectures are clear, structured, and easy to follow even for complex theoretical concepts.",English,Positive,Subject Mastery,5
+15,"Walang pakialam kung naiintindihan ng students, tuloy-tuloy lang magsalita.",Tagalog,Negative,Empathy,1
+17,The professor is strict but very fair when evaluating individual and group performance.,English,Positive,Assessment Fairness,4
+18,"Palaging absent si Sir, tapos magbibigay na lang bigla ng sandamakmak na modules at activities.",Taglish,Negative,Punctuality,1
+19,"Super interactive ng class discussions, never boring kasi nage-encourage ng recitation.",Taglish,Positive,Engagement,5
+20,"Average teaching style, covers the textbook topics without going deeper into practical problems.",English,Neutral,Teaching Depth,3
+21,Napakabait at laging handang tumulong sa mga nahihirapang estudyante pagkatapos ng klase.,Tagalog,Positive,Empathy,5
+22,Nagagalit agad kapag nagtatanong ng clarification sa assignment.,Tagalog,Negative,Temperament,1
+26,The tests are completely disconnected from the actual learning materials assigned.,English,Negative,Assessment Fairness,1
+27,"Sakto lang, sumusunod naman sa course syllabus pero strictly theoretical.",Taglish,Neutral,Course Delivery,3
+29,"Laging nag-oovertime ng 15-20 minutes, naaapektuhan tuloy yung next class namin.",Taglish,Negative,Punctuality,2
+30,The instructor maintains high academic rigor while keeping a supportive learning environment.,English,Positive,Classroom Atmosphere,5
+32,The quizzes are very challenging but strictly based on the assigned readings.,English,Positive,Assessment Fairness,5
+33,"Hindi transparent magbigay ng rubrics sa project, nagugulat na lang kami sa deduction.",Taglish,Negative,Grading Criteria,2
+35,"Sobrang haba ng periodic exam, hindi kasya yung 1 hour time limit para sa 100 items.",Taglish,Negative,Exam Time Limit,2
+36,Very objective and fair grading system; scores and remarks are posted within a week.,English,Positive,Grading Transparency,5
+37,Walang consideration sa group mates na hindi gumagawa ng final paper.,Taglish,Negative,Assessment Fairness,2
+38,Ang hirap ng mga problem sets pero nagbibigay naman ng partial points kapag tama ang solution.,Taglish,Positive,Grading Fairness,4
+43,Clear guidelines and rubrics are provided well ahead of the project submission.,English,Positive,Rubric Clarity,5
+44,Masyadong mabigat ang departmental exams kumpara sa mga practice exercises sa klase.,Taglish,Negative,Exam Difficulty,2
+45,"Average difficulty ang mga quiz, halos kasing-level lang ng mga sample problems.",Taglish,Neutral,Exam Difficulty,3
+46,Detailed comments on assignments help us identify our weak areas.,English,Positive,Assessment Feedback,5
+47,Hindi makatarungan ang pagbibigay ng zero sa buong grupo dahil sa pagkukulang ng isa.,Tagalog,Negative,Assessment Fairness,1
+48,Exam questions test memorization rather than actual analytical understanding.,English,Negative,Assessment Quality,2
+49,Nagbibigay ng practice test bago ang midterm kaya nakakapaghanda nang maayos.,Taglish,Positive,Assessment Support,5
+51,The grading is strictly based on the syllabus breakdown with zero hidden deductions.,English,Positive,Grading Transparency,5
+52,Walang ibinigay na rubric para sa research proposal kaya mahirap tantyahin ang ineexpect.,Taglish,Negative,Rubric Clarity,2
+53,Tama lang ang haba ng exam para sa dalawang oras na nakalaan.,Taglish,Neutral,Exam Time Limit,3
+54,Constructive feedback on midterm papers greatly helped improve our writing.,English,Positive,Assessment Feedback,5
+55,Puro subjective questions sa essay exam pero walang malinaw na basehan ng marka.,Taglish,Negative,Grading Criteria,1
+56,The time allotted for the laboratory practical exam was adequate.,English,Neutral,Exam Time Limit,3
+57,Laging on time mag-release ng test scores at may kasamang answer key.,Taglish,Positive,Assessment Feedback,5
+58,"Sobrang strict mag-grade sa reports, pati maliliit na formatting issues malaki ang bawas.",Taglish,Negative,Grading Criteria,2
+59,Quizzes are aligned with the stated course objectives and weekly lectures.,English,Positive,Assessment Fairness,5
+60,Walang consideration sa mga technical glitch habang nag-eexam sa online portal.,Taglish,Negative,Assessment Fairness,1
+61,Makatarungan ang ibinibigay na marka ayon sa kalidad ng naisumiteng takdang-aralin.,Tagalog,Positive,Assessment Fairness,5
+66,Gives reasonable deadline extensions when students request them politely.,English,Positive,Assessment Support,5
+67,Hindi tugma ang binigay na reviewer sa mga lumabas na topic sa midterm exam.,Taglish,Negative,Assessment Fairness,1
+68,Fair evaluation across all groups without any favoritism during oral presentations.,English,Positive,Assessment Fairness,5
+70,Biglang binago ang grading criteria sa kalagitnaan ng semestre nang walang abiso.,Taglish,Negative,Grading Criteria,1
+76,Clear expectations were set from the first day regarding how papers would be graded.,English,Positive,Grading Criteria,5
+77,Paboritismo ang pagbibigay ng mataas na score sa mga paboritong estudyante.,Tagalog,Negative,Assessment Fairness,1
+78,Questions in the quiz reflect typical problems discussed in class lectures.,English,Neutral,Assessment Fairness,3
+79,May curve ang final grade kapag mababa ang average ng buong batch sa exam.,Taglish,Positive,Grading Fairness,4
+80,Hindi sinasabi kung bakit mababa ang naging grade sa final requirement.,Taglish,Negative,Assessment Feedback,2
+81,Assessment questions challenged our critical understanding without being unfair.,English,Positive,Assessment Quality,5
+82,Sobrang hirap ng identification part dahil kailangang eksaktong salita ang sagot.,Taglish,Negative,Exam Difficulty,2
+83,Sumusunod naman sa tamang distribution ng items ayon sa table of specifications.,Taglish,Neutral,Assessment Fairness,3
+86,Nagbibigay ng bonus questions sa exam para mahatak ang mga nahihirapan.,Taglish,Positive,Assessment Support,5
+87,The rubric is overly vague and open to personal interpretation.,English,Negative,Rubric Clarity,2
+89,Ang daming pinapagawa sabay-sabay na project bago ang exam week.,Taglish,Negative,Assessment Quality,2
+92,The final project was assigned just one week before the deadline with no rubric.,English,Negative,Rubric Clarity,1
+94,Extremely thorough feedback on our thesis methodology and statistical analysis.,English,Positive,Assessment Feedback,5
+95,Hindi tugma ang points na binawas sa pagkakamaling nakasaad sa test paper.,Taglish,Negative,Grading Fairness,2
+96,Nagbibigay ng second chance o remedial exam para sa mga bumagsak sa midterm.,Taglish,Positive,Assessment Support,5
+97,The exam software crashed multiple times and no extra time was compensated.,English,Negative,Exam Time Limit,1
+98,"Maayos ang pagkakabuo ng mga tanong, malinaw at walang kalituhan.",Tagalog,Positive,Assessment Quality,5
+99,Walang malinaw na instructions sa group activity kaya iba-iba ang naipasa.,Taglish,Negative,Grading Criteria,2
+100,The weekly quizzes are predictable and directly follow lecture slides.,English,Neutral,Exam Difficulty,3
+101,Very considerate in giving partial credit when steps of the proof are correct.,English,Positive,Grading Fairness,5
+104,"Walang feedback man lang sa essays, score lang ang nakalagay.",Taglish,Negative,Assessment Feedback,2
+105,Fair and balanced assessments that truly measure student comprehension.,English,Positive,Assessment Fairness,5
+106,Pahirap ang mga trick questions na wala naman kinalaman sa core lesson.,Taglish,Negative,Exam Difficulty,1
+107,"Average difficulty level, requiring moderate preparation to pass comfortably.",English,Neutral,Exam Difficulty,3
+110,"Provides clear rubric benchmarks for excellent, satisfactory, and poor work.",English,Positive,Rubric Clarity,5
+111,Hindi ipinaalam ang bigat ng bawat component sa kabuuang marka.,Tagalog,Negative,Grading Transparency,2
+112,The mock exam was very useful in helping us prepare for the actual test.,English,Positive,Assessment Support,5
+113,Sakto lang ang nakuhang marka base sa naipakitang output sa klase.,Taglish,Neutral,Grading Fairness,3
+114,"Masyadong mahaba ang exam, hindi natapos ng mahigit kalahati ng klase.",Taglish,Negative,Exam Time Limit,1
+118,Unannounced pop quizzes caused unnecessary stress and panic.,English,Negative,Assessment Fairness,2
+122,Comprehensive rubrics were shared before we started the capstone project.,English,Positive,Rubric Clarity,5
+123,Walang consideration sa mga working students pagdating sa project deadlines.,Taglish,Negative,Assessment Fairness,2
+124,Makatarungan ang ibinigay na marka sa aming pangkatang ulat.,Tagalog,Positive,Grading Fairness,4
+125,Exam items were ambiguous and open to multiple interpretations.,English,Negative,Assessment Quality,2
+126,Nagbibigay ng reviewer na may sample questions bago ang periodic exam.,Taglish,Positive,Assessment Support,5
+128,Hindi ibinalik ang midterm exam papers hanggang sa matapos ang semester.,Taglish,Negative,Assessment Feedback,1
+130,Masyadong maraming items para sa maikling oras na ibinigay.,Tagalog,Negative,Exam Time Limit,2
+131,Detailed written feedback helped us revise our research methodology effectively.,English,Positive,Assessment Feedback,5
+132,Walang konsiderasyon sa power outage habang nagpapasagot ng online quiz.,Taglish,Negative,Assessment Fairness,1
+133,Sapat at patas ang mga batayan sa paggagawad ng marka sa takdang-aralin.,Tagalog,Positive,Grading Criteria,4
+134,Scores were not disclosed until after final grade submission to the registrar.,English,Negative,Grading Transparency,1
+137,"Sakto lang ang nilalaman ng pagsusulit, nasakop ang mga tinalakay sa libro.",Taglish,Neutral,Assessment Fairness,3
+139,Hindi pantay ang grading sa mga group members kahit hindi nag-ambag ang iba.,Taglish,Negative,Assessment Fairness,2
+140,Provides constructive remarks that genuinely motivate students to do better.,English,Positive,Assessment Feedback,5
+142,Standard difficulty level for a major subject exam.,English,Neutral,Exam Difficulty,3
+143,Laging handang ipaliwanag kung paano nakuha ang computed grade.,Taglish,Positive,Grading Transparency,5
+144,Grading felt erratic and inconsistent between different student sections.,English,Negative,Grading Fairness,1
+145,Nagbigay ng sapat na oras para maghanda sa mga practical exams.,Taglish,Positive,Assessment Support,5
+146,Masyadong mahigpit sa technical deductions kahit minor formatting lang.,Taglish,Negative,Grading Criteria,2
+147,Test formats were varied and effectively evaluated practical skills.,English,Positive,Assessment Quality,5
+148,Walang abiso kung kailan magkakaroon ng graded assessment.,Tagalog,Negative,Assessment Fairness,2
+149,The exam was fair and accurately reflected the material covered in lectures.,English,Positive,Assessment Fairness,5
+150,"Sakto lang ang nakuhang score, patas naman ang naging pagsusuri.",Taglish,Neutral,Grading Fairness,3
+151,Malinaw ang panuntunan sa pagsusulit at walang nakalilitong mga tanong.,Tagalog,Positive,Assessment Clarity,5
+153,May mga items sa quiz na hindi naman naituro sa synchronous classes.,Taglish,Negative,Assessment Fairness,2
+154,Provides rubric before the activity so students know what standards to meet.,English,Positive,Rubric Clarity,5
+155,Sakto lang ang level of difficulty ng problem sets para sa introductory course.,Taglish,Neutral,Exam Difficulty,3
+157,Promptly returned the graded midterms with clear margin annotations.,English,Positive,Assessment Feedback,5
+158,Walang konsiderasyon sa mga estudyanteng nawalan ng internet habang nageexam.,Tagalog,Negative,Assessment Fairness,1
+159,"Average difficulty ang periodic test, sapat ang oras para makapag-review.",Taglish,Neutral,Exam Difficulty,3
+160,The peer evaluation rubric helped ensure equal workload distribution in group work.,English,Positive,Peer Evaluation,5
+161,Sobrang unfair ng peer grading kasi nagkakampihan lang yung magbabarkada.,Taglish,Negative,Peer Evaluation,1
+162,Mahusay magbalangkas ng mga pagsusulit na sumusukat sa tunay na pagkatuto.,Tagalog,Positive,Assessment Quality,5
+165,Laging nagbibigay ng step-by-step breakdown kung saan nanggaling ang deductions.,Taglish,Positive,Grading Transparency,5
+166,Hindi ipinapakita ang scores sa quizzes kaya nakakagulat ang final grade.,Tagalog,Negative,Grading Transparency,1
+168,Puro memorization ng dates and names ang quiz imbes na conceptual understanding.,Taglish,Negative,Assessment Quality,2
+169,The exam format followed the standard multiple choice and problem solving template.,English,Neutral,Assessment Quality,3
+172,Patas at makatwiran ang pagmamarka sa aming presentasyon.,Tagalog,Positive,Grading Fairness,5
+173,The final exam weighted too heavily on a topic discussed for only thirty minutes.,English,Negative,Assessment Fairness,2
+174,"Standard lang ang expectations sa final report, nasunod ang course syllabus.",Taglish,Neutral,Grading Criteria,3
+177,Ipinapaliwanag ang tamang sagot at solusyon pagkatapos maiwasto ang mga papel.,Tagalog,Positive,Assessment Feedback,5
+178,The online testing platform locked out students without saving their progress.,English,Negative,Exam Environment,1
+179,"Katamtaman ang haba ng departmental exam, kayang tapusin sa itinakdang oras.",Taglish,Neutral,Exam Time Limit,3
+185,Naglaan si Ma'am ng consultation hour para talakayin ang mga mali namin sa midterm.,Taglish,Positive,Assessment Feedback,5
+186,Masyadong marami ang pinagawang case studies habang exam week pa mismo.,Taglish,Negative,Workload,1
+189,The exam questions adequately reflected the difficulty of the homework assignments.,English,Neutral,Assessment Alignment,3
+191,The proctoring rules were overly draconian and added extreme test anxiety.,English,Negative,Exam Environment,2
+193,Puro subjective questions pero naghahanap ng specific keywords na hindi itinuro.,Taglish,Negative,Grading Criteria,2
+195,Hands-on assessment helped us apply programming concepts to real applications.,English,Positive,Assessment Quality,5
+196,Hindi man lang sinuri ang hard copy bago naglagay ng mababang grado.,Tagalog,Negative,Assessment Feedback,1
+197,Madaling sundin ang scoring guidelines dahil napakalinaw ng bawat krayterya.,Taglish,Positive,Rubric Clarity,5
+198,Surprise practical exam without prior notice caused half the section to fail.,English,Negative,Pop Quizzes,1
+199,Sakto lang ang bigat ng final project para sa natitirang linggo ng semestre.,Taglish,Neutral,Workload,3
+200,He walked the class through common mistakes made on the preliminary test.,English,Positive,Assessment Feedback,5
+201,Hindi pinakinggan ang apela ng buong klase sa mga may error na multiple choice questions.,Taglish,Negative,Assessment Fairness,1
+202,Makatarungan ang ibinigay na marka batay sa ipinakitang husay sa pag-uulat.,Tagalog,Positive,Grading Fairness,5
+203,The project deadline was moved earlier abruptly without sufficient justification.,English,Negative,Assessment Support,2
+204,"Normal lang ang scoring, hindi masyadong mababa at hindi rin sobrang taas.",Taglish,Neutral,Grading Fairness,3
+206,Walang rubrics para sa oral defense kaya napaka-subjective ng mga komento ng panel.,Taglish,Negative,Rubric Clarity,2
+207,Patas at bukas ang guro sa pagpapasuri muli ng mga nasagutang pagsusulit.,Tagalog,Positive,Assessment Fairness,5
+208,The multiple choice options were trick questions meant to confuse rather than evaluate.,English,Negative,Exam Quality,2
+210,Gives partial credit generously if the student demonstrates sound logical thinking.,English,Positive,Grading Fairness,5
+211,Hindi nag-post ng official grade sheet bago ipasok ang final marks sa portal.,Taglish,Negative,Grading Transparency,1
+213,The final exam software glitched and reset answers in the middle of submission.,English,Negative,Exam Environment,1
+214,"Katamtaman ang naging resulta ng aming pagsusulit, ayon sa aming paghahanda.",Tagalog,Neutral,Assessment Fairness,3
+215,Very prompt in replying to grade queries and explaining deduction reasons.,English,Positive,Grading Transparency,5
+216,Napakabigat ng deduction sa formatting errors kumpara sa actual content ng thesis.,Taglish,Negative,Grading Criteria,2
+217,Nagbigay ng review session bago ang exam para sagutin ang mga katanungan.,Taglish,Positive,Assessment Support,5
+218,No breakdown was provided for our mid-semester assessment score.,English,Negative,Grading Transparency,2
+219,Ang mga katanungan sa pagsusulit ay katamtaman lamang ang antas ng kahirapan.,Tagalog,Neutral,Exam Difficulty,3
+220,Allowed teams to defend their project methodology and adjusted grades fairly.,English,Positive,Assessment Fairness,5
+221,Laging late magbigay ng assignments tapos kinabukasan agad ang deadline.,Taglish,Negative,Workload,1
+222,May malinaw na rubric kaya alam namin kung anong pamantayan ang dapat abutin.,Taglish,Positive,Rubric Clarity,5
+223,The exam had questions from chapters that were explicitly told to be skipped.,English,Negative,Assessment Alignment,1
+224,Standard grading rubric applied uniformly across all research groups.,English,Neutral,Rubric Clarity,3
+225,Nagbibigay ng detalyadong written feedback sa bawat lab report submission.,Taglish,Positive,Assessment Feedback,5
+226,Nagbawas ng limang puntos nang walang binigay na paliwanag kung bakit.,Tagalog,Negative,Assessment Feedback,2
+227,The open-book exam truly evaluated our synthesis and problem-solving skills.,English,Positive,Assessment Quality,5
+228,"Sobrang gulo ng online test submission link, maraming hindi nakaabot sa cut-off.",Taglish,Negative,Exam Environment,1
+229,"Sakto lang ang nilalaman ng pagsusulit, kapareho ng tinalakay sa modyul.",Tagalog,Neutral,Assessment Alignment,3
+232,Inilalahad nang buong linaw ang rubrik bago simulan ang pananaliksik.,Tagalog,Positive,Rubric Clarity,5
+234,Karaniwang antas ng kahirapan para sa isang major examination.,Tagalog,Neutral,Exam Difficulty,3
+235,Maagap mag-post ng answer key at score analysis pagkatapos ng exam.,Taglish,Positive,Assessment Feedback,5
+236,The exam instructions were contradictory between the physical copy and portal.,English,Negative,Assessment Clarity,2
+237,Pantay ang pagtimbang sa teorya at aplikasyon sa mga katanungan.,Tagalog,Positive,Assessment Quality,5
+239,The case study prompt was straightforward and aligned with class discussions.,English,Neutral,Assessment Alignment,3
+240,Naglaan ng mock defense kaya naging handa ang klase sa final oral presentation.,Taglish,Positive,Assessment Support,5
+243,Puro trivia questions ang exam imbes na mga konseptong pinag-aralan buong sem.,Taglish,Negative,Assessment Quality,2
+244,"Katamtaman ang haba ng takdang-aralin, sapat ang oras para matapos ito.",Tagalog,Neutral,Workload,3
+245,Encouraged students to dispute quiz grading errors during office hours.,English,Positive,Assessment Fairness,5
+246,Walang paunang abiso ang sorpresang pagsusulit kahit bagong tapos pa lang ang lecture.,Tagalog,Negative,Pop Quizzes,1
+249,The exam coverage matched what was discussed during synchronous lectures.,English,Neutral,Assessment Alignment,3
+250,Nagbibigay ng second chance para sa mga estudyanteng mababa ang marka sa prelim.,Taglish,Positive,Assessment Support,5
+251,Hindi transparent ang computation ng class standing at recitation grade.,Taglish,Negative,Grading Transparency,2
+252,Patas ang pagwawasto at walang kinikilingang estudyante sa klase.,Tagalog,Positive,Assessment Fairness,5
+254,"Katamtamang hirap ang mga tanong, sapat ang dalawang oras na inilaan.",Taglish,Neutral,Exam Time Limit,3
+255,Comprehensive feedback on each milestone ensured project success.,English,Positive,Assessment Feedback,5
+256,Masyadong mabigat ang sabay-sabay na deadlines sa iisang linggo.,Taglish,Negative,Workload,2
+257,Madaling maunawaan ang bawat aytem sa talatanungan ng pagsusulit.,Tagalog,Positive,Assessment Clarity,5
+260,Nag-aalok ng extra credit opportunities para sa mga gustong bumawi ng grades.,Taglish,Positive,Assessment Support,5
+262,Makatwiran ang itinakdang oras para sa pagsusulit sa laboratoryo.,Tagalog,Positive,Exam Time Limit,5
+263,The test was overly focused on obscure textbook footnotes rather than core themes.,English,Negative,Assessment Quality,2
+264,Sumunod naman sa tamang pamantayan ang naging pagtataya sa mga gawain.,Tagalog,Neutral,Grading Criteria,3
+266,Hindi binilang ang peer evaluation scores kaya pare-pareho pa rin ang naging grade.,Taglish,Negative,Peer Evaluation,2
+267,Napakabilis magwasto at laging may nakasulat na gabay kung paano mag-improve.,Taglish,Positive,Assessment Feedback,5
+269,The midterm coverage strictly followed the syllabus breakdown.,English,Neutral,Assessment Alignment,3
+270,Makatarungan ang grading system at regular na naka-update sa online portal.,Taglish,Positive,Grading Transparency,5
+273,Questions on the exam were ambiguous with multiple seemingly correct options.,English,Negative,Assessment Clarity,2
+275,Nagbigay ng complete rubrics at formatting guidelines sa unang araw pa lang.,Taglish,Positive,Rubric Clarity,5
+276,Hindi ipinaalam ang rubrik bago kami nagpasa ng aming ulat.,Tagalog,Negative,Rubric Clarity,1
+277,Generous grading policy with clear avenues for grade re-evaluation.,English,Positive,Assessment Fairness,5
+278,The practical exam schedule conflicted directly with another major departmental exam.,English,Negative,Assessment Support,2
+280,Detailed line-by-line comments on research drafts were tremendously helpful.,English,Positive,Assessment Feedback,5
+281,Biglang nagbago ang percentage weight ng final exam sa huling linggo ng klase.,Taglish,Negative,Grading Criteria,1
+282,Maayos ang pamamahagi ng mga puntos sa bawat bahagi ng pagsusulit.,Tagalog,Positive,Grading Transparency,5
+283,Too many complex essay questions squeezed into a strict thirty-minute period.,English,Negative,Exam Time Limit,2
+284,Sakto lang ang bigat ng mga takdang-aralin bawat linggo.,Taglish,Neutral,Workload,3
+285,Provides sample questions and mock tests that significantly reduce exam stress.,English,Positive,Assessment Support,5
+286,Hindi maayos ang pagkakabalangkas ng mga tanong kaya nakakalito ang mga pagpipilian.,Tagalog,Negative,Assessment Clarity,2
+287,"Transparent ang breakdown ng prelim, midterm, at finals sa Google Sheets tracker.",Taglish,Positive,Grading Transparency,5
+291,"Sobrang unfair mag-grade, laging may favorites na automatic 1.0 ang nakukuha.",Taglish,Negative,Assessment Fairness,1
+292,Clear explanations were provided for every deducted mark on our project.,English,Positive,Assessment Feedback,5
+293,Walang konsiderasyon sa mga working students sa pagtatakda ng submission deadline.,Taglish,Negative,Assessment Fairness,2
+294,Karaniwan ang mga pagsasanay at tumutugma sa kurikulum ng kurso.,Tagalog,Neutral,Assessment Alignment,3
+295,Allowed open notes during exams which encouraged deep critical thinking over memorization.,English,Positive,Assessment Quality,5
+296,The exam proctoring tool flagged regular eye movement as academic dishonesty.,English,Negative,Exam Environment,1
+298,Walang batayan ang pagmamarka sa aming presentasyon dahil walang ibinigay na pamantayan.,Tagalog,Negative,Rubric Clarity,1
+299,The quiz difficulty level aligned fairly well with the assigned homework sets.,English,Neutral,Exam Difficulty,3
+300,"Fair, rigorous, and highly constructive evaluation of our final capstone project.",English,Positive,Assessment Quality,5
+301,"Punctual ang prof pero kulang sa practical applications, puro theoretical lecture lang.",Taglish,Neutral,Teaching Delivery,3
+303,Masyadong nagpo-focus sa rote memorization at cramming ang mga questions sa exam imbes na real understanding.,Taglish,Negative,Examination,2
+304,Lab work is properly covered and the hands-on evaluations help students learn practical engineering skills.,English,Positive,Lab Work,5
+307,Mabagal mag-feedback sa practical experiments kaya hindi namin alam kung tama ang circuit implementation.,Taglish,Negative,Lab Work,2
+308,"The grading breakdown for midterm and final projects is clear, fair, and accessible.",English,Positive,Examination,5
+309,Masyadong masungit ang staff sa library kapag nagtatanong ng reserve section guidelines.,Taglish,Negative,Library Facilities,1
+310,Mahusay magturo at laging nagbibigay ng real-world industrial case studies sa klase.,Tagalog,Positive,Teaching Delivery,5
+311,The course syllabus was thoroughly followed without skipping critical foundational modules.,English,Positive,Course Content,5
+312,"Luma na ang mga apparatus sa chemistry lab, madalas sirang burette at weighing scale ang nagagamit.",Taglish,Negative,Lab Work,2
+313,Sapat naman ang espasyo sa silid-aklatan para sa tahimik na pag-aaral tuwing hapon.,Tagalog,Neutral,Library Facilities,3
+314,Campus organizations receive strong administrative support for leadership training seminars.,English,Positive,Extracurricular,5
+315,"Sobrang bilis maglipat ng slides, hindi man lang tinitingnan kung nakakasunod pa ang mga estudyante.",Taglish,Negative,Teaching Pace,2
+317,The lab manual lacks troubleshooting steps when simulation tools throw unhandled errors.,English,Negative,Lab Work,2
+319,Walang kwenta ang club accreditation process dahil napakaraming unnecessary bureaucracy.,Taglish,Negative,Extracurricular,1
+322,"Masyadong luma ang reading materials, karamihan published pa noong late 1990s.",Taglish,Negative,Course Content,2
+323,Hands-on coding exercises during the laboratory sessions greatly reinforced backend web principles.,English,Positive,Lab Work,5
+324,"Katamtaman ang bilis ng pagtalakay sa mga aralin, hindi mabilis at hindi rin mabagal.",Tagalog,Neutral,Teaching Pace,3
+325,The digital library catalog frequently goes offline during midterms and finals preparation.,English,Negative,Library Facilities,2
+327,Hindi nagtutugma ang mga lecture notes sa departmental exam questions na ibinigay.,Taglish,Negative,Examination,1
+328,"The instructor maintains a respectful, collaborative, and highly intellectually stimulating classroom environment.",English,Positive,Classroom Atmosphere,5
+329,Patas at makatwiran ang paggagawad ng grado sa lahat ng pangkatang pagsasanay.,Tagalog,Positive,Assessment Fairness,5
+330,Limited seats in the library study hall force students to study in noisy corridors.,English,Negative,Library Facilities,2
+331,"Maganda ang pacing ng laboratory experiments, natatapos on time ang deliverables.",Taglish,Positive,Lab Work,4
+333,The course curriculum strikes a balanced mix between foundational theory and practical industry applications.,English,Positive,Course Content,5
+334,Karaniwan ang mga paksa sa silabus at katulad lamang ng mga pamantayang aklat.,Tagalog,Neutral,Course Content,3
+335,Strict laboratory safety protocols are properly enforced to avoid chemical hazards.,English,Positive,Lab Work,5
+336,Walang maayos na venue para sa drama and arts rehearsals ng student organizations.,Taglish,Negative,Extracurricular,2
+337,Napaka-approachable ng librarian at tinutulungan kami maghanap ng peer-reviewed articles.,Taglish,Positive,Library Facilities,5
+338,The midterm examination was unfairly skewed toward minor footnote definitions.,English,Negative,Examination,2
+339,Maayos magpaliwanag ng mahihirap na derivation ng mathematical equations sa pisara.,Tagalog,Positive,Teaching Delivery,5
+340,"Standard course syllabus, covers essential introductory topics without extra supplementary resources.",English,Neutral,Course Content,3
+341,Masyadong maingay sa library second floor dahil hindi sumasaway ang mga floor marshals.,Taglish,Negative,Library Facilities,2
+342,The professor provides insightful industry context during discussion of software architecture patterns.,English,Positive,Teaching Delivery,5
+344,"Kulubot at sira-sira na ang textbooks sa reference section, kailangan na ng bagong editions.",Taglish,Negative,Library Facilities,2
+345,Student government activities are well-coordinated and provide valuable community outreach initiatives.,English,Positive,Extracurricular,5
+347,The lab computers have outdated software packages and slow compile times during practical coding exams.,English,Negative,Lab Work,2
+350,Comprehensive course pack with up-to-date case studies from top multinational corporations.,English,Positive,Course Content,5
+352,The library Wi-Fi connectivity is reliable and allows fast downloading of electronic academic papers.,English,Positive,Library Facilities,5
+353,"Katamtaman lamang ang mga pagsasanay sa laboratoryo, nakabatay sa mga karaniwang eksperimento.",Tagalog,Neutral,Lab Work,3
+354,Extracurricular leadership roles conflict heavily with academic schedules due to poor faculty coordination.,English,Negative,Extracurricular,2
+357,Patas ang pagtrato ng guro sa lahat ng mag-aaral nang walang anumang paboritismo.,Tagalog,Positive,Assessment Fairness,5
+358,The reading assignments are heavily repetitive across different modules with very little added insight.,English,Negative,Course Content,2
+360,Air conditioning in the university library reading room is constantly broken and unbearable.,English,Negative,Library Facilities,1
+361,Active participation in academic debate societies is warmly encouraged and supported by mentors.,English,Positive,Extracurricular,5
+364,The exam difficulty was moderate and faithfully mirrored the practice problems assigned in class.,English,Neutral,Exam Difficulty,3
+367,Napakasipag magturo at laging handa ang mga visual aids at supplementary materials.,Tagalog,Positive,Teaching Delivery,5
+368,Too much emphasis on theoretical derivations with zero exposure to real-life applications.,English,Negative,Teaching Depth,2
+369,"Maganda ang distribution ng club events, hindi sumasabay sa major examination weeks.",Taglish,Positive,Extracurricular,5
+373,Online journal access through the university portal is restricted to only a few publishers.,English,Negative,Library Facilities,2
+375,Hindi tugma ang nilalaman ng midterm exam sa mga aktwal na tinalakay sa klase.,Tagalog,Negative,Examination,1
+376,Outstanding support for student organizations participating in national engineering competitions.,English,Positive,Extracurricular,5
+377,"Masyadong crowded ang library tuwing exam period, mahirap makahanap ng vacant table.",Taglish,Negative,Library Facilities,2
+378,The instructor explains complex algorithms using intuitive diagrams and clear pseudocode.,English,Positive,Subject Mastery,5
+379,"Maayos naman ang pasilidad sa laboratoryo, may sapat na kagamitan para sa aming grupo.",Tagalog,Neutral,Lab Work,3
+380,Strict pop quizzes every meeting cause excessive anxiety and hinder productive discussions.,English,Negative,Pop Quizzes,2
+383,Napakalawak ng kaalaman ng guro sa larangan ng panitikan at kasaysayan ng Pilipinas.,Tagalog,Positive,Subject Mastery,5
+384,The course content is overly generic and repeats concepts already mastered in prerequisite courses.,English,Negative,Course Content,2
+385,Extracurricular workshops help students build crucial networking and project management skills.,English,Positive,Extracurricular,5
+386,"Mabagal ang circulation desk sa library, umaabot ng 30 minutes bago ma-process ang hiniram na libro.",Taglish,Negative,Library Facilities,2
+387,Makatwiran ang nakuhang marka batay sa kalidad ng ipinasang proyekto sa katapusan ng termino.,Tagalog,Neutral,Grading Fairness,3
+388,The professor encourages dynamic classroom debates where multiple perspectives are evaluated critically.,English,Positive,Classroom Atmosphere,5
+390,Laboratory safety equipment like eyewash stations and fire extinguishers are regularly inspected.,English,Positive,Lab Work,5
+392,The library has very strict and unreasonable fines for minor delays in book returns.,English,Negative,Library Facilities,2
+393,Sakto lang ang balance ng theory at hands-on activities sa buong semester.,Taglish,Neutral,Course Content,3
+394,"Lacking essential chemicals and reagents, resulting in cancelled chemistry laboratory sessions.",English,Negative,Lab Work,1
+395,Nagbibigay ng second chance para i-correct ang laboratory mistakes at matuto nang husto.,Taglish,Positive,Lab Work,5
+396,Hindi maayos ang coordination ng student council sa university administration ukol sa event permits.,Taglish,Negative,Extracurricular,2
+397,"Clear, concise, and logically sequenced lecture slides that make revision straightforward.",English,Positive,Teaching Delivery,5
+398,Walang konsiderasyon ang guro sa mga mag-aaral na nagkasakit sa araw ng pagsusulit.,Tagalog,Negative,Empathy,1
+399,"The library discussion rooms are spacious, well-soundproofed, and easy to reserve online.",English,Positive,Library Facilities,5
+400,"Katamtaman ang hirap ng midterm exam, tugma sa mga halimbawang ibinigay sa klase.",Tagalog,Neutral,Exam Difficulty,3
+401,"Hindi pantay ang grading sa laboratory partner activities, pareho ang grade kahit isa lang gumawa.",Taglish,Negative,Grading Fairness,2
+402,The extracurricular sports facilities and equipment are well-maintained and accessible to all students.,English,Positive,Extracurricular,5
+403,Very approachable during and outside lecture sessions to address student inquiries thoroughly.,English,Positive,Communication,5
+404,"Sobrang luma ng operating system sa computer lab, madalas mag-hang habang nagko-compile.",Taglish,Negative,Lab Work,2
+406,"The exam instructions were contradictory, creating widespread confusion among examinees.",English,Negative,Examination,2
+407,Transparent ang spreadsheet ng class standing kaya alam agad ng estudyante kung saan babawi.,Taglish,Positive,Grading Transparency,5
+409,Walang pondo o tulong mula sa unibersidad para sa student research competitions sa ibang bansa.,Taglish,Negative,Extracurricular,2
+410,The instructor fosters an inclusive classroom culture where every question is valued and addressed.,English,Positive,Classroom Atmosphere,5
+411,Mabilis magwasto ng mga takdang-aralin at palaging may nakasulat na gabay sa pagpapabuti.,Tagalog,Positive,Assessment Feedback,5
+412,Monotonous delivery makes even naturally exciting topics boring and hard to concentrate on.,English,Negative,Teaching Delivery,2
+414,Hindi sapat ang 1 hour time limit para sa 100-item multiple choice at essay examination.,Taglish,Negative,Exam Time Limit,2
+415,The lab manual provides step-by-step schematics that clearly guide electronic circuit prototyping.,English,Positive,Lab Work,5
+416,"Karaniwan ang nilalaman ng kurso, sumusunod sa pambansang pamantayan ng edukasyon.",Tagalog,Neutral,Course Content,3
+419,Walang sapat na reference books sa library para sa specialized subject na ito.,Taglish,Negative,Library Facilities,2
+421,Patas ang sistema ng pagmamarka at walang kinikilingang estudyante sa anumang aktibidad.,Tagalog,Positive,Assessment Fairness,5
+423,Maganda ang selection ng e-books at journals sa online library subscription ng school.,Taglish,Positive,Library Facilities,5
+424,"Standard exam difficulty, accurately evaluating fundamental competencies without trick problems.",English,Neutral,Exam Difficulty,3
+425,Masyadong masungit si Ma'am kapag may nagtatanong ng clarificatory questions sa exam instructions.,Taglish,Negative,Communication,2
+426,Student clubs provide vibrant community building and practical leadership exposure.,English,Positive,Extracurricular,5
+427,Napakalinaw ng syllabus at maayos na naipamahagi ang mga babasahin sa simula ng semestre.,Tagalog,Positive,Course Content,5
+428,"The laboratory equipment is severely outdated, failing to reflect modern industry standards.",English,Negative,Lab Work,2
+431,The exam had multiple ambiguous questions that the professor refused to clarify during test time.,English,Negative,Examination,2
+432,Inspirasyon si Sir magturo dahil ramdam mo ang passion niya sa bawat lecture topic.,Taglish,Positive,Teaching Delivery,5
+433,Hindi pantay ang hatian ng workload sa group assignments dahil walang peer review system.,Taglish,Negative,Assessment Fairness,2
+434,The library staff is consistently helpful in assisting students with digital database queries.,English,Positive,Library Facilities,5
+438,"Masyadong madilim ang ilaw sa third floor study area ng library, nakakasakit sa mata.",Taglish,Negative,Library Facilities,2
+440,"The professor provides constructive, thorough, and prompt feedback on all submitted manuscripts.",English,Positive,Assessment Feedback,5
+442,Malinis at maayos ang mga kagamitan sa agham sa loob ng bagong laboratoryo.,Tagalog,Positive,Lab Work,5
+443,The university lacks adequate funding and facilities to sustain student performing arts groups.,English,Negative,Extracurricular,2
+444,Mabilis mag-reply sa emails si Sir kahit weekend kapag may emergency concerns sa project.,Taglish,Positive,Communication,5
+445,The library catalog search engine frequently fails to return results for existing acquisitions.,English,Negative,Library Facilities,2
+446,Patas ang pagbibigay ng marka at may malinaw na basehan ang bawat natamong puntos.,Tagalog,Positive,Grading Fairness,5
+447,The examination contained problems with errors in the given numerical parameters.,English,Negative,Examination,2
+448,Standard extracurricular calendar with typical university events and annual festivals.,English,Neutral,Extracurricular,3
+449,Napaka-organized ng laboratory sessions at laging handa ang lab technician sa pagtulong.,Taglish,Positive,Lab Work,5
+450,"Comprehensive, fair, and practical evaluation that truly measures student engineering competence.",English,Positive,Assessment Fairness,5
+451,All course materials provide very good knowledge in depth.,English,Positive,Course Content,5
+452,Exam pattern is up to the mark and the marks distribution across quizzes and prelims is very fair.,English,Positive,Examination,5
+453,Lab work is properly covered and the practical evaluations help learn hands-on knowledge.,English,Positive,Lab Work,5
+454,Content of course promotes rote memorization rather than concept application.,English,Negative,Course Content,1
+456,Masyadong theoretical ang exam questions kumpara sa practical exercises.,Taglish,Neutral,Examination,3
+458,Comprehensive lectures clearly explain theoretical principles and industry practices.,English,Positive,Teaching Delivery,5
+459,Napapanahon ang mga paksa sa kurso at angkop sa kasalukuyang kalakaran sa industriya.,Tagalog,Positive,Course Content,5
+463,"The syllabus outline is followed strictly, covering standard core competencies.",English,Neutral,Course Content,3
+464,Mabilis magsalita ang propesor kaya mahirap kumuha ng maayos na notes.,Taglish,Negative,Teaching Delivery,2
+465,The mid-term exam questions were directly aligned with lecture topics.,English,Positive,Examination,5
+466,Kulang sa kemikal at test tubes sa lab kaya hindi natatapos ang eksperimento.,Taglish,Negative,Lab Work,1
+467,Sapat ang oras na ibinigay para tapusin ang lahat ng bahagi ng pagsusulit.,Tagalog,Positive,Examination,5
+468,The course curriculum lacks depth in newer technological advancements.,English,Negative,Course Content,2
+469,Laging handa ang propesor na magbigay ng karagdagang paliwanag kapag may katanungan.,Tagalog,Positive,Teaching Delivery,5
+470,Hands-on lab experiments reinforced the mathematical theories taught in lectures.,English,Positive,Lab Work,5
+471,Katamtaman lamang ang kahirapan ng departmental finals.,Tagalog,Neutral,Examination,3
+472,Puro PowerPoint slides lang ang binabasa nang walang karagdagang paliwanag.,Taglish,Negative,Teaching Delivery,2
+473,The course modules are structured logically with clear learning milestones.,English,Positive,Course Content,5
+474,Sirang-sira ang mga microscope lenses kaya hindi makita ang specimen nang maayos.,Taglish,Negative,Lab Work,1
+475,Makatwiran ang alokasyon ng mga puntos sa bawat katanungan sa pagsusulit.,Tagalog,Positive,Examination,4
+476,Interactive coding exercises in lectures significantly enhanced our understanding.,English,Positive,Teaching Delivery,5
+477,Sakto lang ang nilalaman ng silabus para sa isang pambungad na asignatura.,Tagalog,Neutral,Course Content,3
+478,The final examination had multiple ambiguous problem statements that caused panic.,English,Negative,Examination,2
+481,Reading assignments and case studies are intellectually stimulating and highly relevant.,English,Positive,Course Content,5
+483,The examination format was predictable and consistent with previous practice tests.,English,Neutral,Examination,3
+486,Laging may bukas na komunikasyon at maayos magpaliwanag ng mahihirap na konsepto.,Tagalog,Positive,Teaching Delivery,5
+489,Malinaw na naipapaliwanag ang bawat layunin sa simula ng bawat aralin.,Tagalog,Positive,Course Content,5
+490,The instructor frequently canceled lecture sessions without providing make-up discussions.,English,Negative,Teaching Delivery,1
+491,Sobrang tagal bago naayos ang mga Sirang computer sa lab kaya naantala ang klase.,Taglish,Negative,Lab Work,2
+493,Comprehensive curriculum covers both historical context and modern applications.,English,Positive,Course Content,5
+494,Magaling mag-motivate si Ma'am at laging nagbibigay ng praktikal na payo sa career.,Taglish,Positive,Teaching Delivery,5
+495,The practical lab exam required tools that were defective and not functioning.,English,Negative,Lab Work,1
+496,Masyadong mahaba ang pagsusulit para sa nakalaang isang oras lamang.,Tagalog,Negative,Examination,2
+497,"Sakto lang ang bilis ng pagtalakay sa mga aralin, nasusundan naman ng klase.",Taglish,Neutral,Teaching Delivery,3
+498,Weekly laboratory modules provided crucial practical insights for engineering work.,English,Positive,Lab Work,5
+499,Masyadong nakatutok sa teorya ang kurso at walang praktikal na pagsasanay.,Tagalog,Negative,Course Content,2
+500,The exam had trick questions designed to mislead rather than measure true knowledge.,English,Negative,Examination,1
+502,Engaging teaching methodology keeps all students attentive throughout the lecture.,English,Positive,Teaching Delivery,5
+503,Kulang ang components sa circuit boards kaya napilitang mag-share ang apat na grupo.,Taglish,Negative,Lab Work,2
+504,Transparent ang scoring rubric ng exam kaya malinaw kung paano nakuha ang marka.,Taglish,Positive,Examination,5
+506,"Walang sigla magturo ang propesor, parang napipilitan lamang pumasok araw-araw.",Tagalog,Negative,Teaching Delivery,1
+508,Biglaang nagbigay ng mahirap na departmental exam nang walang sapat na review session.,Taglish,Negative,Examination,2
+509,Makabuluhan at praktikal ang mga babasahin na ibinigay sa bawat linggo.,Tagalog,Positive,Course Content,5
+510,The professor answered student clarifications with patience and detailed analogies.,English,Positive,Teaching Delivery,5
+511,Medyo luma na ang software na naka-install sa lab computers pero nagagamit pa naman.,Taglish,Neutral,Lab Work,3
+512,Patas ang distribusyon ng mga katanungan mula sa madali hanggang sa mahirap.,Tagalog,Positive,Examination,4
+513,The course topics are repetitive and overlap too heavily with previous subjects.,English,Negative,Course Content,2
+514,Laging nahuhuli sa klase ang guro at nagmamadaling tapusin ang mga presentasyon.,Tagalog,Negative,Teaching Delivery,2
+515,Laboratory manuals provide clear step-by-step guidance for every apparatus.,English,Positive,Lab Work,5
+516,Napakalayo ng exam questions sa mga ibinigay na sample exercises sa classroom.,Taglish,Negative,Examination,1
+518,Naaayon sa pambansang kurikulum ang saklaw ng mga paksang tinalakay.,Tagalog,Neutral,Course Content,3
+519,Walang lab technician na tumutulong tuwing nagkakaproblema sa mga makina sa workshop.,Taglish,Negative,Lab Work,2
+521,"Napakalinaw magturo ni Sir, pati advanced mathematical derivations nagiging madali.",Taglish,Positive,Teaching Delivery,5
+523,Maayos ang daloy ng mga laboratory experiment at laging handa ang mga gamit.,Tagalog,Positive,Lab Work,5
+525,Mahusay gumamit ng mga halimbawa mula sa pang-araw-araw na buhay upang magpaliwanag.,Tagalog,Positive,Teaching Delivery,5
+526,The course syllabus provides a balanced blend of academic theory and practical tools.,English,Positive,Course Content,5
+527,Masyadong maingay ang katabing laboratory kaya mahirap marinig ang safety instructions.,Taglish,Neutral,Lab Work,3
+528,"Katamtaman ang haba ng departmental final exam, natapos ng karamihan sa takdang oras.",Tagalog,Neutral,Examination,3
+529,Monotonous delivery made two-hour lecture periods feel exhausting and hard to follow.,English,Negative,Teaching Delivery,2
+530,Sapat ang dami ng kagamitan sa lab upang makagawa nang indibidwal ang bawat mag-aaral.,Tagalog,Positive,Lab Work,5
+531,The course materials include comprehensive reading lists that broaden intellectual understanding.,English,Positive,Course Content,5
+532,Hindi makatarungan ang exam dahil may mga items na galing sa hindi pa natatalakay.,Taglish,Negative,Examination,1
+533,Active discussions and peer feedback sessions created an enjoyable learning environment.,English,Positive,Teaching Delivery,5
+534,Walang internet connection sa computer lab habang kailangan mag-clone ng Git repository.,Taglish,Negative,Lab Work,1
+536,Patas ang pagbibigay ng marka sa pagsusulit at may partial credit sa mahihirap na items.,Tagalog,Positive,Examination,5
+537,The instructor explains complex algorithms with great enthusiasm and clarity.,English,Positive,Teaching Delivery,5
+540,"Masyadong nakakalito ang mga multiple choice choices, halos pare-pareho ang ibig sabihin.",Taglish,Negative,Examination,2
+541,Madaling lapitan si Ma'am pagkatapos ng lecture kapag kailangan ng karagdagang tulong.,Taglish,Positive,Teaching Delivery,5
+542,The course content gives students solid foundational skills for future career paths.,English,Positive,Course Content,5
+543,Luma at marumi ang glassware sa chemistry laboratory kaya madalas contaminated ang samples.,Taglish,Negative,Lab Work,1
+546,Medyo mabilis ang takbo ng mga aralin pero naitawid naman ang kabuuang silabus.,Taglish,Neutral,Course Content,3
+547,Hands-on robotics kits were modern and greatly aided hardware prototyping.,English,Positive,Lab Work,5
+548,"Sobrang higpit sa grading ng exam, kahit tamang concept pero may rounding error zero agad.",Taglish,Negative,Examination,1
+551,"Katamtaman ang bilis ng mga laboratory sessions, sapat para matapos ang data gathering.",Tagalog,Neutral,Lab Work,3
+553,"Walang gana magturo ang lecturer, nagbabasa lang ng notes sa buong duration ng klase.",Taglish,Negative,Teaching Delivery,1
+554,"Masyadong luma ang mga reperensya sa modyul, hindi na tugma sa makabagong teknolohiya.",Tagalog,Negative,Course Content,2
+555,Defective oscilloscopes in the lab caused significant delays during our circuit testing.,English,Negative,Lab Work,2
+556,Malinaw ang mga panuto sa pagsusulit at walang malabong katanungan.,Tagalog,Positive,Examination,5
+557,Effective use of multimedia and interactive polling to keep students engaged.,English,Positive,Teaching Delivery,5
+558,Angkop ang nilalaman ng kurso para sa mga gustong kumuha ng board examination.,Tagalog,Positive,Course Content,5
+559,Kulang sa sapat na bentilasyon ang laboratoryo habang gumagamit ng mga kemikal.,Tagalog,Negative,Lab Work,2
+560,"The departmental exam was fair, balanced, and accurately reflected the entire term.",English,Positive,Examination,5
+561,Matiyagang sumasagot sa mga tanong ng estudyante kahit paulit-ulit na itanong.,Taglish,Positive,Teaching Delivery,5
+562,The syllabus covers too much broad material with very little practical application.,English,Negative,Course Content,2
+563,Maayos ang pamamahagi ng laboratory equipment at bawat mesa ay may kumpletong tools.,Taglish,Positive,Lab Work,5
+564,Maling formula ang nakasulat sa problem sheet ng exam kaya nagulo ang kalkulasyon namin.,Taglish,Negative,Examination,2
+566,Napakalinaw ng module objectives at madaling sundan ang bawat lingguhang gawain.,Taglish,Positive,Course Content,5
+567,Standard laboratory setup with basic equipment suitable for introductory science courses.,English,Neutral,Lab Work,3
+568,Patas ang pagwawasto sa mga pagsusulit at mabilis na naipaskil ang mga resulta.,Tagalog,Positive,Examination,5
+572,The final examination was excessively long with zero time to double-check solutions.,English,Negative,Examination,2
+573,Masiglang nagtuturo si Sir at may mga real-life examples sa bawat topic.,Taglish,Positive,Teaching Delivery,5
+574,Sumunod naman sa karaniwang pamantayan ang nilalaman ng mga aralin.,Tagalog,Neutral,Course Content,3
+575,High-spec computers in the graphic design lab allowed seamless 3D rendering.,English,Positive,Lab Work,5
+576,Makatarungan ang ibinigay na marka ayon sa kalidad ng mga naisumiteng sagot sa eksamen.,Tagalog,Positive,Examination,5
+578,Napapanahon ang mga aralin at may sapat na pagsasanay sa computer programming.,Tagalog,Positive,Course Content,5
+580,The exam had balanced questions ranging from fundamental theory to complex problems.,English,Positive,Examination,5
+581,Laging handa ang guro sa bawat sesyon at bukas sa mga bagong ideya mula sa mag-aaral.,Tagalog,Positive,Teaching Delivery,5
+582,Masyadong maraming redundant readings na hindi naman nagagamit sa mga pagsusulit.,Taglish,Negative,Course Content,2
+583,Laboratory manuals are clearly written with helpful safety warnings and troubleshooting tips.,English,Positive,Lab Work,5
+585,Exceptional lecture pacing with adequate pauses for student questions and reflections.,English,Positive,Teaching Delivery,5
+586,"Napakaganda ng pagkakaayos ng mga aralin sa module, madaling balikan kapag magrereview.",Taglish,Positive,Course Content,5
+588,The multiple choice exam was straightforward and completely free of ambiguous questions.,English,Positive,Examination,5
+589,"Mabilis magturo si Ma'am, hindi na namin ma-absorb yung mga tinuturong concepts.",Taglish,Negative,Teaching Delivery,2
+591,May sapat na chemical reagents para sa bawat experimental group sa klase.,Taglish,Positive,Lab Work,4
+592,Patas at makatwiran ang sakop ng eksaminasyon base sa itinakdang aralin.,Tagalog,Positive,Examination,5
+594,Masyadong mababaw ang pagtalakay sa mga aralin at kulang sa pagsusuri.,Tagalog,Negative,Course Content,2
+595,The laboratory network was offline during our hands-on database assessment.,English,Negative,Lab Work,1
+596,"Katamtaman ang hirap ng midterm exam, halos kapareho ng mga homework assignments.",Taglish,Neutral,Examination,3
+597,"Maayos at may malasakit sa pagtuturo, laging handang magpaliwanag sa nahihirapan.",Tagalog,Positive,Teaching Delivery,5
+598,Rich learning materials featuring industry case studies and current best practices.,English,Positive,Course Content,5
+599,Kumpleto at gumagana lahat ng laboratory equipment sa electronic circuits class.,Taglish,Positive,Lab Work,5
+601,The campus library offers an extensive collection of digital journals and quiet study carrels.,English,Positive,Library Facilities,5
+602,"Masyadong maingay sa second floor ng library, parang tambayan na lang ng mga org.",Taglish,Negative,Library Facilities,2
+605,"Mabilis ang Wi-Fi sa library at napakalamig ng aircon, sarap mag-aral maghapon.",Taglish,Positive,Library Facilities,5
+606,Mababait at matulungin ang mga kawani ng silid-aklatan kapag naghahanap ng libro.,Tagalog,Positive,Library Facilities,4
+607,"The library environment is decent, though reference books for engineering are limited.",English,Neutral,Library Facilities,3
+608,Hindi gumagana ang online catalog ng library kaya mano-mano pa rin ang paghahanap.,Taglish,Negative,Library Facilities,2
+610,The newly renovated discussion rooms provide great spaces for group study and projects.,English,Positive,Library Facilities,5
+611,Sobrang active ng student council at maraming workshops na nakatulong sa leadership skills ko.,Taglish,Positive,Extracurricular,5
+613,"Campus clubs host various events throughout the year, but student participation is mixed.",English,Neutral,Extracurricular,3
+614,"Puro fundraising na lang ang inaatupag ng org, wala namang developmental programs.",Taglish,Negative,Extracurricular,2
+615,Joining the university robotics club gave me valuable hands-on technical experience.,English,Positive,Extracurricular,5
+616,Nakatutulong ang mga paligsahang pampalakasan upang mapatibay ang samahan ng mag-aaral.,Tagalog,Positive,Extracurricular,4
+618,Administrative approvals for student club events take far too long to process.,English,Negative,Extracurricular,2
+621,"Galing magpaliwanag ni Sir, laging may step-by-step example bago magpa-exercise.",Taglish,Positive,Teaching Delivery,5
+622,Walang kahandaan ang guro sa pagtuturo at binabasa lamang ang aklat sa klase.,Tagalog,Negative,Teaching Delivery,1
+624,"Masyadong mabilis maglipat ng slides si Ma'am, hindi pa tapos kopyahin yung notes.",Taglish,Negative,Teaching Delivery,2
+625,The lectures are intellectually stimulating and connect fundamental theory to industry practice.,English,Positive,Teaching Delivery,5
+626,Masigasig na nagpapaliwanag ang guro at tinitiyak na nauunawaan ng lahat ang aralin.,Tagalog,Positive,Teaching Delivery,5
+628,The instructor shows very little enthusiasm and reads verbatim from prepared slide decks.,English,Negative,Teaching Delivery,1
+630,Encourages healthy debate and creates an inclusive environment for student questions.,English,Positive,Teaching Delivery,5
+631,Transparent ang grading rubrics at laging may feedback kung saan pwede mag-improve.,Taglish,Positive,Assessment Fairness,5
+632,Hindi makatwiran ang pagbibigay ng marka dahil may hayagang paboritismo ang guro.,Tagalog,Negative,Assessment Fairness,1
+633,"The grading scheme is consistent with the syllabus, although deductions feel somewhat strict.",English,Neutral,Assessment Fairness,3
+634,Biglang naglagay ng penalty sa submission kahit na-inform naman tungkol sa portal downtime.,Taglish,Negative,Assessment Fairness,2
+636,Makatarungan ang ibinigay na marka batay sa ipinakitang husay sa pag-uulat.,Tagalog,Positive,Assessment Fairness,4
+637,"Sakto lang ang nakuhang grade, tumugma naman sa naging score sa mga problem sets.",Taglish,Neutral,Assessment Fairness,3
+638,The final exam included several trick questions that were never mentioned during lectures.,English,Negative,Assessment Fairness,1
+640,The professor generously awards partial credit when logical steps in computations are shown.,English,Positive,Assessment Fairness,5
+641,Kumpleto ang mga apparatus sa chemistry lab at maayos ang supervision ng laboratory tech.,Taglish,Positive,Lab Work,5
+644,"Kulang sa computers sa IT lab, kailangang tatlo kaming mag-share sa isang workstation.",Taglish,Negative,Lab Work,2
+645,Modern digital microscopes and prepared slides made the pathology lab sessions very engaging.,English,Positive,Lab Work,5
+646,Malinis at maayos ang pasilidad ng laboratoryo bago at pagkatapos ng bawat pagsasanay.,Tagalog,Positive,Lab Work,4
+650,Hands-on exercises in the networking lab provided practical skills directly applicable to industry.,English,Positive,Lab Work,5
+651,Madaling mag-borrow ng reference books kapag may kailangan para sa research paper.,Taglish,Positive,Library Facilities,4
+652,Mausok at maalikabok ang ilang bahagi ng aklatan kaya mahirap manatili nang matagal.,Tagalog,Negative,Library Facilities,2
+653,"Quiet study spaces are available, but charging outlets are scarce near the desks.",English,Neutral,Library Facilities,3
+654,"Laging sira ang aircon sa third floor ng library, sobrang init kapag hapon.",Taglish,Negative,Library Facilities,1
+655,The online library portal allows easy access to scientific databases from off-campus.,English,Positive,Library Facilities,5
+656,Tahimik at kaaya-aya ang kapaligiran sa aklatan para sa mga naghahanda sa pagsusulit.,Tagalog,Positive,Library Facilities,5
+657,"Okay naman ang collection ng libro, medyo matagal lang mag-process ng library card renewal.",Taglish,Neutral,Library Facilities,3
+659,Kulang ang espasyo para sa mga mag-aaral tuwing nalalapit ang panapos na pagsusulit.,Tagalog,Negative,Library Facilities,1
+660,Comfortable seating and adequate lighting make long study hours quite manageable.,English,Positive,Library Facilities,4
+661,Napakaraming org fair activities na nagbigay ng opportunity para makakilala ng new friends.,Taglish,Positive,Extracurricular,5
+662,Hindi pantay ang pamamahagi ng pondo sa mga samahan ng mag-aaral sa pamantasan.,Tagalog,Negative,Extracurricular,2
+663,"The range of student organizations is acceptable, though funding for club initiatives is modest.",English,Neutral,Extracurricular,3
+664,"Puro politika sa student council, nawawala na yung tunay na purpose ng mga programs.",Taglish,Negative,Extracurricular,1
+668,Conflicts between club schedules and mandatory class requirements were handled poorly.,English,Negative,Extracurricular,2
+669,Mabigat ang sinisingil na bayarin sa organisasyon nang walang malinaw na ulat ng pananalapi.,Tagalog,Negative,Extracurricular,1
+670,Intramural sports events foster strong camaraderie and sportsmanship across departments.,English,Positive,Extracurricular,4
+672,Hindi pumapasok sa tamang oras ang guro at madalas na mag-iwan lamang ng takdang-aralin.,Tagalog,Negative,Teaching Delivery,1
+674,"Hindi organized ang Canvas modules ni Ma'am, nakakalito kung aling file ang unang babasahin.",Taglish,Negative,Teaching Delivery,2
+676,Magalang at mapagkumbaba ang guro sa pakikitungo sa mga katanungan ng mag-aaral.,Tagalog,Positive,Teaching Delivery,5
+678,Lectures lack structure and often veer into off-topic personal anecdotes.,English,Negative,Teaching Delivery,1
+679,Masyadong mabilis magsalita ang tagapagturo kaya nahuhuli ang klase sa pagtatala.,Tagalog,Negative,Teaching Delivery,2
+682,Hindi makatwiran ang biglaang pagpapalit ng batayan sa pagmamarka sa gitna ng semestre.,Tagalog,Negative,Assessment Fairness,1
+683,"The midterm exam covered the required syllabus, but the time limit was quite tight.",English,Neutral,Assessment Fairness,3
+686,Patas ang pagtrato sa bawat mag-aaral nang walang anumang kinikilingan sa klase.,Tagalog,Positive,Assessment Fairness,4
+687,"Average difficulty ang exam, halos kapareho lang ng mga sample exercise sa module.",Taglish,Neutral,Assessment Fairness,3
+688,Deductions for formatting errors were disproportionate compared to the actual analytical content.,English,Negative,Assessment Fairness,2
+690,Prompt return of graded papers allowed students to learn effectively from their mistakes.,English,Positive,Assessment Fairness,5
+691,Bago ang mga equipment sa physics lab kaya accurate ang naging results ng experiment.,Taglish,Positive,Lab Work,5
+692,Kulang ang mga pananggalang at kagamitang pangkaligtasan sa loob ng laboratoryo.,Tagalog,Negative,Lab Work,1
+694,Laging mabagal ang internet connection sa computer laboratory habang may coding exercise.,Taglish,Negative,Lab Work,2
+695,The lab instructor provided excellent guidance on proper calibration techniques.,English,Positive,Lab Work,5
+696,Kumpleto ang mga materyales para sa pagsusuri ng mga biological specimen.,Tagalog,Positive,Lab Work,5
+697,"Katamtaman lang ang kondisyon ng mga computers sa lab, nagagamit naman sa programming.",Taglish,Neutral,Lab Work,3
+700,Working in assigned pairs helped develop practical laboratory collaboration skills.,English,Positive,Lab Work,4
+701,May dedicated quiet zone sa library na sobrang conducive para sa thesis writing.,Taglish,Positive,Library Facilities,5
+702,Sira ang sistema ng pagpapahiram ng mga aklat at laging sarado ang silid-aklatan.,Tagalog,Negative,Library Facilities,1
+704,Pahirapan maghanap ng available na socket sa library para sa laptop charging.,Taglish,Negative,Library Facilities,2
+705,The electronic thesis repository and research guides provided by the library are invaluable.,English,Positive,Library Facilities,5
+706,Maaliwalas at malinis ang mga lamesa sa loob ng silid-aklatan ng pamantasan.,Tagalog,Positive,Library Facilities,4
+707,"Sakto lang ang bilis ng Wi-Fi sa library, minsan nagdidisconnect kapag maraming tao.",Taglish,Neutral,Library Facilities,3
+709,Mabaho ang palikuran na katabi ng aklatan kaya hindi kaaya-ayang magbasa roon.,Tagalog,Negative,Library Facilities,1
+712,Kulang sa koordinasyon ang mga palatuntunan ng mag-aaral kaya nagkakasabay-sabay.,Tagalog,Negative,Extracurricular,2
+713,Student organizations provide moderate networking opportunities within specific majors.,English,Neutral,Extracurricular,3
+714,"Sayang ang ibinayad na org fee, wala namang maayos na aktibidad na naipatupad.",Taglish,Negative,Extracurricular,1
+715,Volunteering through university charity outreach expanded my cultural awareness and empathy.,English,Positive,Extracurricular,5
+716,Masigla ang pakikilahok ng mga mag-aaral sa pagtataguyod ng sining at panitikan.,Tagalog,Positive,Extracurricular,5
+717,"Normal lang ang takbo ng mga student club activities, halos pareho taon-taon.",Taglish,Neutral,Extracurricular,3
+719,May palakasan sa pagpili ng mga opisyal sa samahan ng mga mag-aaral.,Tagalog,Negative,Extracurricular,1
+720,Annual cultural festivals celebrate regional heritage and promote unity across campuses.,English,Positive,Extracurricular,4
+722,Laging huli sa pagdating ang guro at maagang nagpapakawala ng klase.,Tagalog,Negative,Teaching Delivery,1
+723,Lectures cover standard textbook material without significant practical deviation.,English,Neutral,Teaching Delivery,3
+726,Mahusay magpaliwanag ang guro at laging naglalaan ng oras para sa paglilinaw.,Tagalog,Positive,Teaching Delivery,5
+727,"Maayos naman ang pagtuturo, sakto lang sa syllabus pero medyo monotone ang boses.",Taglish,Neutral,Teaching Delivery,3
+728,Refuses to answer clarifying questions during lectures and dismisses student concerns.,English,Negative,Teaching Delivery,1
+729,Kulang sa sigla ang talakayan kaya inaantok ang karamihan sa mga mag-aaral.,Tagalog,Negative,Teaching Delivery,2
+730,Provides insightful real-world examples that bring textbook theories to life.,English,Positive,Teaching Delivery,5
+732,Hindi makatwiran ang pagbibigay ng mababang marka nang walang anumang paliwanag.,Tagalog,Negative,Assessment Fairness,1
+733,Assessment questions adequately reflect homework problems with comparable difficulty.,English,Neutral,Assessment Fairness,3
+734,Hindi tugma ang binigay na reviewer sa mga tanong na aktwal na lumabas sa midterm.,Taglish,Negative,Assessment Fairness,2
+735,The comprehensive grading rubric ensured consistent evaluation across all term papers.,English,Positive,Assessment Fairness,5
+736,Makatarungan ang pagsusuri sa bawat proyekto batay sa itinakdang pamantayan.,Tagalog,Positive,Assessment Fairness,5
+737,"Sakto lang ang nakuhang score, tumutugma naman sa naging performance sa reporting.",Taglish,Neutral,Assessment Fairness,3
+738,The final exam placed undue emphasis on minor details mentioned only in passing.,English,Negative,Assessment Fairness,2
+740,Offers constructive written feedback on analytical essays to support student improvement.,English,Positive,Assessment Fairness,5
+741,Mabilis at high-spec ang mga computers sa IT lab kaya smooth ang machine problems.,Taglish,Positive,Lab Work,5
+744,"Mainit sa loob ng lab dahil mahina ang aircon, nakakaantok mag-execute ng experiments.",Taglish,Negative,Lab Work,2
+745,Hands-on laboratory simulations reinforced core engineering principles effectively.,English,Positive,Lab Work,5
+746,Kumpleto at ligtas ang mga gamit sa pagsasagawa ng mga eksperimento sa kemika.,Tagalog,Positive,Lab Work,5
+747,"Okay naman ang mga lab sessions, minsan lang nagkukulang sa sample chemicals.",Taglish,Neutral,Lab Work,3
+751,Sobrang accommodating ng librarians kapag nagpapatulong mag-request ng journal articles.,Taglish,Positive,Library Facilities,5
+752,Masyadong madilim ang ilaw sa mga sulok ng aklatan kaya mahirap magbasa ng libro.,Tagalog,Negative,Library Facilities,2
+753,Study areas are sufficient during regular weeks but crowded during exam periods.,English,Neutral,Library Facilities,3
+754,Laging offline ang computer terminal para sa book search sa loob ng library.,Taglish,Negative,Library Facilities,1
+755,The silent study room provides an optimal environment for intense concentration.,English,Positive,Library Facilities,5
+757,"Puwede na ang library facilities, kailangan lang dagdagan ang mga electric outlets.",Taglish,Neutral,Library Facilities,3
+758,Strict borrowing limits make it difficult to gather enough sources for extensive papers.,English,Negative,Library Facilities,2
+761,"Ang ganda ng sports fest, naging avenue para makipag-bonding sa ibang batch.",Taglish,Positive,Extracurricular,5
+762,Walang suporta ang pamantasan sa pamasahe ng mga kalahok sa pambansang paligsahan.,Tagalog,Negative,Extracurricular,1
+763,"Extracurricular offerings are adequate, though marketing for campus events is lacking.",English,Neutral,Extracurricular,3
+765,Student government programs addressed practical student welfare concerns effectively.,English,Positive,Extracurricular,5
+766,Kapaki-pakinabang ang mga palihan sa pamumuno na itinaguyod ng kapisanan.,Tagalog,Positive,Extracurricular,4
+767,"Karaniwan lang ang mga booth sa college fair, walang gaanong bago o kakaiba.",Taglish,Neutral,Extracurricular,3
+769,Sapilitang pinagbabayad ang mga estudyante para sa aktibidad na hindi dinaluhan.,Tagalog,Negative,Extracurricular,1
+772,Hindi pinakikinggan ng guro ang mga hinaing at katanungan ng klase hinggil sa aralin.,Tagalog,Negative,Teaching Delivery,1
+773,"Presents syllabus content steadily, though discussions rarely venture beyond core texts.",English,Neutral,Teaching Delivery,3
+775,Passionate teaching style that inspires genuine curiosity and academic rigor.,English,Positive,Teaching Delivery,5
+779,Masyadong mahigpit ang guro kaya natatakot magsalita o magtanong ang mga mag-aaral.,Tagalog,Negative,Teaching Delivery,2
+780,Incorporates interactive digital tools that make lectures lively and informative.,English,Positive,Teaching Delivery,4
+781,Nagbibigay ng second chance para i-correct ang lab reports bago i-finalize ang grade.,Taglish,Positive,Assessment Fairness,5
+782,Hindi patas ang paggagawad ng puntos sa mga pagsusulit dahil may pinapaboran.,Tagalog,Negative,Assessment Fairness,1
+783,The grading distribution adheres closely to normal academic departmental curves.,English,Neutral,Assessment Fairness,3
+784,Masyadong malaki ang bawas sa minor formatting errors sa final capstone document.,Taglish,Negative,Assessment Fairness,2
+787,"Sakto lang ang level ng exam, hindi sobrang dali at hindi rin imposibleng ipasa.",Taglish,Neutral,Assessment Fairness,3
+788,Pop quizzes were administered before key formulas had been practiced in class.,English,Negative,Assessment Fairness,2
+789,Walang malinaw na rubrik sa pagtutuos ng marka sa pinal na pagsusulit.,Tagalog,Negative,Assessment Fairness,1
+791,Kumpleto ang mga measuring tools sa civil engineering lab kaya pulido ang surveying.,Taglish,Positive,Lab Work,5
+792,Sira ang bentilador sa laboratoryo kaya hindi makahinga nang maayos dahil sa kemikal.,Tagalog,Negative,Lab Work,1
+794,Kulang sa lisensya ang software sa lab kaya hindi magamit lahat ng programming features.,Taglish,Negative,Lab Work,2
+795,Well-structured experiment protocols fostered confidence in performing complex assays.,English,Positive,Lab Work,5
+797,"Normal lang ang takbo ng mga lab sessions, natatapos naman ang experiment sa takdang oras.",Taglish,Neutral,Lab Work,3
+798,Faulty wiring in the electronics lab led to repeated blown fuses during testing.,English,Negative,Lab Work,1
+800,High-quality instrumentation enabled precise data collection for our capstone research.,English,Positive,Lab Work,5

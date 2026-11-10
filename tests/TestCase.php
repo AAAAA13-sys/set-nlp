@@ -363,7 +363,9 @@ namespace Tests {
                         'Assessment & Grading',
                         'Classroom Management',
                         'Professional Conduct',
-                        'Student Support & Mentorship'
+                        'Student Support & Mentorship',
+                        'Unclassified / Needs Review',
+                        'Unclassified'
                     )),
                     recorded_date TEXT NOT NULL,
                     professor_questions_json TEXT NULL

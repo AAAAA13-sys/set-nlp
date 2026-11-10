@@ -27,6 +27,9 @@ from .engine import (
     MAX_COMMENT_LENGTH,
     MAX_PROFESSOR_QUESTIONS,
     PEDAGOGICAL_TAGS,
+    TAG_UNCLASSIFIED,
+    ALL_PEDAGOGICAL_TAGS,
+    get_engine_provenance,
     analyze_batch,
     analyze_comment,
     analyze_plp_section_dossier,
@@ -78,14 +81,22 @@ def handle_request(method: str, path: str, body: Any = None) -> tuple[int, dict[
     if clean_path == "/health":
         if http_method != "GET":
             return 405, {"error": "Method not allowed."}
+        prov = get_engine_provenance()
         return 200, {
             "status": "ok",
             "service": "evaluatech-nlp-analytics",
-            "version": "1.1.0",
-            "nlp_engine": "calamanCy+VADER",
-            "calamancy_model": CALAMANCY_DEFAULT_MODEL,
-            "calamancy_repo": CALAMANCY_REPO_URL,
+            "version": "1.2.0",
+            "nlp_engine": prov["nlp_engine"],
+            "runtime_engine": prov["runtime_engine"],
+            "calamancy_loaded": prov["calamancy_loaded"],
+            "fallback_heuristic": prov["fallback_heuristic"],
+            "vader_loaded": prov["vader_loaded"],
+            "loaded_dependencies": prov["dependencies"],
+            "calamancy_model": prov["calamancy_model"],
+            "calamancy_repo": prov["calamancy_repo"],
             "pedagogical_tags": list(PEDAGOGICAL_TAGS),
+            "unclassified_tag": TAG_UNCLASSIFIED,
+            "all_pedagogical_tags": list(ALL_PEDAGOGICAL_TAGS),
             "likert_clusters": list(FIVE_LIKERT_CLUSTERS),
             "max_professor_questions": MAX_PROFESSOR_QUESTIONS,
         }

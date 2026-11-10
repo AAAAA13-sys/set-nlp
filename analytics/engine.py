@@ -56,6 +56,8 @@ PEDAGOGICAL_TAGS: tuple[str, ...] = (
     "Student Support & Mentorship",
 )
 FIVE_PEDAGOGICAL_CLUSTERS: tuple[str, ...] = PEDAGOGICAL_TAGS
+TAG_UNCLASSIFIED: str = "Unclassified / Needs Review"
+ALL_PEDAGOGICAL_TAGS: tuple[str, ...] = PEDAGOGICAL_TAGS + (TAG_UNCLASSIFIED,)
 
 FIVE_LIKERT_CLUSTERS: tuple[dict[str, Any], ...] = (
     {
@@ -256,6 +258,22 @@ SENTIMENT_LEXICON: dict[str, float] = {
     "eksperto": 2.4,
     "disiplinado": 2.2,
     "aktibo": 2.0,
+    # High-Yield Higher-Education Tagalog/Taglish Positive Terms
+    "makatarungan": 2.4,
+    "matino": 2.2,
+    "marunong": 2.0,
+    "maganda": 2.3,
+    "ganda": 2.1,
+    "kumpleto": 2.0,
+    "sapat": 1.5,
+    "sulit": 2.3,
+    "paborito": 2.5,
+    "remedial": 1.8,
+    "bonus": 1.8,
+    "maasahan": 2.2,
+    "maalalahanin": 2.3,
+    "konsiderasyon": 2.0,
+    "paliwanag": 2.0,
     # Negative (English General + Higher-Ed Specific)
     "terrible": -3.2,
     "horrible": -3.2,
@@ -370,6 +388,36 @@ SENTIMENT_LEXICON: dict[str, float] = {
     "labo": -2.0,
     "bastos": -2.9,
     "pabaya": -2.5,
+    # High-Yield Higher-Education Tagalog/Taglish Negative Terms
+    "terror": -2.8,
+    "galit": -2.4,
+    "nagagalit": -2.5,
+    "anxious": -2.3,
+    "nakaka-anxious": -2.4,
+    "tamad": -2.6,
+    "lutang": -2.4,
+    "petiks": -2.3,
+    "inip": -1.8,
+    "nakakainip": -2.0,
+    "boring": -2.0,
+    "bagsak": -2.2,
+    "bumagsak": -2.2,
+    "maramot": -2.4,
+    "sira": -2.2,
+    "disconnected": -2.2,
+    "overtime": -1.8,
+    "vague": -1.9,
+    "unapproachable": -2.5,
+    "bias": -2.4,
+    "biased": -2.4,
+    "paboritismo": -2.6,
+    "unresponsive": -2.3,
+    "unreasonable": -2.4,
+    "unfair": -2.4,
+    "nahihirapan": -1.8,
+    "hirap": -1.8,
+    "layo": -1.5,
+    "napakalayo": -2.2,
 }
 
 # Multi-word academic sentiment phrase adjustments (English + Taglish)
@@ -409,6 +457,38 @@ SENTIMENT_PHRASES: list[tuple[str, float]] = [
     ("clear rubric", 2.0),
     ("no rubric", -2.0),
     ("always available", 2.2),
+    ("hindi makatarungan", -2.5),
+    ("hindi marunong", -2.2),
+    ("hindi tugma", -2.3),
+    ("hindi nagtuturo", -2.6),
+    ("hindi nagbibigay", -2.0),
+    ("walang konsiderasyon", -2.5),
+    ("walang pakialam", -2.6),
+    ("walang kwenta", -3.0),
+    ("walang rubrics", -2.0),
+    ("walang breakdown", -2.0),
+    ("walang paliwanag", -2.2),
+    ("terror teacher", -2.8),
+    ("ang ganda", 2.3),
+    ("ang bilis", -1.8),
+    ("ang hirap", -1.9),
+    ("sakto lang", 0.0),
+    ("ok lang", 0.0),
+    ("average lang", 0.0),
+    ("madaling lapitan", 2.4),
+    ("marunong makinig", 2.2),
+    ("nag-oovertime", -1.9),
+    ("surprise quiz", -1.8),
+    ("pop quiz", -1.5),
+    ("hands-on", 2.0),
+    ("real-world application", 2.2),
+    ("sira ang", -2.2),
+    ("kulang sa", -2.0),
+    ("sobrang hirap", -2.5),
+    ("sobrang dami", -2.2),
+    ("tambak ang", -2.4),
+    ("second chance", 1.8),
+    ("partial points", 1.6),
 ]
 
 # Degree modifiers / boosters (English + Tagalog calamanCy intensifiers)
@@ -586,6 +666,14 @@ DOMAIN_LEXICONS: dict[str, dict[str, float]] = {
         "hands on": 2.0,
         "lab": 1.5,
         "laboratory": 1.6,
+        "guro": 2.2,
+        "nagtuturo": 2.4,
+        "magturo": 2.3,
+        "leksyon": 2.0,
+        "lab work": 2.2,
+        "laboratory exercise": 2.2,
+        "real-world": 2.2,
+        "real-world application": 2.4,
     },
     "Assessment & Grading": {
         "quiz": 2.6,
@@ -645,6 +733,14 @@ DOMAIN_LEXICONS: dict[str, dict[str, float]] = {
         "papers": 1.6,
         "report": 1.4,
         "over a month": 2.0,
+        "sulit": 2.2,
+        "rubrik": 2.8,
+        "breakdown": 2.2,
+        "partial points": 2.4,
+        "second chance": 2.2,
+        "bonus": 2.0,
+        "remedial": 2.2,
+        "makatarungan": 2.4,
     },
     "Classroom Management": {
         "arrive": 2.1,
@@ -706,6 +802,8 @@ DOMAIN_LEXICONS: dict[str, dict[str, float]] = {
         "policy": 1.8,
         "policies": 1.8,
         "rules": 1.9,
+        "nag-oovertime": 2.4,
+        "pumasok": 2.2,
     },
     "Professional Conduct": {
         "respect": 2.6,
@@ -769,6 +867,14 @@ DOMAIN_LEXICONS: dict[str, dict[str, float]] = {
         "listens": 2.1,
         "caring": 2.3,
         "supportive": 2.1,
+        "terror": 2.8,
+        "galit": 2.6,
+        "nagagalit": 2.6,
+        "paboritismo": 2.7,
+        "tamad": 2.6,
+        "lutang": 2.4,
+        "petiks": 2.4,
+        "maramot": 2.5,
     },
     "Student Support & Mentorship": {
         "consultation": 2.8,
@@ -810,14 +916,106 @@ DOMAIN_LEXICONS: dict[str, dict[str, float]] = {
         "student support": 2.9,
         "welfare": 2.3,
         "accommodating": 2.5,
+        "lapitan": 2.6,
+        "madaling lapitan": 2.8,
+        "makinig": 2.4,
+        "marunong makinig": 2.6,
+        "alaga": 2.3,
+        "maalalahanin": 2.6,
     },
 }
+
+FACILITY_EXTRACURRICULAR_KEYWORDS: frozenset[str] = frozenset(
+    {
+        "library",
+        "silid-aklatan",
+        "librarian",
+        "reference books",
+        "digital library",
+        "reserve section",
+        "journals",
+        "aircon",
+        "air conditioning",
+        "electric fan",
+        "wifi",
+        "wi-fi",
+        "internet",
+        "university portal",
+        "portal",
+        "projector",
+        "whiteboard",
+        "chairs",
+        "tables",
+        "comfort room",
+        "restroom",
+        "cr",
+        "extracurricular",
+        "extracurricular activities",
+        "campus organizations",
+        "campus organization",
+        "organization",
+        "organizations",
+        "club",
+        "clubs",
+        "varsity",
+        "leadership training",
+        "leadership seminar",
+        "accreditation process",
+        "bureaucracy",
+        "campus",
+        "facilities",
+        "facility",
+    }
+)
 
 _TOKEN_RE = re.compile(r"[A-Za-z0-9]+(?:'[A-Za-z0-9]+|-[A-Za-z0-9]+)*")
 
 # Loaded calamanCy pipeline cache (if installed in environment)
 _CALAMANCY_NLP: Any = None
 _CALAMANCY_LOAD_ATTEMPTED: bool = False
+_VADER_ANALYZER_INSTANCE: Any = None
+
+
+def _get_vader_analyzer() -> Any:
+    """Return a cached lexicon-augmented VADER analyzer instance."""
+    global _VADER_ANALYZER_INSTANCE
+    if _VADER_ANALYZER_INSTANCE is None and _VaderAnalyzer is not None:
+        _VADER_ANALYZER_INSTANCE = _VaderAnalyzer()
+        _VADER_ANALYZER_INSTANCE.lexicon.update(SENTIMENT_LEXICON)
+    return _VADER_ANALYZER_INSTANCE
+
+
+def is_calamancy_active() -> bool:
+    """Return whether real trained calamanCy spaCy pipeline is actively loaded."""
+    return _get_calamancy_pipeline() is not None
+
+
+def get_engine_provenance() -> dict[str, Any]:
+    """Accurately report the active NLP engine, loaded dependencies, and fallback status."""
+    calamancy_active = is_calamancy_active()
+    spacy_installed = False
+    try:
+        import spacy  # type: ignore[import-not-found]
+
+        spacy_installed = True
+    except ImportError:
+        spacy_installed = False
+
+    return {
+        "nlp_engine": "calamanCy+VADER",
+        "runtime_engine": "calamanCy+VADER" if calamancy_active else "RuleBased+VADER (Heuristic Fallback)",
+        "calamancy_loaded": calamancy_active,
+        "vader_loaded": _VaderAnalyzer is not None,
+        "fallback_heuristic": not calamancy_active,
+        "calamancy_model": CALAMANCY_DEFAULT_MODEL if calamancy_active else None,
+        "calamancy_repo": CALAMANCY_REPO_URL,
+        "scoring_combination": "0.60*rule + 0.40*vader (blended when both fire; fallback to non-zero)",
+        "dependencies": {
+            "vaderSentiment": _VaderAnalyzer is not None,
+            "calamancy": _calamancy_lib is not None,
+            "spacy": spacy_installed,
+        },
+    }
 
 
 def _get_calamancy_pipeline() -> Any:
@@ -1130,36 +1328,49 @@ def _compute_rule_based_polarity(text: str) -> float:
         punct_boost = exclamations * 0.292
         total_valence += punct_boost if total_valence > 0 else -punct_boost
 
-    if total_valence == 0.0:
-        return 0.0
-
     # VADER normalization: x / sqrt(x^2 + alpha)
-    compound = total_valence / math.sqrt((total_valence * total_valence) + VADER_ALPHA)
+    rule_compound = 0.0
+    if total_valence != 0.0:
+        rule_compound = total_valence / math.sqrt((total_valence * total_valence) + VADER_ALPHA)
 
-    # If external vaderSentiment is installed, blend with lexicon-augmented VADER
-    if _VaderAnalyzer is not None:
-        analyzer = _VaderAnalyzer()
-        analyzer.lexicon.update(SENTIMENT_LEXICON)
+    # Score with cached lexicon-augmented VADER
+    analyzer = _get_vader_analyzer()
+    vader_compound = 0.0
+    if analyzer is not None:
         vader_compound = analyzer.polarity_scores(cleaned)["compound"]
-        if vader_compound != 0.0:
-            compound = (compound * 0.65) + (vader_compound * 0.35)
+
+    if rule_compound != 0.0 and vader_compound != 0.0:
+        compound = (rule_compound * 0.60) + (vader_compound * 0.40)
+    elif rule_compound != 0.0:
+        compound = rule_compound
+    elif vader_compound != 0.0:
+        compound = vader_compound
+    else:
+        compound = 0.0
 
     compound = max(-1.0, min(1.0, compound))
     return round(compound, 4)
 
 
 def classify_pedagogical_domain(text: str) -> tuple[str, float, list[str], dict[str, float]]:
-    """Classify a student comment into one of the five pedagogical Likert clusters."""
+    """Classify a student comment into one of the five pedagogical Likert clusters, or Unclassified."""
     cleaned = _normalize_whitespace(text)
     if not cleaned:
         empty_scores = {tag: 0.0 for tag in PEDAGOGICAL_TAGS}
-        return "Pedagogical Delivery", 0.25, [], empty_scores
+        return TAG_UNCLASSIFIED, 0.0, [], empty_scores
 
     lowered = cleaned.lower()
     if lowered in _BENCHMARK_CALIBRATIONS:
         _, tag, bench_keywords = _BENCHMARK_CALIBRATIONS[lowered]
         scores = {t: (10.0 if t == tag else 0.0) for t in PEDAGOGICAL_TAGS}
         return tag, 0.95, list(bench_keywords), scores
+
+    # Check for non-pedagogical facility or extracurricular signals
+    facility_matches = [
+        kw
+        for kw in FACILITY_EXTRACURRICULAR_KEYWORDS
+        if (" " in kw and kw in lowered) or (kw in _TOKEN_RE.findall(lowered))
+    ]
 
     tokens = _TOKEN_RE.findall(lowered)
     lemmas = [lemmatize_calamancy_token(tok) for tok in tokens]
@@ -1192,8 +1403,12 @@ def classify_pedagogical_domain(text: str) -> tuple[str, float, list[str], dict[
     best_score = tag_scores[best_tag]
     total_score = sum(tag_scores.values())
 
-    if best_score <= 0.0:
-        return "Pedagogical Delivery", 0.35, [], tag_scores
+    # If facility/extracurricular feedback without strong teacher pedagogy keywords
+    if facility_matches and (best_score < 2.0 or not matched_by_tag[best_tag]):
+        return TAG_UNCLASSIFIED, 0.85, facility_matches, tag_scores
+
+    if best_score <= 0.0 or not matched_by_tag[best_tag]:
+        return TAG_UNCLASSIFIED, 0.0, [], tag_scores
 
     share = best_score / total_score if total_score > 0 else 1.0
     magnitude_boost = min(0.30, best_score / 18.0)
@@ -1248,13 +1463,18 @@ def analyze_comment(text: Any) -> dict[str, Any]:
     pedagogical_tag, confidence, keywords, _ = classify_pedagogical_domain(comment_str)
     calamancy_meta = extract_calamancy_features(comment_str)
 
+    prov = get_engine_provenance()
     result: dict[str, Any] = {
         "polarity": polarity,
         "valence": valence,
         "pedagogical_tag": pedagogical_tag,
         "confidence": confidence,
         "keywords": keywords,
-        "nlp_engine": "calamanCy+VADER",
+        "nlp_engine": prov["nlp_engine"],
+        "runtime_engine": prov["runtime_engine"],
+        "calamancy_loaded": prov["calamancy_loaded"],
+        "fallback_heuristic": prov["fallback_heuristic"],
+        "runtime_provenance": prov,
         "calamancy": calamancy_meta,
     }
     if item_id is not None:
@@ -1554,6 +1774,7 @@ def analyze_batch(comments: Iterable[Any] | None) -> list[dict[str, Any]]:
 def summarize_comments(comments: Iterable[Any] | None) -> dict[str, Any]:
     """Aggregate sentiment distribution and pedagogical tag breakdown across comments."""
     tag_breakdown: dict[str, int] = {tag: 0 for tag in PEDAGOGICAL_TAGS}
+    unclassified_count = 0
 
     if comments is None or isinstance(comments, (str, bytes)):
         items: list[Any] = []
@@ -1588,6 +1809,7 @@ def summarize_comments(comments: Iterable[Any] | None) -> dict[str, Any]:
             "mean_polarity": 0.0,
             "primary_tag": "Pedagogical Delivery",
             "primary_negative_tag": "Pedagogical Delivery",
+            "unclassified_count": 0,
             "tag_breakdown": tag_breakdown,
             "watchlist_flagged": False,
         }
@@ -1601,16 +1823,18 @@ def summarize_comments(comments: Iterable[Any] | None) -> dict[str, Any]:
     for entry in analyzed:
         valence = entry.get("valence", "Neutral")
         tag = entry.get("pedagogical_tag", "Pedagogical Delivery")
-        if tag not in tag_breakdown:
-            tag = "Pedagogical Delivery"
-        tag_breakdown[tag] += 1
+        if tag == TAG_UNCLASSIFIED or tag not in tag_breakdown:
+            unclassified_count += 1
+        else:
+            tag_breakdown[tag] += 1
         polarity_sum += float(entry.get("polarity", 0.0))
 
         if valence == "Positive":
             positive_count += 1
         elif valence == "Negative":
             negative_count += 1
-            negative_tag_counts[tag] += 1
+            if tag in negative_tag_counts:
+                negative_tag_counts[tag] += 1
         else:
             neutral_count += 1
 
@@ -1642,6 +1866,7 @@ def summarize_comments(comments: Iterable[Any] | None) -> dict[str, Any]:
         "mean_polarity": mean_polarity,
         "primary_tag": primary_tag,
         "primary_negative_tag": primary_negative_tag,
+        "unclassified_count": unclassified_count,
         "tag_breakdown": tag_breakdown,
         "watchlist_flagged": negative_pct > 35.0,
     }

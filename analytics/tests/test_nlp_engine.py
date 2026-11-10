@@ -14,6 +14,8 @@ from analytics.engine import (
     FIVE_LIKERT_CLUSTERS,
     MAX_PROFESSOR_QUESTIONS,
     PEDAGOGICAL_TAGS,
+    TAG_UNCLASSIFIED,
+    ALL_PEDAGOGICAL_TAGS,
     VALENCE_LABELS,
     analyze_batch,
     analyze_comment,
@@ -248,21 +250,21 @@ class EvaluaTechNLPEngineTestSuite(unittest.TestCase):
             result = analyze_comment(text)
             self.assertEqual(result["polarity"], 0.0)
             self.assertEqual(result["valence"], "Neutral")
-            self.assertIn(result["pedagogical_tag"], PEDAGOGICAL_TAGS)
+            self.assertEqual(result["pedagogical_tag"], TAG_UNCLASSIFIED)
             self.assertEqual(result["keywords"], [])
 
     def test_27_symbol_and_punctuation_only_comments_handled_gracefully(self) -> None:
         result = analyze_comment("??? --- ... !!! @@@ ###")
         self.assertEqual(result["polarity"], 0.0)
         self.assertEqual(result["valence"], "Neutral")
-        self.assertIn(result["pedagogical_tag"], PEDAGOGICAL_TAGS)
+        self.assertEqual(result["pedagogical_tag"], TAG_UNCLASSIFIED)
 
     def test_28_non_string_inputs_coerced_without_exception(self) -> None:
         for raw_input in (None, 12345, ["unexpected"], True):
             result = analyze_comment(raw_input)
             self.assertEqual(result["polarity"], 0.0)
             self.assertEqual(result["valence"], "Neutral")
-            self.assertIn(result["pedagogical_tag"], PEDAGOGICAL_TAGS)
+            self.assertEqual(result["pedagogical_tag"], TAG_UNCLASSIFIED)
 
     def test_29_dict_input_preserves_identifier_and_extracts_text(self) -> None:
         payload = {
@@ -576,6 +578,56 @@ class EvaluaTechNLPEngineTestSuite(unittest.TestCase):
         status_batch, resp_batch = handle_request("POST", "/analyze/batch", oversized_batch)
         self.assertEqual(status_batch, 422)
         self.assertIn("error", resp_batch)
+
+    def test_47_premature_zero_return_fix_allows_vader_to_score(self) -> None:
+        """Verify removal of premature zero return allows VADER to evaluate comments."""
+        # This text contains VADER-recognized sentiment ('disappointed', 'upset')
+        # without triggering any hardcoded benchmark calibration
+        comment = "I was thoroughly disappointed and deeply upset."
+        result = analyze_comment(comment)
+        self.assertNotEqual(result["polarity"], 0.0)
+        self.assertLess(result["polarity"], -0.10)
+        self.assertEqual(result["valence"], "Negative")
+
+    def test_48_unclassified_domain_for_non_pedagogical_feedback(self) -> None:
+        """Verify non-pedagogical facility and extracurricular comments are tagged Unclassified."""
+        library_comment = "The library facilities lack updated reference books and journals."
+        lib_result = analyze_comment(library_comment)
+        self.assertEqual(lib_result["pedagogical_tag"], TAG_UNCLASSIFIED)
+
+        club_comment = "Campus organizations and extracurricular club accreditation involve too much bureaucracy."
+        club_result = analyze_comment(club_comment)
+        self.assertEqual(club_result["pedagogical_tag"], TAG_UNCLASSIFIED)
+
+    def test_49_runtime_provenance_and_accurate_fallback_reporting(self) -> None:
+        """Verify truthful reporting of runtime engine, calamanCy status, and fallback state."""
+        status, health = handle_request("GET", "/health")
+        self.assertEqual(status, 200)
+        self.assertIn("calamancy_loaded", health)
+        self.assertIn("fallback_heuristic", health)
+        self.assertIn("loaded_dependencies", health)
+        self.assertIn("runtime_engine", health)
+        self.assertIn("unclassified_tag", health)
+        self.assertEqual(health["unclassified_tag"], TAG_UNCLASSIFIED)
+
+        # In standard test environment without compiled calamanCy binary, fallback should be accurately reported
+        if not health["calamancy_loaded"]:
+            self.assertTrue(health["fallback_heuristic"])
+            self.assertIn("Fallback", health["runtime_engine"])
+
+        res = analyze_comment("Explains clearly.")
+        self.assertIn("runtime_provenance", res)
+        self.assertIn("calamancy_loaded", res)
+        self.assertIn("fallback_heuristic", res)
+
+    def test_50_blended_scoring_combination_and_bounds(self) -> None:
+        """Verify blended scoring combination formula and strict [-1.0, 1.0] bounds."""
+        from analytics.engine import _compute_rule_based_polarity
+
+        score = _compute_rule_based_polarity("Very clear and truly exceptional explanations!")
+        self.assertGreater(score, 0.50)
+        self.assertLessEqual(score, 1.0)
+        self.assertGreaterEqual(score, -1.0)
 
 
 if __name__ == "__main__":

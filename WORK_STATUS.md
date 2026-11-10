@@ -184,6 +184,17 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
   - Integrated into `package.json` (`npm run test:e2e`) and `scripts/verify-all.ps1` as Tier 4.
   - All 159 automated units across all 5 verification tiers pass 100%.
 
+- [x] **Checkpoint 54:** Project Management Directive: Sentiment Analysis & NLP Corrective Work and Empirical Holdout Validation:
+  - Resolved scoring defects in `analytics/engine.py`: removed the premature return (`if total_valence == 0.0: return 0.0`) that prevented VADER from evaluating 110+ comments.
+  - Implemented dual-stream score combination formula ($0.60 \times \text{rule} + 0.40 \times \text{vader}$ when both fire; fallback to whichever stream provides non-zero polarity).
+  - Extended higher-ed Tagalog/Taglish sentiment lexicon (54 words, 36 multi-token phrases) and cached lexicon-augmented VADER analyzer.
+  - Introduced explicit `Unclassified / Needs Review` domain classification (`TAG_UNCLASSIFIED`), properly isolating campus facilities (library, air conditioning, Wi-Fi, lab equipment) and extracurricular clubs from faculty pedagogical evaluation, eliminating the silent 172-comment coercion into "Pedagogical Delivery".
+  - Established defensible evaluation dataset: 70% Development Partition (560 samples) / 30% Untouched Held-Out Test Partition (240 samples), stratified across 9 strata ($3\text{ Languages} \times 3\text{ Sentiments}$), with exact duplicate rows 202 & 636 bound to Dev (`docs/analysis/dataset_partitions.json`, `docs/analysis/ANNOTATION_GUIDELINES.md`).
+  - Conducted model comparison on untouched test set: Model A (Uncorrected Baseline: 55.00% accuracy, 40.86% negative recall) vs Model B (Corrected Baseline: 58.33% accuracy, 44.09% negative recall) vs Model C (Enhanced Hybrid Pipeline: 62.08% accuracy, 48.39% negative recall, 58.14% Taglish accuracy, 0.072 ms/sample latency).
+  - Produced `docs/analysis/MODEL_COMPARISON_REPORT.md` and updated `AGENTS.md`, accurately reporting runtime provenance (`calamancy_loaded: False`, `fallback_heuristic: True`, `RuleBased+VADER (Heuristic Fallback)`) and strictly repudiating unverified 82–88% accuracy claims.
+  - Added regression unit tests (`test_47`–`test_50`) bringing Python test suite to 50 tests.
+  - Updated Unified Multi-Tier Verification Matrix to 167 automated units (`167 / 167 PASS`, 100%).
+
 ---
 
 ## 6. Multi-Tier Verification Evidence Log
@@ -192,9 +203,9 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
 | :--- | :--- | :--- | :--- | :--- |
 | **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 35 tests (989 assertions) | 35 / 35 | **100% PASS** |
 | **Frontend DOM & UX Suite** | `npm.cmd test` | 72 test groups (76 tests) | 76 / 76 | **100% PASS** |
-| **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 46 unit tests | 46 / 46 | **100% PASS** |
+| **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 50 unit tests | 50 / 50 | **100% PASS** |
 | **Playwright E2E Suite** | `node --test tests/frontend/e2e-interaction.spec.js` | 6 interaction tests | 6 / 6 | **100% PASS** |
-| **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 52 PHP files, 247 sources | 100% clean | **100% PASS** |
+| **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 52 PHP files, 261 sources | 100% clean | **100% PASS** |
 | **Vite Production Bundle** | `npm.cmd run build` | 91 modules | Zero `.map` files | **100% PASS** |
-| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 159 automated units | 159 / 159 | **100% PASS** |
+| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 167 automated units | 167 / 167 | **100% PASS** |
 
