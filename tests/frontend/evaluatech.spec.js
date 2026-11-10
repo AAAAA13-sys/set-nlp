@@ -1723,6 +1723,12 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(deanViewSfc.includes('EvaluationRubricModal'), 'EvaluationRubricModal imported in Dean');
       assert.ok(deanViewSfc.includes('data-testid="dean-open-rubric-btn"'), 'Dean open rubric button');
       assert.ok(deanViewSfc.includes('showRubricModal = true'), 'Dean showRubricModal trigger');
+
+      // 4. Faculty Dashboard Integration
+      const facultyViewSfc = readResourceFile('views/FacultyDashboardView.vue');
+      assert.ok(facultyViewSfc.includes('EvaluationRubricModal'), 'EvaluationRubricModal imported in Faculty');
+      assert.ok(facultyViewSfc.includes('data-testid="faculty-open-rubric-btn"'), 'Faculty open rubric button');
+      assert.ok(facultyViewSfc.includes('showRubricModal = true'), 'Faculty showRubricModal trigger');
     });
   });
 

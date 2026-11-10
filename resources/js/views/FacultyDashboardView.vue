@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import ErrorRecoveryBanner from '../components/ErrorRecoveryBanner.vue';
+import EvaluationRubricModal from '../components/EvaluationRubricModal.vue';
 import SkeletonLoader from '../components/SkeletonLoader.vue';
 import { useAuthStore } from '../stores/auth.js';
 import { useEvaluationStore } from '../stores/evaluation.js';
@@ -16,6 +17,7 @@ const submittingGrades = ref(false);
 const reportNetworkError = ref('');
 const gradeStatusBanner = ref(null);
 const planStatusOverrides = ref({});
+const showRubricModal = ref(false);
 
 const assignedSections = computed(() => evaluationStore.facultySections || []);
 
@@ -430,6 +432,15 @@ function printEvaluationReport() {
           <button
             type="button"
             class="btn-secondary"
+            data-testid="faculty-open-rubric-btn"
+            style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.45rem 0.85rem; font-size: 0.85rem; font-weight: 600;"
+            @click="showRubricModal = true"
+          >
+            <span>📋 Rating Rubric</span>
+          </button>
+          <button
+            type="button"
+            class="btn-secondary"
             data-testid="export-faculty-section-csv-btn"
             style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.45rem 0.85rem; font-size: 0.85rem; font-weight: 600;"
             @click="exportFacultySectionCsv"
@@ -647,5 +658,11 @@ function printEvaluationReport() {
         </div>
       </div>
     </section>
+
+    <EvaluationRubricModal
+      :visible="showRubricModal"
+      role-title="Faculty Member"
+      @close="showRubricModal = false"
+    />
   </main>
 </template>
