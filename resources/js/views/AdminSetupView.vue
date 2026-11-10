@@ -2573,7 +2573,7 @@ async function executeDeleteSection() {
               data-testid="student-enrollment-view-permit-btn"
               style="text-decoration: none; font-size: 0.85rem; padding: 0.45rem 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem;"
             >
-              📜 View Official Examination Permit
+              📜 View Evaluation Clearance Certificate
             </router-link>
           </div>
           <button
@@ -2877,7 +2877,7 @@ async function executeDeleteSection() {
                         :data-testid="`roster-permit-verify-btn-${s.student_id}`"
                         style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
                       >
-                        Permit 📜
+                        Certificate 📜
                       </router-link>
                       <span v-else style="font-size: 0.75rem; color: #9ca3af; padding: 0.25rem 0.35rem;">Awaiting</span>
                     </td>

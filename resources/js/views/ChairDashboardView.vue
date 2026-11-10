@@ -898,7 +898,7 @@ async function endorseActionPlan(item) {
             </span>
           </div>
 
-          <div v-if="selectedFacultyReport.sample_comment" style="background: #f9fafb; border-left: 3px solid #103c2e; padding: 0.65rem 0.85rem; border-radius: 4px; font-size: 0.82rem; color: #374151; font-style: italic;">
+          <div v-if="selectedFacultyReport.sample_comment" style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.82rem; color: #374151; font-style: italic;">
             “{{ selectedFacultyReport.sample_comment }}”
           </div>
         </div>

@@ -16,7 +16,9 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 Route::get('/auth/me', [AuthController::class, 'me']);
 Route::post('/auth/logout', [AuthController::class, 'logout']);
 
-// Public / Proctor Examination Permit Verification & Signed Registrar Webhook
+// Public / Institutional Evaluation Clearance Verification & Signed Registrar Webhook
+Route::match(['GET', 'POST'], '/clearance/verify', [StudentEvaluationController::class, 'verifyPermit']);
+Route::match(['GET', 'POST'], '/student/clearance/verify', [StudentEvaluationController::class, 'verifyPermit']);
 Route::match(['GET', 'POST'], '/permit/verify', [StudentEvaluationController::class, 'verifyPermit']);
 Route::match(['GET', 'POST'], '/student/permit/verify', [StudentEvaluationController::class, 'verifyPermit']);
 Route::post('/webhooks/registrar-sync', [AdminRosterController::class, 'registrarSyncWebhook']);

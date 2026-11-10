@@ -354,7 +354,7 @@ const complianceAuditData = ref({
     { criterion_id: 'CRIT-04', title: 'Double-Blind Faculty Grade Synchronization Lock', status: 'COMPLIANT', evidence: 'Reports locked until both term_grades_submitted = 1 and registrar_lock = 1.' },
     { criterion_id: 'CRIT-05', title: '5-Cluster Pedagogical Questionnaire Coverage', status: 'COMPLIANT', evidence: '25 Likert items across Delivery, Assessment, Management, Conduct, and Student Support.' },
     { criterion_id: 'CRIT-06', title: 'calamanCy Tagalog/Taglish/English NLP Pipeline', status: 'COMPLIANT', evidence: 'Continuous VADER polarity P in [-1.0, +1.0] and 4 qualitative professor question synthesis.' },
-    { criterion_id: 'CRIT-07', title: 'Public Proctor Digital Examination Permit Protocol', status: 'COMPLIANT', evidence: 'Cryptographic signature validation yielding PLP-REGISTRAR-AUTHENTICATED official seals.' },
+    { criterion_id: 'CRIT-07', title: 'Public Evaluation Clearance Verification Protocol', status: 'COMPLIANT', evidence: 'Cryptographic signature validation yielding PLP-REGISTRAR-AUTHENTICATED official seals.' },
     { criterion_id: 'CRIT-08', title: 'Longitudinal Semester Instructional Quality Tracking', status: 'COMPLIANT', evidence: 'Historical multi-term deltas tracking mean score growth and action plan resolution.' },
   ],
 });

@@ -41,19 +41,19 @@ All seeded accounts use the password **`evaluatech123`**:
 
 ---
 
-## 2. Global Navigation Shell (`WorkspaceSidebar.vue` & `NavbarHeader.vue`)
+## 2. Universal Top Navigation Shell (`NavbarHeader.vue`)
 
-Authenticated institutional staff (Faculty, Chair, Dean, Admin) navigate using the collapsible deep-emerald sidebar (`#103c2e`) and top bar. Students receive a dedicated, distraction-free workspace without sidebars or permit banners.
+EvaluaTech features a single-page universal top navigation bar across all roles (`student`, `faculty`, `chair`, `dean`, `admin`) and unauthenticated views. There are **zero sidebars, zero collapsible side rails, and zero mobile side drawers**, ensuring a clean, distraction-free institutional layout. On mobile viewports ($375\times812$), an accessible dropdown menu expands directly beneath the top bar.
 
 | Control / Button | Location | What Happens When Clicked |
 | :--- | :--- | :--- |
-| **Collapse Sidebar Button** (`[data-testid="sidebar-collapse-toggle"]`) | Top-right of emerald sidebar (`[‖]`) or `Ctrl + B` (Staff) | Toggles the left sidebar between full width (`248px`) and compact icon rail (`68px`). |
-| **Workspace Links** (`Faculty Portal`, `Chair Portal`, `Dean Analytics`, `Registrar Console`) | Left sidebar under `WORKSPACE` (Staff) | Navigates directly to the selected role portal; active route is highlighted with a warm gold pill (`#f4cd42`). |
+| **Institutional Brand & Seal** (`[data-testid="navbar-plp-seal"]`) | Top-left navbar | Displays the official Pamantasan ng Lungsod ng Pasig seal and title; links to institutional home (`/`). |
+| **Role Navigation Links** (`[data-testid^="nav-link-"]`) | Top navbar center strip | Navigates directly to the role portal (`Faculty Portal`, `Chair Portal`, `Dean Analytics`, `Registrar Console`, `Campus Advocacy & Standards`). Active route is marked with a distinctive forest-green underline and badge. |
 | **Active Term Indicator** | Top navbar right strip | Displays the active institutional academic term (`Term: 1st Semester AY 2026-2027`). |
-| **`Command Palette` (`Ctrl K`)** (`[data-testid="sidebar-cmdk-btn"]` / `[data-testid="navbar-cmdk-btn"]`) | Left sidebar under `QUICK TOOLS` & top navbar (Staff) | Opens the keyboard-driven **Command Palette Modal** (`Ctrl + K`) to jump to any page or toggle table density. |
-| **`Evaluation Analysis` (`AI`)** (`[data-testid="sidebar-quivr-btn"]`) | Left sidebar under `QUICK TOOLS` (Chair, Dean, Registrar) | Opens the **Professor's Evaluation Analysis** slide-over drawer to search anonymized student comments. |
-| **`Shortcuts & Rules` (`?`)** (`[data-testid="sidebar-shortcuts-btn"]`) | Left sidebar under `QUICK TOOLS` (Staff) | Opens the **Keyboard Shortcuts & Evaluation Rules** reference modal. |
-| **`Sign Out` Button** (`[data-testid="sidebar-logout-btn"]` / `[data-testid="navbar-logout-btn"]`) | Bottom of left sidebar (Staff) & top-right of navbar (All Roles) | Revokes your Bearer token (`POST /api/auth/logout`), clears session state, and returns to `/login`. |
+| **`Command Palette` (`Ctrl K`)** (`[data-testid="navbar-cmdk-btn"]`) | Top navbar actions | Opens the keyboard-driven **Command Palette Modal** (`Ctrl + K`) to jump to any page or toggle table density. |
+| **`Evaluation Analysis` (`AI`)** (`[data-testid="open-quivr-brain-btn"]`) | Top navbar actions (Chair, Dean, Admin) | Opens the **Professor's Evaluation Analysis** slide-over drawer to search anonymized student comments. |
+| **`Shortcuts & Rules` (`?`)** (`[data-testid="navbar-shortcuts-btn"]`) | Top navbar actions | Opens the **Keyboard Shortcuts & Evaluation Rules** reference modal. |
+| **`Sign Out` Button** (`[data-testid="navbar-logout-btn"]`) | Top-right of navbar (All Roles) | Revokes your Bearer token (`POST /api/auth/logout`), clears session state, and returns to `/login`. |
 
 ---
 

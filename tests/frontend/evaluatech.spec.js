@@ -248,8 +248,8 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
     it('keeps permit gated when 3/6 or 5/6 courses are completed and unlocks only when 6/6 are COMPLETED', () => {
       const permitCardSfc = readResourceFile('components/ClearancePermitCard.vue');
       assert.ok(permitCardSfc.includes('data-testid="clearance-permit-card"'));
-      assert.ok(permitCardSfc.includes('Digital Examination Permit — CLEARED'));
-      assert.ok(permitCardSfc.includes('Digital Examination Permit — GATED (PENDING)'));
+      assert.ok(permitCardSfc.includes('Digital Evaluation Completion Certificate — CLEARED') || permitCardSfc.includes('Digital Examination Permit — CLEARED'));
+      assert.ok(permitCardSfc.includes('Digital Evaluation Completion Certificate — PENDING') || permitCardSfc.includes('Digital Examination Permit — GATED (PENDING)'));
 
       const fiveOfSix = DEMO_STUDENT_QUEUE.map((c, idx) => ({
         ...c,
@@ -718,7 +718,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
 
       // 4. Verify Digital Exam Permit unlocks when allCleared is true
       assert.ok(permitCardSfc.includes('data-testid="clearance-permit-card"'));
-      assert.ok(permitCardSfc.includes('Digital Examination Permit — CLEARED'));
+      assert.ok(permitCardSfc.includes('Digital Evaluation Completion Certificate — CLEARED') || permitCardSfc.includes('Digital Examination Permit — CLEARED'));
       assert.ok(permitCardSfc.includes('PLP-REGISTRAR-AUTHENTICATED'));
     });
   });
@@ -940,7 +940,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(permitCardSfc.includes('data-testid="proctor-verification-details"'));
       assert.ok(permitCardSfc.includes('SEAL: PLP-REGISTRAR-AUTHENTICATED'));
       assert.ok(permitCardSfc.includes('https://plpasig.edu.ph/'));
-      assert.ok(permitCardSfc.includes('PROCTOR VERIFICATION PROTOCOL: ADMISSION AUTHORIZED'));
+      assert.ok(permitCardSfc.includes('INSTITUTIONAL CLEARANCE VERIFICATION PROTOCOL: CLEARED') || permitCardSfc.includes('PROCTOR VERIFICATION PROTOCOL: ADMISSION AUTHORIZED'));
 
       // 4. Verify public un-gated proctor permit verification route in api.php
       assert.ok(apiRoutes.includes("Route::match(['GET', 'POST'], '/permit/verify'"));
@@ -1924,7 +1924,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(advocacyViewSfc.includes('Complete Cryptographic Anonymity'), 'Pillar 1 present');
       assert.ok(advocacyViewSfc.includes('Immediate Submission Readiness'), 'Pillar 2 present');
       assert.ok(advocacyViewSfc.includes('Double-Blind Grade Protection'), 'Pillar 3 present');
-      assert.ok(advocacyViewSfc.includes('Automatic Examination Permit'), 'Pillar 4 present');
+      assert.ok(advocacyViewSfc.includes('Automatic Evaluation Clearance') || advocacyViewSfc.includes('Automatic Examination Permit'), 'Pillar 4 present');
 
       // 2. Rubric Modal Trigger & Component Integration
       assert.ok(advocacyViewSfc.includes('data-testid="advocacy-open-rubric-btn"'), 'Advocacy open rubric button present');

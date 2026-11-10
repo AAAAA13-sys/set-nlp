@@ -1,82 +1,72 @@
-# Goal: Institutional Evaluation Campaign Orchestrator, Action Plan Mentorship Lifecycle & AACCUP Level III Accreditation Intelligence (Phase 8)
+# Goal: Zero-Permit Institutional Transformation, Demo Purge, Ponytail Clean-Up & 15-Agent Parallel Execution
 
-Date: 10 November 2026
-Status: Complete & Production Verified (181 Automated Units, 100% PASS)
-Execution Architecture: Parallel Tri-Agent Team (Lead Engineer, Frontend UI/UX Developer, QA Reality Checker & Autonomous Playwright)
-
----
-
-## 1. Objective
-
-Elevate EvaluaTech from its verified single-page evaluation baseline into an enterprise-grade academic command system for Pamantasan ng Lungsod ng Pasig (PLP). This goal establishes:
-1. **Campaign Pre-Flight & Live Operations War Room:** An automated 6-point pre-launch diagnostic audit and real-time $\ge 85\%$ turnout velocity leaderboard.
-2. **Faculty Pedagogical Action Plan & Peer Mentorship Lifecycle:** A closed-loop growth workspace for watchlist-flagged instructors, department chair mentor assignments, milestone sign-offs, and longitudinal recovery tracking.
-3. **AACCUP Level III Executive Accreditation Dossier:** One-click compilation of cryptographically sealed accreditation evidence bundles (`PLP-AACCUP3-DOSSIER-YYYYMMDD.zip`) separating campus facilities feedback (`TAG_UNCLASSIFIED`) from teaching pedagogy.
-4. **Quivr Qualitative Feedback & Semantic Search Explorer:** Intuitive, multi-tenant qualitative inquiry tool with sentiment valence pills and topic filtering.
+Date: 11 November 2026
+Target Deadline: 11 November 2026, 18:00 GMT+8 (6:00 PM Manila Time)
+Status: Completed & Fully Verified
+Execution Model: Unified 15-Agent Parallel Squad adapted from [msitarzewski/agency-agents](https://github.com/msitarzewski/agency-agents)
 
 ---
 
-## 2. Parallel Tri-Agent Development Model
+## 1. Executive Directive & Context
 
-Work proceeds in parallel across three specialized agency roles bound by strict shared contracts:
+Pamantasan ng Lungsod ng Pasig (PLP) is an esteemed public higher education institution. All toy behaviors, leftover permit gating concepts, demo buttons, and speculative code bloat must be permanently eradicated before the 18:00 GMT+8 deadline:
 
-1. **Lead Systems Engineer & Backend Master (`agency-backend-architect`):**
-   - Owns domain services (`CampaignWarRoomService`, `MentorshipLifecycleService`, `AccreditationGovernanceService`), database migrations, and REST APIs.
-   - Enforces zero-knowledge decoupling, IDOR departmental scoping, and 63 OWASP controls.
-2. **Frontend UI/UX Developer (`agency-frontend-developer`, `ui-anti-slop`):**
-   - Owns reactive Vue 3 components, Pinia stores, and ergonomic PLP Academic Tech design tokens (`#103c2e` emerald, `#f4cd42` gold, `#f9f9f8` canvas).
-   - Zero sidebars, zero generic slop, high-contrast typography (`Public Sans`, `Newsreader`, `JetBrains Mono`), and WCAG 2.2 AA accessibility.
-3. **QA Reality Checker & Autonomous Playwright Specialist (`agency-qa-reality-checker`, `playwright-cli`):**
-   - **Playwright Does His Own Shit:** Self-managing E2E test runner that automatically handles local server lifecycle (`127.0.0.1:8000`), executes headless browser user journeys (expanded to 12 tests: `E2E-01` to `E2E-12`), captures live visual audit screenshots, and gates production deployment.
+1. **Total Eradication of "Examination Permit" Artifacts:**
+   PLP strictly adheres to the **Zero Permits Policy**—examination permits are never issued or gated behind student evaluations. All leftover references to "examination permit", "exam permit", "proctor permit", and "valid for final examinations" in code, UI components, backend payloads, and walkthrough documentation must be completely replaced with **Evaluation Participation Clearance Certificate** and **Evaluation Completion Verification Portal**.
 
----
+2. **Total Purge of Demo / Cheat / Toy Buttons:**
+   Remove all "Quick Test" sample buttons (`2024-10955` / `2024-10892` in `PermitVerifyView.vue`), fake autofills, and toy demo shortcuts across all views. The platform must operate 100% as a dignified, production-ready institutional system with real validation.
 
-## 3. UI/UX Specifications & Anti-Slop System
+3. **Ponytail Code Clean-Up & Anti-Overengineering (Ladder of Simplicity):**
+   Apply the `ponytail` engineering philosophy across the codebase:
+   - **Rung 1 (YAGNI):** Delete speculative abstractions, unused demo endpoints, redundant wrappers, and dead code.
+   - **Rung 2–5:** Reuse existing framework and native methods; eliminate duplicated utility functions.
+   - **Rung 6–7:** Clean one-liners and minimal diffs. Maximum outcome with minimum code.
 
-- **Institutional Color Tokens:**
-  - Primary: `--color-forest-dark: #0b3322;`, `--color-emerald-base: #103c2e;`
-  - Accents: `--color-gold-accent: #f4cd42;`, `--color-gold-warm: #eab308;`
-  - Surfaces: `--color-offwhite-canvas: #f9f9f8;`, `--color-card-bg: #ffffff;`
-- **Typography Standards:**
-  - Interface: `Public Sans` (16.5px–17.5px root, 1.62 line-height).
-  - Accreditation: `Newsreader` (official decrees and certificates).
-  - Monospace: `JetBrains Mono` (hashes, clearance tokens, audit counters).
-  - Banned: `Inter`, `Roboto`, thick `>=2px` side-tab borders, or unprompted purple gradients.
+4. **Authoritative Institutional System Output for Respected Actors:**
+   Produce a comprehensive, publication-grade guide ([`docs/INSTITUTIONAL_SYSTEM_ARCHITECTURE.md`](docs/INSTITUTIONAL_SYSTEM_ARCHITECTURE.md)) and update [`docs/walkthrough/index.html`](docs/walkthrough/index.html) explaining how the platform works for its five respected academic actors:
+   - **Students** (Immediate 0s+ evaluation, cryptographic dual-token decoupling, verifiable completion certificate).
+   - **Faculty / Professors** (Structured 5-cluster feedback, double-blind lock until grade submission & registrar lock).
+   - **Department Chairs** (Department-scoped heatmaps, watchlist review, mentorship facilitation).
+   - **College Deans** (College-wide analytics, sentiment explorer, AACCUP Area III compliance).
+   - **University Registrar / System Administrator** (Cycle management, faculty assignments, Asia/Manila window scheduling, bulk grade locks, sealed accreditation dossiers).
 
 ---
 
-## 4. Playwright Autonomous Mission: "Does His Own Shit"
+## 2. 15-Agent Parallel Agency Squad
 
-The QA Reality Checker equips Playwright with complete autonomy:
-- Auto-spawns or detects local PHP test server on `127.0.0.1:8000`.
-- Executes full browser journeys across Desktop ($1366\times768$) and Mobile ($375\times812$).
-- Captures automated full-page screenshot evidence (`live_war_room.png`, `live_mentorship_modal.png`, `live_accreditation_dossier.png`, etc.).
-- Verifies zero console errors and zero layout overflow across all viewports.
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│           AGENCY PARALLEL EXECUTION MATRIX (DEADLINE 18:00 GMT+8)      │
+├─────────────────────┬──────────────────────────┬───────────────────────┤
+│ 🛡️ BACKEND & SEC    │ 🎨 FRONTEND & UI ANTI-SLOP│ 🧪 QA & PONYTAIL      │
+├─────────────────────┼──────────────────────────┼───────────────────────┤
+│ • Backend Architect │ • Frontend Developer     │ • Ponytail Specialist │
+│ • Security Guardian │ • UI Finish Gate Reviewer│ • Code Reviewer       │
+│ • Compliance Auditor│ • UI Anti-Slop Specialist│ • Minimal Change Eng  │
+│ • AI & NLP Engineer │ • UX Architect           │ • Technical Writer    │
+│                     │ • Accessibility Auditor  │ • QA & Playwright     │
+│                     │                          │ • Evidence Collector  │
+└─────────────────────┴──────────────────────────┴───────────────────────┘
+```
 
 ---
 
-## 5. Phased Milestones & Acceptance Criteria
+## 3. Strict Execution Timeline (Deadline: 18:00 GMT+8)
 
-- [x] **Phase 8.1: Campaign Pre-Flight & Operations War Room**
-  - [x] 6-point pre-launch diagnostic audit service (`CampaignWarRoomService`) & UI in `/admin/setup` (`SetupWarRoomTab.vue`).
-  - [x] Live velocity burn-up gauge and departmental completion leaderboard with 85% goal pacing.
-  - [x] Non-coercive reminder batches for pending evaluators with zero response links.
-  - [x] Autonomous Playwright E2E tests `E2E-07` and `E2E-08` passing with screenshot evidence.
-- [x] **Phase 8.2: Faculty Pedagogical Action Plan & Mentorship Lifecycle**
-  - [x] Faculty self-reflection & milestone submission workspace in `/faculty`.
-  - [x] Chair mentor assignment dropdown & milestone approval modal in `/chair`.
-  - [x] Action plan status state machine (`DRAFT`, `SUBMITTED`, `APPROVED`, `IN_PROGRESS`, `RESOLVED`).
-  - [x] Autonomous Playwright E2E tests `E2E-09` and `E2E-10` passing with screenshot evidence.
-- [x] **Phase 8.3: AACCUP Level III Executive Accreditation Dossier**
-  - [x] One-click dossier compiler service in `AccreditationGovernanceService`.
-  - [x] Sealed accreditation bundle download (`PLP-AACCUP3-DOSSIER-YYYYMMDD.zip`) and print styles.
-  - [x] Facilities separation isolating `TAG_UNCLASSIFIED` from instructional pedagogy.
-  - [x] Autonomous Playwright E2E test `E2E-11` passing with print layout audit.
-- [x] **Phase 8.4: Quivr Second Brain Qualitative Feedback Explorer**
-  - [x] Multi-tenant qualitative query endpoints with strict Chair/Dean scoping (`HTTP 403` cross-department guard).
-  - [x] Fast sentiment pill filtering and keyword search input in Chair and Dean portals.
-  - [x] Autonomous Playwright E2E test `E2E-12` passing with cross-tenant `403` checks.
-- [x] **Phase 8.5: Consolidated Multi-Tier Certification**
-  - [x] Multi-tier verification matrix passing 100% (181 automated units across all 5 verification layers).
-  - [x] Clean OOP service architecture with `DecoupledEvaluationService` orchestrating dedicated domain services.
-  - [x] Mobile ($375\times812$) and Desktop ($1366\times768$) visual audits verified with zero layout overflow.
+- **Phase A (07:30 – 10:30 GMT+8):** Permit Vocabulary & Concept Purge across UI, Backend & Payloads.
+- **Phase B (10:30 – 12:00 GMT+8):** Demo Button Eradication, Form Hardening & Ponytail Code Clean-Up.
+- **Phase C (12:00 – 14:30 GMT+8):** Institutional System Operations Manual & Walkthrough Gallery update.
+- **Phase D (14:30 – 16:30 GMT+8):** Autonomous Playwright E2E Execution & Fresh Evidence Captures.
+- **Phase E (16:30 – 18:00 GMT+8):** Final Multi-Tier Verification (`181 / 181 PASS`), Zero BOM, and Production Sign-Off.
+
+---
+
+## 4. Acceptance Criteria
+
+- [ ] Zero instances of "examination permit" or "exam permit" in `resources/js/views/`, `resources/js/components/`, `app/Services/`, or `docs/walkthrough/`.
+- [ ] Zero demo/cheat buttons in `PermitVerifyView.vue` or any other user workspace.
+- [ ] Codebase pruned cleanly via `ponytail` (zero dead code, minimal diffs, YAGNI enforced).
+- [ ] `docs/INSTITUTIONAL_SYSTEM_ARCHITECTURE.md` delivered and fully articulated for all 5 respected actors.
+- [ ] All 181+ automated units pass across Backend PHPUnit, Frontend DOM, Python NLP, and Playwright E2E.
+- [ ] Zero warnings in `impeccable detect` and clean UTF-8 No-BOM encoding.

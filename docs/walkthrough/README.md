@@ -48,25 +48,25 @@ This walkthrough documents the full operational capabilities of EvaluaTech acros
 ### #03: Student Participation Tracking & Academic Integrity
 - **Phase:** Phase 1: Public Portal
 - **File:** [`03_public_landing_participation.png`](screenshots/03_public_landing_participation.png)
-- **Description:** Participation monitoring charter without gating examination permits.
+- **Description:** Participation monitoring charter enforcing the Zero Permits Policy.
 
 ![Student Participation Tracking & Academic Integrity](screenshots/03_public_landing_participation.png)
 
 ---
 
-### #04: Public Examination Clearance & Status Verification Hub
+### #04: Public Evaluation Clearance & Status Verification Hub
 - **Phase:** Phase 1: Public Portal
 - **File:** [`04_public_verification_hub.png`](screenshots/04_public_verification_hub.png)
-- **Description:** Official registrar verification interface allowing students and proctors to verify clearance authenticity.
+- **Description:** Official registrar verification interface allowing students and staff to verify clearance authenticity.
 
-![Public Examination Clearance & Status Verification Hub](screenshots/04_public_verification_hub.png)
+![Public Evaluation Clearance & Status Verification Hub](screenshots/04_public_verification_hub.png)
 
 ---
 
 ### #05: Verification Input with Signed Institutional Token
 - **Phase:** Phase 1: Public Portal
 - **File:** [`05_public_verification_token_entry.png`](screenshots/05_public_verification_token_entry.png)
-- **Description:** HMAC-SHA256 signed permit verification query interface.
+- **Description:** HMAC-SHA256 signed evaluation clearance verification query interface.
 
 ![Verification Input with Signed Institutional Token](screenshots/05_public_verification_token_entry.png)
 
@@ -264,7 +264,7 @@ This walkthrough documents the full operational capabilities of EvaluaTech acros
 ### #27: Student Participation Tracker Bar
 - **Phase:** Phase 6: Admin Command
 - **File:** [`29_admin_student_participation_tracker.png`](screenshots/29_admin_student_participation_tracker.png)
-- **Description:** Monitoring pending evaluations and turnout progress without gating examination permits.
+- **Description:** Monitoring pending evaluations and turnout progress under the Zero Permits Policy.
 
 ![Student Participation Tracker Bar](screenshots/29_admin_student_participation_tracker.png)
 

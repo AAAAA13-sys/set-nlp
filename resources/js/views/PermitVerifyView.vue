@@ -37,7 +37,7 @@ async function executeVerification(tokenOrId) {
     if (res.ok && data.verified) {
       verificationResult.value = data;
     } else {
-      verificationError.value = data.message || 'The specified examination permit token is either invalid, forged, or student evaluations are pending.';
+      verificationError.value = data.message || 'The specified clearance token is either invalid, forged, or student evaluations are pending.';
     }
   } catch (_) {
     verificationError.value = 'Unable to establish a secure connection with the Office of the University Registrar.';
@@ -48,11 +48,6 @@ async function executeVerification(tokenOrId) {
 
 function handleFormSubmit() {
   executeVerification(tokenInput.value);
-}
-
-function quickFillSample(sampleId) {
-  tokenInput.value = sampleId;
-  executeVerification(sampleId);
 }
 
 function printPermitCertificate() {
@@ -79,7 +74,7 @@ onMounted(() => {
           <span class="plp-seal-symbol">🏛</span>
           <div>
             <h1 class="plp-univ-title">PAMANTASAN NG LUNGSOD NG PASIG</h1>
-            <p class="plp-sub-title">Office of the University Registrar · Examination Clearance Verification</p>
+            <p class="plp-sub-title">Office of the University Registrar · Student Evaluation Clearance Verification</p>
           </div>
         </div>
         <div class="top-nav-actions">
@@ -105,22 +100,22 @@ onMounted(() => {
       <!-- Verification Input Card -->
       <section class="verify-card" data-testid="verify-input-card">
         <div class="verify-card-header">
-          <h2 class="verify-title">Proctor &amp; Registrar Permit Verification Portal</h2>
+          <h2 class="verify-title">Institutional Evaluation Completion Verification Portal</h2>
           <p class="verify-desc">
-            Enter an examination permit clearance token or student institutional ID to verify final examination eligibility and SET evaluation completion in real-time.
+            Enter an institutional clearance token or student ID to verify student faculty evaluation completion and clearance status in real-time.
           </p>
         </div>
 
         <form class="verify-form" data-testid="verify-permit-form" @submit.prevent="handleFormSubmit">
           <div class="form-group">
-            <label for="permit-input" class="form-label">Permit Clearance Token or Student ID:</label>
+            <label for="permit-input" class="form-label">Clearance Token or Student Institutional ID:</label>
             <div class="input-with-button">
               <input
                 id="permit-input"
                 v-model="tokenInput"
                 type="text"
                 class="form-input token-input"
-                placeholder="e.g. 2024-10892 or PERMIT-2024-10892-FALL2026-VERIFIED"
+                placeholder="e.g. 2024-10892 or EVT-CLR-2024-10892-SEALED"
                 data-testid="permit-token-input"
                 required
               />
@@ -135,26 +130,6 @@ onMounted(() => {
             </div>
           </div>
         </form>
-
-        <div class="sample-shortcuts-row">
-          <span class="sample-label">Quick Test:</span>
-          <button
-            type="button"
-            class="sample-pill-btn"
-            data-testid="quick-fill-cleared-student-btn"
-            @click="quickFillSample('2024-10955')"
-          >
-            ✓ Cleared Student (2024-10955)
-          </button>
-          <button
-            type="button"
-            class="sample-pill-btn"
-            data-testid="quick-fill-pending-student-btn"
-            @click="quickFillSample('2024-10892')"
-          >
-            ⏳ Pending Student (2024-10892)
-          </button>
-        </div>
       </section>
 
       <!-- Verified Success Certificate Card -->
@@ -165,7 +140,7 @@ onMounted(() => {
       >
         <div class="certificate-top-bar">
           <span class="status-badge status-cleared" data-testid="permit-verified-badge">
-            ✓ OFFICIALLY CLEARED FOR EXAMINATIONS
+            ✓ EVALUATION COMPLETED — INSTITUTIONALLY CLEARED
           </span>
           <span class="timestamp-tag">
             Verified: {{ verificationResult.verification_timestamp || '2026-11-10' }}
@@ -224,7 +199,7 @@ onMounted(() => {
               class="btn-secondary"
               @click="verificationResult = null"
             >
-              Verify Another Permit
+              Verify Another Clearance Token
             </button>
           </div>
         </div>
@@ -241,10 +216,10 @@ onMounted(() => {
             ✕ CLEARANCE NOT VERIFIED
           </span>
         </div>
-        <h3 class="error-heading">Examination Clearance Withheld</h3>
+        <h3 class="error-heading">Evaluation Clearance Pending</h3>
         <p class="error-message">{{ verificationError }}</p>
         <p class="error-guidance">
-          Students must complete all assigned faculty evaluations before examination permits can be issued. If you believe this is in error, please consult the Office of the University Registrar.
+          Students must complete all assigned faculty evaluations to receive an official institutional clearance certificate. If you believe this is in error, please consult the Office of the University Registrar.
         </p>
       </section>
 
@@ -395,29 +370,6 @@ onMounted(() => {
 .verify-submit-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-.sample-shortcuts-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8rem;
-  color: #6b7280;
-}
-
-.sample-pill-btn {
-  background: #f3f4f6;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  padding: 0.2rem 0.5rem;
-  font-size: 0.78rem;
-  color: #374151;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.sample-pill-btn:hover {
-  background: #e5e7eb;
 }
 
 .certificate-card {

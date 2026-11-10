@@ -65,20 +65,20 @@ const roleNavLinks = computed(() => ({
   ],
   faculty: [
     { to: '/faculty', label: 'Faculty Portal', testId: 'nav-link-faculty-portal', exact: true },
-    { to: '/advocacy', label: 'Advocacy & Permits', testId: 'nav-link-faculty-advocacy' },
+    { to: '/advocacy', label: 'Campus Advocacy & Standards', testId: 'nav-link-faculty-advocacy' },
   ],
   chair: [
     { to: '/chair', label: 'Department Chair Portal', testId: 'nav-link-chair-portal', exact: true },
-    { to: '/advocacy', label: 'Advocacy & Permits', testId: 'nav-link-chair-advocacy' },
+    { to: '/advocacy', label: 'Campus Advocacy & Standards', testId: 'nav-link-chair-advocacy' },
   ],
   dean: [
     { to: '/dean', label: 'Dean Analytics', testId: 'nav-link-dean-analytics', exact: true },
-    { to: '/advocacy', label: 'Advocacy & Permits', testId: 'nav-link-dean-advocacy' },
+    { to: '/advocacy', label: 'Campus Advocacy & Standards', testId: 'nav-link-dean-advocacy' },
   ],
   admin: [
     { to: '/admin', label: 'Registrar Console', testId: 'nav-link-admin-console', exact: true },
     { to: '/admin/setup', label: 'Academic Setup', testId: 'nav-link-admin-setup' },
-    { to: '/advocacy', label: 'Advocacy & Permits', testId: 'nav-link-admin-advocacy' },
+    { to: '/advocacy', label: 'Campus Advocacy & Standards', testId: 'nav-link-admin-advocacy' },
   ],
 }));
 

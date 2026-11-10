@@ -97,7 +97,7 @@ export const routes = [
     component: EvaluationAdvocacyView,
     meta: {
       roles: ['faculty', 'chair', 'dean', 'admin'],
-      title: 'Campus SET Advocacy & Permit Verification Hub — PLP',
+      title: 'Campus SET Advocacy & Standards Hub — PLP',
     },
   },
   {
@@ -116,7 +116,7 @@ export const routes = [
     component: PermitVerifyView,
     meta: {
       public: true,
-      title: 'Examination Permit Verification — Pamantasan ng Lungsod ng Pasig',
+      title: 'Evaluation Clearance Verification — Pamantasan ng Lungsod ng Pasig',
     },
   },
   {

@@ -65,11 +65,11 @@ Academic Year: ${authStore.activeTerm || '1st Semester AY 2026-2027'}
    - Professional Conduct (Items 16-20): Ethical integrity, respect for learners, professional demeanor.
    - Student Support & Mentorship (Items 21-25): Consultation availability, empathy, encouragement.
 
-7. EXAMINATION CLEARANCE PERMIT
+7. EVALUATION COMPLETION CERTIFICATE & PARTICIPATION CLEARANCE
    - Completing 100% of your enrolled course evaluations automatically unlocks your official
-     Digital Examination Clearance Permit.
-   - You can print your clearance permit or present your signed verification hash for examination entry.
-   - Proctors verify clearance in real-time via the public verification portal (/verify).
+     Digital Evaluation Completion Certificate.
+   - You can print your clearance certificate or present your signed verification hash for institutional clearance.
+   - Proctors and academic staff verify clearance in real-time via the public verification portal (/verify).
 
 Pamantasan ng Lungsod ng Pasig * Office of the University Registrar * Institutional Accreditation`;
 
@@ -141,10 +141,10 @@ async function copyText(text, key) {
     <section class="card advocacy-hero-card">
       <div class="advocacy-header-row">
         <div>
-          <span class="eyebrow-badge">CLASS LINK &amp; PERMIT</span>
+          <span class="eyebrow-badge">CLASS LINK &amp; CLEARANCE</span>
           <h2 id="advocacy-heading" class="section-title">
-            Share Portal Link &amp; Check Permit Status
-            <span class="ui-hint" tabindex="0" aria-label="Class link and permit help" data-hint="Share the evaluation link with classmates or copy your signed examination clearance code.">?</span>
+            Share Portal Link &amp; Check Clearance Status
+            <span class="ui-hint" tabindex="0" aria-label="Class link and clearance help" data-hint="Share the evaluation link with classmates or copy your signed evaluation clearance code.">?</span>
           </h2>
         </div>
         <div class="advocacy-term-pill tabular-nums">
@@ -181,7 +181,7 @@ async function copyText(text, key) {
         </div>
 
         <div class="share-box">
-          <span class="share-kicker">EXAMINATION CLEARANCE</span>
+          <span class="share-kicker">EVALUATION CLEARANCE</span>
           <h3>
             Your Clearance Code
             <span class="ui-hint" tabindex="0" aria-label="Clearance code help" data-hint="Generated automatically as you complete your assigned course evaluations.">?</span>
@@ -279,9 +279,9 @@ async function copyText(text, key) {
         </div>
         <div class="pillar-card">
           <span class="pillar-number">04</span>
-          <h4>Automatic Examination Permit</h4>
+          <h4>Automatic Evaluation Clearance</h4>
           <p>
-            Evaluating 100% of your courses automatically clears and unlocks your official digital examination permit with verifiable cryptographic proof.
+            Evaluating 100% of your courses automatically clears and unlocks your official digital evaluation completion certificate with verifiable cryptographic proof.
           </p>
         </div>
       </div>

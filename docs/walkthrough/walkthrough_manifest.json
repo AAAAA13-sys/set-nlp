@@ -21,21 +21,21 @@
       "filename": "03_public_landing_participation.png",
       "title": "Student Participation Tracking & Academic Integrity",
       "phase": "Phase 1: Public Portal",
-      "description": "Participation monitoring charter without gating examination permits.",
+      "description": "Participation monitoring charter enforcing the Zero Permits Policy.",
       "timestamp": "2026-11-10T14:27:35.524Z"
     },
     {
       "filename": "04_public_verification_hub.png",
-      "title": "Public Examination Clearance & Status Verification Hub",
+      "title": "Public Evaluation Clearance & Status Verification Hub",
       "phase": "Phase 1: Public Portal",
-      "description": "Official registrar verification interface allowing students and proctors to verify clearance authenticity.",
+      "description": "Official registrar verification interface allowing students and staff to verify clearance authenticity.",
       "timestamp": "2026-11-10T14:27:36.437Z"
     },
     {
       "filename": "05_public_verification_token_entry.png",
       "title": "Verification Input with Signed Institutional Token",
       "phase": "Phase 1: Public Portal",
-      "description": "HMAC-SHA256 signed permit verification query interface.",
+      "description": "HMAC-SHA256 signed evaluation clearance verification query interface.",
       "timestamp": "2026-11-10T14:27:37.037Z"
     },
     {
@@ -189,7 +189,7 @@
       "filename": "29_admin_student_participation_tracker.png",
       "title": "Student Participation Tracker Bar",
       "phase": "Phase 6: Admin Command",
-      "description": "Monitoring pending evaluations and turnout progress without gating examination permits.",
+      "description": "Monitoring pending evaluations and turnout progress under the Zero Permits Policy.",
       "timestamp": "2026-11-10T14:28:08.451Z"
     },
     {

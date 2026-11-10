@@ -421,11 +421,11 @@ class AccreditationGovernanceService
             ],
             [
                 'criterion_id' => 'CRIT-07',
-                'title' => 'Public Proctor Digital Examination Permit Protocol',
-                'category' => 'Examination Security',
+                'title' => 'Public Evaluation Clearance Verification Protocol',
+                'category' => 'Evaluation Security & Records',
                 'standard' => 'Registrar Digital Authentication',
                 'status' => 'COMPLIANT',
-                'evidence' => 'Cryptographic JWT validation yielding PLP-REGISTRAR-AUTHENTICATED official seals.',
+                'evidence' => 'Cryptographic signature validation yielding PLP-REGISTRAR-AUTHENTICATED official seals.',
                 'verified' => true,
             ],
             [

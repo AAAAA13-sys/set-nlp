@@ -389,7 +389,7 @@ function startEvaluation(course) {
       </p>
     </section>
 
-    <!-- Digital Examination Clearance Permit (Unlocked on 100% Completion) -->
+    <!-- Digital Evaluation Completion Certificate (Unlocked on 100% Completion) -->
     <div v-if="progress.allCleared" style="margin-top: 1.25rem;">
       <ClearancePermitCard
         :student-id="authStore.user?.institutional_id || String(authStore.user?.id || 'PLP-STD-2026')"

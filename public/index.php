@@ -193,7 +193,7 @@ if ($isApiRoute) {
             $response = $authController->me($request);
         } elseif ($uriPath === '/api/auth/logout' && $method === 'POST') {
             $response = $authController->logout($request);
-        } elseif ($uriPath === '/api/permit/verify' || $uriPath === '/api/student/permit/verify') {
+        } elseif ($uriPath === '/api/clearance/verify' || $uriPath === '/api/student/clearance/verify' || $uriPath === '/api/permit/verify' || $uriPath === '/api/student/permit/verify') {
             $response = (new StudentEvaluationController($service))->verifyPermit($request);
         } elseif ($uriPath === '/api/webhooks/registrar-sync' && $method === 'POST') {
             $response = (new AdminRosterController(null, $service))->registrarSyncWebhook($request, $rawBody);

@@ -181,7 +181,7 @@ function printRubric() {
       </div>
 
       <!-- Institutional Governance Trigger Rules -->
-      <div style="border-left: 4px solid #103c2e; background: #f0fdf4; padding: 0.75rem 1rem; border-radius: 0 8px 8px 0; font-size: 0.82rem; color: #166534;">
+      <div style="border: 1px solid #bbf7d0; background: #f0fdf4; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.82rem; color: #166534;">
         <strong style="display: block; margin-bottom: 0.2rem;">Institutional Action Protocols:</strong>
         <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.5;">
           <li><strong>Mean Likert &lt; 3.50:</strong> Automatically triggers the Dean/Chair Priority Intervention Watchlist and mandates an institutional Pedagogical Action Plan.</li>

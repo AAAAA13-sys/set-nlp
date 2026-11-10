@@ -197,6 +197,11 @@ class DecoupledEvaluationService
      *
      * @return array<string, mixed>
      */
+    public function verifyEvaluationClearance(string $clearanceToken, ?string $institutionalId = null): array
+    {
+        return $this->permitService->verifyEvaluationClearance($clearanceToken, $institutionalId);
+    }
+
     public function verifyExaminationPermit(string $permitToken, ?string $institutionalId = null): array
     {
         return $this->permitService->verifyExaminationPermit($permitToken, $institutionalId);

@@ -77,15 +77,15 @@ function printPermit() {
   <section
     class="clearance-permit-card"
     :class="progress.allCleared ? 'permit-unlocked' : 'permit-gated'"
-    aria-label="Digital Examination Clearance Permit"
+    aria-label="Digital Evaluation Completion Certificate"
     data-testid="clearance-permit-card"
   >
     <div class="permit-header">
       <div>
-        <span class="permit-eyebrow">EXAMINATION CLEARANCE</span>
+        <span class="permit-eyebrow">EVALUATION CLEARANCE</span>
         <h3 class="permit-title">
-          {{ progress.allCleared ? 'Digital Examination Permit — CLEARED' : 'Digital Examination Permit — GATED (PENDING)' }}
-          <span class="ui-hint" tabindex="0" data-hint="Complete all assigned course evaluations to unlock your official examination permit.">?</span>
+          {{ progress.allCleared ? 'Digital Evaluation Completion Certificate — CLEARED' : 'Digital Evaluation Completion Certificate — PENDING' }}
+          <span class="ui-hint" tabindex="0" data-hint="Complete all assigned course evaluations to unlock your official evaluation completion certificate.">?</span>
         </h3>
       </div>
 
@@ -99,12 +99,12 @@ function printPermit() {
 
     <div class="permit-body">
       <p v-if="!progress.allCleared" class="permit-description">
-        Finish your remaining <strong>{{ progress.pending }}</strong> course evaluation(s) ({{ progress.completed }} of {{ progress.total }} completed) to unlock your examination permit.
+        Finish your remaining <strong>{{ progress.pending }}</strong> course evaluation(s) ({{ progress.completed }} of {{ progress.total }} completed) to complete your institutional evaluation clearance.
       </p>
 
       <div v-else class="permit-verified-box">
         <p class="permit-description">
-          All <strong>{{ progress.total }}</strong> course evaluations are complete. Your examination permit is ready.
+          All <strong>{{ progress.total }}</strong> course evaluations are complete. Your evaluation completion certificate is ready.
         </p>
         <div class="permit-token-grid">
           <div>
@@ -129,7 +129,7 @@ function printPermit() {
         <div class="print-permit-auth-block" data-testid="print-permit-signature-block">
           <div class="auth-seal-watermark">
             <span class="seal-badge">SEAL: PLP-REGISTRAR-AUTHENTICATED</span>
-            <small class="seal-sub">Valid for Final Examination Admission • AY 2026-2027</small>
+            <small class="seal-sub">Officially Cleared for Academic Records • AY 2026-2027</small>
           </div>
           <div class="auth-signatures-row">
             <div class="sig-column">
@@ -186,7 +186,7 @@ function printPermit() {
           data-testid="print-permit-btn"
           @click="printPermit"
         >
-          Print / Export Signed PLP Exam Permit
+          Print / Export Signed PLP Evaluation Certificate
         </button>
       </div>
 
@@ -206,12 +206,12 @@ function printPermit() {
         data-testid="proctor-verification-details"
       >
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
-          <strong style="color: #166534;">PROCTOR VERIFICATION PROTOCOL: ADMISSION AUTHORIZED</strong>
+          <strong style="color: #166534;">INSTITUTIONAL CLEARANCE VERIFICATION PROTOCOL: CLEARED</strong>
           <span class="token-chip chip-signed" style="font-size: 0.7rem;">OFFICIAL REGISTRAR RECORD</span>
         </div>
         <div style="color: #15803d; line-height: 1.45;">
           Student <strong>{{ studentId }}</strong> has completed all {{ progress.total }} enrolled course evaluations.
-          Status: <strong>{{ verificationResult.permit_status || 'VALID_FOR_FINAL_EXAMINATIONS' }}</strong> •
+          Status: <strong>{{ verificationResult.clearance_status || verificationResult.permit_status || 'EVALUATION_COMPLETED_CLEARED' }}</strong> •
           Seal: <strong>{{ verificationResult.registrar_seal || 'PLP-REGISTRAR-AUTHENTICATED' }}</strong> •
           Portal: <a href="https://plpasig.edu.ph/" target="_blank" rel="noopener" style="color: #166534; text-decoration: underline;">https://plpasig.edu.ph/</a>
         </div>

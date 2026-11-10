@@ -1,14 +1,47 @@
 import test, { describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
+import { spawn } from 'node:child_process';
+import http from 'node:http';
 import { chromium } from 'playwright';
 
 const BASE_URL = 'http://127.0.0.1:8000';
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 
+function pingServer(url) {
+  return new Promise((resolve) => {
+    const req = http.get(url, (res) => {
+      resolve(true);
+      res.resume();
+    });
+    req.on('error', () => resolve(false));
+    req.setTimeout(500, () => {
+      req.destroy();
+      resolve(false);
+    });
+  });
+}
+
 describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suite', () => {
   let browser;
+  let serverProcess = null;
 
   before(async () => {
+    const isUp = await pingServer(BASE_URL);
+    if (!isUp) {
+      const phpExe = process.env.PHP_BIN || 'php';
+      serverProcess = spawn(phpExe, ['-S', '127.0.0.1:8000', '-t', 'public', 'public/index.php'], {
+        stdio: 'ignore',
+        detached: false,
+      });
+
+      for (let i = 0; i < 30; i++) {
+        await new Promise((r) => setTimeout(r, 200));
+        if (await pingServer(BASE_URL)) {
+          break;
+        }
+      }
+    }
+
     browser = await chromium.launch({
       headless: true,
       executablePath: CHROME_PATH
@@ -18,6 +51,14 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
   after(async () => {
     if (browser) {
       await browser.close();
+    }
+    if (serverProcess) {
+      try {
+        serverProcess.kill('SIGTERM');
+      } catch (_) {}
+      try {
+        process.kill(serverProcess.pid);
+      } catch (_) {}
     }
   });
 
