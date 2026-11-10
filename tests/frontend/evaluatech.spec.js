@@ -1741,4 +1741,22 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(queueViewSfc.includes('Clearance Proof Token'), 'Clearance Proof Token column included');
     });
   });
+
+  describe('Group 60: Academic Setup Multi-Directory Department Scoping & Cross-Tab Filter Consistency', () => {
+    it('verifies department filter dropdowns across Faculty Directory, Student Directory, and System Accounts tabs', () => {
+      const setupViewSfc = readResourceFile('views/AdminSetupView.vue');
+
+      // 1. Tab 4: Faculty Directory Department Filter
+      assert.ok(setupViewSfc.includes('data-testid="faculty-dept-filter-select"'), 'Faculty department filter select present');
+      assert.ok(setupViewSfc.includes('facultyDepartmentFilter'), 'facultyDepartmentFilter ref defined');
+
+      // 2. Tab 5: Student Directory Department Filter
+      assert.ok(setupViewSfc.includes('data-testid="student-dept-filter-select"'), 'Student department filter select present');
+      assert.ok(setupViewSfc.includes('studentDepartmentFilter'), 'studentDepartmentFilter ref defined');
+
+      // 3. Tab 6: System Accounts Department Filter
+      assert.ok(setupViewSfc.includes('data-testid="users-dept-filter-select"'), 'System users department filter select present');
+      assert.ok(setupViewSfc.includes('usersDepartmentFilter'), 'usersDepartmentFilter ref defined');
+    });
+  });
 });

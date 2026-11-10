@@ -467,10 +467,15 @@ function printSetupSectionReport() {
 }
 
 const facultySearchInput = ref('');
+const facultyDepartmentFilter = ref('ALL');
 
 const filteredFacultyDirectory = computed(() => {
   const query = facultySearchInput.value.trim().toLowerCase();
-  const list = setupStore.facultyList || [];
+  const depFilter = facultyDepartmentFilter.value;
+  let list = setupStore.facultyList || [];
+  if (depFilter !== 'ALL') {
+    list = list.filter((f) => String(f.department_id) === String(depFilter) || f.department_code === depFilter);
+  }
   if (!query) return list;
   return list.filter((f) => {
     const text = `${f.name || ''} ${f.institutional_id || ''} ${f.email || ''} ${f.department_name || ''} ${f.department_code || ''}`.toLowerCase();
@@ -669,10 +674,16 @@ function printSectionRoster() {
   }
 }
 
+const studentDepartmentFilter = ref('ALL');
+
 const filteredStudentsDirectory = computed(() => {
   const query = studentSearchInput.value.trim().toLowerCase();
   const filter = studentStatusFilter.value;
+  const depFilter = studentDepartmentFilter.value;
   let list = setupStore.studentsList || [];
+  if (depFilter !== 'ALL') {
+    list = list.filter((s) => String(s.department_id) === String(depFilter) || s.department_code === depFilter);
+  }
   if (filter === 'CLEARED') {
     list = list.filter((s) => s.is_complete);
   } else if (filter === 'PENDING') {
@@ -687,13 +698,18 @@ const filteredStudentsDirectory = computed(() => {
 
 const usersSearchInput = ref('');
 const usersRoleFilter = ref('ALL');
+const usersDepartmentFilter = ref('ALL');
 
 const filteredSystemUsers = computed(() => {
   const query = usersSearchInput.value.trim().toLowerCase();
   const role = usersRoleFilter.value;
+  const depFilter = usersDepartmentFilter.value;
   let list = setupStore.systemUsers || [];
   if (role !== 'ALL') {
     list = list.filter((u) => u.role === role);
+  }
+  if (depFilter !== 'ALL') {
+    list = list.filter((u) => String(u.department_id) === String(depFilter) || u.department_code === depFilter);
   }
   if (!query) return list;
   return list.filter((u) => {
@@ -1504,7 +1520,7 @@ async function executeDeleteSection() {
     <!-- TAB 4: FACULTY DIRECTORY (Inspired by admin/faculty_list.php) -->
     <section v-if="activeTab === 'faculty'" class="tab-pane" data-testid="pane-faculty">
       <div class="pane-controls-bar">
-        <div class="search-filter-group">
+        <div class="search-filter-group" style="display: flex; gap: 0.65rem; flex-wrap: wrap; align-items: center;">
           <input
             v-model="facultySearchInput"
             type="search"
@@ -1512,6 +1528,21 @@ async function executeDeleteSection() {
             placeholder="Search faculty by name, employee ID, or department…"
             data-testid="faculty-search-input"
           />
+          <select
+            v-model="facultyDepartmentFilter"
+            class="form-input"
+            style="width: auto; min-width: 170px;"
+            data-testid="faculty-dept-filter-select"
+          >
+            <option value="ALL">All Departments</option>
+            <option
+              v-for="d in setupStore.departments"
+              :key="d.id"
+              :value="d.id"
+            >
+              {{ d.code }} — {{ d.name }}
+            </option>
+          </select>
         </div>
         <div class="actions-group" style="display: flex; gap: 0.5rem; align-items: center;">
           <button
@@ -1625,6 +1656,21 @@ async function executeDeleteSection() {
             <option value="ALL">All Clearance Status</option>
             <option value="CLEARED">Cleared (100%)</option>
             <option value="PENDING">Pending Evaluations</option>
+          </select>
+          <select
+            v-model="studentDepartmentFilter"
+            class="form-input"
+            style="width: auto; min-width: 170px;"
+            data-testid="student-dept-filter-select"
+          >
+            <option value="ALL">All Departments</option>
+            <option
+              v-for="d in setupStore.departments"
+              :key="d.id"
+              :value="d.id"
+            >
+              {{ d.code }} — {{ d.name }}
+            </option>
           </select>
         </div>
         <div class="actions-group" style="display: flex; gap: 0.5rem; align-items: center;">
@@ -1761,6 +1807,21 @@ async function executeDeleteSection() {
             <option value="chair">Department Chairs</option>
             <option value="faculty">Faculty Members</option>
             <option value="student">Enrolled Students</option>
+          </select>
+          <select
+            v-model="usersDepartmentFilter"
+            class="form-input"
+            style="width: auto; min-width: 170px;"
+            data-testid="users-dept-filter-select"
+          >
+            <option value="ALL">All Departments</option>
+            <option
+              v-for="d in setupStore.departments"
+              :key="d.id"
+              :value="d.id"
+            >
+              {{ d.code }} — {{ d.name }}
+            </option>
           </select>
         </div>
         <div class="actions-group" style="display: flex; gap: 0.5rem; align-items: center;">
