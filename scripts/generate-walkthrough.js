@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { execSync } from 'node:child_process';
+import { execSync, spawn } from 'node:child_process';
+import http from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 
@@ -10,6 +11,20 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 
 const BASE_URL = 'http://127.0.0.1:8000';
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+
+function pingServer(url) {
+  return new Promise((resolve) => {
+    const req = http.get(url, (res) => {
+      resolve(true);
+      res.resume();
+    });
+    req.on('error', () => resolve(false));
+    req.setTimeout(500, () => {
+      req.destroy();
+      resolve(false);
+    });
+  });
+}
 
 const WALKTHROUGH_DIR = path.join(REPO_ROOT, 'docs', 'walkthrough');
 const SCREENSHOTS_DIR = path.join(WALKTHROUGH_DIR, 'screenshots');
@@ -46,6 +61,21 @@ async function run() {
   console.log(`Target Base URL: ${BASE_URL}`);
   console.log(`Screenshots Directory: ${SCREENSHOTS_DIR}`);
   console.log(`Videos Directory: ${VIDEOS_DIR}`);
+
+  let serverProcess = null;
+  const isUp = await pingServer(BASE_URL);
+  if (!isUp) {
+    console.log('--- Starting local PHP server at 127.0.0.1:8000...');
+    const phpExe = process.env.PHP_BIN || 'php';
+    serverProcess = spawn(phpExe, ['-S', '127.0.0.1:8000', '-t', 'public', 'public/index.php'], {
+      stdio: 'ignore',
+      detached: false,
+    });
+    for (let i = 0; i < 30; i++) {
+      await sleep(200);
+      if (await pingServer(BASE_URL)) break;
+    }
+  }
 
   console.log('--- Initializing pristine demonstration database state...');
   try {
@@ -88,20 +118,20 @@ async function run() {
     // Scroll to Participation Tracking
     await page.evaluate(() => window.scrollBy({ top: 800, behavior: 'smooth' }));
     await sleep(700);
-    await capture(page, '03_public_landing_participation.png', 'Student Participation Tracking & Academic Integrity', 'Phase 1: Public Portal', 'Participation monitoring charter without gating examination permits.');
+    await capture(page, '03_public_landing_participation.png', 'Student Participation Tracking & Academic Integrity', 'Phase 1: Public Portal', 'Participation monitoring charter enforcing the Zero Permits Policy.');
 
-    // Visit Public Completion & Permit Verification Portal (/verify)
+    // Visit Public Completion & Clearance Verification Portal (/verify)
     await page.goto(`${BASE_URL}/verify`, { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('[data-testid="permit-verify-page"]', { timeout: 8000 });
     await sleep(700);
-    await capture(page, '04_public_verification_hub.png', 'Public Examination Clearance & Status Verification Hub', 'Phase 1: Public Portal', 'Official registrar verification interface allowing students and proctors to verify clearance authenticity.');
+    await capture(page, '04_public_verification_hub.png', 'Public Evaluation Clearance & Status Verification Hub', 'Phase 1: Public Portal', 'Official registrar verification interface allowing students and staff to verify clearance authenticity.');
 
     // Enter sample token or view input card
     const tokenInput = await page.$('[data-testid="permit-token-input"]');
     if (tokenInput) {
-      await tokenInput.fill('PERMIT-2024-10892-SEM1');
+      await tokenInput.fill('EVT-CLR-2024-10892-SEALED');
       await sleep(500);
-      await capture(page, '05_public_verification_token_entry.png', 'Verification Input with Signed Institutional Token', 'Phase 1: Public Portal', 'HMAC-SHA256 signed permit verification query interface.');
+      await capture(page, '05_public_verification_token_entry.png', 'Verification Input with Signed Institutional Token', 'Phase 1: Public Portal', 'HMAC-SHA256 signed evaluation clearance verification query interface.');
     }
 
     // Mobile Viewport for Public Landing Page
@@ -370,7 +400,7 @@ async function run() {
     await studentsBtn.click();
     await page.waitForSelector('[data-testid="student-tracker-summary-bar"]', { timeout: 6000 });
     await sleep(700);
-    await capture(page, '29_admin_student_participation_tracker.png', 'Student Participation Tracker Bar', 'Phase 6: Admin Command', 'Monitoring pending evaluations and turnout progress without gating examination permits.');
+    await capture(page, '29_admin_student_participation_tracker.png', 'Student Participation Tracker Bar', 'Phase 6: Admin Command', 'Monitoring pending evaluations and turnout progress under the Zero Permits Policy.');
 
     // Open Student Modal (Reminder Notice or Enrolled Courses & Clearance breakdown)
     const remindStudentBtn = await page.$('[data-testid^="remind-student-btn-"]');
@@ -455,6 +485,10 @@ async function run() {
   } finally {
     await context.close();
     await browser.close();
+    if (serverProcess) {
+      try { serverProcess.kill('SIGTERM'); } catch (_) {}
+      try { process.kill(serverProcess.pid); } catch (_) {}
+    }
   }
 
   // Find saved video file in VIDEOS_DIR and standardize to evalua_tech_walkthrough.webm
@@ -922,7 +956,7 @@ ${screenshots
 
 ## 3. Institutional Governance & Security Verification
 
-- **Zero Permits Policy Enforced:** The walkthrough confirms that the university tracks evaluation completion progress without issuing or gating examination permits.
+- **Zero Permits Policy Enforced:** The walkthrough confirms that the university tracks evaluation completion progress without issuing or gating student participation.
 - **Dual-Token Anonymity Guaranteed:** Zero student identifiers (\`student_id\`, \`user_id\`, \`ip_address\`) exist in the evaluation vault.
 - **Double-Blind Grade Lock Validated:** Faculty reports remain locked until term grades are submitted and verified by the Registrar lock.
 - **Accreditation Separation:** Campus facilities feedback (\`TAG_UNCLASSIFIED\`) is strictly separated from teaching pedagogy in the compiled Level III dossier.
