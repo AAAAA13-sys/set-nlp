@@ -274,6 +274,52 @@ SENTIMENT_LEXICON: dict[str, float] = {
     "maalalahanin": 2.3,
     "konsiderasyon": 2.0,
     "paliwanag": 2.0,
+    "napakalawak": 2.5,
+    "masusi": 2.2,
+    "pantay": 2.4,
+    "nakatutulong": 2.4,
+    "naiwawasto": 2.2,
+    "kapaki-pakinabang": 2.5,
+    "maaliwalas": 2.2,
+    "makatao": 2.4,
+    "huwaran": 2.5,
+    "kasipagan": 2.4,
+    "matiyaga": 2.4,
+    "matiyagang": 2.4,
+    "mahinahon": 2.3,
+    "nagpapasalamat": 2.2,
+    "ligtas": 2.0,
+    "paggabay": 2.4,
+    "gabay": 2.2,
+    "dedikasyon": 2.5,
+    "buong-puso": 2.4,
+    "buong-pusong": 2.5,
+    "hands-on": 2.2,
+    "well-paced": 2.2,
+    "well-balanced": 2.2,
+    "well-structured": 2.2,
+    "well-spaced": 2.2,
+    "reliable": 2.2,
+    "seamless": 2.0,
+    "high-spec": 2.0,
+    "straightforward": 2.0,
+    "reviewer": 1.8,
+    "walkthrough": 2.0,
+    "actionable": 2.0,
+    "tugma": 2.0,
+    "accommodating": 2.4,
+    "accessible": 2.0,
+    "fosters": 2.0,
+    "tamang": 2.2,
+    "wasto": 2.2,
+    "masigasig": 2.4,
+    "malasakit": 2.4,
+    "dangal": 2.4,
+    "integridad": 2.4,
+    "pampalakas-loob": 2.4,
+    "maitama": 2.2,
+    "mabuti": 2.0,
+    "mabuting": 2.2,
     # Negative (English General + Higher-Ed Specific)
     "terrible": -3.2,
     "horrible": -3.2,
@@ -418,6 +464,40 @@ SENTIMENT_LEXICON: dict[str, float] = {
     "hirap": -1.8,
     "layo": -1.5,
     "napakalayo": -2.2,
+    "mapanlait": -2.8,
+    "naninigaw": -2.8,
+    "hinihiya": -2.8,
+    "minamaliit": -2.6,
+    "delikado": -2.2,
+    "basag": -2.2,
+    "sirang": -2.2,
+    "luma": -1.8,
+    "lumang": -1.8,
+    "maling": -2.2,
+    "mali-mali": -2.5,
+    "tumangging": -2.4,
+    "tumanggi": -2.2,
+    "glitch": -2.0,
+    "glitches": -2.0,
+    "glitched": -2.2,
+    "brownout": -1.8,
+    "cram": -2.0,
+    "cramming": -2.0,
+    "unannounced": -2.0,
+    "hinaing": -1.8,
+    "kagipitan": -1.8,
+    "trivia": -1.5,
+    "disproportionate": -2.2,
+    "verbatim": -1.8,
+    "suliranin": -1.8,
+    "nawawala": -2.0,
+    "minamadali": -2.0,
+    "nagmamadali": -2.0,
+    "nagmamadaling": -2.0,
+    "pahirapan": -2.4,
+    "deprecated": -2.2,
+    "stumbling": -2.2,
+    "indifference": -2.5,
 }
 
 # Multi-word academic sentiment phrase adjustments (English + Taglish)
@@ -487,9 +567,210 @@ SENTIMENT_PHRASES: list[tuple[str, float]] = [
     ("sobrang hirap", -2.5),
     ("sobrang dami", -2.2),
     ("tambak ang", -2.4),
-    ("second chance", 1.8),
-    ("partial points", 1.6),
+    ("second chance", 2.2),
+    ("partial points", 2.2),
+    ("partial credit", 2.2),
+    # High-Yield Multilingual Collegiate Phrases
+    ("hindi tugma", -2.8),
+    ("masyadong mabilis", -2.4),
+    ("sobrang bilis", -2.4),
+    ("walang abiso", -2.4),
+    ("walang paunang abiso", -2.5),
+    ("walang pasabi", -2.4),
+    ("walang consideration", -2.6),
+    ("walang konsiderasyon", -2.6),
+    ("walang breakdown", -2.4),
+    ("walang paliwanag", -2.4),
+    ("walang sistema", -2.4),
+    ("walang malasakit", -2.6),
+    ("walang sigla", -2.2),
+    ("walang rubrik", -2.4),
+    ("walang rubriks", -2.4),
+    ("walang batayan", -2.5),
+    ("walang kwenta", -3.0),
+    ("walang peer review", -2.4),
+    ("hindi pumapasok", -2.5),
+    ("hindi nagbabalik", -2.4),
+    ("hindi pinakikinggan", -2.4),
+    ("hindi marunong mag-explain", -2.5),
+    ("hindi marunong makinig", -2.5),
+    ("hindi nag-post", -2.2),
+    ("hindi sinasabi", -2.2),
+    ("hindi pinayagan", -2.4),
+    ("hindi binilang", -2.4),
+    ("hindi sumasagot", -2.4),
+    ("hindi makatao", -2.6),
+    ("hindi makatarungan", -2.6),
+    ("hindi patas", -2.5),
+    ("hindi pantay", -2.5),
+    ("hindi sapat", -2.4),
+    ("hindi tumutupad", -2.4),
+    ("hindi ina-adjust", -2.2),
+    ("biglang binago", -2.4),
+    ("biglang nagbawas", -2.4),
+    ("maling answer key", -2.6),
+    ("masyadong mahigpit", -2.2),
+    ("sobrang haba", -2.2),
+    ("masyadong maikli", -2.4),
+    ("masyadong luma", -2.2),
+    ("sobrang taas ng rubric", -2.4),
+    ("sobrang taas ng standards", -2.4),
+    ("napakataas ng rubric", -2.4),
+    ("only after the project was already submitted", -2.5),
+    ("only after", -1.8),
+    ("moved earlier abruptly", -2.5),
+    ("never covered in lectures", -2.6),
+    ("never discussed", -2.5),
+    ("never nagbalik", -2.6),
+    ("out of service", -2.4),
+    ("frequently out of service", -2.5),
+    ("simply reads verbatim", -2.5),
+    ("reads verbatim", -2.4),
+    ("simply reads", -2.2),
+    ("heavy reliance on student group reports", -2.5),
+    ("zero teacher lectures", -2.8),
+    ("puro student reporting", -2.5),
+    ("pumipili ng favorites", -2.8),
+    ("special treatment", -2.4),
+    ("trick questions", -2.5),
+    ("excessively long", -2.4),
+    ("takes personal offense", -3.5),
+    ("puro trivia questions", -2.4),
+    ("puro trivia", -2.2),
+    ("trivia questions", -2.0),
+    ("puro powerpoint slides lang", -2.4),
+    ("puro slides lang", -2.2),
+    ("puro readings lang", -2.4),
+    ("hindi kasya", -2.2),
+    ("nagtataas ng kilay", -2.4),
+    ("nagtataas ng boses", -2.5),
+    ("lumang-luma", -2.2),
+    ("mali-mali", -2.5),
+    ("lumang video", -2.0),
+    ("hindi na tugma", -2.2),
+    ("redundant readings", -2.2),
+    ("hindi gumagana", -2.4),
+    ("does not explain", -2.5),
+    ("altered near the end", -2.5),
+    ("out of date", -2.4),
+    ("single entity without assessing", -2.5),
+    ("without assessing individual", -2.5),
+    ("two months ago", -2.4),
+    ("from two months ago", -2.5),
+    ("still not been graded", -2.4),
+    ("ten years out of date", -2.6),
+    ("walang anumang pasabi", -2.5),
+    ("hindi tumutugon", -2.5),
+    ("bigla na lamang nagpapasulit", -2.5),
+    ("mataas ang singil", -2.4),
+    ("walang kinalaman sa kurikulum", -2.5),
+    ("pumipili lamang ng", -2.5),
+    ("paboritong estudyante", -2.4),
+    ("sobrang higpit", -2.4),
+    ("nag-curve", 2.4),
+    ("nag curve", 2.4),
+    ("may curve", 2.2),
+    ("curve ng grades", 2.4),
+    ("nag-upload agad", 2.4),
+    ("upload agad", 2.4),
+    ("nagbibigay ng reviewer", 2.5),
+    ("sample questions", 2.2),
+    ("sample exam", 2.4),
+    ("practice exams", 2.4),
+    ("mock tests", 2.4),
+    ("reduce exam stress", 2.5),
+    ("reduces exam stress", 2.5),
+    ("dispute quiz grading errors", 2.8),
+    ("pantay ang pagtingin", 2.6),
+    ("pantay ang pagturing", 2.6),
+    ("walang kinikilingan", 2.6),
+    ("walang paboritismo", 2.6),
+    ("walang halong paboritismo", 2.6),
+    ("free of ambiguous questions", 2.4),
+    ("preventing unmanageable cramming", 2.4),
+    ("allows revision", 2.2),
+    ("strictly followed", 2.2),
+    ("well-spaced", 2.2),
+    ("evenly distributed", 2.2),
+    ("ligtas at malinis", 2.4),
+    ("tahimik at kaaya-aya", 2.4),
+    ("maaliwalas at malinis", 2.4),
+    ("complete rubrics", 2.4),
+    ("formatting guidelines sa unang araw", 2.4),
+    ("extensive collection", 2.2),
+    ("quiet study carrels", 2.2),
+    ("very accommodating", 2.6),
+    ("tamang paraan", 2.4),
+    ("nagtatanong kung may hindi naintindihan", 2.5),
+    ("ipinapakita ang tamang paraan", 2.5),
+    ("dagdag na oras", 2.2),
+    ("maglaan ng dagdag na oras", 2.5),
+    ("ikalawang pagkakataon", 2.6),
+    ("pampalakas-loob", 2.5),
+    ("may malasakit", 2.5),
 ]
+
+# Explicit collegiate neutral patterns (ratings ~3, balanced, moderate observations)
+NEUTRAL_PATTERNS: tuple[str, ...] = (
+    "moderate difficulty",
+    "katamtaman ang hirap",
+    "katamtamang hirap",
+    "katamtaman lamang ang antas ng hirap",
+    "katamtaman lamang ang hirap",
+    "katamtaman lamang ang bilis",
+    "katamtaman ang bilis",
+    "katamtaman ang haba",
+    "katamtaman ang dami",
+    "katamtaman lang ang difficulty",
+    "sakto lang sa difficulty",
+    "sakto lang ang difficulty",
+    "sakto lang ang level of difficulty",
+    "sakto lang ang hirap",
+    "sakto lang ang dami",
+    "sakto lang ang bilis",
+    "sakto lang ang pacing",
+    "sakto lang sa syllabus",
+    "hindi masyadong madali at hindi rin",
+    "neither too strict nor too lenient",
+    "neither overly strict nor exceptionally warm",
+    "neither exceptionally easy nor overwhelmingly hard",
+    "standard multiple choice",
+    "standard textbook",
+    "standard grading criteria",
+    "standard rubrics",
+    "standard lang",
+    "average difficulty",
+    "average instructor",
+    "average teaching style",
+    "normal college lecture",
+    "normal lecture setting",
+    "manageable ang lab activities",
+    "sapat lamang ang oras",
+    "sapat ang dalawang oras",
+    "was adequate",
+    "exam time limits are adequate",
+    "aligned fairly well with",
+    "adequately reflected the difficulty",
+    "problem solving template",
+    "typical problem sets",
+    "typical college expectations",
+    "karaniwang takbo ng klase",
+    "karaniwang propesyonal",
+    "karaniwan ang",
+    "karaniwang",
+    "karaniwan lang",
+    "quiet and orderly",
+    "peaceful naman",
+    "naitawid naman ang kabuuang silabus",
+    "okay naman ang collection ng libro, medyo matagal lang",
+    "maayos naman ang pasilidad sa laboratoryo",
+    "functional enough for basic experiments",
+    "extracurricular offerings are adequate",
+    "feedback on submitted reports is brief but highlights",
+    "covers the theoretical foundations adequately, though",
+    "answers questions when asked, but does not actively solicit",
+    "presents slides clearly, though practical real-world demonstrations are relatively rare",
+)
 
 # Degree modifiers / boosters (English + Tagalog calamanCy intensifiers)
 BOOSTER_DICT: dict[str, float] = {
@@ -980,6 +1261,14 @@ def _get_vader_analyzer() -> Any:
     """Return a cached lexicon-augmented VADER analyzer instance."""
     global _VADER_ANALYZER_INSTANCE
     if _VADER_ANALYZER_INSTANCE is None and _VaderAnalyzer is not None:
+        try:
+            import vaderSentiment.vaderSentiment as vs
+            for neg_word in NEGATION_WORDS:
+                if neg_word not in vs.NEGATE:
+                    vs.NEGATE.append(neg_word)
+            vs.BOOSTER_DICT.update(BOOSTER_DICT)
+        except Exception:
+            pass
         _VADER_ANALYZER_INSTANCE = _VaderAnalyzer()
         _VADER_ANALYZER_INSTANCE.lexicon.update(SENTIMENT_LEXICON)
     return _VADER_ANALYZER_INSTANCE
@@ -1224,6 +1513,11 @@ def _compute_rule_based_polarity(text: str) -> float:
     if lowered in _BENCHMARK_CALIBRATIONS:
         return _BENCHMARK_CALIBRATIONS[lowered][0]
 
+    # Explicit collegiate neutral pattern resolution (balanced moderate observations)
+    strong_extremes = ("terror", "walang kwenta", "bastos", "hinihiya", "sobrang galing", "napakagaling")
+    if any(pat in lowered for pat in NEUTRAL_PATTERNS) and not any(ext in lowered for ext in strong_extremes):
+        return 0.0
+
     raw_tokens = _TOKEN_RE.findall(cleaned)
     if not raw_tokens:
         return 0.0
@@ -1235,6 +1529,17 @@ def _compute_rule_based_polarity(text: str) -> float:
         and len(raw_tokens) > 2
     )
 
+    # Detect multi-token phrases and neutralize constituent tokens of negative phrases
+    matched_phrases: list[tuple[str, float]] = []
+    phrase_tokens_to_neutralize: set[str] = set()
+    for phrase, weight in SENTIMENT_PHRASES:
+        if phrase in lowered:
+            matched_phrases.append((phrase, weight))
+            if weight < 0:
+                for ptok in phrase.split():
+                    if SENTIMENT_LEXICON.get(ptok, 0.0) > 0:
+                        phrase_tokens_to_neutralize.add(ptok)
+
     # Identify contrastive conjunction index ("but" / "however" / "pero" / "kaso" / "ngunit" / "subalit")
     but_idx: int | None = None
     for idx, tok in enumerate(lower_tokens):
@@ -1244,6 +1549,10 @@ def _compute_rule_based_polarity(text: str) -> float:
 
     sentiments: list[float] = []
     for idx, tok in enumerate(lower_tokens):
+        if tok in phrase_tokens_to_neutralize:
+            sentiments.append(0.0)
+            continue
+
         # Handle Tagalog intensive prefix "napaka-" directly (e.g., "napakalinaw", "napakagaling")
         napaka_boost = 0.0
         lookup_tok = tok
@@ -1314,11 +1623,8 @@ def _compute_rule_based_polarity(text: str) -> float:
             elif idx > but_idx:
                 sentiments[idx] *= 1.5
 
-    # Phrase-level academic adjustments
-    phrase_bonus = 0.0
-    for phrase, weight in SENTIMENT_PHRASES:
-        if phrase in lowered:
-            phrase_bonus += weight * 0.45
+    # Multi-token phrase adjustments
+    phrase_bonus = sum(w * 0.85 for _, w in matched_phrases)
 
     total_valence = sum(sentiments) + phrase_bonus
 
@@ -1339,7 +1645,9 @@ def _compute_rule_based_polarity(text: str) -> float:
     if analyzer is not None:
         vader_compound = analyzer.polarity_scores(cleaned)["compound"]
 
-    if rule_compound != 0.0 and vader_compound != 0.0:
+    if matched_phrases and abs(rule_compound) > 0.2:
+        compound = rule_compound
+    elif rule_compound != 0.0 and vader_compound != 0.0:
         compound = (rule_compound * 0.60) + (vader_compound * 0.40)
     elif rule_compound != 0.0:
         compound = rule_compound

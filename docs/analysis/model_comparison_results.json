@@ -4,400 +4,400 @@
     "model_a": {
       "model_name": "Model A (Baseline Uncorrected)",
       "partition": "docs/analysis/dev_partition.csv",
-      "total_samples": 560,
-      "accuracy": 0.6589,
-      "macro_f1": 0.6114,
+      "total_samples": 1400,
+      "accuracy": 0.8243,
+      "macro_f1": 0.7995,
       "per_class": {
         "Positive": {
-          "precision": 0.8484,
-          "recall": 0.8313,
-          "f1": 0.8398,
-          "support": 249,
-          "predicted": 244
+          "precision": 0.8879,
+          "recall": 0.8788,
+          "f1": 0.8834,
+          "support": 586,
+          "predicted": 580
         },
         "Neutral": {
-          "precision": 0.2816,
-          "recall": 0.5326,
-          "f1": 0.3684,
-          "support": 92,
-          "predicted": 174
+          "precision": 0.5604,
+          "recall": 0.7846,
+          "f1": 0.6538,
+          "support": 260,
+          "predicted": 364
         },
         "Negative": {
-          "precision": 0.7958,
-          "recall": 0.516,
-          "f1": 0.626,
-          "support": 219,
-          "predicted": 142
+          "precision": 0.9539,
+          "recall": 0.7852,
+          "f1": 0.8614,
+          "support": 554,
+          "predicted": 456
         }
       },
       "confusion_matrix": {
         "Positive": {
-          "Positive": 207,
-          "Neutral": 35,
-          "Negative": 7
+          "Positive": 515,
+          "Neutral": 66,
+          "Negative": 5
         },
         "Neutral": {
-          "Positive": 21,
-          "Neutral": 49,
-          "Negative": 22
+          "Positive": 40,
+          "Neutral": 204,
+          "Negative": 16
         },
         "Negative": {
-          "Positive": 16,
-          "Neutral": 90,
-          "Negative": 113
+          "Positive": 25,
+          "Neutral": 94,
+          "Negative": 435
         }
       },
       "per_language": {
         "English": {
-          "total": 226,
-          "correct": 174,
-          "accuracy": 0.7699
+          "total": 507,
+          "correct": 427,
+          "accuracy": 0.8422
         },
         "Tagalog": {
-          "total": 135,
-          "correct": 89,
-          "accuracy": 0.6593
+          "total": 415,
+          "correct": 334,
+          "accuracy": 0.8048
         },
         "Taglish": {
-          "total": 199,
-          "correct": 106,
-          "accuracy": 0.5327
+          "total": 478,
+          "correct": 393,
+          "accuracy": 0.8222
         }
       },
-      "avg_latency_ms": 0.099,
-      "total_time_ms": 55.67
+      "avg_latency_ms": 0.291,
+      "total_time_ms": 407.99
     },
     "model_b": {
       "model_name": "Model B (Corrected Baseline)",
       "partition": "docs/analysis/dev_partition.csv",
-      "total_samples": 560,
-      "accuracy": 0.6893,
-      "macro_f1": 0.64,
+      "total_samples": 1400,
+      "accuracy": 0.7843,
+      "macro_f1": 0.7416,
       "per_class": {
         "Positive": {
-          "precision": 0.856,
-          "recall": 0.8353,
-          "f1": 0.8455,
-          "support": 249,
-          "predicted": 243
+          "precision": 0.847,
+          "recall": 0.8788,
+          "f1": 0.8626,
+          "support": 586,
+          "predicted": 608
         },
         "Neutral": {
-          "precision": 0.3101,
-          "recall": 0.5326,
-          "f1": 0.392,
-          "support": 92,
-          "predicted": 158
+          "precision": 0.4839,
+          "recall": 0.5769,
+          "f1": 0.5263,
+          "support": 260,
+          "predicted": 310
         },
         "Negative": {
-          "precision": 0.8113,
-          "recall": 0.589,
-          "f1": 0.6825,
-          "support": 219,
-          "predicted": 159
+          "precision": 0.8983,
+          "recall": 0.7816,
+          "f1": 0.8359,
+          "support": 554,
+          "predicted": 482
         }
       },
       "confusion_matrix": {
         "Positive": {
-          "Positive": 208,
-          "Neutral": 34,
-          "Negative": 7
+          "Positive": 515,
+          "Neutral": 65,
+          "Negative": 6
         },
         "Neutral": {
-          "Positive": 20,
-          "Neutral": 49,
-          "Negative": 23
+          "Positive": 67,
+          "Neutral": 150,
+          "Negative": 43
         },
         "Negative": {
-          "Positive": 15,
-          "Neutral": 75,
-          "Negative": 129
+          "Positive": 26,
+          "Neutral": 95,
+          "Negative": 433
         }
       },
       "per_language": {
         "English": {
-          "total": 226,
-          "correct": 174,
-          "accuracy": 0.7699
+          "total": 507,
+          "correct": 410,
+          "accuracy": 0.8087
         },
         "Tagalog": {
-          "total": 135,
-          "correct": 94,
-          "accuracy": 0.6963
+          "total": 415,
+          "correct": 315,
+          "accuracy": 0.759
         },
         "Taglish": {
-          "total": 199,
-          "correct": 118,
-          "accuracy": 0.593
+          "total": 478,
+          "correct": 373,
+          "accuracy": 0.7803
         }
       },
-      "avg_latency_ms": 0.095,
-      "total_time_ms": 53.16
+      "avg_latency_ms": 0.208,
+      "total_time_ms": 290.66
     },
     "model_c": {
       "model_name": "Model C (Enhanced Hybrid Pipeline)",
       "partition": "docs/analysis/dev_partition.csv",
-      "total_samples": 560,
-      "accuracy": 0.6607,
-      "macro_f1": 0.6112,
+      "total_samples": 1400,
+      "accuracy": 0.8243,
+      "macro_f1": 0.7995,
       "per_class": {
         "Positive": {
-          "precision": 0.8496,
-          "recall": 0.8394,
-          "f1": 0.8444,
-          "support": 249,
-          "predicted": 246
+          "precision": 0.8879,
+          "recall": 0.8788,
+          "f1": 0.8834,
+          "support": 586,
+          "predicted": 580
         },
         "Neutral": {
-          "precision": 0.2807,
-          "recall": 0.5217,
-          "f1": 0.365,
-          "support": 92,
-          "predicted": 171
+          "precision": 0.5604,
+          "recall": 0.7846,
+          "f1": 0.6538,
+          "support": 260,
+          "predicted": 364
         },
         "Negative": {
-          "precision": 0.7902,
-          "recall": 0.516,
-          "f1": 0.6243,
-          "support": 219,
-          "predicted": 143
+          "precision": 0.9539,
+          "recall": 0.7852,
+          "f1": 0.8614,
+          "support": 554,
+          "predicted": 456
         }
       },
       "confusion_matrix": {
         "Positive": {
-          "Positive": 209,
-          "Neutral": 33,
-          "Negative": 7
+          "Positive": 515,
+          "Neutral": 66,
+          "Negative": 5
         },
         "Neutral": {
-          "Positive": 21,
-          "Neutral": 48,
-          "Negative": 23
+          "Positive": 40,
+          "Neutral": 204,
+          "Negative": 16
         },
         "Negative": {
-          "Positive": 16,
-          "Neutral": 90,
-          "Negative": 113
+          "Positive": 25,
+          "Neutral": 94,
+          "Negative": 435
         }
       },
       "per_language": {
         "English": {
-          "total": 226,
-          "correct": 174,
-          "accuracy": 0.7699
+          "total": 507,
+          "correct": 427,
+          "accuracy": 0.8422
         },
         "Tagalog": {
-          "total": 135,
-          "correct": 90,
-          "accuracy": 0.6667
+          "total": 415,
+          "correct": 334,
+          "accuracy": 0.8048
         },
         "Taglish": {
-          "total": 199,
-          "correct": 106,
-          "accuracy": 0.5327
+          "total": 478,
+          "correct": 393,
+          "accuracy": 0.8222
         }
       },
-      "avg_latency_ms": 0.087,
-      "total_time_ms": 48.48
+      "avg_latency_ms": 0.258,
+      "total_time_ms": 361.01
     }
   },
   "held_out_test_evaluation": {
     "model_a": {
       "model_name": "Model A (Baseline Uncorrected)",
       "partition": "docs/analysis/test_partition.csv",
-      "total_samples": 240,
-      "accuracy": 0.6083,
-      "macro_f1": 0.5634,
+      "total_samples": 600,
+      "accuracy": 0.965,
+      "macro_f1": 0.9562,
       "per_class": {
         "Positive": {
-          "precision": 0.8218,
-          "recall": 0.7757,
-          "f1": 0.7981,
-          "support": 107,
-          "predicted": 101
+          "precision": 0.9612,
+          "recall": 0.988,
+          "f1": 0.9745,
+          "support": 251,
+          "predicted": 258
         },
         "Neutral": {
-          "precision": 0.225,
-          "recall": 0.45,
-          "f1": 0.3,
-          "support": 40,
-          "predicted": 80
+          "precision": 0.9115,
+          "recall": 0.9196,
+          "f1": 0.9156,
+          "support": 112,
+          "predicted": 113
         },
         "Negative": {
-          "precision": 0.7627,
-          "recall": 0.4839,
-          "f1": 0.5921,
-          "support": 93,
-          "predicted": 59
+          "precision": 0.9956,
+          "recall": 0.962,
+          "f1": 0.9785,
+          "support": 237,
+          "predicted": 229
         }
       },
       "confusion_matrix": {
         "Positive": {
-          "Positive": 83,
-          "Neutral": 22,
-          "Negative": 2
+          "Positive": 248,
+          "Neutral": 3,
+          "Negative": 0
         },
         "Neutral": {
-          "Positive": 10,
-          "Neutral": 18,
-          "Negative": 12
+          "Positive": 8,
+          "Neutral": 103,
+          "Negative": 1
         },
         "Negative": {
-          "Positive": 8,
-          "Neutral": 40,
-          "Negative": 45
+          "Positive": 2,
+          "Neutral": 7,
+          "Negative": 228
         }
       },
       "per_language": {
         "English": {
-          "total": 97,
-          "correct": 69,
-          "accuracy": 0.7113
+          "total": 216,
+          "correct": 215,
+          "accuracy": 0.9954
         },
         "Tagalog": {
-          "total": 57,
-          "correct": 29,
-          "accuracy": 0.5088
+          "total": 178,
+          "correct": 173,
+          "accuracy": 0.9719
         },
         "Taglish": {
-          "total": 86,
-          "correct": 48,
-          "accuracy": 0.5581
+          "total": 206,
+          "correct": 191,
+          "accuracy": 0.9272
         }
       },
-      "avg_latency_ms": 0.072,
-      "total_time_ms": 17.37
+      "avg_latency_ms": 0.293,
+      "total_time_ms": 175.58
     },
     "model_b": {
       "model_name": "Model B (Corrected Baseline)",
       "partition": "docs/analysis/test_partition.csv",
-      "total_samples": 240,
-      "accuracy": 0.6167,
-      "macro_f1": 0.5685,
+      "total_samples": 600,
+      "accuracy": 0.8817,
+      "macro_f1": 0.8288,
       "per_class": {
         "Positive": {
-          "precision": 0.8137,
-          "recall": 0.7757,
-          "f1": 0.7943,
-          "support": 107,
-          "predicted": 102
+          "precision": 0.8813,
+          "recall": 0.9761,
+          "f1": 0.9263,
+          "support": 251,
+          "predicted": 278
         },
         "Neutral": {
-          "precision": 0.2267,
-          "recall": 0.425,
-          "f1": 0.2957,
-          "support": 40,
-          "predicted": 75
+          "precision": 0.8169,
+          "recall": 0.5179,
+          "f1": 0.6339,
+          "support": 112,
+          "predicted": 71
         },
         "Negative": {
-          "precision": 0.7619,
-          "recall": 0.5161,
-          "f1": 0.6154,
-          "support": 93,
-          "predicted": 63
+          "precision": 0.9004,
+          "recall": 0.9536,
+          "f1": 0.9262,
+          "support": 237,
+          "predicted": 251
         }
       },
       "confusion_matrix": {
         "Positive": {
-          "Positive": 83,
-          "Neutral": 22,
-          "Negative": 2
+          "Positive": 245,
+          "Neutral": 5,
+          "Negative": 1
         },
         "Neutral": {
-          "Positive": 10,
-          "Neutral": 17,
-          "Negative": 13
+          "Positive": 30,
+          "Neutral": 58,
+          "Negative": 24
         },
         "Negative": {
-          "Positive": 9,
-          "Neutral": 36,
-          "Negative": 48
+          "Positive": 3,
+          "Neutral": 8,
+          "Negative": 226
         }
       },
       "per_language": {
         "English": {
-          "total": 97,
-          "correct": 69,
-          "accuracy": 0.7113
+          "total": 216,
+          "correct": 191,
+          "accuracy": 0.8843
         },
         "Tagalog": {
-          "total": 57,
-          "correct": 29,
-          "accuracy": 0.5088
+          "total": 178,
+          "correct": 163,
+          "accuracy": 0.9157
         },
         "Taglish": {
-          "total": 86,
-          "correct": 50,
-          "accuracy": 0.5814
+          "total": 206,
+          "correct": 175,
+          "accuracy": 0.8495
         }
       },
-      "avg_latency_ms": 0.072,
-      "total_time_ms": 17.19
+      "avg_latency_ms": 0.224,
+      "total_time_ms": 134.17
     },
     "model_c": {
       "model_name": "Model C (Enhanced Hybrid Pipeline)",
       "partition": "docs/analysis/test_partition.csv",
-      "total_samples": 240,
-      "accuracy": 0.6208,
-      "macro_f1": 0.5694,
+      "total_samples": 600,
+      "accuracy": 0.965,
+      "macro_f1": 0.9562,
       "per_class": {
         "Positive": {
-          "precision": 0.8269,
-          "recall": 0.8037,
-          "f1": 0.8152,
-          "support": 107,
-          "predicted": 104
+          "precision": 0.9612,
+          "recall": 0.988,
+          "f1": 0.9745,
+          "support": 251,
+          "predicted": 258
         },
         "Neutral": {
-          "precision": 0.2267,
-          "recall": 0.425,
-          "f1": 0.2957,
-          "support": 40,
-          "predicted": 75
+          "precision": 0.9115,
+          "recall": 0.9196,
+          "f1": 0.9156,
+          "support": 112,
+          "predicted": 113
         },
         "Negative": {
-          "precision": 0.7541,
-          "recall": 0.4946,
-          "f1": 0.5974,
-          "support": 93,
-          "predicted": 61
+          "precision": 0.9956,
+          "recall": 0.962,
+          "f1": 0.9785,
+          "support": 237,
+          "predicted": 229
         }
       },
       "confusion_matrix": {
         "Positive": {
-          "Positive": 86,
-          "Neutral": 19,
-          "Negative": 2
+          "Positive": 248,
+          "Neutral": 3,
+          "Negative": 0
         },
         "Neutral": {
-          "Positive": 10,
-          "Neutral": 17,
-          "Negative": 13
+          "Positive": 8,
+          "Neutral": 103,
+          "Negative": 1
         },
         "Negative": {
-          "Positive": 8,
-          "Neutral": 39,
-          "Negative": 46
+          "Positive": 2,
+          "Neutral": 7,
+          "Negative": 228
         }
       },
       "per_language": {
         "English": {
-          "total": 97,
-          "correct": 69,
-          "accuracy": 0.7113
+          "total": 216,
+          "correct": 215,
+          "accuracy": 0.9954
         },
         "Tagalog": {
-          "total": 57,
-          "correct": 30,
-          "accuracy": 0.5263
+          "total": 178,
+          "correct": 173,
+          "accuracy": 0.9719
         },
         "Taglish": {
-          "total": 86,
-          "correct": 50,
-          "accuracy": 0.5814
+          "total": 206,
+          "correct": 191,
+          "accuracy": 0.9272
         }
       },
-      "avg_latency_ms": 0.082,
-      "total_time_ms": 19.6
+      "avg_latency_ms": 0.268,
+      "total_time_ms": 160.72
     }
   }
 }

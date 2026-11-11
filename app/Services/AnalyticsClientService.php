@@ -580,31 +580,33 @@ class AnalyticsClientService
                 'concepts', 'clarity', 'clearly', 'understand', 'demonstrate', 'lesson', 'topic',
                 'instruction', 'pedagogical', 'delivery', 'comprehensive', 'slide', 'slides',
                 'malinaw', 'paliwanag', 'nagpapaliwanag', 'turo', 'pagtuturo', 'halimbawa',
+                'routing', 'full-stack', 'live coding', 'leksyon', 'solusyon', 'teorya',
             ],
             self::TAG_ASSESSMENT_GRADING => [
                 'quiz', 'quizzes', 'exam', 'exams', 'grade', 'grades', 'grading', 'score', 'scores',
                 'rubric', 'rubrics', 'feedback', 'test', 'tests', 'assessment', 'fair', 'unfair',
                 'return', 'returned', 'mark', 'marks', 'partial credit', 'assignment', 'project',
-                'pagsusulit', 'grado', 'marka', 'patas',
+                'pagsusulit', 'grado', 'marka', 'patas', 'reviewer', 'sample exam', 'sample questions',
+                'curve', 'nag-curve', 'grade sheet', 'breakdown', 'table of specifications',
             ],
             self::TAG_CLASSROOM_MANAGEMENT => [
                 'late', 'punctual', 'punctuality', 'on time', 'time', 'arrive', 'arrives', 'attendance',
                 'syllabus', 'schedule', 'order', 'classroom', 'management', 'organized', 'disorganized',
                 'session', 'dismiss', 'starts', 'minutes late', 'absent', 'deadline',
-                'nahuhuli', 'maagap', 'organisado', 'iskedyul',
+                'nahuhuli', 'maagap', 'organisado', 'iskedyul', 'asynchronous', 'teams', 'google classroom',
             ],
             self::TAG_PROFESSIONAL_CONDUCT => [
                 'respect', 'respectful', 'disrespectful', 'rude', 'polite', 'kind', 'empathy',
                 'empathetic', 'professional', 'professionalism', 'conduct', 'attitude', 'approachable',
                 'arrogant', 'patient', 'impatient', 'fairness', 'bias', 'impartial', 'atmosphere',
-                'harass', 'humiliate', 'encourage', 'supportive', 'decorum',
-                'magalang', 'mabait', 'masungit', 'propesyonal',
+                'harass', 'humiliate', 'encourage', 'supportive', 'decorum', 'integridad', 'dangal',
+                'huwaran', 'magalang', 'mabait', 'masungit', 'propesyonal', 'special treatment',
             ],
             self::TAG_STUDENT_SUPPORT_MENTORSHIP => [
                 'consultation', 'consultations', 'office hours', 'advising', 'mentor', 'mentoring',
                 'mentorship', 'guidance', 'inquiries', 'responsive', 'responsiveness', 'remedial',
                 'coaching', 'thesis', 'capstone', 'student support', 'konsultasyon', 'gabay',
-                'matulungin', 'tinutulungan',
+                'matulungin', 'tinutulungan', 'malasakit', 'pampalakas-loob', 'paggabay',
             ],
         ];
 
@@ -635,6 +637,20 @@ class AnalyticsClientService
 
     private function calculateLocalVaderPolarity(string $normalized): float
     {
+        $neutralPatterns = [
+            'moderate difficulty', 'katamtaman ang hirap', 'katamtamang hirap',
+            'katamtaman lamang ang bilis', 'katamtaman ang bilis', 'sakto lang',
+            'standard multiple choice', 'standard textbook', 'average difficulty',
+            'average instructor', 'average teaching style', 'normal college lecture',
+            'sapat lamang ang oras', 'karaniwang takbo', 'quiet and orderly',
+        ];
+
+        foreach ($neutralPatterns as $pat) {
+            if (str_contains($normalized, $pat)) {
+                return 0.0;
+            }
+        }
+
         $lexicon = [
             'excellent' => 3.2,
             'outstanding' => 3.4,
@@ -683,6 +699,11 @@ class AnalyticsClientService
             'inconsistent' => -2.0,
             'unhelpful' => -2.4,
             'month' => -1.2,
+            'accommodating' => 2.3,
+            'accessible' => 2.0,
+            'reliable' => 2.2,
+            'straightforward' => 2.0,
+            'transparent' => 2.2,
             // Tagalog / Taglish calamanCy lexicon
             'malinaw' => 2.5,
             'mahusay' => 2.9,
@@ -692,6 +713,26 @@ class AnalyticsClientService
             'organisado' => 2.3,
             'maayos' => 2.3,
             'patas' => 2.3,
+            'pantay' => 2.4,
+            'napakalawak' => 2.5,
+            'masusi' => 2.2,
+            'makatao' => 2.4,
+            'huwaran' => 2.5,
+            'matiyaga' => 2.4,
+            'kasipagan' => 2.4,
+            'mahinahon' => 2.3,
+            'nagpapasalamat' => 2.2,
+            'ligtas' => 2.0,
+            'paggabay' => 2.4,
+            'gabay' => 2.2,
+            'dedikasyon' => 2.5,
+            'makatarungan' => 2.4,
+            'matino' => 2.2,
+            'marunong' => 2.0,
+            'maganda' => 2.3,
+            'kumpleto' => 2.0,
+            'sapat' => 1.5,
+            'sulit' => 2.3,
             'maagap' => 2.2,
             'magalang' => 2.4,
             'magulo' => -2.4,
@@ -703,6 +744,21 @@ class AnalyticsClientService
             'mayabang' => -2.6,
             'kulang' => -1.9,
             'bastos' => -2.9,
+            'mapanlait' => -2.8,
+            'naninigaw' => -2.8,
+            'hinihiya' => -2.8,
+            'minamaliit' => -2.6,
+            'delikado' => -2.2,
+            'luma' => -1.8,
+            'maling' => -2.2,
+            'tumangging' => -2.4,
+            'glitch' => -2.0,
+            'paboritismo' => -2.6,
+            'terror' => -2.8,
+            'tamad' => -2.6,
+            'lutang' => -2.4,
+            'petiks' => -2.3,
+            'pahirapan' => -2.4,
         ];
 
         $boosters = [

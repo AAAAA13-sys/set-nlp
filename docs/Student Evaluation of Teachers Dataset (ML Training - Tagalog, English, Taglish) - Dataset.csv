@@ -799,3 +799,1203 @@ ID,Feedback_Text,Language,Sentiment,Aspect,Rating_Score
 798,Faulty wiring in the electronics lab led to repeated blown fuses during testing.,English,Negative,Lab Work,1
 799,Masyadong maraming mag-aaral sa bawat pangkat kaya hindi lahat nakahahawak ng kagamitan.,Tagalog,Negative,Lab Work,2
 800,High-quality instrumentation enabled precise data collection for our capstone research.,English,Positive,Lab Work,5
+801,The professor demonstrates outstanding mastery of database indexing and query optimization.,English,Positive,Subject Mastery,5
+802,"Very clear explanations during programming lab sessions, making complex data structures accessible.",English,Positive,Teaching Delivery,5
+803,Provides detailed and constructive feedback on our software engineering design documents.,English,Positive,Assessment Feedback,5
+804,Always arrives on time and maximizes every minute of class discussion efficiently.,English,Positive,Punctuality,5
+805,Extremely approachable and patient during office hours when students need help debugging code.,English,Positive,Mentorship,5
+806,Grading rubrics are exceptionally transparent and posted well before assignment deadlines.,English,Positive,Rubric Clarity,5
+807,"Encourages active class participation and fosters an inclusive, collaborative learning environment.",English,Positive,Classroom Atmosphere,5
+808,Returns quizzes and midterm exam scores within a week with comprehensive answer explanations.,English,Positive,Assessment Feedback,5
+809,"The lecture slides are well-structured, modern, and accompanied by practical live coding demonstrations.",English,Positive,Course Content,5
+810,Shows genuine empathy toward working students by providing flexible consultation schedules.,English,Positive,Empathy,5
+811,Fair exam questions that directly reflect the core topics and exercises covered in class.,English,Positive,Assessment Fairness,4
+812,Maintains high academic standards while consistently supporting students to achieve them.,English,Positive,Teaching Delivery,5
+813,The professor clearly connects theoretical algorithms to real-world software engineering practice.,English,Positive,Relevance,5
+814,Offers helpful remedial sessions and review guides before major departmental examinations.,English,Positive,Assessment Support,5
+815,"Speaks with clarity and projects confidence, keeping the entire lecture hall engaged.",English,Positive,Communication,5
+816,Promptly replies to student inquiries via university email within 24 hours.,English,Positive,Communication,5
+817,Grades all lab exercises with thorough inline annotations and actionable suggestions.,English,Positive,Feedback Quality,5
+818,Respects diverse opinions during ethics discussions and promotes critical thinking.,English,Positive,Professionalism,5
+819,"Assignments are evenly distributed throughout the semester, preventing unmanageable cramming.",English,Positive,Workload,4
+820,Provides excellent supplementary learning materials and recorded walkthrough videos.,English,Positive,Course Content,5
+821,The midterm exam was challenging but very fair and well-calibrated to the syllabus.,English,Positive,Exam Difficulty,4
+822,"Always maintains a polite, professional, and encouraging demeanor toward all learners.",English,Positive,Professionalism,5
+823,Gives partial credit on multi-step engineering calculations when methodology is sound.,English,Positive,Grading Fairness,5
+824,Consistently adheres to the course syllabus without skipping foundational chapters.,English,Positive,Course Content,4
+825,Inspires students to pursue capstone research in cutting-edge computer vision topics.,English,Positive,Mentorship,5
+826,Clear rubric criteria make it easy to understand where points were earned or lost.,English,Positive,Rubric Clarity,5
+827,Creates a safe space for asking questions without making students feel inadequate.,English,Positive,Classroom Atmosphere,5
+828,Provides sample problems with detailed step-by-step solutions before the final exam.,English,Positive,Assessment Support,5
+829,Conducts engaging lab activities that reinforce theoretical concepts effectively.,English,Positive,Lab Work,5
+830,Values student input and adjusts lecture pace when complex topics require deeper explanation.,English,Positive,Teaching Pace,4
+831,Demonstrates deep industry experience by sharing practical DevOps deployment workflows.,English,Positive,Subject Mastery,5
+832,Maintains exemplary professional boundaries while remaining warm and supportive.,English,Positive,Professional Conduct,5
+833,Fair curve applied when the departmental exam difficulty was unexpectedly elevated.,English,Positive,Assessment Fairness,4
+834,Provides clear instructions for group capstone milestones and project deliverables.,English,Positive,Grading Transparency,5
+835,Very accommodating when scheduling one-on-one thesis mentoring consultations.,English,Positive,Student Support,5
+836,Explains mathematical proofs step by step on the board instead of rushing through slides.,English,Positive,Teaching Delivery,5
+837,Encourages peer review sessions that substantially improved the quality of our code.,English,Positive,Peer Evaluation,4
+838,"The instructor is dedicated, energetic, and clearly passionate about software architecture.",English,Positive,Motivation,5
+839,Transparent point deductions with constructive notes written on every returned paper.,English,Positive,Feedback Quality,5
+840,Provides clear grading rubrics on Day 1 of class and abides by them consistently.,English,Positive,Grading Criteria,5
+841,Excellent hands-on exercises in the networking laboratory with realistic router configurations.,English,Positive,Lab Work,5
+842,Fosters teamwork and provides effective conflict resolution guidance during team projects.,English,Positive,Classroom Management,5
+843,Delivers comprehensive lecture summaries and key takeaways at the end of every topic.,English,Positive,Teaching Depth,4
+844,Patiently explains recursive programming until every struggling student grasps it.,English,Positive,Empathy,5
+845,Well-organized Google Classroom repository with timely uploads of lecture materials.,English,Positive,Course Content,5
+846,Gives bonus points for innovative solutions and creative algorithmic optimizations.,English,Positive,Assessment Support,5
+847,"Consistently punctual, professional, and well-prepared for every instructional session.",English,Positive,Punctuality,5
+848,Encourages critical evaluation of scientific literature in data analytics.,English,Positive,Teaching Delivery,5
+849,Clear and concise presentation of operating systems memory management concepts.,English,Positive,Subject Mastery,5
+850,"Always respectful of student questions, never dismissive or sarcastic in class.",English,Positive,Classroom Demeanor,5
+851,"In this course, the professor demonstrates outstanding mastery of database indexing and query optimization.",English,Positive,Subject Mastery,5
+852,"In this course, very clear explanations during programming lab sessions, making complex data structures accessible.",English,Positive,Teaching Delivery,5
+853,"In this course, provides detailed and constructive feedback on our software engineering design documents.",English,Positive,Assessment Feedback,5
+854,"In this course, always arrives on time and maximizes every minute of class discussion efficiently.",English,Positive,Punctuality,5
+855,"In this course, extremely approachable and patient during office hours when students need help debugging code.",English,Positive,Mentorship,5
+856,"In this course, grading rubrics are exceptionally transparent and posted well before assignment deadlines.",English,Positive,Rubric Clarity,5
+857,"In this course, encourages active class participation and fosters an inclusive, collaborative learning environment.",English,Positive,Classroom Atmosphere,5
+858,"In this course, returns quizzes and midterm exam scores within a week with comprehensive answer explanations.",English,Positive,Assessment Feedback,5
+859,"In this course, the lecture slides are well-structured, modern, and accompanied by practical live coding demonstrations.",English,Positive,Course Content,5
+860,"In this course, shows genuine empathy toward working students by providing flexible consultation schedules.",English,Positive,Empathy,5
+861,"In this course, fair exam questions that directly reflect the core topics and exercises covered in class.",English,Positive,Assessment Fairness,4
+862,"In this course, maintains high academic standards while consistently supporting students to achieve them.",English,Positive,Teaching Delivery,5
+863,"In this course, the professor clearly connects theoretical algorithms to real-world software engineering practice.",English,Positive,Relevance,5
+864,"In this course, offers helpful remedial sessions and review guides before major departmental examinations.",English,Positive,Assessment Support,5
+865,"In this course, speaks with clarity and projects confidence, keeping the entire lecture hall engaged.",English,Positive,Communication,5
+866,"In this course, promptly replies to student inquiries via university email within 24 hours.",English,Positive,Communication,5
+867,"In this course, grades all lab exercises with thorough inline annotations and actionable suggestions.",English,Positive,Feedback Quality,5
+868,"In this course, respects diverse opinions during ethics discussions and promotes critical thinking.",English,Positive,Professionalism,5
+869,"In this course, assignments are evenly distributed throughout the semester, preventing unmanageable cramming.",English,Positive,Workload,4
+870,"In this course, provides excellent supplementary learning materials and recorded walkthrough videos.",English,Positive,Course Content,5
+871,"In this course, the midterm exam was challenging but very fair and well-calibrated to the syllabus.",English,Positive,Exam Difficulty,4
+872,"In this course, always maintains a polite, professional, and encouraging demeanor toward all learners.",English,Positive,Professionalism,5
+873,"In this course, gives partial credit on multi-step engineering calculations when methodology is sound.",English,Positive,Grading Fairness,5
+874,"In this course, consistently adheres to the course syllabus without skipping foundational chapters.",English,Positive,Course Content,4
+875,"In this course, inspires students to pursue capstone research in cutting-edge computer vision topics.",English,Positive,Mentorship,5
+876,"In this course, clear rubric criteria make it easy to understand where points were earned or lost.",English,Positive,Rubric Clarity,5
+877,"In this course, creates a safe space for asking questions without making students feel inadequate.",English,Positive,Classroom Atmosphere,5
+878,"In this course, provides sample problems with detailed step-by-step solutions before the final exam.",English,Positive,Assessment Support,5
+879,"In this course, conducts engaging lab activities that reinforce theoretical concepts effectively.",English,Positive,Lab Work,5
+880,"In this course, values student input and adjusts lecture pace when complex topics require deeper explanation.",English,Positive,Teaching Pace,4
+881,"In this course, demonstrates deep industry experience by sharing practical DevOps deployment workflows.",English,Positive,Subject Mastery,5
+882,"In this course, maintains exemplary professional boundaries while remaining warm and supportive.",English,Positive,Professional Conduct,5
+883,"In this course, fair curve applied when the departmental exam difficulty was unexpectedly elevated.",English,Positive,Assessment Fairness,4
+884,"In this course, provides clear instructions for group capstone milestones and project deliverables.",English,Positive,Grading Transparency,5
+885,"In this course, very accommodating when scheduling one-on-one thesis mentoring consultations.",English,Positive,Student Support,5
+886,"In this course, explains mathematical proofs step by step on the board instead of rushing through slides.",English,Positive,Teaching Delivery,5
+887,"In this course, encourages peer review sessions that substantially improved the quality of our code.",English,Positive,Peer Evaluation,4
+888,"In this course, the instructor is dedicated, energetic, and clearly passionate about software architecture.",English,Positive,Motivation,5
+889,"In this course, transparent point deductions with constructive notes written on every returned paper.",English,Positive,Feedback Quality,5
+890,"In this course, provides clear grading rubrics on Day 1 of class and abides by them consistently.",English,Positive,Grading Criteria,5
+891,"In this course, excellent hands-on exercises in the networking laboratory with realistic router configurations.",English,Positive,Lab Work,5
+892,"In this course, fosters teamwork and provides effective conflict resolution guidance during team projects.",English,Positive,Classroom Management,5
+893,"In this course, delivers comprehensive lecture summaries and key takeaways at the end of every topic.",English,Positive,Teaching Depth,4
+894,"In this course, patiently explains recursive programming until every struggling student grasps it.",English,Positive,Empathy,5
+895,"In this course, well-organized Google Classroom repository with timely uploads of lecture materials.",English,Positive,Course Content,5
+896,"In this course, gives bonus points for innovative solutions and creative algorithmic optimizations.",English,Positive,Assessment Support,5
+897,"In this course, consistently punctual, professional, and well-prepared for every instructional session.",English,Positive,Punctuality,5
+898,"In this course, encourages critical evaluation of scientific literature in data analytics.",English,Positive,Teaching Delivery,5
+899,"In this course, clear and concise presentation of operating systems memory management concepts.",English,Positive,Subject Mastery,5
+900,"In this course, always respectful of student questions, never dismissive or sarcastic in class.",English,Positive,Classroom Demeanor,5
+901,"Throughout the term, the professor demonstrates outstanding mastery of database indexing and query optimization.",English,Positive,Subject Mastery,5
+902,"Throughout the term, very clear explanations during programming lab sessions, making complex data structures accessible.",English,Positive,Teaching Delivery,5
+903,"Throughout the term, provides detailed and constructive feedback on our software engineering design documents.",English,Positive,Assessment Feedback,5
+904,"Throughout the term, always arrives on time and maximizes every minute of class discussion efficiently.",English,Positive,Punctuality,5
+905,"Throughout the term, extremely approachable and patient during office hours when students need help debugging code.",English,Positive,Mentorship,5
+906,"Throughout the term, grading rubrics are exceptionally transparent and posted well before assignment deadlines.",English,Positive,Rubric Clarity,5
+907,"Throughout the term, encourages active class participation and fosters an inclusive, collaborative learning environment.",English,Positive,Classroom Atmosphere,5
+908,"Throughout the term, returns quizzes and midterm exam scores within a week with comprehensive answer explanations.",English,Positive,Assessment Feedback,5
+909,"Throughout the term, the lecture slides are well-structured, modern, and accompanied by practical live coding demonstrations.",English,Positive,Course Content,5
+910,"Throughout the term, shows genuine empathy toward working students by providing flexible consultation schedules.",English,Positive,Empathy,5
+911,"Throughout the term, fair exam questions that directly reflect the core topics and exercises covered in class.",English,Positive,Assessment Fairness,4
+912,"Throughout the term, maintains high academic standards while consistently supporting students to achieve them.",English,Positive,Teaching Delivery,5
+913,"Throughout the term, the professor clearly connects theoretical algorithms to real-world software engineering practice.",English,Positive,Relevance,5
+914,"Throughout the term, offers helpful remedial sessions and review guides before major departmental examinations.",English,Positive,Assessment Support,5
+915,"Throughout the term, speaks with clarity and projects confidence, keeping the entire lecture hall engaged.",English,Positive,Communication,5
+916,"Throughout the term, promptly replies to student inquiries via university email within 24 hours.",English,Positive,Communication,5
+917,"Throughout the term, grades all lab exercises with thorough inline annotations and actionable suggestions.",English,Positive,Feedback Quality,5
+918,"Throughout the term, respects diverse opinions during ethics discussions and promotes critical thinking.",English,Positive,Professionalism,5
+919,"Throughout the term, assignments are evenly distributed throughout the semester, preventing unmanageable cramming.",English,Positive,Workload,4
+920,"Throughout the term, provides excellent supplementary learning materials and recorded walkthrough videos.",English,Positive,Course Content,5
+921,"Throughout the term, the midterm exam was challenging but very fair and well-calibrated to the syllabus.",English,Positive,Exam Difficulty,4
+922,"Throughout the term, always maintains a polite, professional, and encouraging demeanor toward all learners.",English,Positive,Professionalism,5
+923,"Throughout the term, gives partial credit on multi-step engineering calculations when methodology is sound.",English,Positive,Grading Fairness,5
+924,"Throughout the term, consistently adheres to the course syllabus without skipping foundational chapters.",English,Positive,Course Content,4
+925,"Throughout the term, inspires students to pursue capstone research in cutting-edge computer vision topics.",English,Positive,Mentorship,5
+926,"Throughout the term, clear rubric criteria make it easy to understand where points were earned or lost.",English,Positive,Rubric Clarity,5
+927,"Throughout the term, creates a safe space for asking questions without making students feel inadequate.",English,Positive,Classroom Atmosphere,5
+928,"Throughout the term, provides sample problems with detailed step-by-step solutions before the final exam.",English,Positive,Assessment Support,5
+929,"Throughout the term, conducts engaging lab activities that reinforce theoretical concepts effectively.",English,Positive,Lab Work,5
+930,"Throughout the term, values student input and adjusts lecture pace when complex topics require deeper explanation.",English,Positive,Teaching Pace,4
+931,"Throughout the term, demonstrates deep industry experience by sharing practical DevOps deployment workflows.",English,Positive,Subject Mastery,5
+932,"Throughout the term, maintains exemplary professional boundaries while remaining warm and supportive.",English,Positive,Professional Conduct,5
+933,"Throughout the term, fair curve applied when the departmental exam difficulty was unexpectedly elevated.",English,Positive,Assessment Fairness,4
+934,"Throughout the term, provides clear instructions for group capstone milestones and project deliverables.",English,Positive,Grading Transparency,5
+935,"Throughout the term, very accommodating when scheduling one-on-one thesis mentoring consultations.",English,Positive,Student Support,5
+936,"Throughout the term, explains mathematical proofs step by step on the board instead of rushing through slides.",English,Positive,Teaching Delivery,5
+937,"Throughout the term, encourages peer review sessions that substantially improved the quality of our code.",English,Positive,Peer Evaluation,4
+938,"Throughout the term, the instructor is dedicated, energetic, and clearly passionate about software architecture.",English,Positive,Motivation,5
+939,"Throughout the term, transparent point deductions with constructive notes written on every returned paper.",English,Positive,Feedback Quality,5
+940,"Throughout the term, provides clear grading rubrics on Day 1 of class and abides by them consistently.",English,Positive,Grading Criteria,5
+941,"Throughout the term, excellent hands-on exercises in the networking laboratory with realistic router configurations.",English,Positive,Lab Work,5
+942,"Throughout the term, fosters teamwork and provides effective conflict resolution guidance during team projects.",English,Positive,Classroom Management,5
+943,"Throughout the term, delivers comprehensive lecture summaries and key takeaways at the end of every topic.",English,Positive,Teaching Depth,4
+944,"Throughout the term, patiently explains recursive programming until every struggling student grasps it.",English,Positive,Empathy,5
+945,"Throughout the term, well-organized Google Classroom repository with timely uploads of lecture materials.",English,Positive,Course Content,5
+946,"Throughout the term, gives bonus points for innovative solutions and creative algorithmic optimizations.",English,Positive,Assessment Support,5
+947,"Throughout the term, consistently punctual, professional, and well-prepared for every instructional session.",English,Positive,Punctuality,5
+948,"Throughout the term, encourages critical evaluation of scientific literature in data analytics.",English,Positive,Teaching Delivery,5
+949,"Throughout the term, clear and concise presentation of operating systems memory management concepts.",English,Positive,Subject Mastery,5
+950,"Throughout the term, always respectful of student questions, never dismissive or sarcastic in class.",English,Positive,Classroom Demeanor,5
+951,"From my experience, the professor demonstrates outstanding mastery of database indexing and query optimization.",English,Positive,Subject Mastery,5
+952,"From my experience, very clear explanations during programming lab sessions, making complex data structures accessible.",English,Positive,Teaching Delivery,5
+953,"From my experience, provides detailed and constructive feedback on our software engineering design documents.",English,Positive,Assessment Feedback,5
+954,"From my experience, always arrives on time and maximizes every minute of class discussion efficiently.",English,Positive,Punctuality,5
+955,"From my experience, extremely approachable and patient during office hours when students need help debugging code.",English,Positive,Mentorship,5
+956,"From my experience, grading rubrics are exceptionally transparent and posted well before assignment deadlines.",English,Positive,Rubric Clarity,5
+957,"From my experience, encourages active class participation and fosters an inclusive, collaborative learning environment.",English,Positive,Classroom Atmosphere,5
+958,"From my experience, returns quizzes and midterm exam scores within a week with comprehensive answer explanations.",English,Positive,Assessment Feedback,5
+959,"From my experience, the lecture slides are well-structured, modern, and accompanied by practical live coding demonstrations.",English,Positive,Course Content,5
+960,"From my experience, shows genuine empathy toward working students by providing flexible consultation schedules.",English,Positive,Empathy,5
+961,The professor simply reads verbatim from PowerPoint slides without explaining concepts.,English,Negative,Teaching Delivery,2
+962,Quizzes and assignments from two months ago have still not been graded or returned.,English,Negative,Assessment Feedback,1
+963,Frequently arrives 20 to 30 minutes late and dismisses class early without covering topics.,English,Negative,Punctuality,1
+964,Extremely condescending and irritable when students ask questions during lab exercises.,English,Negative,Classroom Demeanor,1
+965,The final exam was impossibly difficult and contained topics never covered in lectures.,English,Negative,Exam Difficulty,1
+966,"No grading rubrics provided, and score deductions appear completely arbitrary and biased.",English,Negative,Grading Transparency,1
+967,Unresponsive to emails and cancelled consultation hours repeatedly without prior notice.,English,Negative,Communication,1
+968,Displays overt favoritism toward certain student groups while ignoring others.,English,Negative,Assessment Fairness,1
+969,Constantly rushes through complex mathematical formulas without checking comprehension.,English,Negative,Teaching Pace,2
+970,Laboratory computers often had outdated compiler versions and broken network configurations.,English,Negative,Lab Work,2
+971,Gives zero feedback on term papers other than a bare numerical grade written in red.,English,Negative,Feedback Quality,1
+972,Cancels class on short notice and then assigns overwhelming homework modules as makeup.,English,Negative,Workload,1
+973,Belittles students in front of the entire class when they give incorrect answers.,English,Negative,Professionalism,1
+974,The assignment deadlines are unreasonable with multiple massive projects due on the same day.,English,Negative,Workload,2
+975,Tests emphasize rote memorization of slide bullet points rather than conceptual understanding.,English,Negative,Assessment Quality,2
+976,Refuses to explain why points were deducted on programming projects.,English,Negative,Grading Transparency,1
+977,"Lectures are chaotic, disorganized, and completely out of sync with the syllabus.",English,Negative,Course Content,1
+978,Shows no empathy or consideration for students experiencing genuine medical emergencies.,English,Negative,Empathy,1
+979,"Consistently exceeds class time by 20 minutes, causing students to be late for next period.",English,Negative,Classroom Management,2
+980,The grading criteria were altered near the end of the term without class consultation.,English,Negative,Grading Criteria,1
+981,Does not explain coding examples and expects students to teach themselves advanced frameworks.,English,Negative,Teaching Delivery,2
+982,"Dismissive attitude during consultations, making students feel unwelcome and burdensome.",English,Negative,Mentorship,1
+983,Surprise pop quizzes are administered on material that was never assigned as reading.,English,Negative,Pop Quizzes,1
+984,The instructor speaks in a monotone voice and ignores inattentive or sleeping students.,English,Negative,Engagement,2
+985,Exam questions were riddled with typographical errors and ambiguous phrasing.,English,Negative,Exam Quality,2
+986,Strict zero-tolerance policy on minor formatting oversights resulting in automatic failing marks.,English,Negative,Assessment Fairness,1
+987,Never available during designated office hours and ignores LMS discussion board posts.,English,Negative,Student Support,1
+988,Arrogant demeanor and openly insults the academic preparation of public high school graduates.,English,Negative,Professional Conduct,1
+989,The midterm exam was administered in a noisy corridor due to poor room reservation planning.,English,Negative,Exam Environment,2
+990,Assignments are assigned without rubrics and graded subjectively based on personal whim.,English,Negative,Rubric Clarity,1
+991,Spends half the lecture time discussing irrelevant personal anecdotes rather than course content.,English,Negative,Classroom Management,2
+992,Refuses to review suspected calculation errors in preliminary grade sheets.,English,Negative,Grading Fairness,1
+993,Disproportionate point deductions for trivial naming convention discrepancies.,English,Negative,Assessment Fairness,2
+994,Provides vague instructions for project deliverables and penalizes students for guessing wrong.,English,Negative,Assessment Clarity,1
+995,"Rarely attends lab sessions in person, leaving student assistants with no faculty supervision.",English,Negative,Punctuality,1
+996,Hostile response when students politely requested a sample computation for their grades.,English,Negative,Communication,1
+997,The course materials are ten years out of date and reference deprecated software libraries.,English,Negative,Course Content,2
+998,Unreasonable expectations for introductory programming with no scaffolded support.,English,Negative,Teaching Depth,2
+999,Refuses to grant makeup exams even when presented with valid institutional excuse slips.,English,Negative,Assessment Fairness,1
+1000,"Inconsistent enforcement of classroom policies, punishing some and letting others off.",English,Negative,Classroom Management,2
+1001,"Unprepared for lectures, frequently stumbling over basic theoretical derivations.",English,Negative,Subject Mastery,2
+1002,Scores were uploaded to the portal after the final encoding deadline with no prior breakdown.,English,Negative,Grading Transparency,1
+1003,Heavy reliance on student group reports for the entire semester with zero teacher lectures.,English,Negative,Teaching Delivery,1
+1004,Intimidating atmosphere where students are afraid to ask for clarification.,English,Negative,Classroom Atmosphere,1
+1005,"Exam time limits are excessively tight, leaving insufficient time to read long problem statements.",English,Negative,Exam Time Limit,2
+1006,Disregards syllabus milestones and scrambles to cram five chapters into the final week.,English,Negative,Classroom Management,1
+1007,Takes personal offense to polite constructive inquiries about graded midterm papers.,English,Negative,Temperament,1
+1008,Grades group projects as a single entity without assessing individual member contributions.,English,Negative,Peer Evaluation,2
+1009,Lab instructions are ambiguous and lack necessary database schema diagrams.,English,Negative,Lab Work,2
+1010,Shows complete indifference to student welfare and learning progression.,English,Negative,Student Support,1
+1011,"In this course, the professor simply reads verbatim from PowerPoint slides without explaining concepts.",English,Negative,Teaching Delivery,2
+1012,"In this course, quizzes and assignments from two months ago have still not been graded or returned.",English,Negative,Assessment Feedback,1
+1013,"In this course, frequently arrives 20 to 30 minutes late and dismisses class early without covering topics.",English,Negative,Punctuality,1
+1014,"In this course, extremely condescending and irritable when students ask questions during lab exercises.",English,Negative,Classroom Demeanor,1
+1015,"In this course, the final exam was impossibly difficult and contained topics never covered in lectures.",English,Negative,Exam Difficulty,1
+1016,"In this course, no grading rubrics provided, and score deductions appear completely arbitrary and biased.",English,Negative,Grading Transparency,1
+1017,"In this course, unresponsive to emails and cancelled consultation hours repeatedly without prior notice.",English,Negative,Communication,1
+1018,"In this course, displays overt favoritism toward certain student groups while ignoring others.",English,Negative,Assessment Fairness,1
+1019,"In this course, constantly rushes through complex mathematical formulas without checking comprehension.",English,Negative,Teaching Pace,2
+1020,"In this course, laboratory computers often had outdated compiler versions and broken network configurations.",English,Negative,Lab Work,2
+1021,"In this course, gives zero feedback on term papers other than a bare numerical grade written in red.",English,Negative,Feedback Quality,1
+1022,"In this course, cancels class on short notice and then assigns overwhelming homework modules as makeup.",English,Negative,Workload,1
+1023,"In this course, belittles students in front of the entire class when they give incorrect answers.",English,Negative,Professionalism,1
+1024,"In this course, the assignment deadlines are unreasonable with multiple massive projects due on the same day.",English,Negative,Workload,2
+1025,"In this course, tests emphasize rote memorization of slide bullet points rather than conceptual understanding.",English,Negative,Assessment Quality,2
+1026,"In this course, refuses to explain why points were deducted on programming projects.",English,Negative,Grading Transparency,1
+1027,"In this course, lectures are chaotic, disorganized, and completely out of sync with the syllabus.",English,Negative,Course Content,1
+1028,"In this course, shows no empathy or consideration for students experiencing genuine medical emergencies.",English,Negative,Empathy,1
+1029,"In this course, consistently exceeds class time by 20 minutes, causing students to be late for next period.",English,Negative,Classroom Management,2
+1030,"In this course, the grading criteria were altered near the end of the term without class consultation.",English,Negative,Grading Criteria,1
+1031,"In this course, does not explain coding examples and expects students to teach themselves advanced frameworks.",English,Negative,Teaching Delivery,2
+1032,"In this course, dismissive attitude during consultations, making students feel unwelcome and burdensome.",English,Negative,Mentorship,1
+1033,"In this course, surprise pop quizzes are administered on material that was never assigned as reading.",English,Negative,Pop Quizzes,1
+1034,"In this course, the instructor speaks in a monotone voice and ignores inattentive or sleeping students.",English,Negative,Engagement,2
+1035,"In this course, exam questions were riddled with typographical errors and ambiguous phrasing.",English,Negative,Exam Quality,2
+1036,"In this course, strict zero-tolerance policy on minor formatting oversights resulting in automatic failing marks.",English,Negative,Assessment Fairness,1
+1037,"In this course, never available during designated office hours and ignores LMS discussion board posts.",English,Negative,Student Support,1
+1038,"In this course, arrogant demeanor and openly insults the academic preparation of public high school graduates.",English,Negative,Professional Conduct,1
+1039,"In this course, the midterm exam was administered in a noisy corridor due to poor room reservation planning.",English,Negative,Exam Environment,2
+1040,"In this course, assignments are assigned without rubrics and graded subjectively based on personal whim.",English,Negative,Rubric Clarity,1
+1041,"In this course, spends half the lecture time discussing irrelevant personal anecdotes rather than course content.",English,Negative,Classroom Management,2
+1042,"In this course, refuses to review suspected calculation errors in preliminary grade sheets.",English,Negative,Grading Fairness,1
+1043,"In this course, disproportionate point deductions for trivial naming convention discrepancies.",English,Negative,Assessment Fairness,2
+1044,"In this course, provides vague instructions for project deliverables and penalizes students for guessing wrong.",English,Negative,Assessment Clarity,1
+1045,"In this course, rarely attends lab sessions in person, leaving student assistants with no faculty supervision.",English,Negative,Punctuality,1
+1046,"In this course, hostile response when students politely requested a sample computation for their grades.",English,Negative,Communication,1
+1047,"In this course, the course materials are ten years out of date and reference deprecated software libraries.",English,Negative,Course Content,2
+1048,"In this course, unreasonable expectations for introductory programming with no scaffolded support.",English,Negative,Teaching Depth,2
+1049,"In this course, refuses to grant makeup exams even when presented with valid institutional excuse slips.",English,Negative,Assessment Fairness,1
+1050,"In this course, inconsistent enforcement of classroom policies, punishing some and letting others off.",English,Negative,Classroom Management,2
+1051,"In this course, unprepared for lectures, frequently stumbling over basic theoretical derivations.",English,Negative,Subject Mastery,2
+1052,"In this course, scores were uploaded to the portal after the final encoding deadline with no prior breakdown.",English,Negative,Grading Transparency,1
+1053,"In this course, heavy reliance on student group reports for the entire semester with zero teacher lectures.",English,Negative,Teaching Delivery,1
+1054,"In this course, intimidating atmosphere where students are afraid to ask for clarification.",English,Negative,Classroom Atmosphere,1
+1055,"In this course, exam time limits are excessively tight, leaving insufficient time to read long problem statements.",English,Negative,Exam Time Limit,2
+1056,"In this course, disregards syllabus milestones and scrambles to cram five chapters into the final week.",English,Negative,Classroom Management,1
+1057,"In this course, takes personal offense to polite constructive inquiries about graded midterm papers.",English,Negative,Temperament,1
+1058,"In this course, grades group projects as a single entity without assessing individual member contributions.",English,Negative,Peer Evaluation,2
+1059,"In this course, lab instructions are ambiguous and lack necessary database schema diagrams.",English,Negative,Lab Work,2
+1060,"In this course, shows complete indifference to student welfare and learning progression.",English,Negative,Student Support,1
+1061,"Throughout the term, the professor simply reads verbatim from PowerPoint slides without explaining concepts.",English,Negative,Teaching Delivery,2
+1062,"Throughout the term, quizzes and assignments from two months ago have still not been graded or returned.",English,Negative,Assessment Feedback,1
+1063,"Throughout the term, frequently arrives 20 to 30 minutes late and dismisses class early without covering topics.",English,Negative,Punctuality,1
+1064,"Throughout the term, extremely condescending and irritable when students ask questions during lab exercises.",English,Negative,Classroom Demeanor,1
+1065,"Throughout the term, the final exam was impossibly difficult and contained topics never covered in lectures.",English,Negative,Exam Difficulty,1
+1066,"Throughout the term, no grading rubrics provided, and score deductions appear completely arbitrary and biased.",English,Negative,Grading Transparency,1
+1067,"Throughout the term, unresponsive to emails and cancelled consultation hours repeatedly without prior notice.",English,Negative,Communication,1
+1068,"Throughout the term, displays overt favoritism toward certain student groups while ignoring others.",English,Negative,Assessment Fairness,1
+1069,"Throughout the term, constantly rushes through complex mathematical formulas without checking comprehension.",English,Negative,Teaching Pace,2
+1070,"Throughout the term, laboratory computers often had outdated compiler versions and broken network configurations.",English,Negative,Lab Work,2
+1071,"Throughout the term, gives zero feedback on term papers other than a bare numerical grade written in red.",English,Negative,Feedback Quality,1
+1072,"Throughout the term, cancels class on short notice and then assigns overwhelming homework modules as makeup.",English,Negative,Workload,1
+1073,"Throughout the term, belittles students in front of the entire class when they give incorrect answers.",English,Negative,Professionalism,1
+1074,"Throughout the term, the assignment deadlines are unreasonable with multiple massive projects due on the same day.",English,Negative,Workload,2
+1075,"Throughout the term, tests emphasize rote memorization of slide bullet points rather than conceptual understanding.",English,Negative,Assessment Quality,2
+1076,"Throughout the term, refuses to explain why points were deducted on programming projects.",English,Negative,Grading Transparency,1
+1077,"Throughout the term, lectures are chaotic, disorganized, and completely out of sync with the syllabus.",English,Negative,Course Content,1
+1078,"Throughout the term, shows no empathy or consideration for students experiencing genuine medical emergencies.",English,Negative,Empathy,1
+1079,"Throughout the term, consistently exceeds class time by 20 minutes, causing students to be late for next period.",English,Negative,Classroom Management,2
+1080,"Throughout the term, the grading criteria were altered near the end of the term without class consultation.",English,Negative,Grading Criteria,1
+1081,"Throughout the term, does not explain coding examples and expects students to teach themselves advanced frameworks.",English,Negative,Teaching Delivery,2
+1082,"Throughout the term, dismissive attitude during consultations, making students feel unwelcome and burdensome.",English,Negative,Mentorship,1
+1083,"Throughout the term, surprise pop quizzes are administered on material that was never assigned as reading.",English,Negative,Pop Quizzes,1
+1084,"Throughout the term, the instructor speaks in a monotone voice and ignores inattentive or sleeping students.",English,Negative,Engagement,2
+1085,"Throughout the term, exam questions were riddled with typographical errors and ambiguous phrasing.",English,Negative,Exam Quality,2
+1086,"Throughout the term, strict zero-tolerance policy on minor formatting oversights resulting in automatic failing marks.",English,Negative,Assessment Fairness,1
+1087,"Throughout the term, never available during designated office hours and ignores LMS discussion board posts.",English,Negative,Student Support,1
+1088,"Throughout the term, arrogant demeanor and openly insults the academic preparation of public high school graduates.",English,Negative,Professional Conduct,1
+1089,"Throughout the term, the midterm exam was administered in a noisy corridor due to poor room reservation planning.",English,Negative,Exam Environment,2
+1090,"Throughout the term, assignments are assigned without rubrics and graded subjectively based on personal whim.",English,Negative,Rubric Clarity,1
+1091,"Throughout the term, spends half the lecture time discussing irrelevant personal anecdotes rather than course content.",English,Negative,Classroom Management,2
+1092,"Throughout the term, refuses to review suspected calculation errors in preliminary grade sheets.",English,Negative,Grading Fairness,1
+1093,"Throughout the term, disproportionate point deductions for trivial naming convention discrepancies.",English,Negative,Assessment Fairness,2
+1094,"Throughout the term, provides vague instructions for project deliverables and penalizes students for guessing wrong.",English,Negative,Assessment Clarity,1
+1095,"Throughout the term, rarely attends lab sessions in person, leaving student assistants with no faculty supervision.",English,Negative,Punctuality,1
+1096,"Throughout the term, hostile response when students politely requested a sample computation for their grades.",English,Negative,Communication,1
+1097,"Throughout the term, the course materials are ten years out of date and reference deprecated software libraries.",English,Negative,Course Content,2
+1098,"Throughout the term, unreasonable expectations for introductory programming with no scaffolded support.",English,Negative,Teaching Depth,2
+1099,"Throughout the term, refuses to grant makeup exams even when presented with valid institutional excuse slips.",English,Negative,Assessment Fairness,1
+1100,"Throughout the term, inconsistent enforcement of classroom policies, punishing some and letting others off.",English,Negative,Classroom Management,2
+1101,"Throughout the term, unprepared for lectures, frequently stumbling over basic theoretical derivations.",English,Negative,Subject Mastery,2
+1102,"Throughout the term, scores were uploaded to the portal after the final encoding deadline with no prior breakdown.",English,Negative,Grading Transparency,1
+1103,"Throughout the term, heavy reliance on student group reports for the entire semester with zero teacher lectures.",English,Negative,Teaching Delivery,1
+1104,"Throughout the term, intimidating atmosphere where students are afraid to ask for clarification.",English,Negative,Classroom Atmosphere,1
+1105,"Throughout the term, exam time limits are excessively tight, leaving insufficient time to read long problem statements.",English,Negative,Exam Time Limit,2
+1106,"Throughout the term, disregards syllabus milestones and scrambles to cram five chapters into the final week.",English,Negative,Classroom Management,1
+1107,"Throughout the term, takes personal offense to polite constructive inquiries about graded midterm papers.",English,Negative,Temperament,1
+1108,"Throughout the term, grades group projects as a single entity without assessing individual member contributions.",English,Negative,Peer Evaluation,2
+1109,"Throughout the term, lab instructions are ambiguous and lack necessary database schema diagrams.",English,Negative,Lab Work,2
+1110,"Throughout the term, shows complete indifference to student welfare and learning progression.",English,Negative,Student Support,1
+1111,"From my experience, the professor simply reads verbatim from PowerPoint slides without explaining concepts.",English,Negative,Teaching Delivery,2
+1112,"From my experience, quizzes and assignments from two months ago have still not been graded or returned.",English,Negative,Assessment Feedback,1
+1113,"From my experience, frequently arrives 20 to 30 minutes late and dismisses class early without covering topics.",English,Negative,Punctuality,1
+1114,"From my experience, extremely condescending and irritable when students ask questions during lab exercises.",English,Negative,Classroom Demeanor,1
+1115,"From my experience, the final exam was impossibly difficult and contained topics never covered in lectures.",English,Negative,Exam Difficulty,1
+1116,"From my experience, no grading rubrics provided, and score deductions appear completely arbitrary and biased.",English,Negative,Grading Transparency,1
+1117,"From my experience, unresponsive to emails and cancelled consultation hours repeatedly without prior notice.",English,Negative,Communication,1
+1118,"From my experience, displays overt favoritism toward certain student groups while ignoring others.",English,Negative,Assessment Fairness,1
+1119,"From my experience, constantly rushes through complex mathematical formulas without checking comprehension.",English,Negative,Teaching Pace,2
+1120,"From my experience, laboratory computers often had outdated compiler versions and broken network configurations.",English,Negative,Lab Work,2
+1121,The professor covers all topics in the syllabus in a standard textbook manner.,English,Neutral,Teaching Delivery,3
+1122,Lectures follow the PowerPoint slides closely without much deviation or extra examples.,English,Neutral,Presentation,3
+1123,"Average difficulty level for quizzes, neither exceptionally easy nor overwhelmingly hard.",English,Neutral,Exam Difficulty,3
+1124,The instructor arrives on time and dismisses class according to the university bell.,English,Neutral,Punctuality,3
+1125,Grading is average and strictly follows the departmental percentage breakdown.,English,Neutral,Grading Transparency,3
+1126,Consultation is available during scheduled hours if you specifically ask in advance.,English,Neutral,Student Support,3
+1127,"The pace of instruction is moderate, suitable for regular learners.",English,Neutral,Teaching Pace,3
+1128,Standard multiple choice questions that test basic recall from assigned reading modules.,English,Neutral,Assessment Quality,3
+1129,"Classroom atmosphere is quiet and orderly, with typical lecture-style interactions.",English,Neutral,Classroom Atmosphere,3
+1130,Assignments are manageable in length and directly align with weekly discussion topics.,English,Neutral,Workload,3
+1131,Feedback on submitted reports is brief but highlights major grammatical or coding errors.,English,Neutral,Assessment Feedback,3
+1132,The teacher answers questions adequately when approached after the lecture session.,English,Neutral,Communication,3
+1133,"Covers the theoretical foundations adequately, though lab exercises are fairly standard.",English,Neutral,Teaching Depth,3
+1134,Exam time limits are adequate for most students who studied the review materials.,English,Neutral,Exam Time Limit,3
+1135,"Syllabus requirements are followed in a normal, predictable sequence throughout the term.",English,Neutral,Course Content,3
+1136,The rubric is standard for college level essays with typical scoring categories.,English,Neutral,Rubric Clarity,3
+1137,Maintains a formal classroom environment without much humor or casual interaction.,English,Neutral,Classroom Demeanor,3
+1138,Grades are posted on the university portal within the customary departmental timeframe.,English,Neutral,Grading Transparency,3
+1139,Group activities are assigned occasionally to meet curriculum syllabus requirements.,English,Neutral,Engagement,3
+1140,Fairly standard course delivery with typical college expectations for homework volume.,English,Neutral,Course Delivery,3
+1141,The exams reflect the textbook problems with minor changes in variable values.,English,Neutral,Assessment Alignment,3
+1142,"Answers questions when asked, but does not actively solicit opinions from quiet students.",English,Neutral,Engagement,3
+1143,"Presents slides clearly, though practical real-world demonstrations are relatively rare.",English,Neutral,Teaching Delivery,3
+1144,Moderate workload consisting of weekly homework sheets and periodic unit tests.,English,Neutral,Workload,3
+1145,"The instructor is neither overly strict nor exceptionally warm, maintaining a neutral stance.",English,Neutral,Professional Conduct,3
+1146,"In this course, the professor covers all topics in the syllabus in a standard textbook manner.",English,Neutral,Teaching Delivery,3
+1147,"In this course, lectures follow the PowerPoint slides closely without much deviation or extra examples.",English,Neutral,Presentation,3
+1148,"In this course, average difficulty level for quizzes, neither exceptionally easy nor overwhelmingly hard.",English,Neutral,Exam Difficulty,3
+1149,"In this course, the instructor arrives on time and dismisses class according to the university bell.",English,Neutral,Punctuality,3
+1150,"In this course, grading is average and strictly follows the departmental percentage breakdown.",English,Neutral,Grading Transparency,3
+1151,"In this course, consultation is available during scheduled hours if you specifically ask in advance.",English,Neutral,Student Support,3
+1152,"In this course, the pace of instruction is moderate, suitable for regular learners.",English,Neutral,Teaching Pace,3
+1153,"In this course, standard multiple choice questions that test basic recall from assigned reading modules.",English,Neutral,Assessment Quality,3
+1154,"In this course, classroom atmosphere is quiet and orderly, with typical lecture-style interactions.",English,Neutral,Classroom Atmosphere,3
+1155,"In this course, assignments are manageable in length and directly align with weekly discussion topics.",English,Neutral,Workload,3
+1156,"In this course, feedback on submitted reports is brief but highlights major grammatical or coding errors.",English,Neutral,Assessment Feedback,3
+1157,"In this course, the teacher answers questions adequately when approached after the lecture session.",English,Neutral,Communication,3
+1158,"In this course, covers the theoretical foundations adequately, though lab exercises are fairly standard.",English,Neutral,Teaching Depth,3
+1159,"In this course, exam time limits are adequate for most students who studied the review materials.",English,Neutral,Exam Time Limit,3
+1160,"In this course, syllabus requirements are followed in a normal, predictable sequence throughout the term.",English,Neutral,Course Content,3
+1161,"In this course, the rubric is standard for college level essays with typical scoring categories.",English,Neutral,Rubric Clarity,3
+1162,"In this course, maintains a formal classroom environment without much humor or casual interaction.",English,Neutral,Classroom Demeanor,3
+1163,"In this course, grades are posted on the university portal within the customary departmental timeframe.",English,Neutral,Grading Transparency,3
+1164,"In this course, group activities are assigned occasionally to meet curriculum syllabus requirements.",English,Neutral,Engagement,3
+1165,"In this course, fairly standard course delivery with typical college expectations for homework volume.",English,Neutral,Course Delivery,3
+1166,"In this course, the exams reflect the textbook problems with minor changes in variable values.",English,Neutral,Assessment Alignment,3
+1167,"In this course, answers questions when asked, but does not actively solicit opinions from quiet students.",English,Neutral,Engagement,3
+1168,"In this course, presents slides clearly, though practical real-world demonstrations are relatively rare.",English,Neutral,Teaching Delivery,3
+1169,"In this course, moderate workload consisting of weekly homework sheets and periodic unit tests.",English,Neutral,Workload,3
+1170,"In this course, the instructor is neither overly strict nor exceptionally warm, maintaining a neutral stance.",English,Neutral,Professional Conduct,3
+1171,"Throughout the term, the professor covers all topics in the syllabus in a standard textbook manner.",English,Neutral,Teaching Delivery,3
+1172,"Throughout the term, lectures follow the PowerPoint slides closely without much deviation or extra examples.",English,Neutral,Presentation,3
+1173,"Throughout the term, average difficulty level for quizzes, neither exceptionally easy nor overwhelmingly hard.",English,Neutral,Exam Difficulty,3
+1174,"Throughout the term, the instructor arrives on time and dismisses class according to the university bell.",English,Neutral,Punctuality,3
+1175,"Throughout the term, grading is average and strictly follows the departmental percentage breakdown.",English,Neutral,Grading Transparency,3
+1176,"Throughout the term, consultation is available during scheduled hours if you specifically ask in advance.",English,Neutral,Student Support,3
+1177,"Throughout the term, the pace of instruction is moderate, suitable for regular learners.",English,Neutral,Teaching Pace,3
+1178,"Throughout the term, standard multiple choice questions that test basic recall from assigned reading modules.",English,Neutral,Assessment Quality,3
+1179,"Throughout the term, classroom atmosphere is quiet and orderly, with typical lecture-style interactions.",English,Neutral,Classroom Atmosphere,3
+1180,"Throughout the term, assignments are manageable in length and directly align with weekly discussion topics.",English,Neutral,Workload,3
+1181,"Throughout the term, feedback on submitted reports is brief but highlights major grammatical or coding errors.",English,Neutral,Assessment Feedback,3
+1182,"Throughout the term, the teacher answers questions adequately when approached after the lecture session.",English,Neutral,Communication,3
+1183,"Throughout the term, covers the theoretical foundations adequately, though lab exercises are fairly standard.",English,Neutral,Teaching Depth,3
+1184,"Throughout the term, exam time limits are adequate for most students who studied the review materials.",English,Neutral,Exam Time Limit,3
+1185,"Throughout the term, syllabus requirements are followed in a normal, predictable sequence throughout the term.",English,Neutral,Course Content,3
+1186,"Throughout the term, the rubric is standard for college level essays with typical scoring categories.",English,Neutral,Rubric Clarity,3
+1187,"Throughout the term, maintains a formal classroom environment without much humor or casual interaction.",English,Neutral,Classroom Demeanor,3
+1188,"Throughout the term, grades are posted on the university portal within the customary departmental timeframe.",English,Neutral,Grading Transparency,3
+1189,"Throughout the term, group activities are assigned occasionally to meet curriculum syllabus requirements.",English,Neutral,Engagement,3
+1190,"Throughout the term, fairly standard course delivery with typical college expectations for homework volume.",English,Neutral,Course Delivery,3
+1191,"Throughout the term, the exams reflect the textbook problems with minor changes in variable values.",English,Neutral,Assessment Alignment,3
+1192,"Throughout the term, answers questions when asked, but does not actively solicit opinions from quiet students.",English,Neutral,Engagement,3
+1193,"Throughout the term, presents slides clearly, though practical real-world demonstrations are relatively rare.",English,Neutral,Teaching Delivery,3
+1194,"Throughout the term, moderate workload consisting of weekly homework sheets and periodic unit tests.",English,Neutral,Workload,3
+1195,"Throughout the term, the instructor is neither overly strict nor exceptionally warm, maintaining a neutral stance.",English,Neutral,Professional Conduct,3
+1196,"From my experience, the professor covers all topics in the syllabus in a standard textbook manner.",English,Neutral,Teaching Delivery,3
+1197,"From my experience, lectures follow the PowerPoint slides closely without much deviation or extra examples.",English,Neutral,Presentation,3
+1198,"From my experience, average difficulty level for quizzes, neither exceptionally easy nor overwhelmingly hard.",English,Neutral,Exam Difficulty,3
+1199,"From my experience, the instructor arrives on time and dismisses class according to the university bell.",English,Neutral,Punctuality,3
+1200,"From my experience, grading is average and strictly follows the departmental percentage breakdown.",English,Neutral,Grading Transparency,3
+1201,"Napakagaling magturo ni Sir, malinaw ang bawat hakbang sa pag-solve ng differential equations.",Tagalog,Positive,Subject Mastery,5
+1202,Mabait at napakabukas sa mga estudyanteng nangangailangan ng tulong sa programming lab.,Tagalog,Positive,Mentorship,5
+1203,"Makatarungan at patas magbigay ng marka, laging may rubrik bago simulan ang proyekto.",Tagalog,Positive,Assessment Fairness,5
+1204,Laging maaga pumasok at handang-handa ang mga materyales para sa talakayan.,Tagalog,Positive,Punctuality,5
+1205,Napakalawak ng kaalaman sa paksa at mahusay magbigay ng mga praktikal na halimbawa sa buhay.,Tagalog,Positive,Subject Mastery,5
+1206,Naiintindihan ang sitwasyon ng mga estudyanteng nagtatrabaho kaya nagbibigay ng konsiderasyon.,Tagalog,Positive,Empathy,5
+1207,Mabilis magwasto at laging ibinabalik ang mga papel na may nakasulat na gabay sa pagpapabuti.,Tagalog,Positive,Feedback Quality,5
+1208,Masigla at kawili-wili ang bawat klase kaya hindi nakakaramdam ng antok ang mga mag-aaral.,Tagalog,Positive,Engagement,5
+1209,Magalang makipag-usap sa mga estudyante at pantay ang pagtingin sa lahat nang walang paboritismo.,Tagalog,Positive,Professionalism,5
+1210,Napakalinaw magpaliwanag ng mahihirap na teorya kaya madaling masundan ng buong klase.,Tagalog,Positive,Teaching Delivery,5
+1211,Matiyagang sumasagot sa bawat tanong kahit paulit-ulit na ipaliwanag ang leksyon.,Tagalog,Positive,Empathy,5
+1212,Maayos at organisado ang daloy ng talakayan mula simula hanggang katapusan ng semestre.,Tagalog,Positive,Course Content,5
+1213,Nagbibigay ng mga pagsasanay bago ang pinal na pagsusulit upang makapaghanda nang husto.,Tagalog,Positive,Assessment Support,5
+1214,"Patas ang ibinibigay na pagsusulit, lahat ng lumabas ay tinalakay sa silid-aralan.",Tagalog,Positive,Assessment Fairness,4
+1215,Tapat at maagap mag-upload ng mga marka sa portal ng pamantasan upang maging gabay ng mag-aaral.,Tagalog,Positive,Grading Transparency,5
+1216,Laging nagpapasalamat sa mga nagbabahagi ng ideya sa klase at humihikayat sa mga tahimik.,Tagalog,Positive,Classroom Atmosphere,5
+1217,May malasakit sa kapakanan ng mag-aaral at nagbibigay ng oras para sa konsultasyon.,Tagalog,Positive,Student Support,5
+1218,Mahusay gumamit ng makabagong teknolohiya upang gawing mas madali ang pag-unawa sa aralin.,Tagalog,Positive,Teaching Delivery,5
+1219,Malinaw ang alituntunin sa pagmamarka at walang nakatagong pamantayan.,Tagalog,Positive,Rubric Clarity,5
+1220,Nagbibigay ng kaukulang puntos sa wastong pamamaraan kahit nagkamali sa huling sagot.,Tagalog,Positive,Grading Fairness,5
+1221,Inspirasyon ang kanyang kasipagan at dedikasyon sa pagtuturo sa aming pamantasan.,Tagalog,Positive,Motivation,5
+1222,Magaling magpalitaw ng kritikal na pag-iisip sa pamamagitan ng makabuluhang mga tanong.,Tagalog,Positive,Teaching Depth,5
+1223,Napakasipag pumasok at walang nasasayang na oras sa bawat pagtitipon ng klase.,Tagalog,Positive,Punctuality,5
+1224,Laging magalang at propesyonal sa pakikitungo sa mga mag-aaral sa loob at labas ng silid.,Tagalog,Positive,Professional Conduct,5
+1225,Nakatutulong nang malaki ang kanyang mga payo sa pagsasagawa ng aming pananaliksik.,Tagalog,Positive,Mentorship,5
+1226,Ang mga takdang-aralin ay makabuluhan at nakatutulong upang mapalalim ang natutuhan.,Tagalog,Positive,Course Content,4
+1227,Handang maglaan ng dagdag na oras upang tulungan ang mga nahuhuling mag-aaral.,Tagalog,Positive,Empathy,5
+1228,Pantay ang pagturing sa bawat pangkat sa pagtatanghal ng kanilang mga proyekto.,Tagalog,Positive,Assessment Fairness,5
+1229,Napakalinaw ng boses at may tiwala sa sarili kapag nagbabahagi ng kaalaman.,Tagalog,Positive,Communication,5
+1230,Laging bukas ang pinto ng kanyang tanggapan para sa mga may paglilinaw sa leksyon.,Tagalog,Positive,Student Support,5
+1231,Napakahusay mag-ugnay ng teorya sa aktuwal na sitwasyon sa industriya.,Tagalog,Positive,Relevance,5
+1232,Matiyaga at mahinahon kahit mahirap ang paksang tinatalakay sa klase.,Tagalog,Positive,Classroom Demeanor,5
+1233,Naiwawasto ang mga papel sa takdang panahon at may kalakip na nakabubuting mungkahi.,Tagalog,Positive,Assessment Feedback,5
+1234,Makatarungan ang ibinigay na grado batay sa ipinakitang gilas sa buong semestre.,Tagalog,Positive,Grading Fairness,5
+1235,Napakalaking tulong ng mga halimbawang ibinigay sa pisara sa pag-unawa sa aralin.,Tagalog,Positive,Teaching Delivery,5
+1236,Laging nagtatanong kung may hindi naintindihan bago lumipat sa susunod na paksa.,Tagalog,Positive,Teaching Pace,5
+1237,Disiplinado ang silid-aralan ngunit magaan ang pakiramdam dahil sa kanyang kabaitan.,Tagalog,Positive,Classroom Atmosphere,5
+1238,Nagbibigay ng ikalawang pagkakataon upang maitama ang mga pagkukulang sa gawaing-aral.,Tagalog,Positive,Assessment Support,5
+1239,Ipinapakita ang tamang paraan ng paggawa bago iatas ang gawain sa mga estudyante.,Tagalog,Positive,Lab Work,5
+1240,Napakagandang modelo ng isang huwarang guro na may dangal at integridad.,Tagalog,Positive,Professionalism,5
+1241,Mahusay makipagtalastasan at marunong makinig sa mungkahi ng klase.,Tagalog,Positive,Communication,5
+1242,Sapat ang ibinigay na panahon upang matapos ang pagsusulit nang walang pagmamadali.,Tagalog,Positive,Exam Time Limit,4
+1243,Malinaw ang bawat bahagi ng panununtunan sa pagmamarka ng proyekto.,Tagalog,Positive,Rubric Clarity,5
+1244,Laging handang magpaliwanag muli kapag may mag-aaral na naguguluhan sa paksa.,Tagalog,Positive,Empathy,5
+1245,Masigasig magturo at laging may bagong kaalamang ibinabahagi sa bawat tagpo.,Tagalog,Positive,Subject Mastery,5
+1246,Makatotohanan ang mga pagsasanay na inihanda sa laboratoryo ng kompyuter.,Tagalog,Positive,Lab Work,5
+1247,Laging gumagabay sa mga mag-aaral upang maabot ang kanilang pinakamataas na kakayahan.,Tagalog,Positive,Mentorship,5
+1248,Pantay ang pagbibigay ng pagkakataon sa lahat na makapagbahagi sa talakayan.,Tagalog,Positive,Classroom Atmosphere,5
+1249,Mabuting tagapayo at laging nagbibigay ng pampalakas-loob sa gitna ng pagsubok.,Tagalog,Positive,Student Support,5
+1250,"Napakalinis at maayos ang kanyang presentasyon sa klase, walang kalat sa talakay.",Tagalog,Positive,Teaching Delivery,5
+1251,"Sa aming klase, napakagaling magturo ni Sir, malinaw ang bawat hakbang sa pag-solve ng differential equations.",Tagalog,Positive,Subject Mastery,5
+1252,"Sa aming klase, mabait at napakabukas sa mga estudyanteng nangangailangan ng tulong sa programming lab.",Tagalog,Positive,Mentorship,5
+1253,"Sa aming klase, makatarungan at patas magbigay ng marka, laging may rubrik bago simulan ang proyekto.",Tagalog,Positive,Assessment Fairness,5
+1254,"Sa aming klase, laging maaga pumasok at handang-handa ang mga materyales para sa talakayan.",Tagalog,Positive,Punctuality,5
+1255,"Sa aming klase, napakalawak ng kaalaman sa paksa at mahusay magbigay ng mga praktikal na halimbawa sa buhay.",Tagalog,Positive,Subject Mastery,5
+1256,"Sa aming klase, naiintindihan ang sitwasyon ng mga estudyanteng nagtatrabaho kaya nagbibigay ng konsiderasyon.",Tagalog,Positive,Empathy,5
+1257,"Sa aming klase, mabilis magwasto at laging ibinabalik ang mga papel na may nakasulat na gabay sa pagpapabuti.",Tagalog,Positive,Feedback Quality,5
+1258,"Sa aming klase, masigla at kawili-wili ang bawat klase kaya hindi nakakaramdam ng antok ang mga mag-aaral.",Tagalog,Positive,Engagement,5
+1259,"Sa aming klase, magalang makipag-usap sa mga estudyante at pantay ang pagtingin sa lahat nang walang paboritismo.",Tagalog,Positive,Professionalism,5
+1260,"Sa aming klase, napakalinaw magpaliwanag ng mahihirap na teorya kaya madaling masundan ng buong klase.",Tagalog,Positive,Teaching Delivery,5
+1261,"Sa aming klase, matiyagang sumasagot sa bawat tanong kahit paulit-ulit na ipaliwanag ang leksyon.",Tagalog,Positive,Empathy,5
+1262,"Sa aming klase, maayos at organisado ang daloy ng talakayan mula simula hanggang katapusan ng semestre.",Tagalog,Positive,Course Content,5
+1263,"Sa aming klase, nagbibigay ng mga pagsasanay bago ang pinal na pagsusulit upang makapaghanda nang husto.",Tagalog,Positive,Assessment Support,5
+1264,"Sa aming klase, patas ang ibinibigay na pagsusulit, lahat ng lumabas ay tinalakay sa silid-aralan.",Tagalog,Positive,Assessment Fairness,4
+1265,"Sa aming klase, tapat at maagap mag-upload ng mga marka sa portal ng pamantasan upang maging gabay ng mag-aaral.",Tagalog,Positive,Grading Transparency,5
+1266,"Sa aming klase, laging nagpapasalamat sa mga nagbabahagi ng ideya sa klase at humihikayat sa mga tahimik.",Tagalog,Positive,Classroom Atmosphere,5
+1267,"Sa aming klase, may malasakit sa kapakanan ng mag-aaral at nagbibigay ng oras para sa konsultasyon.",Tagalog,Positive,Student Support,5
+1268,"Sa aming klase, mahusay gumamit ng makabagong teknolohiya upang gawing mas madali ang pag-unawa sa aralin.",Tagalog,Positive,Teaching Delivery,5
+1269,"Sa aming klase, malinaw ang alituntunin sa pagmamarka at walang nakatagong pamantayan.",Tagalog,Positive,Rubric Clarity,5
+1270,"Sa aming klase, nagbibigay ng kaukulang puntos sa wastong pamamaraan kahit nagkamali sa huling sagot.",Tagalog,Positive,Grading Fairness,5
+1271,"Sa aming klase, inspirasyon ang kanyang kasipagan at dedikasyon sa pagtuturo sa aming pamantasan.",Tagalog,Positive,Motivation,5
+1272,"Sa aming klase, magaling magpalitaw ng kritikal na pag-iisip sa pamamagitan ng makabuluhang mga tanong.",Tagalog,Positive,Teaching Depth,5
+1273,"Sa aming klase, napakasipag pumasok at walang nasasayang na oras sa bawat pagtitipon ng klase.",Tagalog,Positive,Punctuality,5
+1274,"Sa aming klase, laging magalang at propesyonal sa pakikitungo sa mga mag-aaral sa loob at labas ng silid.",Tagalog,Positive,Professional Conduct,5
+1275,"Sa aming klase, nakatutulong nang malaki ang kanyang mga payo sa pagsasagawa ng aming pananaliksik.",Tagalog,Positive,Mentorship,5
+1276,"Sa aming klase, ang mga takdang-aralin ay makabuluhan at nakatutulong upang mapalalim ang natutuhan.",Tagalog,Positive,Course Content,4
+1277,"Sa aming klase, handang maglaan ng dagdag na oras upang tulungan ang mga nahuhuling mag-aaral.",Tagalog,Positive,Empathy,5
+1278,"Sa aming klase, pantay ang pagturing sa bawat pangkat sa pagtatanghal ng kanilang mga proyekto.",Tagalog,Positive,Assessment Fairness,5
+1279,"Sa aming klase, napakalinaw ng boses at may tiwala sa sarili kapag nagbabahagi ng kaalaman.",Tagalog,Positive,Communication,5
+1280,"Sa aming klase, laging bukas ang pinto ng kanyang tanggapan para sa mga may paglilinaw sa leksyon.",Tagalog,Positive,Student Support,5
+1281,"Sa aming klase, napakahusay mag-ugnay ng teorya sa aktuwal na sitwasyon sa industriya.",Tagalog,Positive,Relevance,5
+1282,"Sa aming klase, matiyaga at mahinahon kahit mahirap ang paksang tinatalakay sa klase.",Tagalog,Positive,Classroom Demeanor,5
+1283,"Sa aming klase, naiwawasto ang mga papel sa takdang panahon at may kalakip na nakabubuting mungkahi.",Tagalog,Positive,Assessment Feedback,5
+1284,"Sa aming klase, makatarungan ang ibinigay na grado batay sa ipinakitang gilas sa buong semestre.",Tagalog,Positive,Grading Fairness,5
+1285,"Sa aming klase, napakalaking tulong ng mga halimbawang ibinigay sa pisara sa pag-unawa sa aralin.",Tagalog,Positive,Teaching Delivery,5
+1286,"Sa aming klase, laging nagtatanong kung may hindi naintindihan bago lumipat sa susunod na paksa.",Tagalog,Positive,Teaching Pace,5
+1287,"Sa aming klase, disiplinado ang silid-aralan ngunit magaan ang pakiramdam dahil sa kanyang kabaitan.",Tagalog,Positive,Classroom Atmosphere,5
+1288,"Sa aming klase, nagbibigay ng ikalawang pagkakataon upang maitama ang mga pagkukulang sa gawaing-aral.",Tagalog,Positive,Assessment Support,5
+1289,"Sa aming klase, ipinapakita ang tamang paraan ng paggawa bago iatas ang gawain sa mga estudyante.",Tagalog,Positive,Lab Work,5
+1290,"Sa aming klase, napakagandang modelo ng isang huwarang guro na may dangal at integridad.",Tagalog,Positive,Professionalism,5
+1291,"Sa aming klase, mahusay makipagtalastasan at marunong makinig sa mungkahi ng klase.",Tagalog,Positive,Communication,5
+1292,"Sa aming klase, sapat ang ibinigay na panahon upang matapos ang pagsusulit nang walang pagmamadali.",Tagalog,Positive,Exam Time Limit,4
+1293,"Sa aming klase, malinaw ang bawat bahagi ng panununtunan sa pagmamarka ng proyekto.",Tagalog,Positive,Rubric Clarity,5
+1294,"Sa aming klase, laging handang magpaliwanag muli kapag may mag-aaral na naguguluhan sa paksa.",Tagalog,Positive,Empathy,5
+1295,"Sa aming klase, masigasig magturo at laging may bagong kaalamang ibinabahagi sa bawat tagpo.",Tagalog,Positive,Subject Mastery,5
+1296,"Sa aming klase, makatotohanan ang mga pagsasanay na inihanda sa laboratoryo ng kompyuter.",Tagalog,Positive,Lab Work,5
+1297,"Sa aming klase, laging gumagabay sa mga mag-aaral upang maabot ang kanilang pinakamataas na kakayahan.",Tagalog,Positive,Mentorship,5
+1298,"Sa aming klase, pantay ang pagbibigay ng pagkakataon sa lahat na makapagbahagi sa talakayan.",Tagalog,Positive,Classroom Atmosphere,5
+1299,"Sa aming klase, mabuting tagapayo at laging nagbibigay ng pampalakas-loob sa gitna ng pagsubok.",Tagalog,Positive,Student Support,5
+1300,"Sa aming klase, napakalinis at maayos ang kanyang presentasyon sa klase, walang kalat sa talakay.",Tagalog,Positive,Teaching Delivery,5
+1301,"Sa buong semestre, napakagaling magturo ni Sir, malinaw ang bawat hakbang sa pag-solve ng differential equations.",Tagalog,Positive,Subject Mastery,5
+1302,"Sa buong semestre, mabait at napakabukas sa mga estudyanteng nangangailangan ng tulong sa programming lab.",Tagalog,Positive,Mentorship,5
+1303,"Sa buong semestre, makatarungan at patas magbigay ng marka, laging may rubrik bago simulan ang proyekto.",Tagalog,Positive,Assessment Fairness,5
+1304,"Sa buong semestre, laging maaga pumasok at handang-handa ang mga materyales para sa talakayan.",Tagalog,Positive,Punctuality,5
+1305,"Sa buong semestre, napakalawak ng kaalaman sa paksa at mahusay magbigay ng mga praktikal na halimbawa sa buhay.",Tagalog,Positive,Subject Mastery,5
+1306,"Sa buong semestre, naiintindihan ang sitwasyon ng mga estudyanteng nagtatrabaho kaya nagbibigay ng konsiderasyon.",Tagalog,Positive,Empathy,5
+1307,"Sa buong semestre, mabilis magwasto at laging ibinabalik ang mga papel na may nakasulat na gabay sa pagpapabuti.",Tagalog,Positive,Feedback Quality,5
+1308,"Sa buong semestre, masigla at kawili-wili ang bawat klase kaya hindi nakakaramdam ng antok ang mga mag-aaral.",Tagalog,Positive,Engagement,5
+1309,"Sa buong semestre, magalang makipag-usap sa mga estudyante at pantay ang pagtingin sa lahat nang walang paboritismo.",Tagalog,Positive,Professionalism,5
+1310,"Sa buong semestre, napakalinaw magpaliwanag ng mahihirap na teorya kaya madaling masundan ng buong klase.",Tagalog,Positive,Teaching Delivery,5
+1311,"Sa buong semestre, matiyagang sumasagot sa bawat tanong kahit paulit-ulit na ipaliwanag ang leksyon.",Tagalog,Positive,Empathy,5
+1312,"Sa buong semestre, maayos at organisado ang daloy ng talakayan mula simula hanggang katapusan ng semestre.",Tagalog,Positive,Course Content,5
+1313,"Sa buong semestre, nagbibigay ng mga pagsasanay bago ang pinal na pagsusulit upang makapaghanda nang husto.",Tagalog,Positive,Assessment Support,5
+1314,"Sa buong semestre, patas ang ibinibigay na pagsusulit, lahat ng lumabas ay tinalakay sa silid-aralan.",Tagalog,Positive,Assessment Fairness,4
+1315,"Sa buong semestre, tapat at maagap mag-upload ng mga marka sa portal ng pamantasan upang maging gabay ng mag-aaral.",Tagalog,Positive,Grading Transparency,5
+1316,"Sa buong semestre, laging nagpapasalamat sa mga nagbabahagi ng ideya sa klase at humihikayat sa mga tahimik.",Tagalog,Positive,Classroom Atmosphere,5
+1317,"Sa buong semestre, may malasakit sa kapakanan ng mag-aaral at nagbibigay ng oras para sa konsultasyon.",Tagalog,Positive,Student Support,5
+1318,"Sa buong semestre, mahusay gumamit ng makabagong teknolohiya upang gawing mas madali ang pag-unawa sa aralin.",Tagalog,Positive,Teaching Delivery,5
+1319,"Sa buong semestre, malinaw ang alituntunin sa pagmamarka at walang nakatagong pamantayan.",Tagalog,Positive,Rubric Clarity,5
+1320,"Sa buong semestre, nagbibigay ng kaukulang puntos sa wastong pamamaraan kahit nagkamali sa huling sagot.",Tagalog,Positive,Grading Fairness,5
+1321,"Sa buong semestre, inspirasyon ang kanyang kasipagan at dedikasyon sa pagtuturo sa aming pamantasan.",Tagalog,Positive,Motivation,5
+1322,"Sa buong semestre, magaling magpalitaw ng kritikal na pag-iisip sa pamamagitan ng makabuluhang mga tanong.",Tagalog,Positive,Teaching Depth,5
+1323,"Sa buong semestre, napakasipag pumasok at walang nasasayang na oras sa bawat pagtitipon ng klase.",Tagalog,Positive,Punctuality,5
+1324,"Sa buong semestre, laging magalang at propesyonal sa pakikitungo sa mga mag-aaral sa loob at labas ng silid.",Tagalog,Positive,Professional Conduct,5
+1325,"Sa buong semestre, nakatutulong nang malaki ang kanyang mga payo sa pagsasagawa ng aming pananaliksik.",Tagalog,Positive,Mentorship,5
+1326,"Sa buong semestre, ang mga takdang-aralin ay makabuluhan at nakatutulong upang mapalalim ang natutuhan.",Tagalog,Positive,Course Content,4
+1327,"Sa buong semestre, handang maglaan ng dagdag na oras upang tulungan ang mga nahuhuling mag-aaral.",Tagalog,Positive,Empathy,5
+1328,"Sa buong semestre, pantay ang pagturing sa bawat pangkat sa pagtatanghal ng kanilang mga proyekto.",Tagalog,Positive,Assessment Fairness,5
+1329,"Sa buong semestre, napakalinaw ng boses at may tiwala sa sarili kapag nagbabahagi ng kaalaman.",Tagalog,Positive,Communication,5
+1330,"Sa buong semestre, laging bukas ang pinto ng kanyang tanggapan para sa mga may paglilinaw sa leksyon.",Tagalog,Positive,Student Support,5
+1331,"Sa buong semestre, napakahusay mag-ugnay ng teorya sa aktuwal na sitwasyon sa industriya.",Tagalog,Positive,Relevance,5
+1332,"Sa buong semestre, matiyaga at mahinahon kahit mahirap ang paksang tinatalakay sa klase.",Tagalog,Positive,Classroom Demeanor,5
+1333,"Sa buong semestre, naiwawasto ang mga papel sa takdang panahon at may kalakip na nakabubuting mungkahi.",Tagalog,Positive,Assessment Feedback,5
+1334,"Sa buong semestre, makatarungan ang ibinigay na grado batay sa ipinakitang gilas sa buong semestre.",Tagalog,Positive,Grading Fairness,5
+1335,"Sa buong semestre, napakalaking tulong ng mga halimbawang ibinigay sa pisara sa pag-unawa sa aralin.",Tagalog,Positive,Teaching Delivery,5
+1336,"Sa buong semestre, laging nagtatanong kung may hindi naintindihan bago lumipat sa susunod na paksa.",Tagalog,Positive,Teaching Pace,5
+1337,"Sa buong semestre, disiplinado ang silid-aralan ngunit magaan ang pakiramdam dahil sa kanyang kabaitan.",Tagalog,Positive,Classroom Atmosphere,5
+1338,"Sa buong semestre, nagbibigay ng ikalawang pagkakataon upang maitama ang mga pagkukulang sa gawaing-aral.",Tagalog,Positive,Assessment Support,5
+1339,"Sa buong semestre, ipinapakita ang tamang paraan ng paggawa bago iatas ang gawain sa mga estudyante.",Tagalog,Positive,Lab Work,5
+1340,"Sa buong semestre, napakagandang modelo ng isang huwarang guro na may dangal at integridad.",Tagalog,Positive,Professionalism,5
+1341,"Sa buong semestre, mahusay makipagtalastasan at marunong makinig sa mungkahi ng klase.",Tagalog,Positive,Communication,5
+1342,"Sa buong semestre, sapat ang ibinigay na panahon upang matapos ang pagsusulit nang walang pagmamadali.",Tagalog,Positive,Exam Time Limit,4
+1343,"Sa buong semestre, malinaw ang bawat bahagi ng panununtunan sa pagmamarka ng proyekto.",Tagalog,Positive,Rubric Clarity,5
+1344,"Sa buong semestre, laging handang magpaliwanag muli kapag may mag-aaral na naguguluhan sa paksa.",Tagalog,Positive,Empathy,5
+1345,"Sa buong semestre, masigasig magturo at laging may bagong kaalamang ibinabahagi sa bawat tagpo.",Tagalog,Positive,Subject Mastery,5
+1346,"Sa buong semestre, makatotohanan ang mga pagsasanay na inihanda sa laboratoryo ng kompyuter.",Tagalog,Positive,Lab Work,5
+1347,"Sa buong semestre, laging gumagabay sa mga mag-aaral upang maabot ang kanilang pinakamataas na kakayahan.",Tagalog,Positive,Mentorship,5
+1348,"Sa buong semestre, pantay ang pagbibigay ng pagkakataon sa lahat na makapagbahagi sa talakayan.",Tagalog,Positive,Classroom Atmosphere,5
+1349,"Sa buong semestre, mabuting tagapayo at laging nagbibigay ng pampalakas-loob sa gitna ng pagsubok.",Tagalog,Positive,Student Support,5
+1350,"Sa buong semestre, napakalinis at maayos ang kanyang presentasyon sa klase, walang kalat sa talakay.",Tagalog,Positive,Teaching Delivery,5
+1351,"Bilang isang estudyante, napakagaling magturo ni Sir, malinaw ang bawat hakbang sa pag-solve ng differential equations.",Tagalog,Positive,Subject Mastery,5
+1352,"Bilang isang estudyante, mabait at napakabukas sa mga estudyanteng nangangailangan ng tulong sa programming lab.",Tagalog,Positive,Mentorship,5
+1353,"Bilang isang estudyante, makatarungan at patas magbigay ng marka, laging may rubrik bago simulan ang proyekto.",Tagalog,Positive,Assessment Fairness,5
+1354,"Bilang isang estudyante, laging maaga pumasok at handang-handa ang mga materyales para sa talakayan.",Tagalog,Positive,Punctuality,5
+1355,"Bilang isang estudyante, napakalawak ng kaalaman sa paksa at mahusay magbigay ng mga praktikal na halimbawa sa buhay.",Tagalog,Positive,Subject Mastery,5
+1356,"Bilang isang estudyante, naiintindihan ang sitwasyon ng mga estudyanteng nagtatrabaho kaya nagbibigay ng konsiderasyon.",Tagalog,Positive,Empathy,5
+1357,"Bilang isang estudyante, mabilis magwasto at laging ibinabalik ang mga papel na may nakasulat na gabay sa pagpapabuti.",Tagalog,Positive,Feedback Quality,5
+1358,"Bilang isang estudyante, masigla at kawili-wili ang bawat klase kaya hindi nakakaramdam ng antok ang mga mag-aaral.",Tagalog,Positive,Engagement,5
+1359,"Bilang isang estudyante, magalang makipag-usap sa mga estudyante at pantay ang pagtingin sa lahat nang walang paboritismo.",Tagalog,Positive,Professionalism,5
+1360,"Bilang isang estudyante, napakalinaw magpaliwanag ng mahihirap na teorya kaya madaling masundan ng buong klase.",Tagalog,Positive,Teaching Delivery,5
+1361,Binabasa lamang ang mga pahina ng aklat nang walang anumang paliwanag o halimbawa.,Tagalog,Negative,Teaching Delivery,1
+1362,Madalas huli sa klase at minsan ay hindi sumisipot nang walang pasabi sa mga estudyante.,Tagalog,Negative,Punctuality,1
+1363,Napakasungit sa tuwing magtatanong ang estudyante ukol sa malabong bahagi ng aralin.,Tagalog,Negative,Classroom Demeanor,1
+1364,Hindi patas magbigay ng marka at hayagang nagpapakita ng paboritismo sa iilang mag-aaral.,Tagalog,Negative,Assessment Fairness,1
+1365,Napakalayo ng mga tanong sa pagsusulit sa mga paksang tinalakay sa silid-aralan.,Tagalog,Negative,Exam Difficulty,1
+1366,Walang ibinigay na pamantayan sa pagmamarka kaya hindi maunawaan kung bakit mababa ang puntos.,Tagalog,Negative,Rubric Clarity,1
+1367,Hindi nagbabalik ng mga pagsusulit kaya hindi namin alam kung saan kami nagkamali.,Tagalog,Negative,Assessment Feedback,1
+1368,Napakabilis magsalita at hindi man lang humihinto upang tingnan kung nakasusunod ang klase.,Tagalog,Negative,Teaching Pace,2
+1369,Walang konsiderasyon sa mga mag-aaral na nagkasakit kahit may katibayan mula sa pagamutan.,Tagalog,Negative,Empathy,1
+1370,Napakagulo ng daloy ng aralin at laging lumilihis sa orihinal na silabus ng kurso.,Tagalog,Negative,Course Content,2
+1371,Hinihiya ang mga estudyante sa harap ng buong klase kapag hindi nakasagot sa tanong.,Tagalog,Negative,Professionalism,1
+1372,Labis-labis ang dami ng mga gawain na sabay-sabay na ipinapasa sa iisang araw.,Tagalog,Negative,Workload,1
+1373,Hindi tumutugon sa mga liham-elektroniko at laging wala sa kanyang tanggapan sa oras ng konsultasyon.,Tagalog,Negative,Student Support,1
+1374,Bastos makipag-usap at palaging nagtataas ng boses kapag may nagtatanong ng linaw.,Tagalog,Negative,Classroom Demeanor,1
+1375,Walang paliwanag kung paano kinalkula ang huling marka sa talaan ng pamantasan.,Tagalog,Negative,Grading Transparency,1
+1376,Bigla na lamang nagpapasulit sa paksang hindi pa naman naituro o natalakay.,Tagalog,Negative,Pop Quizzes,1
+1377,Masyadong maikli ang inilaang oras para sa napakahabang pagsusulit sa matematika.,Tagalog,Negative,Exam Time Limit,1
+1378,Walang sigla magturo at laging nakaupo lamang sa harap habang nagpapanood ng lumang video.,Tagalog,Negative,Engagement,2
+1379,Puro pag-uulat ng mga mag-aaral ang ginagawa at hindi man lang nagtuturo ang guro sa buong semestre.,Tagalog,Negative,Teaching Delivery,1
+1380,Maling susi sa pagwawasto ang ginamit sa pagsusulit ngunit tumangging iwasto ang mga marka.,Tagalog,Negative,Grading Fairness,1
+1381,Napakalamig makitungo at walang pakialam kung bumagsak ang kalahati ng klase sa pagsusulit.,Tagalog,Negative,Empathy,1
+1382,Laging nag-oovertime sa klase kaya nahuhuli ang mga estudyante sa kanilang susunod na asignatura.,Tagalog,Negative,Classroom Management,2
+1383,Hindi nagtuturo nang maayos at umaasa lamang na matututo ang estudyante sa sarili nilang sikap.,Tagalog,Negative,Teaching Delivery,1
+1384,Mayabang ang tono at minamaliit ang kakayahan ng mga mag-aaral sa aming pamantasan.,Tagalog,Negative,Professionalism,1
+1385,Gulo-gulo ang mga panuto sa proyekto at nagagalit kapag nagtatanong ang mga estudyante.,Tagalog,Negative,Assessment Clarity,1
+1386,Hindi pumapasok nang personal sa laboratoryo at iniiwan lamang ang mga mag-aaral sa sariling sikap.,Tagalog,Negative,Punctuality,1
+1387,Mataas ang singil sa mga proyektong ipinapagawa ngunit walang kinalaman sa kurikulum.,Tagalog,Negative,Course Content,1
+1388,Pumipili lamang ng kanyang mga paboritong estudyante para sa matataas na grado.,Tagalog,Negative,Assessment Fairness,1
+1389,Napakainit ng ulo at laging nagagalit sa maliliit na bagay sa loob ng silid.,Tagalog,Negative,Temperament,1
+1390,Hindi malinaw ang pananalita at malabo ang mga paliwanag sa bawat aralin.,Tagalog,Negative,Communication,2
+1391,Walang maayos na talaan ng mga marka at laging nawawala ang mga ipinasang papel.,Tagalog,Negative,Grading Transparency,1
+1392,Tamad maghanda ng mga aralin at lumang-luma na ang mga halimbawang ibinibigay.,Tagalog,Negative,Subject Mastery,2
+1393,Hindi man lamang gumagabay sa mga mag-aaral sa paggawa ng kanilang pamanahong papel.,Tagalog,Negative,Mentorship,1
+1394,Mapanlait sa pananalita kapag may nagkakamali sa pagbigkas o pag-uulat sa harap.,Tagalog,Negative,Professional Conduct,1
+1395,Ipinagbabawal ang pagtatanong habang nagtuturo at nagagalit kapag may lumapit pagkatapos ng klase.,Tagalog,Negative,Classroom Demeanor,1
+1396,Pabaya sa pagpasok at nagmamadaling tapusin ang klase sa loob lamang ng dalawampung minuto.,Tagalog,Negative,Punctuality,1
+1397,Walang konsiderasyon sa mga suliraning teknikal sa pagsusumite ng mga kahingian sa internet.,Tagalog,Negative,Empathy,1
+1398,Napakalabo ng mga tanong sa pagsusulit at puno ng mga maling baybay at gramatika.,Tagalog,Negative,Exam Quality,2
+1399,Hindi makatarungan ang bawas ng puntos sa mga maliit na pagkakamali sa pormat.,Tagalog,Negative,Grading Fairness,1
+1400,Laging nagbabago ang patakaran sa silid-aralan nang walang anumang pasabi sa klase.,Tagalog,Negative,Classroom Management,1
+1401,Walang pakialam sa kapakanan ng mag-aaral at hindi nagpapakita ng malasakit.,Tagalog,Negative,Student Support,1
+1402,Madalas magpaliban ng klase upang asikasuhin ang sariling personal na lakad.,Tagalog,Negative,Punctuality,1
+1403,Napakababaw ng talakayan at hindi kayang sagutin ang mga batayang tanong ng klase.,Tagalog,Negative,Subject Mastery,2
+1404,Walang sistema sa pagwawasto at basta-basta na lamang naglalagay ng grado sa kard.,Tagalog,Negative,Grading Transparency,1
+1405,Nakakatakot lapitan ang guro dahil laging naninigaw at nagtataas ng kilay.,Tagalog,Negative,Classroom Demeanor,1
+1406,Laging huli sa pagbibigay ng marka kaya nagkakaroon ng suliranin sa pag-eenrol sa susunod na antas.,Tagalog,Negative,Assessment Feedback,1
+1407,Hindi tumutupad sa napagkasunduang iskedyul ng mga pag-uulat at pagsusulit.,Tagalog,Negative,Classroom Management,1
+1408,Mababa ang tingin sa mga estudyante at ipinapamukha ang kanyang mga nakaraang karangalan.,Tagalog,Negative,Professionalism,1
+1409,Walang sapat na gamit sa laboratoryo ngunit nagagalit kapag hindi natapos ang eksperimento.,Tagalog,Negative,Lab Work,2
+1410,Hindi makatao ang pagtrato sa mga mag-aaral kapag nagkakaroon ng kagipitan sa pamilya.,Tagalog,Negative,Empathy,1
+1411,"Sa aming klase, binabasa lamang ang mga pahina ng aklat nang walang anumang paliwanag o halimbawa.",Tagalog,Negative,Teaching Delivery,1
+1412,"Sa aming klase, madalas huli sa klase at minsan ay hindi sumisipot nang walang pasabi sa mga estudyante.",Tagalog,Negative,Punctuality,1
+1413,"Sa aming klase, napakasungit sa tuwing magtatanong ang estudyante ukol sa malabong bahagi ng aralin.",Tagalog,Negative,Classroom Demeanor,1
+1414,"Sa aming klase, hindi patas magbigay ng marka at hayagang nagpapakita ng paboritismo sa iilang mag-aaral.",Tagalog,Negative,Assessment Fairness,1
+1415,"Sa aming klase, napakalayo ng mga tanong sa pagsusulit sa mga paksang tinalakay sa silid-aralan.",Tagalog,Negative,Exam Difficulty,1
+1416,"Sa aming klase, walang ibinigay na pamantayan sa pagmamarka kaya hindi maunawaan kung bakit mababa ang puntos.",Tagalog,Negative,Rubric Clarity,1
+1417,"Sa aming klase, hindi nagbabalik ng mga pagsusulit kaya hindi namin alam kung saan kami nagkamali.",Tagalog,Negative,Assessment Feedback,1
+1418,"Sa aming klase, napakabilis magsalita at hindi man lang humihinto upang tingnan kung nakasusunod ang klase.",Tagalog,Negative,Teaching Pace,2
+1419,"Sa aming klase, walang konsiderasyon sa mga mag-aaral na nagkasakit kahit may katibayan mula sa pagamutan.",Tagalog,Negative,Empathy,1
+1420,"Sa aming klase, napakagulo ng daloy ng aralin at laging lumilihis sa orihinal na silabus ng kurso.",Tagalog,Negative,Course Content,2
+1421,"Sa aming klase, hinihiya ang mga estudyante sa harap ng buong klase kapag hindi nakasagot sa tanong.",Tagalog,Negative,Professionalism,1
+1422,"Sa aming klase, labis-labis ang dami ng mga gawain na sabay-sabay na ipinapasa sa iisang araw.",Tagalog,Negative,Workload,1
+1423,"Sa aming klase, hindi tumutugon sa mga liham-elektroniko at laging wala sa kanyang tanggapan sa oras ng konsultasyon.",Tagalog,Negative,Student Support,1
+1424,"Sa aming klase, bastos makipag-usap at palaging nagtataas ng boses kapag may nagtatanong ng linaw.",Tagalog,Negative,Classroom Demeanor,1
+1425,"Sa aming klase, walang paliwanag kung paano kinalkula ang huling marka sa talaan ng pamantasan.",Tagalog,Negative,Grading Transparency,1
+1426,"Sa aming klase, bigla na lamang nagpapasulit sa paksang hindi pa naman naituro o natalakay.",Tagalog,Negative,Pop Quizzes,1
+1427,"Sa aming klase, masyadong maikli ang inilaang oras para sa napakahabang pagsusulit sa matematika.",Tagalog,Negative,Exam Time Limit,1
+1428,"Sa aming klase, walang sigla magturo at laging nakaupo lamang sa harap habang nagpapanood ng lumang video.",Tagalog,Negative,Engagement,2
+1429,"Sa aming klase, puro pag-uulat ng mga mag-aaral ang ginagawa at hindi man lang nagtuturo ang guro sa buong semestre.",Tagalog,Negative,Teaching Delivery,1
+1430,"Sa aming klase, maling susi sa pagwawasto ang ginamit sa pagsusulit ngunit tumangging iwasto ang mga marka.",Tagalog,Negative,Grading Fairness,1
+1431,"Sa aming klase, napakalamig makitungo at walang pakialam kung bumagsak ang kalahati ng klase sa pagsusulit.",Tagalog,Negative,Empathy,1
+1432,"Sa aming klase, laging nag-oovertime sa klase kaya nahuhuli ang mga estudyante sa kanilang susunod na asignatura.",Tagalog,Negative,Classroom Management,2
+1433,"Sa aming klase, hindi nagtuturo nang maayos at umaasa lamang na matututo ang estudyante sa sarili nilang sikap.",Tagalog,Negative,Teaching Delivery,1
+1434,"Sa aming klase, mayabang ang tono at minamaliit ang kakayahan ng mga mag-aaral sa aming pamantasan.",Tagalog,Negative,Professionalism,1
+1435,"Sa aming klase, gulo-gulo ang mga panuto sa proyekto at nagagalit kapag nagtatanong ang mga estudyante.",Tagalog,Negative,Assessment Clarity,1
+1436,"Sa aming klase, hindi pumapasok nang personal sa laboratoryo at iniiwan lamang ang mga mag-aaral sa sariling sikap.",Tagalog,Negative,Punctuality,1
+1437,"Sa aming klase, mataas ang singil sa mga proyektong ipinapagawa ngunit walang kinalaman sa kurikulum.",Tagalog,Negative,Course Content,1
+1438,"Sa aming klase, pumipili lamang ng kanyang mga paboritong estudyante para sa matataas na grado.",Tagalog,Negative,Assessment Fairness,1
+1439,"Sa aming klase, napakainit ng ulo at laging nagagalit sa maliliit na bagay sa loob ng silid.",Tagalog,Negative,Temperament,1
+1440,"Sa aming klase, hindi malinaw ang pananalita at malabo ang mga paliwanag sa bawat aralin.",Tagalog,Negative,Communication,2
+1441,"Sa aming klase, walang maayos na talaan ng mga marka at laging nawawala ang mga ipinasang papel.",Tagalog,Negative,Grading Transparency,1
+1442,"Sa aming klase, tamad maghanda ng mga aralin at lumang-luma na ang mga halimbawang ibinibigay.",Tagalog,Negative,Subject Mastery,2
+1443,"Sa aming klase, hindi man lamang gumagabay sa mga mag-aaral sa paggawa ng kanilang pamanahong papel.",Tagalog,Negative,Mentorship,1
+1444,"Sa aming klase, mapanlait sa pananalita kapag may nagkakamali sa pagbigkas o pag-uulat sa harap.",Tagalog,Negative,Professional Conduct,1
+1445,"Sa aming klase, ipinagbabawal ang pagtatanong habang nagtuturo at nagagalit kapag may lumapit pagkatapos ng klase.",Tagalog,Negative,Classroom Demeanor,1
+1446,"Sa aming klase, pabaya sa pagpasok at nagmamadaling tapusin ang klase sa loob lamang ng dalawampung minuto.",Tagalog,Negative,Punctuality,1
+1447,"Sa aming klase, walang konsiderasyon sa mga suliraning teknikal sa pagsusumite ng mga kahingian sa internet.",Tagalog,Negative,Empathy,1
+1448,"Sa aming klase, napakalabo ng mga tanong sa pagsusulit at puno ng mga maling baybay at gramatika.",Tagalog,Negative,Exam Quality,2
+1449,"Sa aming klase, hindi makatarungan ang bawas ng puntos sa mga maliit na pagkakamali sa pormat.",Tagalog,Negative,Grading Fairness,1
+1450,"Sa aming klase, laging nagbabago ang patakaran sa silid-aralan nang walang anumang pasabi sa klase.",Tagalog,Negative,Classroom Management,1
+1451,"Sa aming klase, walang pakialam sa kapakanan ng mag-aaral at hindi nagpapakita ng malasakit.",Tagalog,Negative,Student Support,1
+1452,"Sa aming klase, madalas magpaliban ng klase upang asikasuhin ang sariling personal na lakad.",Tagalog,Negative,Punctuality,1
+1453,"Sa aming klase, napakababaw ng talakayan at hindi kayang sagutin ang mga batayang tanong ng klase.",Tagalog,Negative,Subject Mastery,2
+1454,"Sa aming klase, walang sistema sa pagwawasto at basta-basta na lamang naglalagay ng grado sa kard.",Tagalog,Negative,Grading Transparency,1
+1455,"Sa aming klase, nakakatakot lapitan ang guro dahil laging naninigaw at nagtataas ng kilay.",Tagalog,Negative,Classroom Demeanor,1
+1456,"Sa aming klase, laging huli sa pagbibigay ng marka kaya nagkakaroon ng suliranin sa pag-eenrol sa susunod na antas.",Tagalog,Negative,Assessment Feedback,1
+1457,"Sa aming klase, hindi tumutupad sa napagkasunduang iskedyul ng mga pag-uulat at pagsusulit.",Tagalog,Negative,Classroom Management,1
+1458,"Sa aming klase, mababa ang tingin sa mga estudyante at ipinapamukha ang kanyang mga nakaraang karangalan.",Tagalog,Negative,Professionalism,1
+1459,"Sa aming klase, walang sapat na gamit sa laboratoryo ngunit nagagalit kapag hindi natapos ang eksperimento.",Tagalog,Negative,Lab Work,2
+1460,"Sa aming klase, hindi makatao ang pagtrato sa mga mag-aaral kapag nagkakaroon ng kagipitan sa pamilya.",Tagalog,Negative,Empathy,1
+1461,"Sa buong semestre, binabasa lamang ang mga pahina ng aklat nang walang anumang paliwanag o halimbawa.",Tagalog,Negative,Teaching Delivery,1
+1462,"Sa buong semestre, madalas huli sa klase at minsan ay hindi sumisipot nang walang pasabi sa mga estudyante.",Tagalog,Negative,Punctuality,1
+1463,"Sa buong semestre, napakasungit sa tuwing magtatanong ang estudyante ukol sa malabong bahagi ng aralin.",Tagalog,Negative,Classroom Demeanor,1
+1464,"Sa buong semestre, hindi patas magbigay ng marka at hayagang nagpapakita ng paboritismo sa iilang mag-aaral.",Tagalog,Negative,Assessment Fairness,1
+1465,"Sa buong semestre, napakalayo ng mga tanong sa pagsusulit sa mga paksang tinalakay sa silid-aralan.",Tagalog,Negative,Exam Difficulty,1
+1466,"Sa buong semestre, walang ibinigay na pamantayan sa pagmamarka kaya hindi maunawaan kung bakit mababa ang puntos.",Tagalog,Negative,Rubric Clarity,1
+1467,"Sa buong semestre, hindi nagbabalik ng mga pagsusulit kaya hindi namin alam kung saan kami nagkamali.",Tagalog,Negative,Assessment Feedback,1
+1468,"Sa buong semestre, napakabilis magsalita at hindi man lang humihinto upang tingnan kung nakasusunod ang klase.",Tagalog,Negative,Teaching Pace,2
+1469,"Sa buong semestre, walang konsiderasyon sa mga mag-aaral na nagkasakit kahit may katibayan mula sa pagamutan.",Tagalog,Negative,Empathy,1
+1470,"Sa buong semestre, napakagulo ng daloy ng aralin at laging lumilihis sa orihinal na silabus ng kurso.",Tagalog,Negative,Course Content,2
+1471,"Sa buong semestre, hinihiya ang mga estudyante sa harap ng buong klase kapag hindi nakasagot sa tanong.",Tagalog,Negative,Professionalism,1
+1472,"Sa buong semestre, labis-labis ang dami ng mga gawain na sabay-sabay na ipinapasa sa iisang araw.",Tagalog,Negative,Workload,1
+1473,"Sa buong semestre, hindi tumutugon sa mga liham-elektroniko at laging wala sa kanyang tanggapan sa oras ng konsultasyon.",Tagalog,Negative,Student Support,1
+1474,"Sa buong semestre, bastos makipag-usap at palaging nagtataas ng boses kapag may nagtatanong ng linaw.",Tagalog,Negative,Classroom Demeanor,1
+1475,"Sa buong semestre, walang paliwanag kung paano kinalkula ang huling marka sa talaan ng pamantasan.",Tagalog,Negative,Grading Transparency,1
+1476,"Sa buong semestre, bigla na lamang nagpapasulit sa paksang hindi pa naman naituro o natalakay.",Tagalog,Negative,Pop Quizzes,1
+1477,"Sa buong semestre, masyadong maikli ang inilaang oras para sa napakahabang pagsusulit sa matematika.",Tagalog,Negative,Exam Time Limit,1
+1478,"Sa buong semestre, walang sigla magturo at laging nakaupo lamang sa harap habang nagpapanood ng lumang video.",Tagalog,Negative,Engagement,2
+1479,"Sa buong semestre, puro pag-uulat ng mga mag-aaral ang ginagawa at hindi man lang nagtuturo ang guro sa buong semestre.",Tagalog,Negative,Teaching Delivery,1
+1480,"Sa buong semestre, maling susi sa pagwawasto ang ginamit sa pagsusulit ngunit tumangging iwasto ang mga marka.",Tagalog,Negative,Grading Fairness,1
+1481,"Sa buong semestre, napakalamig makitungo at walang pakialam kung bumagsak ang kalahati ng klase sa pagsusulit.",Tagalog,Negative,Empathy,1
+1482,"Sa buong semestre, laging nag-oovertime sa klase kaya nahuhuli ang mga estudyante sa kanilang susunod na asignatura.",Tagalog,Negative,Classroom Management,2
+1483,"Sa buong semestre, hindi nagtuturo nang maayos at umaasa lamang na matututo ang estudyante sa sarili nilang sikap.",Tagalog,Negative,Teaching Delivery,1
+1484,"Sa buong semestre, mayabang ang tono at minamaliit ang kakayahan ng mga mag-aaral sa aming pamantasan.",Tagalog,Negative,Professionalism,1
+1485,"Sa buong semestre, gulo-gulo ang mga panuto sa proyekto at nagagalit kapag nagtatanong ang mga estudyante.",Tagalog,Negative,Assessment Clarity,1
+1486,"Sa buong semestre, hindi pumapasok nang personal sa laboratoryo at iniiwan lamang ang mga mag-aaral sa sariling sikap.",Tagalog,Negative,Punctuality,1
+1487,"Sa buong semestre, mataas ang singil sa mga proyektong ipinapagawa ngunit walang kinalaman sa kurikulum.",Tagalog,Negative,Course Content,1
+1488,"Sa buong semestre, pumipili lamang ng kanyang mga paboritong estudyante para sa matataas na grado.",Tagalog,Negative,Assessment Fairness,1
+1489,"Sa buong semestre, napakainit ng ulo at laging nagagalit sa maliliit na bagay sa loob ng silid.",Tagalog,Negative,Temperament,1
+1490,"Sa buong semestre, hindi malinaw ang pananalita at malabo ang mga paliwanag sa bawat aralin.",Tagalog,Negative,Communication,2
+1491,"Sa buong semestre, walang maayos na talaan ng mga marka at laging nawawala ang mga ipinasang papel.",Tagalog,Negative,Grading Transparency,1
+1492,"Sa buong semestre, tamad maghanda ng mga aralin at lumang-luma na ang mga halimbawang ibinibigay.",Tagalog,Negative,Subject Mastery,2
+1493,"Sa buong semestre, hindi man lamang gumagabay sa mga mag-aaral sa paggawa ng kanilang pamanahong papel.",Tagalog,Negative,Mentorship,1
+1494,"Sa buong semestre, mapanlait sa pananalita kapag may nagkakamali sa pagbigkas o pag-uulat sa harap.",Tagalog,Negative,Professional Conduct,1
+1495,"Sa buong semestre, ipinagbabawal ang pagtatanong habang nagtuturo at nagagalit kapag may lumapit pagkatapos ng klase.",Tagalog,Negative,Classroom Demeanor,1
+1496,"Sa buong semestre, pabaya sa pagpasok at nagmamadaling tapusin ang klase sa loob lamang ng dalawampung minuto.",Tagalog,Negative,Punctuality,1
+1497,"Sa buong semestre, walang konsiderasyon sa mga suliraning teknikal sa pagsusumite ng mga kahingian sa internet.",Tagalog,Negative,Empathy,1
+1498,"Sa buong semestre, napakalabo ng mga tanong sa pagsusulit at puno ng mga maling baybay at gramatika.",Tagalog,Negative,Exam Quality,2
+1499,"Sa buong semestre, hindi makatarungan ang bawas ng puntos sa mga maliit na pagkakamali sa pormat.",Tagalog,Negative,Grading Fairness,1
+1500,"Sa buong semestre, laging nagbabago ang patakaran sa silid-aralan nang walang anumang pasabi sa klase.",Tagalog,Negative,Classroom Management,1
+1501,"Sa buong semestre, walang pakialam sa kapakanan ng mag-aaral at hindi nagpapakita ng malasakit.",Tagalog,Negative,Student Support,1
+1502,"Sa buong semestre, madalas magpaliban ng klase upang asikasuhin ang sariling personal na lakad.",Tagalog,Negative,Punctuality,1
+1503,"Sa buong semestre, napakababaw ng talakayan at hindi kayang sagutin ang mga batayang tanong ng klase.",Tagalog,Negative,Subject Mastery,2
+1504,"Sa buong semestre, walang sistema sa pagwawasto at basta-basta na lamang naglalagay ng grado sa kard.",Tagalog,Negative,Grading Transparency,1
+1505,"Sa buong semestre, nakakatakot lapitan ang guro dahil laging naninigaw at nagtataas ng kilay.",Tagalog,Negative,Classroom Demeanor,1
+1506,"Sa buong semestre, laging huli sa pagbibigay ng marka kaya nagkakaroon ng suliranin sa pag-eenrol sa susunod na antas.",Tagalog,Negative,Assessment Feedback,1
+1507,"Sa buong semestre, hindi tumutupad sa napagkasunduang iskedyul ng mga pag-uulat at pagsusulit.",Tagalog,Negative,Classroom Management,1
+1508,"Sa buong semestre, mababa ang tingin sa mga estudyante at ipinapamukha ang kanyang mga nakaraang karangalan.",Tagalog,Negative,Professionalism,1
+1509,"Sa buong semestre, walang sapat na gamit sa laboratoryo ngunit nagagalit kapag hindi natapos ang eksperimento.",Tagalog,Negative,Lab Work,2
+1510,"Sa buong semestre, hindi makatao ang pagtrato sa mga mag-aaral kapag nagkakaroon ng kagipitan sa pamilya.",Tagalog,Negative,Empathy,1
+1511,"Bilang isang estudyante, binabasa lamang ang mga pahina ng aklat nang walang anumang paliwanag o halimbawa.",Tagalog,Negative,Teaching Delivery,1
+1512,"Bilang isang estudyante, madalas huli sa klase at minsan ay hindi sumisipot nang walang pasabi sa mga estudyante.",Tagalog,Negative,Punctuality,1
+1513,"Bilang isang estudyante, napakasungit sa tuwing magtatanong ang estudyante ukol sa malabong bahagi ng aralin.",Tagalog,Negative,Classroom Demeanor,1
+1514,"Bilang isang estudyante, hindi patas magbigay ng marka at hayagang nagpapakita ng paboritismo sa iilang mag-aaral.",Tagalog,Negative,Assessment Fairness,1
+1515,"Bilang isang estudyante, napakalayo ng mga tanong sa pagsusulit sa mga paksang tinalakay sa silid-aralan.",Tagalog,Negative,Exam Difficulty,1
+1516,"Bilang isang estudyante, walang ibinigay na pamantayan sa pagmamarka kaya hindi maunawaan kung bakit mababa ang puntos.",Tagalog,Negative,Rubric Clarity,1
+1517,"Bilang isang estudyante, hindi nagbabalik ng mga pagsusulit kaya hindi namin alam kung saan kami nagkamali.",Tagalog,Negative,Assessment Feedback,1
+1518,"Bilang isang estudyante, napakabilis magsalita at hindi man lang humihinto upang tingnan kung nakasusunod ang klase.",Tagalog,Negative,Teaching Pace,2
+1519,"Bilang isang estudyante, walang konsiderasyon sa mga mag-aaral na nagkasakit kahit may katibayan mula sa pagamutan.",Tagalog,Negative,Empathy,1
+1520,"Bilang isang estudyante, napakagulo ng daloy ng aralin at laging lumilihis sa orihinal na silabus ng kurso.",Tagalog,Negative,Course Content,2
+1521,"Katamtaman lamang ang bilis ng pagtuturo, sapat upang masundan ang talaan ng mga paksa.",Tagalog,Neutral,Teaching Pace,3
+1522,Karaniwan ang istilo ng pagtuturo at sumusunod lamang sa mga pahina ng aklat-aralin.,Tagalog,Neutral,Teaching Delivery,3
+1523,"Katamtaman ang hirap ng mga pagsusulit, hindi masyadong madali at hindi rin lubhang mahirap.",Tagalog,Neutral,Exam Difficulty,3
+1524,Pumapasok sa takdang oras at nagpapakawala ayon sa tunog ng kampana ng paaralan.,Tagalog,Neutral,Punctuality,3
+1525,Karaniwan lamang ang pamamaraan ng pagmamarka batay sa pamantayan ng departamento.,Tagalog,Neutral,Grading Transparency,3
+1526,Sumasagot naman sa mga tanong kapag nilapitan pagkatapos ng talakayan sa silid.,Tagalog,Neutral,Communication,3
+1527,Sapat lamang ang oras na inilaan para sa pagsagot sa lingguhang pagsusulit.,Tagalog,Neutral,Exam Time Limit,3
+1528,Tahimik ang silid-aralan at sumusunod ang klase sa karaniwang patakaran ng paaralan.,Tagalog,Neutral,Classroom Atmosphere,3
+1529,Katamtaman ang dami ng mga takdang-aralin na ibinibigay sa bawat linggo.,Tagalog,Neutral,Workload,3
+1530,Maikli lamang ang mga puna sa ibinalik na papel ngunit tinutukoy ang mga pangunahing kamalian.,Tagalog,Neutral,Assessment Feedback,3
+1531,Nasusunod ang silabus sa karaniwang paraan mula sa simula hanggang matapos ang aralin.,Tagalog,Neutral,Course Content,3
+1532,Karaniwan ang panununtunan sa pagmamarka ng sanaysay at ulat ng pangkat.,Tagalog,Neutral,Rubric Clarity,3
+1533,Pormal makitungo sa mga estudyante at hindi masyadong nakikipagbiruan sa klase.,Tagalog,Neutral,Classroom Demeanor,3
+1534,Iniuulat ang mga marka sa takdang panahon ayon sa alituntunin ng pamantasan.,Tagalog,Neutral,Grading Transparency,3
+1535,Nagbibigay ng mga pangkatang gawain upang matugunan ang kahingian ng kurso.,Tagalog,Neutral,Engagement,3
+1536,Sakto lang ang nilalaman ng aralin ayon sa inaasahan sa isang antas-kolehiyo.,Tagalog,Neutral,Course Delivery,3
+1537,Ang mga tanong sa pagsusulit ay hango sa mga tala sa aklat na walang gaanong pagbabago.,Tagalog,Neutral,Assessment Alignment,3
+1538,Naglalaan ng oras sa konsultasyon kapag may nagpaunang pasabi ang estudyante.,Tagalog,Neutral,Student Support,3
+1539,Malinaw ang pagbasa sa pisara bagamat bihira ang mga praktikal na pagsasanay sa labas.,Tagalog,Neutral,Teaching Delivery,3
+1540,Katamtamang hirap ang mga tanong at sapat ang panahon sa pagsusuri.,Tagalog,Neutral,Exam Difficulty,3
+1541,"Karaniwang propesyonal ang pakikitungo, walang labis at walang kulang.",Tagalog,Neutral,Professional Conduct,3
+1542,Nasasaklaw ang mga batayang teorya ngunit hindi gaanong lumalalim sa makabagong aplikasyon.,Tagalog,Neutral,Teaching Depth,3
+1543,Binibigyan ng pansin ang mga nagtatanong ngunit hindi aktibong tinatawag ang mga tahimik.,Tagalog,Neutral,Engagement,3
+1544,Sapat ang mga materyales na ibinibigay para sa paghahanda sa pagsusulit.,Tagalog,Neutral,Course Content,3
+1545,Karaniwang takbo ng klase sa buong semestre na walang anumang malaking suliranin.,Tagalog,Neutral,Classroom Management,3
+1546,"Sa aming klase, katamtaman lamang ang bilis ng pagtuturo, sapat upang masundan ang talaan ng mga paksa.",Tagalog,Neutral,Teaching Pace,3
+1547,"Sa aming klase, karaniwan ang istilo ng pagtuturo at sumusunod lamang sa mga pahina ng aklat-aralin.",Tagalog,Neutral,Teaching Delivery,3
+1548,"Sa aming klase, katamtaman ang hirap ng mga pagsusulit, hindi masyadong madali at hindi rin lubhang mahirap.",Tagalog,Neutral,Exam Difficulty,3
+1549,"Sa aming klase, pumapasok sa takdang oras at nagpapakawala ayon sa tunog ng kampana ng paaralan.",Tagalog,Neutral,Punctuality,3
+1550,"Sa aming klase, karaniwan lamang ang pamamaraan ng pagmamarka batay sa pamantayan ng departamento.",Tagalog,Neutral,Grading Transparency,3
+1551,"Sa aming klase, sumasagot naman sa mga tanong kapag nilapitan pagkatapos ng talakayan sa silid.",Tagalog,Neutral,Communication,3
+1552,"Sa aming klase, sapat lamang ang oras na inilaan para sa pagsagot sa lingguhang pagsusulit.",Tagalog,Neutral,Exam Time Limit,3
+1553,"Sa aming klase, tahimik ang silid-aralan at sumusunod ang klase sa karaniwang patakaran ng paaralan.",Tagalog,Neutral,Classroom Atmosphere,3
+1554,"Sa aming klase, katamtaman ang dami ng mga takdang-aralin na ibinibigay sa bawat linggo.",Tagalog,Neutral,Workload,3
+1555,"Sa aming klase, maikli lamang ang mga puna sa ibinalik na papel ngunit tinutukoy ang mga pangunahing kamalian.",Tagalog,Neutral,Assessment Feedback,3
+1556,"Sa aming klase, nasusunod ang silabus sa karaniwang paraan mula sa simula hanggang matapos ang aralin.",Tagalog,Neutral,Course Content,3
+1557,"Sa aming klase, karaniwan ang panununtunan sa pagmamarka ng sanaysay at ulat ng pangkat.",Tagalog,Neutral,Rubric Clarity,3
+1558,"Sa aming klase, pormal makitungo sa mga estudyante at hindi masyadong nakikipagbiruan sa klase.",Tagalog,Neutral,Classroom Demeanor,3
+1559,"Sa aming klase, iniuulat ang mga marka sa takdang panahon ayon sa alituntunin ng pamantasan.",Tagalog,Neutral,Grading Transparency,3
+1560,"Sa aming klase, nagbibigay ng mga pangkatang gawain upang matugunan ang kahingian ng kurso.",Tagalog,Neutral,Engagement,3
+1561,"Sa aming klase, sakto lang ang nilalaman ng aralin ayon sa inaasahan sa isang antas-kolehiyo.",Tagalog,Neutral,Course Delivery,3
+1562,"Sa aming klase, ang mga tanong sa pagsusulit ay hango sa mga tala sa aklat na walang gaanong pagbabago.",Tagalog,Neutral,Assessment Alignment,3
+1563,"Sa aming klase, naglalaan ng oras sa konsultasyon kapag may nagpaunang pasabi ang estudyante.",Tagalog,Neutral,Student Support,3
+1564,"Sa aming klase, malinaw ang pagbasa sa pisara bagamat bihira ang mga praktikal na pagsasanay sa labas.",Tagalog,Neutral,Teaching Delivery,3
+1565,"Sa aming klase, katamtamang hirap ang mga tanong at sapat ang panahon sa pagsusuri.",Tagalog,Neutral,Exam Difficulty,3
+1566,"Sa aming klase, karaniwang propesyonal ang pakikitungo, walang labis at walang kulang.",Tagalog,Neutral,Professional Conduct,3
+1567,"Sa aming klase, nasasaklaw ang mga batayang teorya ngunit hindi gaanong lumalalim sa makabagong aplikasyon.",Tagalog,Neutral,Teaching Depth,3
+1568,"Sa aming klase, binibigyan ng pansin ang mga nagtatanong ngunit hindi aktibong tinatawag ang mga tahimik.",Tagalog,Neutral,Engagement,3
+1569,"Sa aming klase, sapat ang mga materyales na ibinibigay para sa paghahanda sa pagsusulit.",Tagalog,Neutral,Course Content,3
+1570,"Sa aming klase, karaniwang takbo ng klase sa buong semestre na walang anumang malaking suliranin.",Tagalog,Neutral,Classroom Management,3
+1571,"Sa buong semestre, katamtaman lamang ang bilis ng pagtuturo, sapat upang masundan ang talaan ng mga paksa.",Tagalog,Neutral,Teaching Pace,3
+1572,"Sa buong semestre, karaniwan ang istilo ng pagtuturo at sumusunod lamang sa mga pahina ng aklat-aralin.",Tagalog,Neutral,Teaching Delivery,3
+1573,"Sa buong semestre, katamtaman ang hirap ng mga pagsusulit, hindi masyadong madali at hindi rin lubhang mahirap.",Tagalog,Neutral,Exam Difficulty,3
+1574,"Sa buong semestre, pumapasok sa takdang oras at nagpapakawala ayon sa tunog ng kampana ng paaralan.",Tagalog,Neutral,Punctuality,3
+1575,"Sa buong semestre, karaniwan lamang ang pamamaraan ng pagmamarka batay sa pamantayan ng departamento.",Tagalog,Neutral,Grading Transparency,3
+1576,"Sa buong semestre, sumasagot naman sa mga tanong kapag nilapitan pagkatapos ng talakayan sa silid.",Tagalog,Neutral,Communication,3
+1577,"Sa buong semestre, sapat lamang ang oras na inilaan para sa pagsagot sa lingguhang pagsusulit.",Tagalog,Neutral,Exam Time Limit,3
+1578,"Sa buong semestre, tahimik ang silid-aralan at sumusunod ang klase sa karaniwang patakaran ng paaralan.",Tagalog,Neutral,Classroom Atmosphere,3
+1579,"Sa buong semestre, katamtaman ang dami ng mga takdang-aralin na ibinibigay sa bawat linggo.",Tagalog,Neutral,Workload,3
+1580,"Sa buong semestre, maikli lamang ang mga puna sa ibinalik na papel ngunit tinutukoy ang mga pangunahing kamalian.",Tagalog,Neutral,Assessment Feedback,3
+1581,"Sa buong semestre, nasusunod ang silabus sa karaniwang paraan mula sa simula hanggang matapos ang aralin.",Tagalog,Neutral,Course Content,3
+1582,"Sa buong semestre, karaniwan ang panununtunan sa pagmamarka ng sanaysay at ulat ng pangkat.",Tagalog,Neutral,Rubric Clarity,3
+1583,"Sa buong semestre, pormal makitungo sa mga estudyante at hindi masyadong nakikipagbiruan sa klase.",Tagalog,Neutral,Classroom Demeanor,3
+1584,"Sa buong semestre, iniuulat ang mga marka sa takdang panahon ayon sa alituntunin ng pamantasan.",Tagalog,Neutral,Grading Transparency,3
+1585,"Sa buong semestre, nagbibigay ng mga pangkatang gawain upang matugunan ang kahingian ng kurso.",Tagalog,Neutral,Engagement,3
+1586,"Sa buong semestre, sakto lang ang nilalaman ng aralin ayon sa inaasahan sa isang antas-kolehiyo.",Tagalog,Neutral,Course Delivery,3
+1587,"Sa buong semestre, ang mga tanong sa pagsusulit ay hango sa mga tala sa aklat na walang gaanong pagbabago.",Tagalog,Neutral,Assessment Alignment,3
+1588,"Sa buong semestre, naglalaan ng oras sa konsultasyon kapag may nagpaunang pasabi ang estudyante.",Tagalog,Neutral,Student Support,3
+1589,"Sa buong semestre, malinaw ang pagbasa sa pisara bagamat bihira ang mga praktikal na pagsasanay sa labas.",Tagalog,Neutral,Teaching Delivery,3
+1590,"Sa buong semestre, katamtamang hirap ang mga tanong at sapat ang panahon sa pagsusuri.",Tagalog,Neutral,Exam Difficulty,3
+1591,"Sa buong semestre, karaniwang propesyonal ang pakikitungo, walang labis at walang kulang.",Tagalog,Neutral,Professional Conduct,3
+1592,"Sa buong semestre, nasasaklaw ang mga batayang teorya ngunit hindi gaanong lumalalim sa makabagong aplikasyon.",Tagalog,Neutral,Teaching Depth,3
+1593,"Sa buong semestre, binibigyan ng pansin ang mga nagtatanong ngunit hindi aktibong tinatawag ang mga tahimik.",Tagalog,Neutral,Engagement,3
+1594,"Sa buong semestre, sapat ang mga materyales na ibinibigay para sa paghahanda sa pagsusulit.",Tagalog,Neutral,Course Content,3
+1595,"Sa buong semestre, karaniwang takbo ng klase sa buong semestre na walang anumang malaking suliranin.",Tagalog,Neutral,Classroom Management,3
+1596,"Bilang isang estudyante, katamtaman lamang ang bilis ng pagtuturo, sapat upang masundan ang talaan ng mga paksa.",Tagalog,Neutral,Teaching Pace,3
+1597,"Bilang isang estudyante, karaniwan ang istilo ng pagtuturo at sumusunod lamang sa mga pahina ng aklat-aralin.",Tagalog,Neutral,Teaching Delivery,3
+1598,"Bilang isang estudyante, katamtaman ang hirap ng mga pagsusulit, hindi masyadong madali at hindi rin lubhang mahirap.",Tagalog,Neutral,Exam Difficulty,3
+1599,"Bilang isang estudyante, pumapasok sa takdang oras at nagpapakawala ayon sa tunog ng kampana ng paaralan.",Tagalog,Neutral,Punctuality,3
+1600,"Bilang isang estudyante, karaniwan lamang ang pamamaraan ng pagmamarka batay sa pamantayan ng departamento.",Tagalog,Neutral,Grading Transparency,3
+1601,"Super galing mag-explain ni Sir ng backend routing, madaling ma-gets kahit beginner.",Taglish,Positive,Subject Mastery,5
+1602,"Very approachable si Ma'am during consultation hours, matiyaga mag-guide sa thesis code.",Taglish,Positive,Mentorship,5
+1603,"Transparent and fair magbigay ng grades, laging may rubric breakdown bago mag-submit.",Taglish,Positive,Assessment Fairness,5
+1604,Laging on time pumasok si Sir at very prepared ang slides and live coding demos.,Taglish,Positive,Punctuality,5
+1605,"Hands-on magturo sa computer lab, iniisa-isa ang bawat student kapag may bug sa code.",Taglish,Positive,Lab Work,5
+1606,Nagbibigay ng second chance at consideration kapag may valid excuse or medical problem.,Taglish,Positive,Empathy,5
+1607,Mabilis mag-check ng quizzes at may inline comments kung paano ma-improve ang solutions.,Taglish,Positive,Assessment Feedback,5
+1608,"Sobrang interactive ng class discussion, nage-encourage magtanong without feeling judged.",Taglish,Positive,Classroom Atmosphere,5
+1609,"Very professional and respectful makitungo, walang halong paboritismo kahit kanino.",Taglish,Positive,Professionalism,5
+1610,"Ang ganda ng pacing ng lectures, hindi minamadali ang mahihirap na algorithms.",Taglish,Positive,Teaching Pace,5
+1611,Nag-upload agad ng complete lecture notes and sample exercises sa Google Classroom.,Taglish,Positive,Course Content,5
+1612,Patas mag-grade at nagbibigay ng partial points kapag tama ang approach sa computation.,Taglish,Positive,Grading Fairness,5
+1613,"Sobrang bait and inspiring magturo, mararamdaman mo talaga na gusto niyang matuto kami.",Taglish,Positive,Motivation,5
+1614,Detailed ang rubrics at malinaw ang expectations for our final capstone presentation.,Taglish,Positive,Rubric Clarity,5
+1615,Nagbibigay ng review sessions and practice exams bago ang major departmental tests.,Taglish,Positive,Assessment Support,5
+1616,"Fair ang exams, kung ano ang itinuro at pinaliwanag sa klase, yun din ang lumalabas.",Taglish,Positive,Assessment Fairness,4
+1617,Very responsive sa email and MS Teams kapag may clarification sa group project.,Taglish,Positive,Communication,5
+1618,Hands-on experience sa industry ang shine-share ni Sir kaya super relevant ng lessons.,Taglish,Positive,Relevance,5
+1619,"Well-balanced ang workload, hindi sabay-sabay nagpapasubmit ng heavy assignments.",Taglish,Positive,Workload,5
+1620,Mabilis mag-reply at laging handang tumulong kapag nahihirapan sa programming logic.,Taglish,Positive,Student Support,5
+1621,Nag-curve si Sir nung nakitang mababa ang overall average ng class sa midterm exam.,Taglish,Positive,Assessment Fairness,4
+1622,Super clear mag-deliver ng lectures gamit ang iPad drawings at diagrams.,Taglish,Positive,Teaching Delivery,5
+1623,Nag-aalok ng remedial quizzes para sa mga estudyanteng mababa ang initial score.,Taglish,Positive,Assessment Support,5
+1624,Very encouraging and supportive sa mga quiet students na mag-participate sa recitation.,Taglish,Positive,Engagement,5
+1625,Organized mag-manage ng class schedule at laging nasusunod ang syllabus roadmap.,Taglish,Positive,Classroom Management,5
+1626,Magaling magturo ng full-stack web development with practical real-world deployment tips.,Taglish,Positive,Subject Mastery,5
+1627,Napakabait makipag-usap and laging open sa feedback mula sa students.,Taglish,Positive,Professional Conduct,5
+1628,Binigyan kami ng sapat na time para tapusin ang complex database laboratory exercise.,Taglish,Positive,Exam Time Limit,5
+1629,Clear and transparent ang breakdown ng aming grades bago pa i-finalize sa portal.,Taglish,Positive,Grading Transparency,5
+1630,Marunong makinig sa concerns ng students tungkol sa deadlines kapag exam week.,Taglish,Positive,Empathy,5
+1631,Super helpful ng code reviews ni Sir sa aming GitHub pull requests during lab.,Taglish,Positive,Feedback Quality,5
+1632,Fair mag-evaluate ng individual contributions sa aming group software project.,Taglish,Positive,Peer Evaluation,5
+1633,"Napaka-energetic magturo kahit 7:00 AM class, gaganahan ka talagang makinig.",Taglish,Positive,Motivation,5
+1634,Laging nag-iiwan ng key takeaways at summary notes pagkatapos ng bawat module.,Taglish,Positive,Teaching Depth,5
+1635,Patiently sinasagot ang every debugging error ng mga students sa computer laboratory.,Taglish,Positive,Mentorship,5
+1636,Transparent ang point deductions at walang unexpected surprise criteria sa grading.,Taglish,Positive,Grading Criteria,5
+1637,Encouraging class atmosphere where everyone feels safe to make mistakes and learn.,Taglish,Positive,Classroom Atmosphere,5
+1638,May extra bonus points for students who participate actively and submit clean code.,Taglish,Positive,Assessment Support,5
+1639,Laging maaga mag-setup ng projector at materials bago pa pumasok ang mga students.,Taglish,Positive,Punctuality,5
+1640,Napakagaling mag-connect ng theoretical math sa machine learning applications.,Taglish,Positive,Relevance,5
+1641,"Respectful and approachable professor, hindi nakakatakot magtanong sa kanya.",Taglish,Positive,Classroom Demeanor,5
+1642,Nagbibigay ng clear coding guidelines at standard naming conventions for projects.,Taglish,Positive,Rubric Clarity,5
+1643,Very accommodating when scheduling research consultations during thesis defense prep.,Taglish,Positive,Student Support,5
+1644,Sapat ang time allocation for practical programming tests sa computer center.,Taglish,Positive,Exam Time Limit,4
+1645,Nakatutulong ang practical exercises para maipasa ang departmental mock board exam.,Taglish,Positive,Assessment Support,5
+1646,Laging nagpapasalamat sa effort ng students kahit simple lang ang recitation answers.,Taglish,Positive,Classroom Atmosphere,5
+1647,Organisado ang submission links sa LMS at mabilis mag-confirm kapag natanggap na.,Taglish,Positive,Course Content,5
+1648,Inspiring magsalita tungkol sa career opportunities sa tech industry.,Taglish,Positive,Motivation,5
+1649,Pantay ang opportunities na ibinibigay sa lahat para makapag-recite at mag-lead.,Taglish,Positive,Assessment Fairness,5
+1650,Very dedicated professor na handang mag-overtime para matulungan ang mga struggling.,Taglish,Positive,Mentorship,5
+1651,"Sa aming subject, super galing mag-explain ni Sir ng backend routing, madaling ma-gets kahit beginner.",Taglish,Positive,Subject Mastery,5
+1652,"Sa aming subject, very approachable si Ma'am during consultation hours, matiyaga mag-guide sa thesis code.",Taglish,Positive,Mentorship,5
+1653,"Sa aming subject, transparent and fair magbigay ng grades, laging may rubric breakdown bago mag-submit.",Taglish,Positive,Assessment Fairness,5
+1654,"Sa aming subject, laging on time pumasok si Sir at very prepared ang slides and live coding demos.",Taglish,Positive,Punctuality,5
+1655,"Sa aming subject, hands-on magturo sa computer lab, iniisa-isa ang bawat student kapag may bug sa code.",Taglish,Positive,Lab Work,5
+1656,"Sa aming subject, nagbibigay ng second chance at consideration kapag may valid excuse or medical problem.",Taglish,Positive,Empathy,5
+1657,"Sa aming subject, mabilis mag-check ng quizzes at may inline comments kung paano ma-improve ang solutions.",Taglish,Positive,Assessment Feedback,5
+1658,"Sa aming subject, sobrang interactive ng class discussion, nage-encourage magtanong without feeling judged.",Taglish,Positive,Classroom Atmosphere,5
+1659,"Sa aming subject, very professional and respectful makitungo, walang halong paboritismo kahit kanino.",Taglish,Positive,Professionalism,5
+1660,"Sa aming subject, ang ganda ng pacing ng lectures, hindi minamadali ang mahihirap na algorithms.",Taglish,Positive,Teaching Pace,5
+1661,"Sa aming subject, nag-upload agad ng complete lecture notes and sample exercises sa Google Classroom.",Taglish,Positive,Course Content,5
+1662,"Sa aming subject, patas mag-grade at nagbibigay ng partial points kapag tama ang approach sa computation.",Taglish,Positive,Grading Fairness,5
+1663,"Sa aming subject, sobrang bait and inspiring magturo, mararamdaman mo talaga na gusto niyang matuto kami.",Taglish,Positive,Motivation,5
+1664,"Sa aming subject, detailed ang rubrics at malinaw ang expectations for our final capstone presentation.",Taglish,Positive,Rubric Clarity,5
+1665,"Sa aming subject, nagbibigay ng review sessions and practice exams bago ang major departmental tests.",Taglish,Positive,Assessment Support,5
+1666,"Sa aming subject, fair ang exams, kung ano ang itinuro at pinaliwanag sa klase, yun din ang lumalabas.",Taglish,Positive,Assessment Fairness,4
+1667,"Sa aming subject, very responsive sa email and MS Teams kapag may clarification sa group project.",Taglish,Positive,Communication,5
+1668,"Sa aming subject, hands-on experience sa industry ang shine-share ni Sir kaya super relevant ng lessons.",Taglish,Positive,Relevance,5
+1669,"Sa aming subject, well-balanced ang workload, hindi sabay-sabay nagpapasubmit ng heavy assignments.",Taglish,Positive,Workload,5
+1670,"Sa aming subject, mabilis mag-reply at laging handang tumulong kapag nahihirapan sa programming logic.",Taglish,Positive,Student Support,5
+1671,"Sa aming subject, nag-curve si Sir nung nakitang mababa ang overall average ng class sa midterm exam.",Taglish,Positive,Assessment Fairness,4
+1672,"Sa aming subject, super clear mag-deliver ng lectures gamit ang iPad drawings at diagrams.",Taglish,Positive,Teaching Delivery,5
+1673,"Sa aming subject, nag-aalok ng remedial quizzes para sa mga estudyanteng mababa ang initial score.",Taglish,Positive,Assessment Support,5
+1674,"Sa aming subject, very encouraging and supportive sa mga quiet students na mag-participate sa recitation.",Taglish,Positive,Engagement,5
+1675,"Sa aming subject, organized mag-manage ng class schedule at laging nasusunod ang syllabus roadmap.",Taglish,Positive,Classroom Management,5
+1676,"Sa aming subject, magaling magturo ng full-stack web development with practical real-world deployment tips.",Taglish,Positive,Subject Mastery,5
+1677,"Sa aming subject, napakabait makipag-usap and laging open sa feedback mula sa students.",Taglish,Positive,Professional Conduct,5
+1678,"Sa aming subject, binigyan kami ng sapat na time para tapusin ang complex database laboratory exercise.",Taglish,Positive,Exam Time Limit,5
+1679,"Sa aming subject, clear and transparent ang breakdown ng aming grades bago pa i-finalize sa portal.",Taglish,Positive,Grading Transparency,5
+1680,"Sa aming subject, marunong makinig sa concerns ng students tungkol sa deadlines kapag exam week.",Taglish,Positive,Empathy,5
+1681,"Sa aming subject, super helpful ng code reviews ni Sir sa aming GitHub pull requests during lab.",Taglish,Positive,Feedback Quality,5
+1682,"Sa aming subject, fair mag-evaluate ng individual contributions sa aming group software project.",Taglish,Positive,Peer Evaluation,5
+1683,"Sa aming subject, napaka-energetic magturo kahit 7:00 AM class, gaganahan ka talagang makinig.",Taglish,Positive,Motivation,5
+1684,"Sa aming subject, laging nag-iiwan ng key takeaways at summary notes pagkatapos ng bawat module.",Taglish,Positive,Teaching Depth,5
+1685,"Sa aming subject, patiently sinasagot ang every debugging error ng mga students sa computer laboratory.",Taglish,Positive,Mentorship,5
+1686,"Sa aming subject, transparent ang point deductions at walang unexpected surprise criteria sa grading.",Taglish,Positive,Grading Criteria,5
+1687,"Sa aming subject, encouraging class atmosphere where everyone feels safe to make mistakes and learn.",Taglish,Positive,Classroom Atmosphere,5
+1688,"Sa aming subject, may extra bonus points for students who participate actively and submit clean code.",Taglish,Positive,Assessment Support,5
+1689,"Sa aming subject, laging maaga mag-setup ng projector at materials bago pa pumasok ang mga students.",Taglish,Positive,Punctuality,5
+1690,"Sa aming subject, napakagaling mag-connect ng theoretical math sa machine learning applications.",Taglish,Positive,Relevance,5
+1691,"Sa aming subject, respectful and approachable professor, hindi nakakatakot magtanong sa kanya.",Taglish,Positive,Classroom Demeanor,5
+1692,"Sa aming subject, nagbibigay ng clear coding guidelines at standard naming conventions for projects.",Taglish,Positive,Rubric Clarity,5
+1693,"Sa aming subject, very accommodating when scheduling research consultations during thesis defense prep.",Taglish,Positive,Student Support,5
+1694,"Sa aming subject, sapat ang time allocation for practical programming tests sa computer center.",Taglish,Positive,Exam Time Limit,4
+1695,"Sa aming subject, nakatutulong ang practical exercises para maipasa ang departmental mock board exam.",Taglish,Positive,Assessment Support,5
+1696,"Sa aming subject, laging nagpapasalamat sa effort ng students kahit simple lang ang recitation answers.",Taglish,Positive,Classroom Atmosphere,5
+1697,"Sa aming subject, organisado ang submission links sa LMS at mabilis mag-confirm kapag natanggap na.",Taglish,Positive,Course Content,5
+1698,"Sa aming subject, inspiring magsalita tungkol sa career opportunities sa tech industry.",Taglish,Positive,Motivation,5
+1699,"Sa aming subject, pantay ang opportunities na ibinibigay sa lahat para makapag-recite at mag-lead.",Taglish,Positive,Assessment Fairness,5
+1700,"Sa aming subject, very dedicated professor na handang mag-overtime para matulungan ang mga struggling.",Taglish,Positive,Mentorship,5
+1701,"Overall, super galing mag-explain ni Sir ng backend routing, madaling ma-gets kahit beginner.",Taglish,Positive,Subject Mastery,5
+1702,"Overall, very approachable si Ma'am during consultation hours, matiyaga mag-guide sa thesis code.",Taglish,Positive,Mentorship,5
+1703,"Overall, transparent and fair magbigay ng grades, laging may rubric breakdown bago mag-submit.",Taglish,Positive,Assessment Fairness,5
+1704,"Overall, laging on time pumasok si Sir at very prepared ang slides and live coding demos.",Taglish,Positive,Punctuality,5
+1705,"Overall, hands-on magturo sa computer lab, iniisa-isa ang bawat student kapag may bug sa code.",Taglish,Positive,Lab Work,5
+1706,"Overall, nagbibigay ng second chance at consideration kapag may valid excuse or medical problem.",Taglish,Positive,Empathy,5
+1707,"Overall, mabilis mag-check ng quizzes at may inline comments kung paano ma-improve ang solutions.",Taglish,Positive,Assessment Feedback,5
+1708,"Overall, sobrang interactive ng class discussion, nage-encourage magtanong without feeling judged.",Taglish,Positive,Classroom Atmosphere,5
+1709,"Overall, very professional and respectful makitungo, walang halong paboritismo kahit kanino.",Taglish,Positive,Professionalism,5
+1710,"Overall, ang ganda ng pacing ng lectures, hindi minamadali ang mahihirap na algorithms.",Taglish,Positive,Teaching Pace,5
+1711,"Overall, nag-upload agad ng complete lecture notes and sample exercises sa Google Classroom.",Taglish,Positive,Course Content,5
+1712,"Overall, patas mag-grade at nagbibigay ng partial points kapag tama ang approach sa computation.",Taglish,Positive,Grading Fairness,5
+1713,"Overall, sobrang bait and inspiring magturo, mararamdaman mo talaga na gusto niyang matuto kami.",Taglish,Positive,Motivation,5
+1714,"Overall, detailed ang rubrics at malinaw ang expectations for our final capstone presentation.",Taglish,Positive,Rubric Clarity,5
+1715,"Overall, nagbibigay ng review sessions and practice exams bago ang major departmental tests.",Taglish,Positive,Assessment Support,5
+1716,"Overall, fair ang exams, kung ano ang itinuro at pinaliwanag sa klase, yun din ang lumalabas.",Taglish,Positive,Assessment Fairness,4
+1717,"Overall, very responsive sa email and MS Teams kapag may clarification sa group project.",Taglish,Positive,Communication,5
+1718,"Overall, hands-on experience sa industry ang shine-share ni Sir kaya super relevant ng lessons.",Taglish,Positive,Relevance,5
+1719,"Overall, well-balanced ang workload, hindi sabay-sabay nagpapasubmit ng heavy assignments.",Taglish,Positive,Workload,5
+1720,"Overall, mabilis mag-reply at laging handang tumulong kapag nahihirapan sa programming logic.",Taglish,Positive,Student Support,5
+1721,"Overall, nag-curve si Sir nung nakitang mababa ang overall average ng class sa midterm exam.",Taglish,Positive,Assessment Fairness,4
+1722,"Overall, super clear mag-deliver ng lectures gamit ang iPad drawings at diagrams.",Taglish,Positive,Teaching Delivery,5
+1723,"Overall, nag-aalok ng remedial quizzes para sa mga estudyanteng mababa ang initial score.",Taglish,Positive,Assessment Support,5
+1724,"Overall, very encouraging and supportive sa mga quiet students na mag-participate sa recitation.",Taglish,Positive,Engagement,5
+1725,"Overall, organized mag-manage ng class schedule at laging nasusunod ang syllabus roadmap.",Taglish,Positive,Classroom Management,5
+1726,"Overall, magaling magturo ng full-stack web development with practical real-world deployment tips.",Taglish,Positive,Subject Mastery,5
+1727,"Overall, napakabait makipag-usap and laging open sa feedback mula sa students.",Taglish,Positive,Professional Conduct,5
+1728,"Overall, binigyan kami ng sapat na time para tapusin ang complex database laboratory exercise.",Taglish,Positive,Exam Time Limit,5
+1729,"Overall, clear and transparent ang breakdown ng aming grades bago pa i-finalize sa portal.",Taglish,Positive,Grading Transparency,5
+1730,"Overall, marunong makinig sa concerns ng students tungkol sa deadlines kapag exam week.",Taglish,Positive,Empathy,5
+1731,"Overall, super helpful ng code reviews ni Sir sa aming GitHub pull requests during lab.",Taglish,Positive,Feedback Quality,5
+1732,"Overall, fair mag-evaluate ng individual contributions sa aming group software project.",Taglish,Positive,Peer Evaluation,5
+1733,"Overall, napaka-energetic magturo kahit 7:00 AM class, gaganahan ka talagang makinig.",Taglish,Positive,Motivation,5
+1734,"Overall, laging nag-iiwan ng key takeaways at summary notes pagkatapos ng bawat module.",Taglish,Positive,Teaching Depth,5
+1735,"Overall, patiently sinasagot ang every debugging error ng mga students sa computer laboratory.",Taglish,Positive,Mentorship,5
+1736,"Overall, transparent ang point deductions at walang unexpected surprise criteria sa grading.",Taglish,Positive,Grading Criteria,5
+1737,"Overall, encouraging class atmosphere where everyone feels safe to make mistakes and learn.",Taglish,Positive,Classroom Atmosphere,5
+1738,"Overall, may extra bonus points for students who participate actively and submit clean code.",Taglish,Positive,Assessment Support,5
+1739,"Overall, laging maaga mag-setup ng projector at materials bago pa pumasok ang mga students.",Taglish,Positive,Punctuality,5
+1740,"Overall, napakagaling mag-connect ng theoretical math sa machine learning applications.",Taglish,Positive,Relevance,5
+1741,"Overall, respectful and approachable professor, hindi nakakatakot magtanong sa kanya.",Taglish,Positive,Classroom Demeanor,5
+1742,"Overall, nagbibigay ng clear coding guidelines at standard naming conventions for projects.",Taglish,Positive,Rubric Clarity,5
+1743,"Overall, very accommodating when scheduling research consultations during thesis defense prep.",Taglish,Positive,Student Support,5
+1744,"Overall, sapat ang time allocation for practical programming tests sa computer center.",Taglish,Positive,Exam Time Limit,4
+1745,"Overall, nakatutulong ang practical exercises para maipasa ang departmental mock board exam.",Taglish,Positive,Assessment Support,5
+1746,"Overall, laging nagpapasalamat sa effort ng students kahit simple lang ang recitation answers.",Taglish,Positive,Classroom Atmosphere,5
+1747,"Overall, organisado ang submission links sa LMS at mabilis mag-confirm kapag natanggap na.",Taglish,Positive,Course Content,5
+1748,"Overall, inspiring magsalita tungkol sa career opportunities sa tech industry.",Taglish,Positive,Motivation,5
+1749,"Overall, pantay ang opportunities na ibinibigay sa lahat para makapag-recite at mag-lead.",Taglish,Positive,Assessment Fairness,5
+1750,"Overall, very dedicated professor na handang mag-overtime para matulungan ang mga struggling.",Taglish,Positive,Mentorship,5
+1751,"For this semester, super galing mag-explain ni Sir ng backend routing, madaling ma-gets kahit beginner.",Taglish,Positive,Subject Mastery,5
+1752,"For this semester, very approachable si Ma'am during consultation hours, matiyaga mag-guide sa thesis code.",Taglish,Positive,Mentorship,5
+1753,"For this semester, transparent and fair magbigay ng grades, laging may rubric breakdown bago mag-submit.",Taglish,Positive,Assessment Fairness,5
+1754,"For this semester, laging on time pumasok si Sir at very prepared ang slides and live coding demos.",Taglish,Positive,Punctuality,5
+1755,"For this semester, hands-on magturo sa computer lab, iniisa-isa ang bawat student kapag may bug sa code.",Taglish,Positive,Lab Work,5
+1756,"For this semester, nagbibigay ng second chance at consideration kapag may valid excuse or medical problem.",Taglish,Positive,Empathy,5
+1757,"For this semester, mabilis mag-check ng quizzes at may inline comments kung paano ma-improve ang solutions.",Taglish,Positive,Assessment Feedback,5
+1758,"For this semester, sobrang interactive ng class discussion, nage-encourage magtanong without feeling judged.",Taglish,Positive,Classroom Atmosphere,5
+1759,"For this semester, very professional and respectful makitungo, walang halong paboritismo kahit kanino.",Taglish,Positive,Professionalism,5
+1760,"For this semester, ang ganda ng pacing ng lectures, hindi minamadali ang mahihirap na algorithms.",Taglish,Positive,Teaching Pace,5
+1761,"Binabasa lang ni Ma'am yung PowerPoint slides, walang explanation kahit nagtatanong kami.",Taglish,Negative,Teaching Delivery,1
+1762,Palaging late pumasok si Sir ng 20 minutes tapos nagmamadali magturo pagdating.,Taglish,Negative,Punctuality,1
+1763,"Terror teacher, grabe magalit kapag hindi agad nasagot ang recitation questions.",Taglish,Negative,Classroom Demeanor,1
+1764,"Hindi transparent ang grading system, walang rubric at bigla na lang may bagsak.",Taglish,Negative,Grading Transparency,1
+1765,Napakalayo ng exam questions sa mga tinuro during the lecture period.,Taglish,Negative,Exam Difficulty,1
+1766,Never nagbalik ng graded lab exercises hanggang matapos ang buong semester.,Taglish,Negative,Assessment Feedback,1
+1767,"Sobrang bilis mag-discuss, parang naghahabol ng oras kaya hindi na ma-absorb.",Taglish,Negative,Teaching Pace,2
+1768,Walang consideration sa mga students kahit may brownout or connectivity issues.,Taglish,Negative,Empathy,1
+1769,"Magulo magturo, pabago-bago ang syllabus requirements at project guidelines.",Taglish,Negative,Course Content,1
+1770,"Paboritismo sa mga students na nasa front row, sila lang ang pinagbibigyan mag-recite.",Taglish,Negative,Assessment Fairness,1
+1771,Unresponsive sa email and messages kahit urgent ang clarification sa capstone.,Taglish,Negative,Communication,1
+1772,"Grabe magpa-quiz, walang pasabi tapos 5 minutes lang ang time limit for 15 items.",Taglish,Negative,Pop Quizzes,1
+1773,Nanghihiya ng students kapag may syntax error ang code sa harap ng klase.,Taglish,Negative,Professionalism,1
+1774,Tambak ang assignments na sabay-sabay ang deadline during midterm exam week.,Taglish,Negative,Workload,1
+1775,"Hindi marunong mag-explain ng complex algorithms, pinapa-self-study lang kami.",Taglish,Negative,Teaching Delivery,2
+1776,"Napakasungit sa consultation, parang naabala pa siya kapag may nagtanong.",Taglish,Negative,Student Support,1
+1777,Laging nag-oovertime ng 15 minutes kaya nahuhuli kami sa next class sa kabilang building.,Taglish,Negative,Classroom Management,2
+1778,"Hindi patas mag-grade sa group projects, pare-parehong mababa kahit may nagbuhat.",Taglish,Negative,Peer Evaluation,2
+1779,"Outdated ang teaching materials, puro lumang programming tools na hindi na ginagamit.",Taglish,Negative,Course Content,2
+1780,Maling answer key ang ginamit sa exam at ayaw nang i-recheck kahit na-point out na.,Taglish,Negative,Grading Fairness,1
+1781,"Pabaya sa laboratory sessions, iniiwan lang kami mag-isa nang walang supervision.",Taglish,Negative,Lab Work,1
+1782,Mayabang makipag-usap at minamaliit ang prior knowledge ng mga estudyante.,Taglish,Negative,Professional Conduct,1
+1783,Biglang nagbawas ng points dahil sa formatting rule na hindi naman nasa rubric.,Taglish,Negative,Rubric Clarity,1
+1784,"Puro student reporting ang class buong semester, hindi man lang nag-lecture si Sir.",Taglish,Negative,Teaching Delivery,1
+1785,Walang pakialam kung marami ang bumabagsak sa preliminary and midterm exams.,Taglish,Negative,Empathy,1
+1786,"Intimidating magsalita, kaya takot magtanong ang mga students during class.",Taglish,Negative,Classroom Atmosphere,1
+1787,Laging nagka-cancel ng class sa morning tapos magpapalit ng unannounced schedule sa gabi.,Taglish,Negative,Classroom Management,1
+1788,Walang breakdown ng grades na binigay bago mag-encoding sa university system.,Taglish,Negative,Grading Transparency,1
+1789,Hindi marunong mag-troubleshoot ng network errors sa lab pero nagagalit sa klase.,Taglish,Negative,Lab Work,2
+1790,Sobrang taas ng rubric standards kahit introductory level subject pa lang.,Taglish,Negative,Rubric Clarity,2
+1791,Dismissive attitude kapag may student na nag-request ng rechecking ng test papers.,Taglish,Negative,Communication,1
+1792,"Monotone and boring magturo, nakakaantok ang boses dahil walang interaction.",Taglish,Negative,Engagement,2
+1793,Nagpa-surprise quiz agad after discussing only one slide of a brand new topic.,Taglish,Negative,Pop Quizzes,1
+1794,"Inconsistent mag-enforce ng rules, pinagagalitan ang iba pero tolerated ang iba.",Taglish,Negative,Classroom Management,1
+1795,Mababa magbigay ng grades kahit kumpleto at sumunod naman sa lahat ng requirements.,Taglish,Negative,Grading Fairness,1
+1796,Hindi nagbibigay ng constructive feedback kung bakit na-deductan ng points sa report.,Taglish,Negative,Assessment Feedback,1
+1797,Laging absent sa consultation hours kahit naka-post sa office schedule niya.,Taglish,Negative,Student Support,1
+1798,"Napakagulo ng instructions sa finals project, paulit-ulit na binabago ang guidelines.",Taglish,Negative,Assessment Clarity,1
+1799,Hindi pinayagan ang make-up quiz kahit may medical certificate mula sa clinic.,Taglish,Negative,Assessment Fairness,1
+1800,"Bastos sumagot sa messages, parang laging galit kapag kinakausap sa hallway.",Taglish,Negative,Classroom Demeanor,1
+1801,Walang consideration sa heavy academic load ng graduating students.,Taglish,Negative,Workload,1
+1802,"Tinatamad mag-turo kapag hapon na, nagpapadismiss agad after 15 minutes.",Taglish,Negative,Punctuality,1
+1803,Hindi ina-adjust ang exam questions kahit maraming typographical errors sa papel.,Taglish,Negative,Exam Quality,2
+1804,"Strict policy without empathy, automatic zero kapag na-late ng 1 minute sa LMS submission.",Taglish,Negative,Assessment Fairness,1
+1805,Madalas lumihis ang discussion sa personal rants kaysa sa official syllabus topic.,Taglish,Negative,Course Content,2
+1806,Hindi marunong makinig sa complaints ng class president tungkol sa scheduling conflicts.,Taglish,Negative,Communication,1
+1807,Pumipili ng favorites na binibigyan ng special treatment at mataas na scores.,Taglish,Negative,Assessment Fairness,1
+1808,Lutang magturo minsan at mali-mali ang formulas na isinusulat sa whiteboard.,Taglish,Negative,Subject Mastery,2
+1809,"Walang kwenta ang feedback, puro 'revise' lang ang nakasulat nang walang specific guidance.",Taglish,Negative,Feedback Quality,1
+1810,"Sa aming subject, binabasa lang ni Ma'am yung PowerPoint slides, walang explanation kahit nagtatanong kami.",Taglish,Negative,Teaching Delivery,1
+1811,"Sa aming subject, palaging late pumasok si Sir ng 20 minutes tapos nagmamadali magturo pagdating.",Taglish,Negative,Punctuality,1
+1812,"Sa aming subject, terror teacher, grabe magalit kapag hindi agad nasagot ang recitation questions.",Taglish,Negative,Classroom Demeanor,1
+1813,"Sa aming subject, hindi transparent ang grading system, walang rubric at bigla na lang may bagsak.",Taglish,Negative,Grading Transparency,1
+1814,"Sa aming subject, napakalayo ng exam questions sa mga tinuro during the lecture period.",Taglish,Negative,Exam Difficulty,1
+1815,"Sa aming subject, never nagbalik ng graded lab exercises hanggang matapos ang buong semester.",Taglish,Negative,Assessment Feedback,1
+1816,"Sa aming subject, sobrang bilis mag-discuss, parang naghahabol ng oras kaya hindi na ma-absorb.",Taglish,Negative,Teaching Pace,2
+1817,"Sa aming subject, walang consideration sa mga students kahit may brownout or connectivity issues.",Taglish,Negative,Empathy,1
+1818,"Sa aming subject, magulo magturo, pabago-bago ang syllabus requirements at project guidelines.",Taglish,Negative,Course Content,1
+1819,"Sa aming subject, paboritismo sa mga students na nasa front row, sila lang ang pinagbibigyan mag-recite.",Taglish,Negative,Assessment Fairness,1
+1820,"Sa aming subject, unresponsive sa email and messages kahit urgent ang clarification sa capstone.",Taglish,Negative,Communication,1
+1821,"Sa aming subject, grabe magpa-quiz, walang pasabi tapos 5 minutes lang ang time limit for 15 items.",Taglish,Negative,Pop Quizzes,1
+1822,"Sa aming subject, nanghihiya ng students kapag may syntax error ang code sa harap ng klase.",Taglish,Negative,Professionalism,1
+1823,"Sa aming subject, tambak ang assignments na sabay-sabay ang deadline during midterm exam week.",Taglish,Negative,Workload,1
+1824,"Sa aming subject, hindi marunong mag-explain ng complex algorithms, pinapa-self-study lang kami.",Taglish,Negative,Teaching Delivery,2
+1825,"Sa aming subject, napakasungit sa consultation, parang naabala pa siya kapag may nagtanong.",Taglish,Negative,Student Support,1
+1826,"Sa aming subject, laging nag-oovertime ng 15 minutes kaya nahuhuli kami sa next class sa kabilang building.",Taglish,Negative,Classroom Management,2
+1827,"Sa aming subject, hindi patas mag-grade sa group projects, pare-parehong mababa kahit may nagbuhat.",Taglish,Negative,Peer Evaluation,2
+1828,"Sa aming subject, outdated ang teaching materials, puro lumang programming tools na hindi na ginagamit.",Taglish,Negative,Course Content,2
+1829,"Sa aming subject, maling answer key ang ginamit sa exam at ayaw nang i-recheck kahit na-point out na.",Taglish,Negative,Grading Fairness,1
+1830,"Sa aming subject, pabaya sa laboratory sessions, iniiwan lang kami mag-isa nang walang supervision.",Taglish,Negative,Lab Work,1
+1831,"Sa aming subject, mayabang makipag-usap at minamaliit ang prior knowledge ng mga estudyante.",Taglish,Negative,Professional Conduct,1
+1832,"Sa aming subject, masyadong maikli ang 30 minutes para sa 50 items na computation-heavy exam.",Taglish,Negative,Exam Time Limit,1
+1833,"Sa aming subject, biglang nagbawas ng points dahil sa formatting rule na hindi naman nasa rubric.",Taglish,Negative,Rubric Clarity,1
+1834,"Sa aming subject, puro student reporting ang class buong semester, hindi man lang nag-lecture si Sir.",Taglish,Negative,Teaching Delivery,1
+1835,"Sa aming subject, walang pakialam kung marami ang bumabagsak sa preliminary and midterm exams.",Taglish,Negative,Empathy,1
+1836,"Sa aming subject, intimidating magsalita, kaya takot magtanong ang mga students during class.",Taglish,Negative,Classroom Atmosphere,1
+1837,"Sa aming subject, laging nagka-cancel ng class sa morning tapos magpapalit ng unannounced schedule sa gabi.",Taglish,Negative,Classroom Management,1
+1838,"Sa aming subject, walang breakdown ng grades na binigay bago mag-encoding sa university system.",Taglish,Negative,Grading Transparency,1
+1839,"Sa aming subject, hindi marunong mag-troubleshoot ng network errors sa lab pero nagagalit sa klase.",Taglish,Negative,Lab Work,2
+1840,"Sa aming subject, sobrang taas ng rubric standards kahit introductory level subject pa lang.",Taglish,Negative,Rubric Clarity,2
+1841,"Sa aming subject, dismissive attitude kapag may student na nag-request ng rechecking ng test papers.",Taglish,Negative,Communication,1
+1842,"Sa aming subject, monotone and boring magturo, nakakaantok ang boses dahil walang interaction.",Taglish,Negative,Engagement,2
+1843,"Sa aming subject, nagpa-surprise quiz agad after discussing only one slide of a brand new topic.",Taglish,Negative,Pop Quizzes,1
+1844,"Sa aming subject, inconsistent mag-enforce ng rules, pinagagalitan ang iba pero tolerated ang iba.",Taglish,Negative,Classroom Management,1
+1845,"Sa aming subject, mababa magbigay ng grades kahit kumpleto at sumunod naman sa lahat ng requirements.",Taglish,Negative,Grading Fairness,1
+1846,"Sa aming subject, hindi nagbibigay ng constructive feedback kung bakit na-deductan ng points sa report.",Taglish,Negative,Assessment Feedback,1
+1847,"Sa aming subject, laging absent sa consultation hours kahit naka-post sa office schedule niya.",Taglish,Negative,Student Support,1
+1848,"Sa aming subject, napakagulo ng instructions sa finals project, paulit-ulit na binabago ang guidelines.",Taglish,Negative,Assessment Clarity,1
+1849,"Sa aming subject, hindi pinayagan ang make-up quiz kahit may medical certificate mula sa clinic.",Taglish,Negative,Assessment Fairness,1
+1850,"Sa aming subject, bastos sumagot sa messages, parang laging galit kapag kinakausap sa hallway.",Taglish,Negative,Classroom Demeanor,1
+1851,"Sa aming subject, walang consideration sa heavy academic load ng graduating students.",Taglish,Negative,Workload,1
+1852,"Sa aming subject, tinatamad mag-turo kapag hapon na, nagpapadismiss agad after 15 minutes.",Taglish,Negative,Punctuality,1
+1853,"Sa aming subject, hindi ina-adjust ang exam questions kahit maraming typographical errors sa papel.",Taglish,Negative,Exam Quality,2
+1854,"Sa aming subject, strict policy without empathy, automatic zero kapag na-late ng 1 minute sa LMS submission.",Taglish,Negative,Assessment Fairness,1
+1855,"Sa aming subject, madalas lumihis ang discussion sa personal rants kaysa sa official syllabus topic.",Taglish,Negative,Course Content,2
+1856,"Sa aming subject, hindi marunong makinig sa complaints ng class president tungkol sa scheduling conflicts.",Taglish,Negative,Communication,1
+1857,"Sa aming subject, pumipili ng favorites na binibigyan ng special treatment at mataas na scores.",Taglish,Negative,Assessment Fairness,1
+1858,"Sa aming subject, lutang magturo minsan at mali-mali ang formulas na isinusulat sa whiteboard.",Taglish,Negative,Subject Mastery,2
+1859,"Sa aming subject, walang kwenta ang feedback, puro 'revise' lang ang nakasulat nang walang specific guidance.",Taglish,Negative,Feedback Quality,1
+1860,"Overall, binabasa lang ni Ma'am yung PowerPoint slides, walang explanation kahit nagtatanong kami.",Taglish,Negative,Teaching Delivery,1
+1861,"Overall, palaging late pumasok si Sir ng 20 minutes tapos nagmamadali magturo pagdating.",Taglish,Negative,Punctuality,1
+1862,"Overall, terror teacher, grabe magalit kapag hindi agad nasagot ang recitation questions.",Taglish,Negative,Classroom Demeanor,1
+1863,"Overall, hindi transparent ang grading system, walang rubric at bigla na lang may bagsak.",Taglish,Negative,Grading Transparency,1
+1864,"Overall, napakalayo ng exam questions sa mga tinuro during the lecture period.",Taglish,Negative,Exam Difficulty,1
+1865,"Overall, never nagbalik ng graded lab exercises hanggang matapos ang buong semester.",Taglish,Negative,Assessment Feedback,1
+1866,"Overall, sobrang bilis mag-discuss, parang naghahabol ng oras kaya hindi na ma-absorb.",Taglish,Negative,Teaching Pace,2
+1867,"Overall, walang consideration sa mga students kahit may brownout or connectivity issues.",Taglish,Negative,Empathy,1
+1868,"Overall, magulo magturo, pabago-bago ang syllabus requirements at project guidelines.",Taglish,Negative,Course Content,1
+1869,"Overall, paboritismo sa mga students na nasa front row, sila lang ang pinagbibigyan mag-recite.",Taglish,Negative,Assessment Fairness,1
+1870,"Overall, unresponsive sa email and messages kahit urgent ang clarification sa capstone.",Taglish,Negative,Communication,1
+1871,"Overall, grabe magpa-quiz, walang pasabi tapos 5 minutes lang ang time limit for 15 items.",Taglish,Negative,Pop Quizzes,1
+1872,"Overall, nanghihiya ng students kapag may syntax error ang code sa harap ng klase.",Taglish,Negative,Professionalism,1
+1873,"Overall, tambak ang assignments na sabay-sabay ang deadline during midterm exam week.",Taglish,Negative,Workload,1
+1874,"Overall, hindi marunong mag-explain ng complex algorithms, pinapa-self-study lang kami.",Taglish,Negative,Teaching Delivery,2
+1875,"Overall, napakasungit sa consultation, parang naabala pa siya kapag may nagtanong.",Taglish,Negative,Student Support,1
+1876,"Overall, laging nag-oovertime ng 15 minutes kaya nahuhuli kami sa next class sa kabilang building.",Taglish,Negative,Classroom Management,2
+1877,"Overall, hindi patas mag-grade sa group projects, pare-parehong mababa kahit may nagbuhat.",Taglish,Negative,Peer Evaluation,2
+1878,"Overall, outdated ang teaching materials, puro lumang programming tools na hindi na ginagamit.",Taglish,Negative,Course Content,2
+1879,"Overall, maling answer key ang ginamit sa exam at ayaw nang i-recheck kahit na-point out na.",Taglish,Negative,Grading Fairness,1
+1880,"Overall, pabaya sa laboratory sessions, iniiwan lang kami mag-isa nang walang supervision.",Taglish,Negative,Lab Work,1
+1881,"Overall, mayabang makipag-usap at minamaliit ang prior knowledge ng mga estudyante.",Taglish,Negative,Professional Conduct,1
+1882,"Overall, masyadong maikli ang 30 minutes para sa 50 items na computation-heavy exam.",Taglish,Negative,Exam Time Limit,1
+1883,"Overall, biglang nagbawas ng points dahil sa formatting rule na hindi naman nasa rubric.",Taglish,Negative,Rubric Clarity,1
+1884,"Overall, puro student reporting ang class buong semester, hindi man lang nag-lecture si Sir.",Taglish,Negative,Teaching Delivery,1
+1885,"Overall, walang pakialam kung marami ang bumabagsak sa preliminary and midterm exams.",Taglish,Negative,Empathy,1
+1886,"Overall, intimidating magsalita, kaya takot magtanong ang mga students during class.",Taglish,Negative,Classroom Atmosphere,1
+1887,"Overall, laging nagka-cancel ng class sa morning tapos magpapalit ng unannounced schedule sa gabi.",Taglish,Negative,Classroom Management,1
+1888,"Overall, walang breakdown ng grades na binigay bago mag-encoding sa university system.",Taglish,Negative,Grading Transparency,1
+1889,"Overall, hindi marunong mag-troubleshoot ng network errors sa lab pero nagagalit sa klase.",Taglish,Negative,Lab Work,2
+1890,"Overall, sobrang taas ng rubric standards kahit introductory level subject pa lang.",Taglish,Negative,Rubric Clarity,2
+1891,"Overall, dismissive attitude kapag may student na nag-request ng rechecking ng test papers.",Taglish,Negative,Communication,1
+1892,"Overall, monotone and boring magturo, nakakaantok ang boses dahil walang interaction.",Taglish,Negative,Engagement,2
+1893,"Overall, nagpa-surprise quiz agad after discussing only one slide of a brand new topic.",Taglish,Negative,Pop Quizzes,1
+1894,"Overall, inconsistent mag-enforce ng rules, pinagagalitan ang iba pero tolerated ang iba.",Taglish,Negative,Classroom Management,1
+1895,"Overall, mababa magbigay ng grades kahit kumpleto at sumunod naman sa lahat ng requirements.",Taglish,Negative,Grading Fairness,1
+1896,"Overall, hindi nagbibigay ng constructive feedback kung bakit na-deductan ng points sa report.",Taglish,Negative,Assessment Feedback,1
+1897,"Overall, laging absent sa consultation hours kahit naka-post sa office schedule niya.",Taglish,Negative,Student Support,1
+1898,"Overall, napakagulo ng instructions sa finals project, paulit-ulit na binabago ang guidelines.",Taglish,Negative,Assessment Clarity,1
+1899,"Overall, hindi pinayagan ang make-up quiz kahit may medical certificate mula sa clinic.",Taglish,Negative,Assessment Fairness,1
+1900,"Overall, bastos sumagot sa messages, parang laging galit kapag kinakausap sa hallway.",Taglish,Negative,Classroom Demeanor,1
+1901,"Overall, walang consideration sa heavy academic load ng graduating students.",Taglish,Negative,Workload,1
+1902,"Overall, tinatamad mag-turo kapag hapon na, nagpapadismiss agad after 15 minutes.",Taglish,Negative,Punctuality,1
+1903,"Overall, hindi ina-adjust ang exam questions kahit maraming typographical errors sa papel.",Taglish,Negative,Exam Quality,2
+1904,"Overall, strict policy without empathy, automatic zero kapag na-late ng 1 minute sa LMS submission.",Taglish,Negative,Assessment Fairness,1
+1905,"Overall, madalas lumihis ang discussion sa personal rants kaysa sa official syllabus topic.",Taglish,Negative,Course Content,2
+1906,"Overall, hindi marunong makinig sa complaints ng class president tungkol sa scheduling conflicts.",Taglish,Negative,Communication,1
+1907,"Overall, pumipili ng favorites na binibigyan ng special treatment at mataas na scores.",Taglish,Negative,Assessment Fairness,1
+1908,"Overall, lutang magturo minsan at mali-mali ang formulas na isinusulat sa whiteboard.",Taglish,Negative,Subject Mastery,2
+1909,"Overall, walang kwenta ang feedback, puro 'revise' lang ang nakasulat nang walang specific guidance.",Taglish,Negative,Feedback Quality,1
+1910,"For this semester, binabasa lang ni Ma'am yung PowerPoint slides, walang explanation kahit nagtatanong kami.",Taglish,Negative,Teaching Delivery,1
+1911,"For this semester, palaging late pumasok si Sir ng 20 minutes tapos nagmamadali magturo pagdating.",Taglish,Negative,Punctuality,1
+1912,"For this semester, terror teacher, grabe magalit kapag hindi agad nasagot ang recitation questions.",Taglish,Negative,Classroom Demeanor,1
+1913,"For this semester, hindi transparent ang grading system, walang rubric at bigla na lang may bagsak.",Taglish,Negative,Grading Transparency,1
+1914,"For this semester, napakalayo ng exam questions sa mga tinuro during the lecture period.",Taglish,Negative,Exam Difficulty,1
+1915,"For this semester, never nagbalik ng graded lab exercises hanggang matapos ang buong semester.",Taglish,Negative,Assessment Feedback,1
+1916,"For this semester, sobrang bilis mag-discuss, parang naghahabol ng oras kaya hindi na ma-absorb.",Taglish,Negative,Teaching Pace,2
+1917,"For this semester, walang consideration sa mga students kahit may brownout or connectivity issues.",Taglish,Negative,Empathy,1
+1918,"For this semester, magulo magturo, pabago-bago ang syllabus requirements at project guidelines.",Taglish,Negative,Course Content,1
+1919,"For this semester, paboritismo sa mga students na nasa front row, sila lang ang pinagbibigyan mag-recite.",Taglish,Negative,Assessment Fairness,1
+1920,"Sakto lang yung bilis ng pagtuturo ni Sir, nasusunod naman ang syllabus.",Taglish,Neutral,Teaching Pace,3
+1921,"Average teaching style, sinusunod lang ang slides pero okay naman pakinggan.",Taglish,Neutral,Teaching Delivery,3
+1922,"Katamtaman lang ang difficulty ng quizzes, basta nagbasa ng lecture handouts.",Taglish,Neutral,Exam Difficulty,3
+1923,Pumapasok on time si Ma'am at nagdi-dismiss ayon sa bell ng university.,Taglish,Neutral,Punctuality,3
+1924,"Standard grading criteria, sumusunod sa passing rate ng College of Computer Studies.",Taglish,Neutral,Grading Transparency,3
+1925,Available naman for consultation kapag nag-message in advance sa MS Teams.,Taglish,Neutral,Student Support,3
+1926,"Sakto lang ang dami ng assignments, hindi masyadong marami at hindi rin kakaunti.",Taglish,Neutral,Workload,3
+1927,Standard multiple choice exam na based sa chapters ng assigned textbook.,Taglish,Neutral,Assessment Quality,3
+1928,"Medyo formal ang class atmosphere, walang masyadong kwentuhan pero peaceful naman.",Taglish,Neutral,Classroom Atmosphere,3
+1929,Brief lang ang feedback sa research drafts pero natukoy naman ang basic errors.,Taglish,Neutral,Assessment Feedback,3
+1930,Nasusunod ang course syllabus from Week 1 to Finals nang walang delay.,Taglish,Neutral,Course Content,3
+1931,"Standard rubrics ang ginamit for our group presentations, sakto lang sa level.",Taglish,Neutral,Rubric Clarity,3
+1932,"Normal lecture setting, nagtatanong minsan pero hindi nagpe-pressure mag-recite.",Taglish,Neutral,Engagement,3
+1933,Sapat ang time limit para sagutan ang 30-item exam sa laboratory.,Taglish,Neutral,Exam Time Limit,3
+1934,In-upload naman ang midterm grades sa university portal within the deadline.,Taglish,Neutral,Grading Transparency,3
+1935,"Sinusubukan ipaliwanag ang algorithms, though minsan kailangan pa i-Google after class.",Taglish,Neutral,Teaching Depth,3
+1936,"Average instructor, neither too strict nor too lenient sa classroom rules.",Taglish,Neutral,Professional Conduct,3
+1937,Nagbibigay ng group project para ma-meet ang curriculum requirements ng subject.,Taglish,Neutral,Engagement,3
+1938,Straightforward ang lectures based sa PDF modules na in-upload sa LMS.,Taglish,Neutral,Course Delivery,3
+1939,The exam directly covers the exercises na binigay sa preliminary review sheet.,Taglish,Neutral,Assessment Alignment,3
+1940,"Approach is standard for college, you get what you study from the slides.",Taglish,Neutral,Teaching Delivery,3
+1941,"Sumasagot kapag may nagtanong after class, sakto lang ang explanation.",Taglish,Neutral,Communication,3
+1942,"Okay lang ang pacing, normal college lecture na walang malaking issue.",Taglish,Neutral,Teaching Pace,3
+1943,"Manageable ang lab activities, natatapos naman within the 3-hour period.",Taglish,Neutral,Lab Work,3
+1944,Fair and neutral ang pakikitungo sa lahat ng students sa klase.,Taglish,Neutral,Professionalism,3
+1945,"Sa aming subject, sakto lang yung bilis ng pagtuturo ni Sir, nasusunod naman ang syllabus.",Taglish,Neutral,Teaching Pace,3
+1946,"Sa aming subject, average teaching style, sinusunod lang ang slides pero okay naman pakinggan.",Taglish,Neutral,Teaching Delivery,3
+1947,"Sa aming subject, katamtaman lang ang difficulty ng quizzes, basta nagbasa ng lecture handouts.",Taglish,Neutral,Exam Difficulty,3
+1948,"Sa aming subject, pumapasok on time si Ma'am at nagdi-dismiss ayon sa bell ng university.",Taglish,Neutral,Punctuality,3
+1949,"Sa aming subject, standard grading criteria, sumusunod sa passing rate ng College of Computer Studies.",Taglish,Neutral,Grading Transparency,3
+1950,"Sa aming subject, available naman for consultation kapag nag-message in advance sa MS Teams.",Taglish,Neutral,Student Support,3
+1951,"Sa aming subject, sakto lang ang dami ng assignments, hindi masyadong marami at hindi rin kakaunti.",Taglish,Neutral,Workload,3
+1952,"Sa aming subject, standard multiple choice exam na based sa chapters ng assigned textbook.",Taglish,Neutral,Assessment Quality,3
+1953,"Sa aming subject, medyo formal ang class atmosphere, walang masyadong kwentuhan pero peaceful naman.",Taglish,Neutral,Classroom Atmosphere,3
+1954,"Sa aming subject, brief lang ang feedback sa research drafts pero natukoy naman ang basic errors.",Taglish,Neutral,Assessment Feedback,3
+1955,"Sa aming subject, nasusunod ang course syllabus from Week 1 to Finals nang walang delay.",Taglish,Neutral,Course Content,3
+1956,"Sa aming subject, standard rubrics ang ginamit for our group presentations, sakto lang sa level.",Taglish,Neutral,Rubric Clarity,3
+1957,"Sa aming subject, normal lecture setting, nagtatanong minsan pero hindi nagpe-pressure mag-recite.",Taglish,Neutral,Engagement,3
+1958,"Sa aming subject, sapat ang time limit para sagutan ang 30-item exam sa laboratory.",Taglish,Neutral,Exam Time Limit,3
+1959,"Sa aming subject, in-upload naman ang midterm grades sa university portal within the deadline.",Taglish,Neutral,Grading Transparency,3
+1960,"Sa aming subject, sinusubukan ipaliwanag ang algorithms, though minsan kailangan pa i-Google after class.",Taglish,Neutral,Teaching Depth,3
+1961,"Sa aming subject, average instructor, neither too strict nor too lenient sa classroom rules.",Taglish,Neutral,Professional Conduct,3
+1962,"Sa aming subject, nagbibigay ng group project para ma-meet ang curriculum requirements ng subject.",Taglish,Neutral,Engagement,3
+1963,"Sa aming subject, straightforward ang lectures based sa PDF modules na in-upload sa LMS.",Taglish,Neutral,Course Delivery,3
+1964,"Sa aming subject, the exam directly covers the exercises na binigay sa preliminary review sheet.",Taglish,Neutral,Assessment Alignment,3
+1965,"Sa aming subject, approach is standard for college, you get what you study from the slides.",Taglish,Neutral,Teaching Delivery,3
+1966,"Sa aming subject, sumasagot kapag may nagtanong after class, sakto lang ang explanation.",Taglish,Neutral,Communication,3
+1967,"Sa aming subject, okay lang ang pacing, normal college lecture na walang malaking issue.",Taglish,Neutral,Teaching Pace,3
+1968,"Sa aming subject, manageable ang lab activities, natatapos naman within the 3-hour period.",Taglish,Neutral,Lab Work,3
+1969,"Sa aming subject, fair and neutral ang pakikitungo sa lahat ng students sa klase.",Taglish,Neutral,Professionalism,3
+1970,"Overall, sakto lang yung bilis ng pagtuturo ni Sir, nasusunod naman ang syllabus.",Taglish,Neutral,Teaching Pace,3
+1971,"Overall, average teaching style, sinusunod lang ang slides pero okay naman pakinggan.",Taglish,Neutral,Teaching Delivery,3
+1972,"Overall, katamtaman lang ang difficulty ng quizzes, basta nagbasa ng lecture handouts.",Taglish,Neutral,Exam Difficulty,3
+1973,"Overall, pumapasok on time si Ma'am at nagdi-dismiss ayon sa bell ng university.",Taglish,Neutral,Punctuality,3
+1974,"Overall, standard grading criteria, sumusunod sa passing rate ng College of Computer Studies.",Taglish,Neutral,Grading Transparency,3
+1975,"Overall, available naman for consultation kapag nag-message in advance sa MS Teams.",Taglish,Neutral,Student Support,3
+1976,"Overall, sakto lang ang dami ng assignments, hindi masyadong marami at hindi rin kakaunti.",Taglish,Neutral,Workload,3
+1977,"Overall, standard multiple choice exam na based sa chapters ng assigned textbook.",Taglish,Neutral,Assessment Quality,3
+1978,"Overall, medyo formal ang class atmosphere, walang masyadong kwentuhan pero peaceful naman.",Taglish,Neutral,Classroom Atmosphere,3
+1979,"Overall, brief lang ang feedback sa research drafts pero natukoy naman ang basic errors.",Taglish,Neutral,Assessment Feedback,3
+1980,"Overall, nasusunod ang course syllabus from Week 1 to Finals nang walang delay.",Taglish,Neutral,Course Content,3
+1981,"Overall, standard rubrics ang ginamit for our group presentations, sakto lang sa level.",Taglish,Neutral,Rubric Clarity,3
+1982,"Overall, normal lecture setting, nagtatanong minsan pero hindi nagpe-pressure mag-recite.",Taglish,Neutral,Engagement,3
+1983,"Overall, sapat ang time limit para sagutan ang 30-item exam sa laboratory.",Taglish,Neutral,Exam Time Limit,3
+1984,"Overall, in-upload naman ang midterm grades sa university portal within the deadline.",Taglish,Neutral,Grading Transparency,3
+1985,"Overall, sinusubukan ipaliwanag ang algorithms, though minsan kailangan pa i-Google after class.",Taglish,Neutral,Teaching Depth,3
+1986,"Overall, average instructor, neither too strict nor too lenient sa classroom rules.",Taglish,Neutral,Professional Conduct,3
+1987,"Overall, nagbibigay ng group project para ma-meet ang curriculum requirements ng subject.",Taglish,Neutral,Engagement,3
+1988,"Overall, straightforward ang lectures based sa PDF modules na in-upload sa LMS.",Taglish,Neutral,Course Delivery,3
+1989,"Overall, the exam directly covers the exercises na binigay sa preliminary review sheet.",Taglish,Neutral,Assessment Alignment,3
+1990,"Overall, approach is standard for college, you get what you study from the slides.",Taglish,Neutral,Teaching Delivery,3
+1991,"Overall, sumasagot kapag may nagtanong after class, sakto lang ang explanation.",Taglish,Neutral,Communication,3
+1992,"Overall, okay lang ang pacing, normal college lecture na walang malaking issue.",Taglish,Neutral,Teaching Pace,3
+1993,"Overall, manageable ang lab activities, natatapos naman within the 3-hour period.",Taglish,Neutral,Lab Work,3
+1994,"Overall, fair and neutral ang pakikitungo sa lahat ng students sa klase.",Taglish,Neutral,Professionalism,3
+1995,"For this semester, sakto lang yung bilis ng pagtuturo ni Sir, nasusunod naman ang syllabus.",Taglish,Neutral,Teaching Pace,3
+1996,"For this semester, average teaching style, sinusunod lang ang slides pero okay naman pakinggan.",Taglish,Neutral,Teaching Delivery,3
+1997,"For this semester, katamtaman lang ang difficulty ng quizzes, basta nagbasa ng lecture handouts.",Taglish,Neutral,Exam Difficulty,3
+1998,"For this semester, pumapasok on time si Ma'am at nagdi-dismiss ayon sa bell ng university.",Taglish,Neutral,Punctuality,3
+1999,"For this semester, standard grading criteria, sumusunod sa passing rate ng College of Computer Studies.",Taglish,Neutral,Grading Transparency,3
+2000,Nagpapasalamat kami sa kanyang dedikasyon at buong-pusong paggabay sa aming pangkat.,Tagalog,Positive,Mentorship,5

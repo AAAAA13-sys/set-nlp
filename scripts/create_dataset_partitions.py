@@ -30,17 +30,17 @@ def main():
                 duplicate_ids.add(g['ID'])
             print(f"Identified duplicate group of {len(group)} items: IDs {[g['ID'] for g in group]}")
 
-    # Stratified target counts (70% Dev = 560, 30% Test = 240)
+    # Stratified target counts (70% Dev = 1400, 30% Test = 600)
     target_dev_counts = {
-        ('English', 'Negative'): 68,
-        ('English', 'Neutral'): 33,
-        ('English', 'Positive'): 125,
-        ('Tagalog', 'Negative'): 50,
-        ('Tagalog', 'Neutral'): 21,
-        ('Tagalog', 'Positive'): 64,
-        ('Taglish', 'Negative'): 101,
-        ('Taglish', 'Neutral'): 38,
-        ('Taglish', 'Positive'): 60,
+        ('English', 'Negative'): 180,
+        ('English', 'Neutral'): 89,
+        ('English', 'Positive'): 238,
+        ('Tagalog', 'Negative'): 162,
+        ('Tagalog', 'Neutral'): 77,
+        ('Tagalog', 'Positive'): 176,
+        ('Taglish', 'Negative'): 212,
+        ('Taglish', 'Neutral'): 94,
+        ('Taglish', 'Positive'): 172,
     }
 
     rng = random.Random(RANDOM_SEED)
@@ -75,8 +75,8 @@ def main():
         dev_rows.extend(stratum_dev)
         test_rows.extend(stratum_test)
 
-    assert len(dev_rows) == 560, f"Expected 560 dev rows, got {len(dev_rows)}"
-    assert len(test_rows) == 240, f"Expected 240 test rows, got {len(test_rows)}"
+    assert len(dev_rows) == 1400, f"Expected 1400 dev rows, got {len(dev_rows)}"
+    assert len(test_rows) == 600, f"Expected 600 test rows, got {len(test_rows)}"
 
     dev_id_set = {r['ID'] for r in dev_rows}
     test_id_set = {r['ID'] for r in test_rows}
