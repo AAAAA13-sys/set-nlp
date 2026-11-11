@@ -120,7 +120,7 @@ function exportChairFacultyCsv() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `PLP_${dept}_Faculty_Evaluation_Summary_${termCode}.csv`;
+  link.download = `AAAAA13_${dept}_Faculty_Evaluation_Summary_${termCode}.csv`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -190,7 +190,7 @@ const departmentWatchlist = computed(() => {
     return serverWatchlist.map((w) => ({
       id: w.faculty_id,
       faculty_id: w.faculty_id,
-      plan_id: w.action_plan?.plan_id || `PLP-ACT-${w.faculty_id}`,
+      plan_id: w.action_plan?.plan_id || `AAAAA13-ACT-${w.faculty_id}`,
       faculty_name: w.faculty_name,
       course_code: w.course_code,
       mean_score: Number(w.mean_score || 0),
@@ -312,7 +312,7 @@ async function endorseActionPlan(item) {
       method: 'POST',
       headers: authStore.authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({
-        plan_id: item.plan_id || `PLP-ACT-${fid}`,
+        plan_id: item.plan_id || `AAAAA13-ACT-${fid}`,
         faculty_id: fid,
         status: 'IN_PROGRESS',
         dean_notes: notes,
@@ -402,7 +402,7 @@ async function endorseActionPlan(item) {
 
         <div class="metric-card">
           <span class="metric-label">Watchlist Alerts</span>
-          <strong class="metric-value" :style="{ color: departmentWatchlist.length > 0 ? '#dc2626' : 'var(--plp-green-900)' }">
+          <strong class="metric-value" :style="{ color: departmentWatchlist.length > 0 ? '#dc2626' : 'var(--ink)' }">
             {{ departmentWatchlist.length }}
           </strong>
           <small style="color:var(--text-secondary);">Mean &lt; 3.50 or Neg &gt; 35%</small>
@@ -443,7 +443,7 @@ async function endorseActionPlan(item) {
       <div class="supervisor-filter-bar" style="display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap; margin-top: 0.75rem; padding: 0.65rem 0.85rem; background: #fbfcfb; border: 1px solid #e1e7e1; border-radius: 8px;">
         <div style="font-size: 0.8rem; margin-right: 0.25rem;">
           <span style="color: #64748b; font-weight: 600;">Scope:</span>
-          <strong style="margin-left: 0.25rem; color: #103c2e;">{{ departmentName }}</strong>
+          <strong style="margin-left: 0.25rem; color: var(--ink);">{{ departmentName }}</strong>
         </div>
         <div style="flex: 1; min-width: 200px;">
           <input
@@ -509,7 +509,7 @@ async function endorseActionPlan(item) {
               </td>
               <td>{{ f.section_code || 'SEC-A' }}</td>
               <td>
-                <span :style="{ color: f.mean_score < 3.5 ? '#dc2626' : 'var(--plp-green-900)', fontWeight: '700' }">
+                <span :style="{ color: f.mean_score < 3.5 ? '#dc2626' : 'var(--ink)', fontWeight: '700' }">
                   {{ f.mean_score.toFixed(2) }}
                 </span>
               </td>
@@ -659,7 +659,7 @@ async function endorseActionPlan(item) {
       <div class="metric-overview-grid tabular-nums" style="margin-top:1rem;" data-testid="chair-longitudinal-grid">
         <div class="metric-card">
           <span class="metric-label">Department Mean</span>
-          <strong class="metric-value" style="color:var(--plp-green-800);">
+          <strong class="metric-value" style="color:var(--brand-royal);">
             {{ departmentLongitudinal.active_term.mean_score.toFixed(2) }} / 5.00
           </strong>
           <small style="color:var(--text-muted);font-size:0.75rem;">
@@ -675,14 +675,14 @@ async function endorseActionPlan(item) {
         </div>
         <div class="metric-card">
           <span class="metric-label">Response Velocity</span>
-          <strong class="metric-value" style="color:var(--plp-green-800);">
+          <strong class="metric-value" style="color:var(--brand-royal);">
             {{ departmentLongitudinal.active_term.response_rate }}%
           </strong>
           <small style="color:var(--text-muted);font-size:0.75rem;">Target: ≥ 85%</small>
         </div>
         <div class="metric-card">
           <span class="metric-label">Action Plan Resolution</span>
-          <strong class="metric-value" style="color:var(--plp-green-800);">
+          <strong class="metric-value" style="color:var(--brand-royal);">
             {{ departmentLongitudinal.deltas.plan_resolution }}%
           </strong>
           <small style="color:var(--text-muted);font-size:0.75rem;">Pedagogical Intervention Rate</small>
@@ -704,7 +704,7 @@ async function endorseActionPlan(item) {
             <td><strong>{{ cs.cluster }}</strong></td>
             <td>{{ cs.active.toFixed(2) }}</td>
             <td>{{ cs.prior.toFixed(2) }}</td>
-            <td style="font-weight:700;color:var(--plp-green-800);">
+            <td style="font-weight:700;color:var(--brand-royal);">
               {{ cs.delta >= 0 ? '+' : '' }}{{ cs.delta.toFixed(2) }}
             </td>
             <td>
@@ -959,7 +959,7 @@ async function endorseActionPlan(item) {
         <!-- Footer / Print actions -->
         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 1rem; flex-wrap: wrap; gap: 0.5rem;">
           <small style="font-size: 0.72rem; color: #6b7280;">
-            Pamantasan ng Lungsod ng Pasig · AACCUP Level III Compliance Evidence
+            School AAAAA13 · AACCUP Level III Compliance Evidence
           </small>
           <div style="display: flex; gap: 0.5rem;">
             <button

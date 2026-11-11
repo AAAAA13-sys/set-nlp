@@ -992,7 +992,7 @@ function returnToQueue() {
         You have successfully submitted evaluations for all <strong>{{ progress.total }} enrolled courses</strong>.
       </p>
       <p style="font-size: 0.88rem; color: #4b5563; max-width: 620px; margin: 0.75rem auto 0; line-height: 1.6;">
-        Thank you for taking the time to share your feedback. Your ratings and written comments have been recorded and cryptographically decoupled to support instructional excellence at Pamantasan ng Lungsod ng Pasig.
+        Thank you for taking the time to share your feedback. Your ratings and written comments have been recorded and cryptographically decoupled to support instructional excellence at School AAAAA13.
       </p>
     </section>
 
@@ -1027,18 +1027,18 @@ function returnToQueue() {
     >
       <div
         class="modal-card print-receipt-card"
-        style="background: #ffffff; border-radius: 12px; max-width: 620px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 2px solid #103c2e;"
+        style="background: #ffffff; border-radius: 12px; max-width: 620px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 2px solid #0f172a;"
       >
         <!-- Institutional Header -->
-        <div style="text-align: center; border-bottom: 2px solid #103c2e; padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
-          <div style="font-size: 0.8rem; font-weight: 700; color: #103c2e; letter-spacing: 0.08em; text-transform: uppercase;">
-            Pamantasan ng Lungsod ng Pasig
+        <div style="text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
+          <div style="font-size: 0.8rem; font-weight: 700; color: #0f172a; letter-spacing: 0.08em; text-transform: uppercase;">
+            School AAAAA13
           </div>
           <div style="font-size: 0.72rem; color: #4b5563; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.15rem;">
             Office of Academic Affairs &amp; Office of the University Registrar
           </div>
-          <h3 id="receipt-title" style="font-size: 1.2rem; font-weight: 800; color: #103c2e; margin: 0.75rem 0 0; text-transform: uppercase; letter-spacing: 0.04em;">
-            Student Evaluation Clearance Receipt
+          <h3 id="receipt-title" style="font-size: 1.2rem; font-weight: 800; color: #0f172a; margin: 0.75rem 0 0; text-transform: uppercase; letter-spacing: 0.04em;">
+            Evaluation Completion Receipt / Submission Confirmation
           </h3>
           <div style="font-size: 0.78rem; color: #6b7280; margin-top: 0.25rem;">
             Official Electronic Proof of Evaluation Completion
@@ -1070,12 +1070,12 @@ function returnToQueue() {
         </div>
 
         <!-- Cryptographic Token Strip -->
-        <div style="background: #f7faf8; border: 1px solid #c8e6c9; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
-          <div style="font-size: 0.75rem; font-weight: 700; color: #1b5e20; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">
+        <div style="background: #e2eafc; border: 1px solid #c1d3fe; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+          <div style="font-size: 0.75rem; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">
             Cryptographic Clearance Signature Token
           </div>
           <code
-            style="display: block; font-family: monospace; font-size: 0.85rem; font-weight: 700; color: #103c2e; word-break: break-all; background: #ffffff; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid #dce7dc;"
+            style="display: block; font-family: monospace; font-size: 0.85rem; font-weight: 700; color: #0f172a; word-break: break-all; background: #ffffff; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid #ccdbfd;"
             data-testid="receipt-clearance-token"
           >
             {{ statusBanner?.token || evaluationStore.activeCourse?.clearance_token || 'CLR-2026-STUDENT-VERIFIED' }}
@@ -1088,8 +1088,8 @@ function returnToQueue() {
         <!-- Verification Signature Block -->
         <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed #d1d5db; padding-top: 1.25rem; margin-bottom: 1.5rem; font-size: 0.78rem;">
           <div>
-            <div style="font-weight: 700; color: #103c2e;">PAMANTASAN NG LUNGSOD NG PASIG</div>
-            <div style="color: #6b7280;">Alcalde Jose St., Kapasigan, Pasig City</div>
+            <div style="font-weight: 700; color: #0f172a;">SCHOOL AAAAA13</div>
+            <div style="color: #6b7280;">Office of Academic Affairs</div>
             <div style="color: #6b7280; margin-top: 0.2rem;">Generated: {{ new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}</div>
           </div>
           <div style="text-align: right;">

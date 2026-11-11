@@ -68,7 +68,7 @@ class EvaluaTechDemoSeeder extends Seeder
                     starts_at, ends_at, timezone, last_window_action, created_at, updated_at
                 ) VALUES (
                     1, 'OPEN', 0, 0.0, 3.50, 35.0,
-                    'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active for 1st Semester AY 2026-2027.',
+                    'School AAAAA13 Student Evaluation of Teachers (SET) is currently active for 1st Semester AY 2026-2027.',
                     '2026-08-15 08:00:00', '2026-12-20 23:59:59', 'Asia/Manila', 'OPEN',
                     '{$now}', '{$now}'
                 )
@@ -81,17 +81,17 @@ class EvaluaTechDemoSeeder extends Seeder
 
         // 3. Canonical Five-Role Institutional Users + 6 Course Instructors + 2 Students
         $users = [
-            [1, 'ADM-00001', 'University Registrar Admin', 'admin@plpasig.edu.ph', 'admin', 1],
-            [2, 'DEAN-0001', 'Dr. V. Mendoza', 'dean@plpasig.edu.ph', 'dean', null],
-            [3, 'CHR-00001', 'Dr. L. Bautista', 'chair@plpasig.edu.ph', 'chair', 1],
-            [4, 'FAC-10001', 'Prof. A. Dela Cruz', 'adelacruz@plpasig.edu.ph', 'faculty', 1],
-            [5, 'FAC-10002', 'Dr. M. Santos', 'msantos@plpasig.edu.ph', 'faculty', 1],
-            [6, 'FAC-10003', 'Prof. E. Rivera', 'erivera@plpasig.edu.ph', 'faculty', 2],
-            [7, 'FAC-10004', 'Dr. R. Garcia', 'rgarcia@plpasig.edu.ph', 'faculty', 2],
-            [8, 'FAC-10005', 'Prof. K. Gomez', 'kgomez@plpasig.edu.ph', 'faculty', 1],
-            [9, 'FAC-10006', 'Engr. J. Luna', 'jluna@plpasig.edu.ph', 'faculty', 2],
-            [10, '2024-10892', 'Juan Dela Cruz', '2024-10892@plpasig.edu.ph', 'student', 1],
-            [11, '2024-10955', 'Maria Clara Reyes', '2024-10955@plpasig.edu.ph', 'student', 1],
+            [1, 'ADM-00001', 'University Registrar Admin', 'admin@aaaaa13.edu', 'admin', 1],
+            [2, 'DEAN-0001', 'Dr. V. Mendoza', 'dean@aaaaa13.edu', 'dean', null],
+            [3, 'CHR-00001', 'Dr. L. Bautista', 'chair@aaaaa13.edu', 'chair', 1],
+            [4, 'FAC-10001', 'Prof. A. Dela Cruz', 'adelacruz@aaaaa13.edu', 'faculty', 1],
+            [5, 'FAC-10002', 'Dr. M. Santos', 'msantos@aaaaa13.edu', 'faculty', 1],
+            [6, 'FAC-10003', 'Prof. E. Rivera', 'erivera@aaaaa13.edu', 'faculty', 2],
+            [7, 'FAC-10004', 'Dr. R. Garcia', 'rgarcia@aaaaa13.edu', 'faculty', 2],
+            [8, 'FAC-10005', 'Prof. K. Gomez', 'kgomez@aaaaa13.edu', 'faculty', 1],
+            [9, 'FAC-10006', 'Engr. J. Luna', 'jluna@aaaaa13.edu', 'faculty', 2],
+            [10, '2024-10892', 'Juan Dela Cruz', '2024-10892@aaaaa13.edu', 'student', 1],
+            [11, '2024-10955', 'Maria Clara Reyes', '2024-10955@aaaaa13.edu', 'student', 1],
         ];
 
         $userStmt = $this->pdo->prepare("
@@ -239,7 +239,7 @@ class EvaluaTechDemoSeeder extends Seeder
             $this->evaluationService->submitEvaluation($submission);
         }
 
-        // 5b. Submit all 6 of 6 courses for Student 2024-10955 (Full Clearance & Unlocked Exam Permit)
+        // 5b. Submit all 6 of 6 courses for Student 2024-10955 (Full Evaluation Completion & Participation Receipt)
         $student11Submissions = [
             [
                 'student_id' => 11,
@@ -337,7 +337,7 @@ class EvaluaTechDemoSeeder extends Seeder
                     ':id' => $syntheticStudentId,
                     ':inst_id' => 'STU-' . $syntheticStudentId,
                     ':name' => 'Cohort Student ' . $syntheticStudentId,
-                    ':email' => 'stu' . $syntheticStudentId . '@plpasig.edu.ph',
+                    ':email' => 'stu' . $syntheticStudentId . '@aaaaa13.edu',
                     ':password' => $passwordHash,
                     ':role' => 'student',
                     ':dept_id' => $secDeptId,

@@ -41,7 +41,7 @@ function exportQuestionnaireInstrumentCsv() {
   const link = document.createElement('a');
   link.setAttribute('href', url);
   const nowStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-  link.setAttribute('download', `PLP_AACCUP3_Evaluation_Instrument_${nowStr}.csv`);
+  link.setAttribute('download', `AAAAA13_AACCUP3_Evaluation_Instrument_${nowStr}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -54,7 +54,7 @@ function exportQuestionnaireInstrumentCsv() {
     <div class="questionnaire-header-banner">
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
         <div class="questionnaire-badge-row">
-          <span class="accreditation-seal">PLP AACCUP Level III Accredited Instrument</span>
+          <span class="accreditation-seal">AAAAA13 AACCUP Level III Accredited Instrument</span>
           <span class="scale-legend">Scale: 1 (Strongly Disagree) to 5 (Strongly Agree)</span>
         </div>
         <button
@@ -76,11 +76,11 @@ function exportQuestionnaireInstrumentCsv() {
     <article class="cluster-card" data-testid="questionnaire-rubric-card" style="margin-bottom: 1.5rem; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.25rem;">
       <header class="cluster-card-header" style="margin-bottom: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
         <div>
-          <h2 class="cluster-card-title" style="margin: 0; font-size: 1.05rem; font-weight: 700; color: #103c2e;">
+          <h2 class="cluster-card-title" style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--ink);">
             Institutional Evaluation Rating Rubric & Performance Bands
           </h2>
           <p class="cluster-card-desc" style="margin: 0.25rem 0 0; font-size: 0.82rem; color: #6b7280;">
-            Pamantasan ng Lungsod ng Pasig — AACCUP Level III 5-Point Likert Evaluation Standards
+            School AAAAA13 — AACCUP Level III 5-Point Likert Evaluation Standards
           </p>
         </div>
         <span class="token-chip chip-signed" style="font-size: 0.75rem;">

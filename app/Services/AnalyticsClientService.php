@@ -501,7 +501,7 @@ class AnalyticsClientService
             self::TAG_PEDAGOGICAL_DELIVERY => [
                 'Incorporate step-by-step live coding and practical laboratory demonstrations during dynamic programming lectures.',
                 'Implement periodic formative check-ins (e.g., 5-minute exit tickets) to calibrate pacing to learner comprehension.',
-                'Participate in the PLP College of Computer Studies Peer Teaching Observation & Active Learning Workshop.',
+                'Participate in the School AAAAA13 College of Computer Studies Peer Teaching Observation & Active Learning Workshop.',
             ],
             self::TAG_ASSESSMENT_GRADING => [
                 'Establish a strict 14-day turnaround SLA for returning graded quizzes, assignments, and programming deliverables.',
@@ -510,13 +510,13 @@ class AnalyticsClientService
             ],
             self::TAG_CLASSROOM_MANAGEMENT => [
                 'Enforce strict session start punctuality and instructional time budgeting across all scheduled lecture and lab hours.',
-                'Align weekly topic pacing directly with the approved PLP departmental course syllabus timeline.',
+                'Align weekly topic pacing directly with the approved School AAAAA13 departmental course syllabus timeline.',
                 'Structure 90-minute lecture blocks into 20-minute active learning segments to sustain student engagement.',
             ],
             self::TAG_PROFESSIONAL_CONDUCT => [
                 'Maintain an open, empathetic, and professional classroom environment conducive to active student inquiry.',
                 'Ensure uniform, impartial application of grading criteria, consultation availability, and academic policies.',
-                'Participate in the PLP Academic Integrity & Student-Centered Pedagogical Communication Seminar.',
+                'Participate in the School AAAAA13 Academic Integrity & Student-Centered Pedagogical Communication Seminar.',
             ],
             self::TAG_STUDENT_SUPPORT_MENTORSHIP => [
                 'Publish and adhere to regular weekly office consultation hours (minimum 4 scheduled hours per week).',
@@ -527,12 +527,12 @@ class AnalyticsClientService
 
         $interventions = $clusterStrategies[$tag] ?? $clusterStrategies[self::TAG_PEDAGOGICAL_DELIVERY];
         $slug = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $cleanName) ?: 'FAC', 0, 8));
-        $planId = "PLP-ACT-{$slug}-" . (int) ($meanScore * 10);
+        $planId = "AAAAA13-ACT-{$slug}-" . (int) ($meanScore * 10);
 
         return [
             'plan_id' => $planId,
-            'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
-            'reference' => 'https://plpasig.edu.ph/',
+            'institution' => 'SCHOOL AAAAA13',
+            'reference' => 'https://aaaaa13.edu/',
             'faculty_name' => $cleanName,
             'mean_score' => round($meanScore, 2),
             'negative_sentiment_pct' => round($negativePct, 1),

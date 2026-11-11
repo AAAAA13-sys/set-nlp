@@ -142,7 +142,7 @@ function getDeanNotes(facultyId) {
 
 async function setPlanStatus(facultyId, status, notes = '') {
   const match = flaggedWatchlist.value.find((w) => Number(w.id) === Number(facultyId));
-  const resolvedPlanId = match?.action_plan?.plan_id || `PLP-ACT-${facultyId}`;
+  const resolvedPlanId = match?.action_plan?.plan_id || `AAAAA13-ACT-${facultyId}`;
 
   planStatuses.value[facultyId] = {
     status,
@@ -199,7 +199,7 @@ function toggleInterventionPlan(item) {
           ]
         : [
             'Enforce strict lecture start punctuality and instructional time budgeting across all scheduled blocks.',
-            'Align topic pacing directly with the approved PLP departmental course syllabus timeline.',
+            'Align topic pacing directly with the approved School AAAAA13 departmental course syllabus timeline.',
             'Structure 90-minute lecture blocks into 20-minute active learning segments to sustain student engagement.',
           ]),
     target_milestone: serverPlan?.target_milestone || {
@@ -354,7 +354,7 @@ const complianceAuditData = ref({
     { criterion_id: 'CRIT-04', title: 'Double-Blind Faculty Grade Synchronization Lock', status: 'COMPLIANT', evidence: 'Reports locked until both term_grades_submitted = 1 and registrar_lock = 1.' },
     { criterion_id: 'CRIT-05', title: '5-Cluster Pedagogical Questionnaire Coverage', status: 'COMPLIANT', evidence: '25 Likert items across Delivery, Assessment, Management, Conduct, and Student Support.' },
     { criterion_id: 'CRIT-06', title: 'calamanCy Tagalog/Taglish/English NLP Pipeline', status: 'COMPLIANT', evidence: 'Continuous VADER polarity P in [-1.0, +1.0] and 4 qualitative professor question synthesis.' },
-    { criterion_id: 'CRIT-07', title: 'Public Evaluation Clearance Verification Protocol', status: 'COMPLIANT', evidence: 'Cryptographic signature validation yielding PLP-REGISTRAR-AUTHENTICATED official seals.' },
+    { criterion_id: 'CRIT-07', title: 'Public Evaluation Clearance Verification Protocol', status: 'COMPLIANT', evidence: 'Cryptographic signature validation yielding AAAAA13-REGISTRAR-AUTHENTICATED official seals.' },
     { criterion_id: 'CRIT-08', title: 'Longitudinal Semester Instructional Quality Tracking', status: 'COMPLIANT', evidence: 'Historical multi-term deltas tracking mean score growth and action plan resolution.' },
   ],
 });
@@ -479,7 +479,7 @@ function triggerDownload(filename, content, mimeType) {
 
 function downloadQualitativeJson() {
   const content = JSON.stringify(qualitativeSynthesis.value, null, 2);
-  triggerDownload('plp-calamancy-qualitative-synthesis.json', content, 'application/json;charset=utf-8');
+  triggerDownload('aaaaa13-calamancy-qualitative-synthesis.json', content, 'application/json;charset=utf-8');
 }
 
 async function downloadQualitativeCsv() {
@@ -494,19 +494,19 @@ async function downloadQualitativeCsv() {
       const contentType = res.headers.get('content-type') || '';
       if (contentType.includes('text/csv')) {
         const csvText = await res.text();
-        triggerDownload('plp-calamancy-qualitative-synthesis.csv', csvText, 'text/csv;charset=utf-8');
+        triggerDownload('aaaaa13-calamancy-qualitative-synthesis.csv', csvText, 'text/csv;charset=utf-8');
         return;
       }
       const data = await res.json().catch(() => ({}));
       if (data.csv_content) {
-        triggerDownload('plp-calamancy-qualitative-synthesis.csv', data.csv_content, 'text/csv;charset=utf-8');
+        triggerDownload('aaaaa13-calamancy-qualitative-synthesis.csv', data.csv_content, 'text/csv;charset=utf-8');
         return;
       }
     }
   } catch (_) {}
 
   const lines = [
-    '# PAMANTASAN NG LUNGSOD NG PASIG • calamanCy + VADER Qualitative SET Synthesis Export',
+    '# SCHOOL AAAAA13 • calamanCy + VADER Qualitative SET Synthesis Export',
     'DescriptorWord,FrequencyCount,PolarityScore,Valence',
   ];
   (qualitativeSynthesis.value.top_descriptors || []).forEach((d) => {
@@ -519,15 +519,15 @@ async function downloadQualitativeCsv() {
       `"${sanitizeCsvCell(t.sub_item || 'a.')}","${sanitizeCsvCell(t.pedagogical_tag || '')}","${sanitizeCsvCell(t.topic || '')}",${t.polarity},"${sanitizeCsvCell(t.valence)}"`,
     );
   });
-  triggerDownload('plp-calamancy-qualitative-synthesis.csv', lines.join('\n'), 'text/csv;charset=utf-8');
+  triggerDownload('aaaaa13-calamancy-qualitative-synthesis.csv', lines.join('\n'), 'text/csv;charset=utf-8');
 }
 
 function exportAccreditationDossier() {
   const sealLine = evidenceDossier.value?.cryptographic_seal?.digital_seal
     ? `# Official Cryptographic Seal: ${evidenceDossier.value.cryptographic_seal.digital_seal} (SHA-256: ${evidenceDossier.value.cryptographic_seal.document_digest})`
-    : '# Official Reference: https://plpasig.edu.ph/';
+    : '# Official Reference: https://aaaaa13.edu/';
   const lines = [
-    '# PAMANTASAN NG LUNGSOD NG PASIG • AACCUP Area III Accreditation Dossier Bundle',
+    '# SCHOOL AAAAA13 • AACCUP Area III Accreditation Dossier Bundle',
     '# Standard: Faculty Development and Continuous Instructional Quality Improvement',
     sealLine,
     '',
@@ -547,7 +547,7 @@ function exportAccreditationDossier() {
   (longitudinalData.value.historical_semesters || []).forEach((h) => {
     lines.push(`"${h.term_name}",${h.mean_score.toFixed(2)},${h.negative_pct}%,${h.response_rate_pct}%,${h.action_plan_resolution_pct}%`);
   });
-  triggerDownload('PLP-AACCUP-Area-III-Dossier-AY2026-2027.csv', lines.join('\n'), 'text/csv;charset=utf-8');
+  triggerDownload('AAAAA13-AACCUP-Area-III-Dossier-AY2026-2027.csv', lines.join('\n'), 'text/csv;charset=utf-8');
 }
 
 const compilingDossier = ref(false);
@@ -1009,7 +1009,7 @@ async function compileAaccupDossier() {
               data-testid="dean-intervention-plan"
             >
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
-                <span class="eyebrow-badge">PAMANTASAN NG LUNGSOD NG PASIG • Academic Excellence Intervention</span>
+                <span class="eyebrow-badge">SCHOOL AAAAA13 • Academic Excellence Intervention</span>
                 <span class="status-badge status-pending">
                   Urgency: {{ selectedInterventionPlan.urgency_level }}
                 </span>
@@ -1139,11 +1139,11 @@ async function compileAaccupDossier() {
         </div>
       </section>
 
-      <!-- PLP Institutional Accreditation & Quality Assurance Card -->
+      <!-- School AAAAA13 Institutional Accreditation & Quality Assurance Card -->
       <section class="card accreditation-card" style="margin-bottom: 1.25rem;" data-testid="accreditation-compliance-card">
         <div class="iso-header">
           <div>
-            <span class="eyebrow-badge">PAMANTASAN NG LUNGSOD NG PASIG • Institutional Quality Assurance</span>
+            <span class="eyebrow-badge">SCHOOL AAAAA13 • Institutional Quality Assurance</span>
             <h3 class="section-title">
               Institutional Accreditation Compliance (AACCUP • CHED • ISO 25010)
               <span class="ui-hint" tabindex="0" aria-label="Accreditation alignment details" data-hint="Alignment with AACCUP Area III, CHED CMO 46 s. 2012, and 5-cluster pedagogical benchmarks.">?</span>
@@ -1326,7 +1326,7 @@ async function compileAaccupDossier() {
           <div class="metric-card">
             <span class="metric-label">Institutional Composite Mean</span>
             <strong class="metric-value">{{ evidenceDossier.composite_domain_scores.institutional_mean_likert.toFixed(2) }} / 5.00</strong>
-            <small style="color: var(--plp-green-800); font-weight: 600;">Exceeds 3.50 Benchmark</small>
+            <small style="color: var(--brand-royal); font-weight: 600;">Exceeds 3.50 Benchmark</small>
           </div>
           <div class="metric-card">
             <span class="metric-label">Watchlist Resolution Velocity</span>
@@ -1337,7 +1337,7 @@ async function compileAaccupDossier() {
           </div>
           <div class="metric-card">
             <span class="metric-label">SHA-256 Document Digest</span>
-            <code style="font-size: 0.72rem; word-break: break-all; color: var(--plp-green-950);" data-testid="dossier-sha256-digest">
+            <code style="font-size: 0.72rem; word-break: break-all; color: var(--ink);" data-testid="dossier-sha256-digest">
               {{ evidenceDossier.cryptographic_seal.document_digest }}
             </code>
           </div>
@@ -1416,7 +1416,7 @@ async function compileAaccupDossier() {
         <div class="metric-overview-grid tabular-nums" style="margin-top: 1rem;" data-testid="longitudinal-kpi-grid">
           <div class="metric-card">
             <span class="metric-label">Mean Rating Delta (Δμ)</span>
-            <strong class="metric-value" style="color: var(--plp-green-800);">
+            <strong class="metric-value" style="color: var(--brand-royal);">
               {{ longitudinalData.deltas.mean_score_delta >= 0 ? '+' : '' }}{{ longitudinalData.deltas.mean_score_delta.toFixed(2) }} vs Baseline
             </strong>
             <small style="color: var(--text-muted); font-size: 0.75rem;">Active: {{ longitudinalData.active_term.mean_score.toFixed(2) }} | Prior: {{ longitudinalData.prior_term.mean_score.toFixed(2) }}</small>
@@ -1430,14 +1430,14 @@ async function compileAaccupDossier() {
           </div>
           <div class="metric-card">
             <span class="metric-label">Positive Sentiment Growth</span>
-            <strong class="metric-value" style="color: var(--plp-green-800);">
+            <strong class="metric-value" style="color: var(--brand-royal);">
               {{ longitudinalData.deltas.positive_sentiment_shift_pct >= 0 ? '+' : '' }}{{ longitudinalData.deltas.positive_sentiment_shift_pct }}%
             </strong>
             <small style="color: var(--text-muted); font-size: 0.75rem;">Current: {{ longitudinalData.active_term.positive_sentiment_pct }}% | Baseline: {{ longitudinalData.prior_term.positive_sentiment_pct }}%</small>
           </div>
           <div class="metric-card">
             <span class="metric-label">Action Plan Resolution</span>
-            <strong class="metric-value" style="color: var(--plp-green-800);">
+            <strong class="metric-value" style="color: var(--brand-royal);">
               {{ longitudinalData.deltas.action_plan_resolution_rate_pct }}% Resolved
             </strong>
             <small style="color: var(--text-muted); font-size: 0.75rem;">Target: ≥ 80.0%</small>
@@ -1500,7 +1500,7 @@ async function compileAaccupDossier() {
               <td><strong>{{ c.cluster }}</strong></td>
               <td>{{ c.active_score.toFixed(2) }}</td>
               <td>{{ c.prior_score.toFixed(2) }}</td>
-              <td style="font-weight: 700; color: var(--plp-green-800);">
+              <td style="font-weight: 700; color: var(--brand-royal);">
                 {{ c.delta >= 0 ? '+' : '' }}{{ c.delta.toFixed(2) }}
               </td>
               <td>
@@ -1859,7 +1859,7 @@ async function compileAaccupDossier() {
         <!-- Footer / Print actions -->
         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 1rem; flex-wrap: wrap; gap: 0.5rem;">
           <small style="font-size: 0.72rem; color: #6b7280;">
-            Pamantasan ng Lungsod ng Pasig · AACCUP Level III Accreditation Audit
+            School AAAAA13 · AACCUP Level III Accreditation Audit
           </small>
           <div style="display: flex; gap: 0.5rem;">
             <button

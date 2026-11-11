@@ -174,7 +174,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     if (!identifier || !password) {
       loading.value = false;
-      error.value = 'Please enter both your PLP Institutional ID (or email) and passphrase.';
+      error.value = 'Please enter both your Institutional ID (or email) and passphrase.';
       throw new Error(error.value);
     }
 
@@ -198,7 +198,7 @@ export const useAuthStore = defineStore('auth', () => {
         clearSession();
         const msg =
           payload?.message ||
-          'Invalid institutional credentials. Verify your PLP ID / university email and passphrase.';
+          'Invalid institutional credentials. Verify your Institutional ID / university email and passphrase.';
         error.value = msg;
         throw new Error(msg);
       }
@@ -215,7 +215,7 @@ export const useAuthStore = defineStore('auth', () => {
       if (!error.value) {
         error.value =
           err?.message ||
-          'Unable to reach the PLP institutional authentication service. Please check your connection.';
+          'Unable to reach the institutional authentication service. Please check your connection.';
       }
       throw new Error(error.value);
     } finally {

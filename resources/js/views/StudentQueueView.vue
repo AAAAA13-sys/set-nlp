@@ -41,8 +41,8 @@ function printQueueReceipt() {
 function exportStudentChecklistCsv() {
   const courses = Array.isArray(evaluationStore.courses) ? evaluationStore.courses : [];
   const termName = evaluationStore.evaluationWindow?.term_name || authStore.activeTerm || '1st Semester AY 2026-2027';
-  const studentId = authStore.user?.institutional_id || 'PLP-STUDENT';
-  const studentName = authStore.user?.name || 'PLP Student';
+  const studentId = authStore.user?.institutional_id || 'AAAAA13-STUDENT';
+  const studentName = authStore.user?.name || 'School AAAAA13 Student';
   const termCode = termName.replace(/[^a-zA-Z0-9_-]/g, '_');
 
   const headers = [
@@ -74,7 +74,7 @@ function exportStudentChecklistCsv() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `PLP_Student_Evaluation_Checklist_${termCode}.csv`;
+  link.download = `AAAAA13_Student_Evaluation_Checklist_${termCode}.csv`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -298,7 +298,7 @@ function startEvaluation(course) {
       <SkeletonLoader
         v-if="evaluationStore.queueLoading"
         :rows="4"
-        label="Loading enrolled PLP course sections…"
+        label="Loading enrolled course sections…"
       />
 
       <div v-else class="table-responsive">
@@ -399,15 +399,15 @@ function startEvaluation(course) {
         You have evaluated all <strong>{{ progress.total }} enrolled courses</strong> for this semester.
       </p>
       <p style="font-size: 0.85rem; color: #4b5563; max-width: 600px; margin: 0.5rem auto 0; line-height: 1.5;">
-        Thank you for your valuable feedback to the faculty of Pamantasan ng Lungsod ng Pasig.
+        Thank you for your valuable feedback to the faculty of School AAAAA13.
       </p>
     </section>
 
     <!-- Digital Evaluation Completion Certificate (Unlocked on 100% Completion) -->
     <div v-if="progress.allCleared" style="margin-top: 1.25rem;">
       <ClearancePermitCard
-        :student-id="authStore.user?.institutional_id || String(authStore.user?.id || 'PLP-STD-2026')"
-        :student-name="authStore.user?.name || 'PLP Student'"
+        :student-id="authStore.user?.institutional_id || String(authStore.user?.id || 'AAAAA13-STD-2026')"
+        :student-name="authStore.user?.name || 'School AAAAA13 Student'"
         :active-term="evaluationStore.evaluationWindow?.term_name || authStore.activeTerm || '1st Semester AY 2026-2027'"
         :exam-permit-token="evaluationStore.lastReceipt?.clearance_token || null"
         :courses="evaluationStore.courses"
@@ -427,18 +427,18 @@ function startEvaluation(course) {
     >
       <div
         class="modal-card print-receipt-card"
-        style="background: #ffffff; border-radius: 12px; max-width: 620px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 2px solid #103c2e;"
+        style="background: #ffffff; border-radius: 12px; max-width: 620px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 2px solid #0f172a;"
       >
         <!-- Institutional Header -->
-        <div style="text-align: center; border-bottom: 2px solid #103c2e; padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
-          <div style="font-size: 0.8rem; font-weight: 700; color: #103c2e; letter-spacing: 0.08em; text-transform: uppercase;">
-            Pamantasan ng Lungsod ng Pasig
+        <div style="text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
+          <div style="font-size: 0.8rem; font-weight: 700; color: #0f172a; letter-spacing: 0.08em; text-transform: uppercase;">
+            School AAAAA13
           </div>
           <div style="font-size: 0.72rem; color: #4b5563; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.15rem;">
             Office of Academic Affairs &amp; Office of the University Registrar
           </div>
-          <h3 id="queue-receipt-title" style="font-size: 1.2rem; font-weight: 800; color: #103c2e; margin: 0.75rem 0 0; text-transform: uppercase; letter-spacing: 0.04em;">
-            Student Evaluation Clearance Receipt
+          <h3 id="queue-receipt-title" style="font-size: 1.2rem; font-weight: 800; color: #0f172a; margin: 0.75rem 0 0; text-transform: uppercase; letter-spacing: 0.04em;">
+            Evaluation Completion Receipt / Submission Confirmation
           </h3>
           <div style="font-size: 0.78rem; color: #6b7280; margin-top: 0.25rem;">
             Official Electronic Proof of Evaluation Completion
@@ -470,12 +470,12 @@ function startEvaluation(course) {
         </div>
 
         <!-- Cryptographic Token Strip -->
-        <div style="background: #f7faf8; border: 1px solid #c8e6c9; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
-          <div style="font-size: 0.75rem; font-weight: 700; color: #1b5e20; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">
+        <div style="background: #e2eafc; border: 1px solid #c1d3fe; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+          <div style="font-size: 0.75rem; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">
             Cryptographic Clearance Signature Token
           </div>
           <code
-            style="display: block; font-family: monospace; font-size: 0.85rem; font-weight: 700; color: #103c2e; word-break: break-all; background: #ffffff; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid #dce7dc;"
+            style="display: block; font-family: monospace; font-size: 0.85rem; font-weight: 700; color: #0f172a; word-break: break-all; background: #ffffff; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid #ccdbfd;"
             data-testid="queue-receipt-clearance-token"
           >
             {{ selectedQueueReceiptCourse.clearance_token || `CLR-2026-${selectedQueueReceiptCourse.course_code}-PASSED` }}
@@ -488,8 +488,8 @@ function startEvaluation(course) {
         <!-- Verification Signature Block -->
         <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed #d1d5db; padding-top: 1.25rem; margin-bottom: 1.5rem; font-size: 0.78rem;">
           <div>
-            <div style="font-weight: 700; color: #103c2e;">PAMANTASAN NG LUNGSOD NG PASIG</div>
-            <div style="color: #6b7280;">Alcalde Jose St., Kapasigan, Pasig City</div>
+            <div style="font-weight: 700; color: #0f172a;">SCHOOL AAAAA13</div>
+            <div style="color: #6b7280;">Office of Academic Affairs</div>
             <div style="color: #6b7280; margin-top: 0.2rem;">Issued to: {{ authStore.user?.name || 'Verified Student' }}</div>
           </div>
           <div style="text-align: right;">

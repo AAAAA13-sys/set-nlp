@@ -346,8 +346,8 @@ class AccreditationGovernanceService
             'cluster_comparisons' => $clusterComparisons,
             'historical_semesters' => $historicalSemesters,
             'action_plans_summary' => $actionPlanSummary,
-            'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
-            'reference' => 'https://plpasig.edu.ph/',
+            'institution' => 'SCHOOL AAAAA13',
+            'reference' => 'https://aaaaa13.edu/',
             'accreditation_dossier_ready' => true,
             'generated_at' => date('Y-m-d H:i:s'),
         ];
@@ -425,7 +425,7 @@ class AccreditationGovernanceService
                 'category' => 'Evaluation Security & Records',
                 'standard' => 'Registrar Digital Authentication',
                 'status' => 'COMPLIANT',
-                'evidence' => 'Cryptographic signature validation yielding PLP-REGISTRAR-AUTHENTICATED official seals.',
+                'evidence' => 'Cryptographic signature validation yielding AAAAA13-REGISTRAR-AUTHENTICATED official seals.',
                 'verified' => true,
             ],
             [
@@ -452,8 +452,8 @@ class AccreditationGovernanceService
             'compliant_checkpoints' => $compliantCount,
             'checkpoints' => $checkpoints,
             'action_plan_resolution_rate_pct' => (float) ($trends['deltas']['action_plan_resolution_rate_pct'] ?? 94.2),
-            'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
-            'reference' => 'https://plpasig.edu.ph/',
+            'institution' => 'SCHOOL AAAAA13',
+            'reference' => 'https://aaaaa13.edu/',
             'audited_at' => date('Y-m-d H:i:s'),
         ];
     }
@@ -504,7 +504,7 @@ class AccreditationGovernanceService
         ];
 
         $sealPayload = [
-            'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
+            'institution' => 'SCHOOL AAAAA13',
             'academic_term' => '1st Semester AY 2024-2025',
             'department_id' => $departmentId,
             'total_enrolled' => $totalEnrolled,
@@ -516,12 +516,12 @@ class AccreditationGovernanceService
         ];
 
         $rawJson = json_encode($sealPayload, JSON_UNESCAPED_SLASHES);
-        $documentDigest = hash('sha256', $rawJson . ':PLP-REGISTRAR-AUTHENTICATED-SECRET');
-        $sealCode = 'PLP-AACCUP3-' . strtoupper(substr($documentDigest, 0, 16));
+        $documentDigest = hash('sha256', $rawJson . ':AAAAA13-REGISTRAR-AUTHENTICATED-SECRET');
+        $sealCode = 'AAAAA13-AACCUP3-' . strtoupper(substr($documentDigest, 0, 16));
 
         return [
-            'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
-            'official_address' => 'Alkalde Joseco St., Kapasigan, Pasig City, Metro Manila',
+            'institution' => 'SCHOOL AAAAA13',
+            'official_address' => 'School AAAAA13 Academic Campus, Metro Manila',
             'academic_year' => 'AY 2024-2025',
             'academic_term' => '1st Semester',
             'department_id' => $departmentId,
@@ -546,7 +546,7 @@ class AccreditationGovernanceService
                 'digital_seal' => $sealCode,
                 'certified_timestamp' => date('Y-m-d H:i:s'),
                 'accreditation_body' => 'AACCUP & CHED Region IV-A / NCR',
-                'verification_url' => 'https://plpasig.edu.ph/accreditation/verify?digest=' . substr($documentDigest, 0, 16),
+                'verification_url' => 'https://aaaaa13.edu/accreditation/verify?digest=' . substr($documentDigest, 0, 16),
                 'status' => 'OFFICIALLY_CERTIFIED',
             ],
         ];
@@ -600,7 +600,7 @@ class AccreditationGovernanceService
         ];
 
         $todayDate = date('Ymd');
-        $bundleFilename = "PLP-AACCUP3-DOSSIER-{$todayDate}.zip";
+        $bundleFilename = "AAAAA13-AACCUP3-DOSSIER-{$todayDate}.zip";
 
         return [
             'bundle_filename' => $bundleFilename,
@@ -609,7 +609,7 @@ class AccreditationGovernanceService
             'accreditation_dossier' => $dossier,
             'facilities_isolation' => $separationReport,
             'manifest_files' => [
-                'PLP-AACCUP3-EXECUTIVE-SUMMARY.json',
+                'AAAAA13-AACCUP3-EXECUTIVE-SUMMARY.json',
                 'AACCUP-AREA-III-PEDAGOGICAL-METRICS.csv',
                 'CAMPUS-FACILITIES-ISOLATION-REPORT.csv',
                 'CRYPTOGRAPHIC-INTEGRITY-MANIFEST.sha256',

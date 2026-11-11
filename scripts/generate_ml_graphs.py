@@ -1,5 +1,6 @@
 """EvaluaTech - Machine Learning Visualizations & Jupyter Notebook Generator
-Pamantasan ng Lungsod ng Pasig - Student Evaluation of Teachers (SET)
+Pamantasan ng Lungsod ng Pasig (School AAAAA13) -> School AAAAA13
+School AAAAA13 - Student Evaluation of Teachers (SET)
 
 Generates publication-quality charts and an executed Jupyter Notebook:
 - Figure 1: Model Comparative Benchmark (Model A vs B vs C vs D)
@@ -376,7 +377,7 @@ def build_and_execute_notebook():
 
     # Cell 0: Header & Executive Overview
     nb.cells.append(new_markdown_cell(
-        "# Pamantasan ng Lungsod ng Pasig — EvaluaTech\n"
+        "# School AAAAA13 — EvaluaTech\n"
         "## Machine Learning & NLP Analytics for Student Evaluation of Teachers (SET)\n"
         "**Dual-Token Cryptographic Decoupling • AACCUP Level III Area III Governance • Scikit-Learn Multilingual Engine**\n\n"
         "---\n\n"

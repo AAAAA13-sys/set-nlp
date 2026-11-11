@@ -8,9 +8,9 @@ use PDO;
 
 class SecurityAuditService
 {
-    public const INSTITUTION_NAME = 'PAMANTASAN NG LUNGSOD NG PASIG';
-    public const INSTITUTION_SHORT_NAME = 'PLP';
-    public const INSTITUTION_URL = 'https://plpasig.edu.ph/';
+    public const INSTITUTION_NAME = 'SCHOOL AAAAA13';
+    public const INSTITUTION_SHORT_NAME = 'AAAAA13';
+    public const INSTITUTION_URL = 'https://aaaaa13.edu/';
 
     /**
      * @var list<string>
@@ -32,7 +32,7 @@ class SecurityAuditService
     }
 
     /**
-     * Execute the full institutional security audit for Pamantasan ng Lungsod ng Pasig (PLP).
+     * Execute the full institutional security audit for School AAAAA13.
      *
      * Verifies:
      * 1. Cryptographic Anonymity Decoupling (zero student-identifying columns in evaluation_vault)
@@ -259,7 +259,7 @@ class SecurityAuditService
             ];
         }
 
-        $safeSample = 'PAMANTASAN NG LUNGSOD NG PASIG - CCS';
+        $safeSample = 'SCHOOL AAAAA13 - CCS';
         $safePreserved = $this->validator->sanitizeCsvCell($safeSample) === $safeSample;
         $passed = $allNeutralized && $safePreserved;
 
@@ -300,9 +300,9 @@ class SecurityAuditService
         $validHmacHash = strlen($commentHash) === 64 && ctype_xdigit($commentHash);
 
         $issuedAt = 1700000000;
-        $startToken = $this->validator->issueStartToken(10, 101, 'plp-audit-secret', $issuedAt);
-        $tamperedRejected = !$this->validator->verifyStartToken($startToken . 'tampered', 10, 101, 'plp-audit-secret', 0, $issuedAt + 5);
-        $validTokenAccepted = $this->validator->verifyStartToken($startToken, 10, 101, 'plp-audit-secret', 0, $issuedAt + 5);
+        $startToken = $this->validator->issueStartToken(10, 101, 'aaaaa13-audit-secret', $issuedAt);
+        $tamperedRejected = !$this->validator->verifyStartToken($startToken . 'tampered', 10, 101, 'aaaaa13-audit-secret', 0, $issuedAt + 5);
+        $validTokenAccepted = $this->validator->verifyStartToken($startToken, 10, 101, 'aaaaa13-audit-secret', 0, $issuedAt + 5);
 
         $passed = $metadataStripped && $validHmacHash && $tamperedRejected && $validTokenAccepted;
 

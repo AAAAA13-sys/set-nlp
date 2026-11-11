@@ -81,7 +81,7 @@ function exportStudentsDirectoryCsv() {
     sanitize(s.cleared_count),
     sanitize(s.clearance_status),
   ].join(','));
-  triggerDownload(headers, rows, 'PLP_Student_Clearance_Roster');
+  triggerDownload(headers, rows, 'AAAAA13_Student_Clearance_Roster');
 }
 
 function exportPendingStudentsCsv() {
@@ -117,7 +117,7 @@ function exportPendingStudentsCsv() {
       sanitize(pending > 0 ? 'PENDING EVALUATION' : 'CLEARED'),
     ].join(',');
   });
-  triggerDownload(headers, rows, 'PLP_Incomplete_Student_Evaluations_FollowUp');
+  triggerDownload(headers, rows, 'AAAAA13_Incomplete_Student_Evaluations_FollowUp');
 }
 </script>
 

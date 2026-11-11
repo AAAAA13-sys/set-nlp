@@ -21,6 +21,11 @@ Route::match(['GET', 'POST'], '/clearance/verify', [StudentEvaluationController:
 Route::match(['GET', 'POST'], '/student/clearance/verify', [StudentEvaluationController::class, 'verifyPermit']);
 Route::match(['GET', 'POST'], '/permit/verify', [StudentEvaluationController::class, 'verifyPermit']);
 Route::match(['GET', 'POST'], '/student/permit/verify', [StudentEvaluationController::class, 'verifyPermit']);
+Route::match(['GET', 'POST'], '/evaluation/verify', [StudentEvaluationController::class, 'verifyPermit']);
+Route::match(['GET', 'POST'], '/student/evaluation/verify', [StudentEvaluationController::class, 'verifyPermit']);
+Route::match(['GET', 'POST'], '/completion/verify', [StudentEvaluationController::class, 'verifyPermit']);
+Route::match(['GET', 'POST'], '/student/completion/verify', [StudentEvaluationController::class, 'verifyPermit']);
+Route::match(['GET', 'POST'], '/receipt/verify', [StudentEvaluationController::class, 'verifyPermit']);
 Route::post('/webhooks/registrar-sync', [AdminRosterController::class, 'registrarSyncWebhook']);
 
 // Student Evaluation & Clearance Queue (SOP 1 & SOP 2)
@@ -31,6 +36,8 @@ Route::middleware(['role:student'])->group(function (): void {
     Route::post('/student/evaluations/submit', [StudentEvaluationController::class, 'submit']);
     Route::post('/student/evaluations', [StudentEvaluationController::class, 'submit']);
     Route::get('/student/permit', [StudentEvaluationController::class, 'permit']);
+    Route::get('/student/receipt', [StudentEvaluationController::class, 'permit']);
+    Route::get('/student/completion', [StudentEvaluationController::class, 'permit']);
 });
 
 // Faculty Double-Blind Portal

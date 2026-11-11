@@ -19,14 +19,14 @@ function closeAdvocacyRubricModal() {
 
 function downloadStudentGuide() {
   const guideText = `================================================================================
-PAMANTASAN NG LUNGSOD NG PASIG
+SCHOOL AAAAA13
 EvaluaTech Student Evaluation of Teachers (SET) & Anonymity Charter
 Academic Year: ${authStore.activeTerm || '1st Semester AY 2026-2027'}
 ================================================================================
 
 1. INSTITUTIONAL PURPOSE & OBJECTIVE
-   EvaluaTech is the accredited student evaluation platform for Pamantasan ng
-   Lungsod ng Pasig. It provides students with a secure, confidential mechanism
+   EvaluaTech is the accredited student evaluation platform for School AAAAA13.
+   It provides students with a secure, confidential mechanism
    to assess instructional delivery, course management, and academic support.
 
 2. ZERO-KNOWLEDGE CRYPTOGRAPHIC ANONYMITY (DUAL-TOKEN DECOUPLING)
@@ -71,13 +71,13 @@ Academic Year: ${authStore.activeTerm || '1st Semester AY 2026-2027'}
    - You can print your clearance certificate or present your signed verification hash for institutional clearance.
    - Academic staff and registrars verify clearance in real-time via the public verification portal (/verify).
 
-Pamantasan ng Lungsod ng Pasig * Office of the University Registrar * Institutional Accreditation`;
+School AAAAA13 * Office of the University Registrar * Institutional Accreditation`;
 
   const blob = new Blob([guideText], { type: 'text/plain;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  link.setAttribute('download', 'PLP_Student_Evaluation_Charter_and_Guidelines.txt');
+  link.setAttribute('download', 'AAAAA13_Student_Evaluation_Charter_and_Guidelines.txt');
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -87,9 +87,9 @@ Pamantasan ng Lungsod ng Pasig * Office of the University Registrar * Institutio
 const campusPortalShareUrl = computed(() => {
   const origin = typeof window !== 'undefined' && window.location?.origin
     ? window.location.origin
-    : 'https://evaluatech.plpasig.edu.ph';
+    : 'https://evaluatech.aaaaa13.edu';
   const dept = encodeURIComponent(authStore.user?.department_code || 'CCS');
-  return `${origin}/login?utm_source=plp_campus_advocacy&dept=${dept}`;
+  return `${origin}/login?utm_source=aaaaa13_campus_advocacy&dept=${dept}`;
 });
 
 const latestClearanceToken = computed(() => {
@@ -116,8 +116,8 @@ const collegeDrives = [
     code: 'COED',
     college: 'College of Education',
     targetRate: '96.0%',
-    advocacyLead: 'Future Educators Guild — PLP Chapter',
-    channel: 'Pre-Final Examination Clearance Orientation',
+    advocacyLead: 'Future Educators Guild — Student Chapter',
+    channel: 'Evaluation Participation Orientation',
   },
 ];
 
@@ -232,7 +232,7 @@ async function copyText(text, key) {
             <span class="ui-hint" tabindex="0" aria-label="Guidelines help" data-hint="Learn how your feedback is cryptographically protected and how faculty performance is evaluated.">?</span>
           </h3>
           <p class="guidelines-subtitle">
-            Pamantasan ng Lungsod ng Pasig protects your student identity through dual-token cryptographic decoupling, double-blind grade locks, and accredited 5-point performance rubrics.
+            School AAAAA13 protects your student identity through dual-token cryptographic decoupling, double-blind grade locks, and accredited 5-point performance rubrics.
           </p>
         </div>
         <div class="guidelines-action-group">

@@ -40,11 +40,11 @@ function navigateToWorkspace() {
       v-if="authStore.isAuthenticated"
       class="landing-auth-banner"
       data-testid="landing-auth-banner"
-      style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;"
+      style="background: #e2eafc; border: 1px solid #ccdbfd; border-radius: 10px; padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;"
     >
-      <div style="font-size: 0.9rem; color: #065f46;">
-        Signed in as <strong>{{ authStore.user?.name || 'PLP User' }}</strong>
-        <span class="role-badge" style="margin-left: 0.5rem; text-transform: uppercase; font-size: 0.75rem; background: #103c2e; color: #ffffff; padding: 0.15rem 0.5rem; border-radius: 4px;">
+      <div style="font-size: 0.9rem; color: #0f172a;">
+        Signed in as <strong>{{ authStore.user?.name || 'School AAAAA13 User' }}</strong>
+        <span class="role-badge" style="margin-left: 0.5rem; text-transform: uppercase; font-size: 0.75rem; background: #0f172a; color: #ffffff; padding: 0.15rem 0.5rem; border-radius: 4px;">
           {{ authStore.currentRole }}
         </span>
       </div>
@@ -62,7 +62,7 @@ function navigateToWorkspace() {
     <!-- Institutional Hero Section -->
     <section class="landing-hero-card" data-testid="landing-hero-section">
       <div class="landing-hero-eyebrow">
-        PAMANTASAN NG LUNGSOD NG PASIG • OFFICE OF ACADEMIC AFFAIRS
+        SCHOOL AAAAA13 • OFFICE OF ACADEMIC AFFAIRS
       </div>
       <h1 class="landing-hero-title">
         EvaluaTech: Automated Student Evaluation of Teachers
@@ -149,7 +149,7 @@ function navigateToWorkspace() {
           <div class="step-number-badge">1</div>
           <h3 class="step-title">Sign In with Credentials</h3>
           <p class="step-text">
-            Authenticate using your official PLP student number or institutional email. Authentication is validated through secure bcrypt verification.
+            Authenticate using your official School AAAAA13 student number or institutional email. Authentication is validated through secure bcrypt verification.
           </p>
         </div>
 
@@ -220,8 +220,8 @@ function navigateToWorkspace() {
     <footer class="landing-footer" data-testid="landing-footer-section">
       <div class="landing-footer-content">
         <div class="footer-col">
-          <strong>Pamantasan ng Lungsod ng Pasig</strong>
-          <p>Alkalde Jose St., Kapasigan, Pasig City, Metro Manila</p>
+          <strong>School AAAAA13</strong>
+          <p>School AAAAA13 Campus</p>
           <small>Office of Academic Affairs • Office of the University Registrar</small>
         </div>
         <div class="footer-col">
@@ -231,7 +231,7 @@ function navigateToWorkspace() {
         </div>
         <div class="footer-col text-right">
           <strong>System Support</strong>
-          <p>Email: <a href="mailto:evaluatech@plpasig.edu.ph" style="color: #f4cd42;">evaluatech@plpasig.edu.ph</a></p>
+          <p>Email: <a href="mailto:evaluatech@aaaaa13.edu" style="color: #2563eb;">evaluatech@aaaaa13.edu</a></p>
           <small>EvaluaTech Version 2.0.0 (Production Release)</small>
         </div>
       </div>
@@ -252,20 +252,20 @@ function navigateToWorkspace() {
 }
 
 .landing-hero-card {
-  background: #103c2e;
+  background: #0f172a;
   color: #ffffff;
   border-radius: 14px;
   padding: 2.75rem 2rem;
-  box-shadow: 0 10px 25px -5px rgba(16, 60, 46, 0.25);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.35);
   margin-bottom: 2.5rem;
-  border: 1px solid #144d3b;
+  border: 1px solid #1e293b;
 }
 
 .landing-hero-eyebrow {
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.1em;
-  color: #f4cd42;
+  color: #abc4ff;
   text-transform: uppercase;
   margin-bottom: 0.75rem;
 }
@@ -281,7 +281,7 @@ function navigateToWorkspace() {
 .landing-hero-subtitle {
   font-size: 1.05rem;
   line-height: 1.6;
-  color: #d1fae5;
+  color: #cbd5e1;
   max-width: 820px;
   margin: 0 0 1.5rem;
 }
@@ -290,8 +290,8 @@ function navigateToWorkspace() {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   padding: 0.35rem 0.85rem;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -299,7 +299,7 @@ function navigateToWorkspace() {
 }
 
 .landing-term-badge span {
-  color: #a7f3d0;
+  color: #abc4ff;
 }
 
 .landing-term-badge strong {
@@ -314,8 +314,8 @@ function navigateToWorkspace() {
 }
 
 .landing-cta-btn {
-  background: #f4cd42;
-  color: #103c2e;
+  background: #2563eb;
+  color: #ffffff;
   font-weight: 700;
   padding: 0.65rem 1.4rem;
   border-radius: 8px;
@@ -326,14 +326,14 @@ function navigateToWorkspace() {
 }
 
 .landing-cta-btn:hover {
-  background: #eab308;
+  background: #1d4ed8;
   transform: translateY(-1px);
 }
 
 .landing-sub-btn {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   font-weight: 600;
   padding: 0.65rem 1.15rem;
   border-radius: 8px;
@@ -343,7 +343,7 @@ function navigateToWorkspace() {
 }
 
 .landing-sub-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .landing-metrics-strip {
@@ -355,30 +355,30 @@ function navigateToWorkspace() {
 
 .metric-cell {
   background: #ffffff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #ccdbfd;
   border-radius: 10px;
   padding: 1.25rem 1rem;
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .metric-cell:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(16, 60, 46, 0.08);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
 }
 
 .metric-val {
   display: block;
   font-size: 1.35rem;
   font-weight: 800;
-  color: #103c2e;
+  color: #2563eb;
   margin-bottom: 0.25rem;
 }
 
 .metric-lbl {
   font-size: 0.8rem;
-  color: #4b5563;
+  color: #334155;
   line-height: 1.4;
   display: block;
 }
@@ -393,7 +393,7 @@ function navigateToWorkspace() {
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: #103c2e;
+  color: #2563eb;
   text-transform: uppercase;
   display: block;
   margin-bottom: 0.35rem;
@@ -402,14 +402,14 @@ function navigateToWorkspace() {
 .section-heading {
   font-size: 1.6rem;
   font-weight: 800;
-  color: #111827;
+  color: #0f172a;
   margin: 0 0 0.5rem;
 }
 
 .section-desc {
   font-size: 0.95rem;
   line-height: 1.55;
-  color: #4b5563;
+  color: #475569;
   margin: 0;
 }
 
@@ -425,18 +425,18 @@ function navigateToWorkspace() {
 
 .step-card {
   background: #ffffff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #ccdbfd;
   border-radius: 10px;
   padding: 1.5rem 1.25rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.04);
   position: relative;
 }
 
 .step-number-badge {
   width: 32px;
   height: 32px;
-  background: #103c2e;
-  color: #f4cd42;
+  background: #2563eb;
+  color: #ffffff;
   font-weight: 800;
   border-radius: 50%;
   display: flex;
@@ -450,20 +450,20 @@ function navigateToWorkspace() {
   font-size: 1.05rem;
   font-weight: 700;
   margin: 0 0 0.45rem;
-  color: #111827;
+  color: #0f172a;
 }
 
 .step-text {
   font-size: 0.88rem;
   line-height: 1.5;
-  color: #4b5563;
+  color: #475569;
   margin: 0;
 }
 
 .landing-safeguards-section {
   margin-bottom: 3rem;
-  background: #f9f9f8;
-  border: 1px solid #dce7dc;
+  background: #edf2fb;
+  border: 1px solid #ccdbfd;
   border-radius: 12px;
   padding: 2.25rem 1.5rem;
 }
@@ -476,7 +476,7 @@ function navigateToWorkspace() {
 
 .safeguard-card {
   background: #ffffff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #ccdbfd;
   border-radius: 10px;
   padding: 1.5rem;
 }
@@ -489,21 +489,21 @@ function navigateToWorkspace() {
 .safeguard-title {
   font-size: 1.05rem;
   font-weight: 700;
-  color: #103c2e;
+  color: #0f172a;
   margin: 0 0 0.45rem;
 }
 
 .safeguard-text {
   font-size: 0.88rem;
   line-height: 1.5;
-  color: #4b5563;
+  color: #475569;
   margin: 0;
 }
 
 .landing-footer {
-  border-top: 2px solid #103c2e;
+  border-top: 2px solid #0f172a;
   padding-top: 1.75rem;
-  color: #4b5563;
+  color: #475569;
   font-size: 0.85rem;
 }
 

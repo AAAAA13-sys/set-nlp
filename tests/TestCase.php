@@ -462,7 +462,7 @@ namespace Tests {
                     created_at, updated_at
                 ) VALUES (
                     1, 'OPEN', 0, 0.0, 3.50, 35.0,
-                    'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active.',
+                    'School AAAAA13 Student Evaluation of Teachers (SET) is currently active.',
                     '2026-01-01 08:00:00', '2026-12-31 23:59:59', 'Asia/Manila', 'OPEN',
                     datetime('now'), datetime('now')
                 );

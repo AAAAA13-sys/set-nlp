@@ -1,6 +1,6 @@
-# PLP EvaluTech — Complete User Walkthrough & Interactive Controls Guide
+# EvaluaTech — Complete User Walkthrough & Interactive Controls Guide
 
-This document walks through **every page, button, input, tab, filter, and modal** across all five roles of **PLP EvaluTech** (*Student*, *Faculty*, *Department Chair*, *College Dean*, and *University Registrar*), paired with live `playwright-cli` screenshots.
+This document walks through **every page, button, input, tab, filter, and modal** across all five roles of **EvaluaTech** (*Student*, *Faculty*, *Department Chair*, *College Dean*, and *University Registrar*), paired with live `playwright-cli` screenshots.
 
 ---
 
@@ -10,12 +10,12 @@ All seeded accounts use the password **`evaluatech123`**:
 
 | Role | ID / Email | Default Landing Route | Description |
 | :--- | :--- | :--- | :--- |
-| **Student** | `2024-10892` (`2024-10892@plpasig.edu.ph`) | `/queue` | Juan Dela Cruz — 6 enrolled courses (3 completed, 3 pending) |
-| **Faculty (Unlocked)** | `FAC-10001` (`adelacruz@plpasig.edu.ph`) | `/faculty` | Prof. A. Dela Cruz — `CS-401` grades submitted & Registrar-locked |
-| **Faculty (Locked)** | `FAC-10003` (`erivera@plpasig.edu.ph`) | `/faculty` | Prof. E. Rivera — `ENG-102` awaiting Registrar grade lock |
-| **Department Chair** | `CHR-00001` (`chair@plpasig.edu.ph`) | `/chair` | Dr. L. Bautista — Scoped to *Department of Computer Science* |
-| **College Dean** | `DEAN-0001` (`dean@plpasig.edu.ph`) | `/dean` | Dr. V. Mendoza — University-wide & department-filtered analytics |
-| **University Registrar** | `ADM-00001` (`admin@plpasig.edu.ph`) | `/admin` | Registrar Admin — Evaluation window, grade locks, roster import & security |
+| **Student** | `2024-10892` (`2024-10892@aaaaa13.edu`) | `/queue` | Juan Dela Cruz — 6 enrolled courses (3 completed, 3 pending) |
+| **Faculty (Unlocked)** | `FAC-10001` (`adelacruz@aaaaa13.edu`) | `/faculty` | Prof. A. Dela Cruz — `CS-401` grades submitted & Registrar-locked |
+| **Faculty (Locked)** | `FAC-10003` (`erivera@aaaaa13.edu`) | `/faculty` | Prof. E. Rivera — `ENG-102` awaiting Registrar grade lock |
+| **Department Chair** | `CHR-00001` (`chair@aaaaa13.edu`) | `/chair` | Dr. L. Bautista — Scoped to *Department of Computer Science* |
+| **College Dean** | `DEAN-0001` (`dean@aaaaa13.edu`) | `/dean` | Dr. V. Mendoza — University-wide & department-filtered analytics |
+| **University Registrar** | `ADM-00001` (`admin@aaaaa13.edu`) | `/admin` | Registrar Admin — Evaluation window, grade locks, roster import & security |
 
 ---
 
@@ -25,9 +25,9 @@ All seeded accounts use the password **`evaluatech123`**:
 - **Mobile Screenshot**: `C:/Users/Ivan/.gemini/antigravity/brain/06629e52-e44e-4545-b82d-425165c408a6/02_login_mobile.png`
 
 ### Interactive Controls & Buttons on `/login`
-- **Hover / Keyboard Tooltip Hints (`?` `.ui-hint`)**: Hovering or focusing the `?` badge next to `"Sign in to your account"` shows a concise tooltip (`"Use your PLP student number (e.g., 2024-10892), employee ID, or university email."`) so the card stays uncluttered.
+- **Hover / Keyboard Tooltip Hints (`?` `.ui-hint`)**: Hovering or focusing the `?` badge next to `"Sign in to your account"` shows a concise tooltip (`"Use your School AAAAA13 student number (e.g., 2024-10892), employee ID, or university email."`) so the card stays uncluttered.
 1. **`Student / Employee ID or Email` Input (`[data-testid="login-identifier-input"]`)**:
-   - Enter your PLP student number (e.g., `2024-10892`), employee ID (`FAC-10001`, `CHR-00001`, `DEAN-0001`, `ADM-00001`), or `@plpasig.edu.ph` email.
+   - Enter your School AAAAA13 student number (e.g., `2024-10892`), employee ID (`FAC-10001`, `CHR-00001`, `DEAN-0001`, `ADM-00001`), or `@aaaaa13.edu` email.
    - Automatically trims whitespace and clears any prior validation banner as you type.
 2. **`Password` Input (`[data-testid="login-password-input"]`)**:
    - Enter your password (`evaluatech123` for seeded accounts).
@@ -47,7 +47,7 @@ EvaluaTech features a single-page universal top navigation bar across all roles 
 
 | Control / Button | Location | What Happens When Clicked |
 | :--- | :--- | :--- |
-| **Institutional Brand & Seal** (`[data-testid="navbar-plp-seal"]`) | Top-left navbar | Displays the official Pamantasan ng Lungsod ng Pasig seal and title; links to institutional home (`/`). |
+| **Institutional Brand & Seal** (`[data-testid="navbar-plp-seal"]`) | Top-left navbar | Displays the official School AAAAA13 seal and title; links to institutional home (`/`). |
 | **Role Navigation Links** (`[data-testid^="nav-link-"]`) | Top navbar center strip | Navigates directly to the role portal (`Faculty Portal`, `Chair Portal`, `Dean Analytics`, `Registrar Console`, `Campus Advocacy & Standards`). Active route is marked with a distinctive forest-green underline and badge. |
 | **Active Term Indicator** | Top navbar right strip | Displays the active institutional academic term (`Term: 1st Semester AY 2026-2027`). |
 | **`Command Palette` (`Ctrl K`)** (`[data-testid="navbar-cmdk-btn"]`) | Top navbar actions | Opens the keyboard-driven **Command Palette Modal** (`Ctrl + K`) to jump to any page or toggle table density. |
@@ -158,7 +158,7 @@ EvaluaTech features a single-page universal top navigation bar across all roles 
    - Filter all metrics, watchlists, heatmaps, and trends between `All Colleges & Departments`, `College of Computer Studies (CCS)`, and `College of Arts and Sciences (CAS)`.
 2. **4 Analytical View Tabs**:
    - **`Overview & Watchlist` (`[data-testid="tab-dean-overview"]`)**: Shows Student Comment Sentiment bars, Faculty Performance Quartiles, Section Completion Heatmap, Faculty Exception Watchlist (with **`Export Sanitized CSV Report`**, **`View Pedagogical Intervention Plan`**, **`Approve Plan`**, and **`Mark Milestone Resolved`** buttons), and the interactive **College Section & Sentiment Explorer** data table (with search `/`, facet filters, column sorting, and **`Comfortable` / `Compact`** density buttons).
-   - **`Semester Trends & Dossier` (`[data-testid="tab-longitudinal-trends"]`)**: Shows the **Accreditation Evidence Summary** (`PLP-AACCUP3-*` seal & SHA-256 digest), **`Export Accreditation Dossier Bundle (CSV)`** button, and semester-over-semester rating comparison tables.
+   - **`Semester Trends & Dossier` (`[data-testid="tab-longitudinal-trends"]`)**: Shows the **Accreditation Evidence Summary** (`School AAAAA13-AACCUP3-*` seal & SHA-256 digest), **`Export Accreditation Dossier Bundle (CSV)`** button, and semester-over-semester rating comparison tables.
    - **`System Quality & Compliance` (`[data-testid="tab-quality-sus"]`)**: Shows the 8-point **Accreditation & Quality Standards Checklist**, ISO/IEC 25010 Software Quality table, and System Usability Scale (SUS) breakdown.
    - **`Written Feedback` (`[data-testid="tab-qualitative-synthesis"]`)**: Shows **Professor's Evaluation Analysis** across `Q1`–`Q4` with `?` tooltip hints (`Three Words Describing the Professor`, `Areas for Improvement`, `Teaching Strengths`, `Student Recommendations`) plus **`Export JSON`** and **`Export CSV`** buttons.
 3. **`Search Feedback` (`[data-testid="open-quivr-brain-btn"]`) & `Evaluation Analysis` (`[data-testid="open-analytics-lab-btn"]`) Buttons**:

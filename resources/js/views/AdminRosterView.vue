@@ -22,7 +22,7 @@ const rosterInput = ref(
         course_title: 'Cloud Security & Distributed Systems',
         section_code: 'SEC-A',
         instructor_name: 'Dr. H. Villanueva',
-        faculty_email: 'hvillanueva@plpasig.edu.ph',
+        faculty_email: 'hvillanueva@aaaaa13.edu',
         department_name: 'College of Computer Studies',
       },
     ],
@@ -153,7 +153,7 @@ function exportMasterEvaluationSummaryCsv() {
   const link = document.createElement('a');
   link.setAttribute('href', url);
   const nowStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-  link.setAttribute('download', `PLP_Evaluation_Master_Summary_${nowStr}.csv`);
+  link.setAttribute('download', `AAAAA13_Evaluation_Master_Summary_${nowStr}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -1535,7 +1535,7 @@ async function toggleLock(sectionId, field) {
         <!-- Footer / Print actions -->
         <div class="no-print" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 1rem; flex-wrap: wrap; gap: 0.5rem;">
           <small style="font-size: 0.72rem; color: #6b7280;">
-            Pamantasan ng Lungsod ng Pasig · AACCUP Level III Accreditation Audit
+            School AAAAA13 · AACCUP Level III Accreditation Audit
           </small>
           <div style="display: flex; gap: 0.5rem;">
             <button

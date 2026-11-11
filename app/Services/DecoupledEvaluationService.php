@@ -137,7 +137,9 @@ class DecoupledEvaluationService
                 if (!is_dir($storageDir)) {
                     @mkdir($storageDir, 0775, true);
                 }
-                $sqlitePath = $storageDir . '/evaluatech_plp.sqlite';
+                $sqlitePath = file_exists($storageDir . '/framework/evaluatech_aaaaa13.sqlite')
+                    ? $storageDir . '/framework/evaluatech_aaaaa13.sqlite'
+                    : $storageDir . '/evaluatech_aaaaa13.sqlite';
                 self::$sharedPdo = new PDO('sqlite:' . $sqlitePath);
             }
 

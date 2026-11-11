@@ -395,7 +395,7 @@ class IntegrityValidatorService
             $clean
         );
 
-        // 3. Scrub accidental email addresses, PH phone numbers, and PLP student IDs (#34)
+        // 3. Scrub accidental email addresses, PH phone numbers, and student IDs (#34)
         $clean = preg_replace('/[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}/', '[REDACTED-EMAIL]', $clean) ?? $clean;
         $clean = preg_replace('/(?:\+63|0)9\d{2}[\s\-]?\d{3}[\s\-]?\d{4}\b/', '[REDACTED-PHONE]', $clean) ?? $clean;
         $clean = preg_replace('/\b20\d{2}[-\s]\d{4,6}\b/', '[REDACTED-ID]', $clean) ?? $clean;

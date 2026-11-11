@@ -258,7 +258,7 @@ class AuthController extends Controller
         $now = $issuedAt ?? time();
         $claims = [
             'alg' => 'HS256',
-            'iss' => 'EvaluaTech-PLP-Auth',
+            'iss' => 'EvaluaTech-AAAAA13-Auth',
             'jti' => bin2hex(random_bytes(8)),
             'sub' => (int) $user['id'],
             'inst' => (string) $user['institutional_id'],
@@ -307,7 +307,7 @@ class AuthController extends Controller
             return null;
         }
 
-        if (($claims['iss'] ?? '') !== 'EvaluaTech-PLP-Auth') {
+        if (($claims['iss'] ?? '') !== 'EvaluaTech-AAAAA13-Auth') {
             return null;
         }
         if (isset($claims['alg']) && strtoupper((string) $claims['alg']) !== 'HS256') {
@@ -492,8 +492,8 @@ class AuthController extends Controller
         if (str_contains($identifier, '@')) {
             [$local, $domain] = explode('@', strtolower($identifier), 2);
             if ($domain === 'evaluatech.edu' || $domain === 'student.evaluatech.edu' || $domain === 'evaluatech.edu.ph') {
-                $candidates[] = $local . '@plpasig.edu.ph';
-            } elseif ($domain === 'plpasig.edu.ph') {
+                $candidates[] = $local . '@aaaaa13.edu';
+            } elseif ($domain === 'aaaaa13.edu') {
                 $candidates[] = $local . '@evaluatech.edu';
                 $candidates[] = $local . '@student.evaluatech.edu';
             }

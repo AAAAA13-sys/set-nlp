@@ -7,7 +7,7 @@ declare(strict_types=1);
  *
  * Provisions a clean, production-ready institutional database:
  * - Initializes full relational schema via DatabaseSchemaManager
- * - Establishes official PLP academic colleges and departments
+ * - Establishes official School AAAAA13 academic colleges and departments
  * - Sets up active academic term and administrative evaluation window
  * - Provisions primary University Registrar Administrator account
  * - Guarantees ZERO fake student evaluations, ZERO mock clearances, and ZERO fake vault records.
@@ -16,7 +16,7 @@ declare(strict_types=1);
 $rootDir = dirname(__DIR__);
 require_once $rootDir . '/bootstrap/app.php';
 
-$sqlitePath = $rootDir . '/storage/framework/evaluatech_plp.sqlite';
+$sqlitePath = $rootDir . '/storage/framework/evaluatech_aaaaa13.sqlite';
 $storageDir = dirname($sqlitePath);
 if (!is_dir($storageDir)) {
     mkdir($storageDir, 0755, true);
@@ -32,7 +32,7 @@ $schema->initializeSchema($pdo);
 
 $now = date('Y-m-d H:i:s');
 
-// 1. Official PLP Colleges & Academic Departments
+// 1. Official School AAAAA13 Colleges & Academic Departments
 $departments = [
     [1, 'CCS', 'Department of Computer Science', 'College of Computer Studies'],
     [2, 'CAS', 'Department of General Education', 'College of Arts and Sciences'],
@@ -73,19 +73,19 @@ $pdo->exec("
         starts_at, ends_at, timezone, last_window_action, created_at, updated_at
     ) VALUES (
         1, 'OPEN', 0, 0.0, 3.50, 35.0,
-        'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active for 1st Semester AY 2026-2027.',
+        'School AAAAA13 Student Evaluation of Teachers (SET) is currently active for 1st Semester AY 2026-2027.',
         '2026-08-15 08:00:00', '2026-12-20 23:59:59', 'Asia/Manila', 'OPEN',
         '{$now}', '{$now}'
     )
 ");
 
 // 4. Primary University Registrar Administrator Account
-$adminPassword = getenv('EVALUATECH_ADMIN_PASSWORD') ?: 'PLPAdmin!2026';
+$adminPassword = getenv('EVALUATECH_ADMIN_PASSWORD') ?: 'AAAAA13Admin!2026';
 $passwordHash = password_hash($adminPassword, PASSWORD_BCRYPT);
 
 $userStmt = $pdo->prepare("
     INSERT OR REPLACE INTO users (id, institutional_id, name, email, password, role, department_id, is_active, created_at, updated_at)
-    VALUES (1, 'ADM-00001', 'University Registrar Admin', 'admin@plpasig.edu.ph', :password, 'admin', NULL, 1, :created_at, :updated_at)
+    VALUES (1, 'ADM-00001', 'University Registrar Admin', 'admin@aaaaa13.edu', :password, 'admin', NULL, 1, :created_at, :updated_at)
 ");
 
 $userStmt->execute([
@@ -103,10 +103,10 @@ $sectionCount = (int) $pdo->query("SELECT COUNT(*) FROM course_sections")->fetch
 echo json_encode([
     'success' => true,
     'mode' => 'PRODUCTION_INITIALIZED',
-    'institution' => 'Pamantasan ng Lungsod ng Pasig',
+    'institution' => 'School AAAAA13',
     'departments_count' => count($departments),
     'active_term' => '1SEM-2026 (1st Semester AY 2026-2027)',
-    'admin_account' => 'admin@plpasig.edu.ph',
+    'admin_account' => 'admin@aaaaa13.edu',
     'zero_mock_verification' => [
         'evaluation_clearances' => $clearanceCount,
         'evaluation_vault' => $vaultCount,

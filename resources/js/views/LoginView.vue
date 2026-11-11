@@ -91,18 +91,18 @@ const handleLogin = throttle(() => {
 
 <template>
   <main class="academic-login-split" aria-labelledby="login-heading" data-testid="login-split-screen">
-    <!-- Left Column: Clean Deep Forest Green Story Panel (dms.css .login-story) -->
-    <aside class="brand-column" aria-label="Pamantasan ng Lungsod ng Pasig Faculty Evaluation">
+    <!-- Left Column: Story Panel -->
+    <aside class="brand-column" aria-label="School AAAAA13 Faculty Evaluation">
       <div class="brand-top-bar">
         <div class="brand-crest-mark" aria-hidden="true">e.</div>
         <div class="brand-wordmark">
-          <strong>PLP EvaluTech</strong>
+          <strong>AAAAA13 EvaluTech</strong>
           <span>STUDENT EVALUATION SYSTEM</span>
         </div>
       </div>
 
       <div class="brand-hero-content">
-        <span class="brand-eyebrow">Pamantasan ng Lungsod ng Pasig</span>
+        <span class="brand-eyebrow">School AAAAA13</span>
 
         <h1 class="brand-display-headline">
           Candid student feedback,<br />decoupled by design.
@@ -131,7 +131,7 @@ const handleLogin = throttle(() => {
       </div>
 
       <div class="brand-bottom-meta">
-        PAMANTASAN NG LUNGSOD NG PASIG · STUDENT EVALUATION OF TEACHERS
+        SCHOOL AAAAA13 · STUDENT EVALUATION OF TEACHERS
       </div>
     </aside>
 
@@ -142,10 +142,10 @@ const handleLogin = throttle(() => {
           <span class="portal-access-label">STUDENT &amp; FACULTY ACCESS</span>
           <h2 id="login-heading" class="auth-card-title">
             Sign in to your account
-            <span class="ui-hint" tabindex="0" aria-label="Sign-in instructions" data-hint="Use your PLP student number (e.g., 2024-10892), employee ID, or university email.">?</span>
+            <span class="ui-hint" tabindex="0" aria-label="Sign-in instructions" data-hint="Use your School AAAAA13 student number (e.g., 2024-10892), employee ID, or university email.">?</span>
           </h2>
           <p class="auth-card-subtitle">
-            Use your PLP ID or university email.
+            Use your School AAAAA13 ID or university email.
           </p>
         </header>
 
@@ -174,7 +174,7 @@ const handleLogin = throttle(() => {
               autocapitalize="none"
               autocorrect="off"
               spellcheck="false"
-              placeholder="e.g. 2024-10892 or you@plpasig.edu.ph"
+              placeholder="e.g. 2024-10892 or you@aaaaa13.edu"
               class="clean-form-input"
               :class="{ 'is-invalid': Boolean(idValidationHint) }"
               :aria-invalid="Boolean(idValidationHint)"
@@ -275,7 +275,7 @@ const handleLogin = throttle(() => {
           <router-link
             to="/verify"
             class="proctor-verify-link"
-            style="font-size: 0.82rem; font-weight: 600; color: #103c2e; text-decoration: underline; display: inline-flex; align-items: center; gap: 0.35rem;"
+            style="font-size: 0.82rem; font-weight: 600; color: #2563eb; text-decoration: underline; display: inline-flex; align-items: center; gap: 0.35rem;"
             data-testid="proctor-verify-link"
           >
             🔍 Check Evaluation Completion Status
@@ -298,7 +298,7 @@ const handleLogin = throttle(() => {
 
 /* Left Story Column (matches dms.css .login-story) */
 .brand-column {
-  background: #103c2e;
+  background: #0f172a;
   color: #ffffff;
   padding: clamp(28px, 4.5vh, 48px) clamp(32px, 4vw, 56px);
   display: flex;
@@ -316,8 +316,8 @@ const handleLogin = throttle(() => {
   width: 44px;
   height: 44px;
   border-radius: 8px;
-  background: #f4cd42;
-  color: #103c2e;
+  background: #abc4ff;
+  color: #0f172a;
   font-weight: 700;
   font-size: 20px;
   display: flex;
@@ -357,7 +357,7 @@ const handleLogin = throttle(() => {
   line-height: 18px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #f4cd42;
+  color: #abc4ff;
 }
 
 .brand-display-headline {
@@ -400,7 +400,7 @@ const handleLogin = throttle(() => {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #f4cd42;
+  background: #abc4ff;
   flex-shrink: 0;
   transform: translateY(-1px);
 }
@@ -443,7 +443,7 @@ const handleLogin = throttle(() => {
   line-height: 18px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #176347;
+  color: #2563eb;
 }
 
 .auth-card-title {
@@ -511,8 +511,8 @@ const handleLogin = throttle(() => {
 
 .clean-form-input:focus {
   outline: none;
-  border-color: #176347;
-  box-shadow: 0 0 0 3px rgba(23, 99, 71, 0.12);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
 .clean-form-input.is-invalid {
@@ -537,7 +537,7 @@ const handleLogin = throttle(() => {
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: #53665a;
+  color: #475569;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -545,8 +545,8 @@ const handleLogin = throttle(() => {
 }
 
 .password-eye-toggle:hover {
-  color: #103c2e;
-  background: #f6f8f4;
+  color: #0f172a;
+  background: #e2eafc;
 }
 
 .field-validation-msg {
@@ -566,7 +566,7 @@ const handleLogin = throttle(() => {
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  color: #53665a;
+  color: #334155;
   cursor: pointer;
   user-select: none;
 }
@@ -574,7 +574,7 @@ const handleLogin = throttle(() => {
 .trust-device-checkbox input {
   width: 16px;
   height: 16px;
-  accent-color: #176347;
+  accent-color: #2563eb;
   cursor: pointer;
 }
 
@@ -582,9 +582,9 @@ const handleLogin = throttle(() => {
   width: 100%;
   min-height: 44px;
   padding: 11px 18px;
-  border: 1px solid #176347;
+  border: 1px solid #2563eb;
   border-radius: 8px;
-  background: #176347;
+  background: #2563eb;
   color: #ffffff;
   font-size: 15px;
   font-weight: 600;
@@ -594,8 +594,8 @@ const handleLogin = throttle(() => {
 }
 
 .primary-signin-btn:hover:not(:disabled) {
-  background: #103c2e;
-  border-color: #103c2e;
+  background: #1d4ed8;
+  border-color: #1d4ed8;
 }
 
 .primary-signin-btn:disabled {

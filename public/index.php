@@ -114,7 +114,7 @@ if ($isApiRoute) {
         if (!is_dir($storageDir)) {
             @mkdir($storageDir, 0775, true);
         }
-        $sqlitePath = $storageDir . '/evaluatech_plp.sqlite';
+        $sqlitePath = $storageDir . '/evaluatech_aaaaa13.sqlite';
         $pdo = new \PDO('sqlite:' . $sqlitePath);
         $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
@@ -181,8 +181,8 @@ if ($isApiRoute) {
         if ($uriPath === '/api/health' && $method === 'GET') {
             $response = new JsonResponse([
                 'status' => 'ok',
-                'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
-                'reference' => 'https://plpasig.edu.ph/',
+                'institution' => 'SCHOOL AAAAA13',
+                'reference' => 'https://aaaaa13.edu/',
                 'platform' => 'EvaluaTech',
                 'nlp_engine' => 'calamanCy+VADER',
                 'calamancy_repo' => 'https://github.com/ljvmiranda921/calamanCy',
@@ -193,7 +193,17 @@ if ($isApiRoute) {
             $response = $authController->me($request);
         } elseif ($uriPath === '/api/auth/logout' && $method === 'POST') {
             $response = $authController->logout($request);
-        } elseif ($uriPath === '/api/clearance/verify' || $uriPath === '/api/student/clearance/verify' || $uriPath === '/api/permit/verify' || $uriPath === '/api/student/permit/verify') {
+        } elseif (in_array($uriPath, [
+            '/api/clearance/verify',
+            '/api/student/clearance/verify',
+            '/api/permit/verify',
+            '/api/student/permit/verify',
+            '/api/evaluation/verify',
+            '/api/student/evaluation/verify',
+            '/api/completion/verify',
+            '/api/student/completion/verify',
+            '/api/receipt/verify',
+        ], true)) {
             $response = (new StudentEvaluationController($service))->verifyPermit($request);
         } elseif ($uriPath === '/api/webhooks/registrar-sync' && $method === 'POST') {
             $response = (new AdminRosterController(null, $service))->registrarSyncWebhook($request, $rawBody);
@@ -208,7 +218,7 @@ if ($isApiRoute) {
             $response = $withRoles('student', static fn (Request $req) => (new StudentEvaluationController($service))->startSession($req, $sectionId));
         } elseif (($uriPath === '/api/evaluation/submit' || $uriPath === '/api/student/evaluations/submit' || $uriPath === '/api/student/evaluations') && $method === 'POST') {
             $response = $withRoles('student', static fn (Request $req) => (new StudentEvaluationController($service))->submit($req));
-        } elseif ($uriPath === '/api/student/permit' && $method === 'GET') {
+        } elseif (($uriPath === '/api/student/permit' || $uriPath === '/api/student/receipt' || $uriPath === '/api/student/completion') && $method === 'GET') {
             $response = $withRoles('student', static fn (Request $req) => (new StudentEvaluationController($service))->permit($req));
         }
         // Faculty Double-Blind Portal Endpoints (Role: faculty, admin)
@@ -382,7 +392,7 @@ if ($isApiRoute) {
                 $audit = $service->verifyVaultAnonymity();
                 $recentVault = $pdo->query('SELECT id, course_section_id, mean_score, rating_variance, is_straight_lined, dwell_time_seconds, comment_hash, sentiment_polarity, sentiment_valence, pedagogical_tag, recorded_date FROM evaluation_vault ORDER BY rowid DESC LIMIT 5')->fetchAll(\PDO::FETCH_ASSOC);
                 $audit['recent_anonymized_vault_entries'] = $recentVault ?: [];
-                $audit['institution'] = 'PAMANTASAN NG LUNGSOD NG PASIG';
+                $audit['institution'] = 'SCHOOL AAAAA13';
                 return new JsonResponse($audit, 200);
             });
         } elseif ($uriPath === '/api/security/audit' && $method === 'GET') {
@@ -424,7 +434,7 @@ if ($isApiRoute) {
     }
 }
 
-// 3. Render the Pamantasan ng Lungsod ng Pasig (PLP) EvaluaTech SPA shell
+// 3. Render the School AAAAA13 EvaluaTech SPA shell
 $bladeFile = __DIR__ . '/../resources/views/app.blade.php';
 if (is_file($bladeFile)) {
     $html = (string) file_get_contents($bladeFile);

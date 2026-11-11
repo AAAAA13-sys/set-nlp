@@ -431,7 +431,7 @@ function exportCoursesCatalogCsv() {
     sanitize(c.department_name || c.department_code || 'College of Computer Studies'),
     sanitize(c.units ?? 3),
   ].join(','));
-  triggerCsvDownload(headers, rows, 'PLP_Course_Catalog');
+  triggerCsvDownload(headers, rows, 'AAAAA13_Course_Catalog');
 }
 
 function exportFacultyDirectoryCsv() {
@@ -450,7 +450,7 @@ function exportFacultyDirectoryCsv() {
     sanitize(f.role),
     sanitize(getFacultyAssignedSectionsCount(f.id)),
   ].join(','));
-  triggerCsvDownload(headers, rows, 'PLP_Faculty_Directory');
+  triggerCsvDownload(headers, rows, 'AAAAA13_Faculty_Directory');
 }
 
 function exportStudentsDirectoryCsv() {
@@ -470,7 +470,7 @@ function exportStudentsDirectoryCsv() {
     sanitize(s.cleared_count),
     sanitize(s.clearance_status),
   ].join(','));
-  triggerCsvDownload(headers, rows, 'PLP_Student_Clearance_Roster');
+  triggerCsvDownload(headers, rows, 'AAAAA13_Student_Clearance_Roster');
 }
 
 function exportPendingStudentsCsv() {
@@ -506,7 +506,7 @@ function exportPendingStudentsCsv() {
       sanitize(pending > 0 ? 'PENDING EVALUATION' : 'CLEARED'),
     ].join(',');
   });
-  triggerCsvDownload(headers, rows, 'PLP_Incomplete_Student_Evaluations_FollowUp');
+  triggerCsvDownload(headers, rows, 'AAAAA13_Incomplete_Student_Evaluations_FollowUp');
 }
 
 const studentTrackerMetrics = computed(() => {
@@ -540,7 +540,7 @@ const reminderNoticeText = computed(() => {
   const s = reminderStudent.value;
   const pending = Math.max(0, (s.enrolled_count || 0) - (s.cleared_count || 0));
   const termName = setupStore.selectedTerm?.name || 'Current Academic Term';
-  return `Subject: [PLP SET Notice] Incomplete Faculty Evaluation Reminder — ${s.name}
+  return `Subject: [School AAAAA13 SET Notice] Incomplete Faculty Evaluation Reminder — ${s.name}
 
 Dear ${s.name} (${s.institutional_id}),
 
@@ -549,13 +549,13 @@ This is an official notice from the Office of Academic Affairs regarding your St
 Our records show that you have ${pending} of ${s.enrolled_count} course evaluation(s) pending completion.
 
 Please access your student evaluation queue at:
-https://evaluatech.plpasig.edu.ph/queue
+https://evaluatech.aaaaa13.edu/queue
 
-Please note that evaluations are 100% confidential and cryptographically decoupled from your student account. Your constructive feedback is essential for continuous instructional improvement at Pamantasan ng Lungsod ng Pasig.
+Please note that evaluations are 100% confidential and cryptographically decoupled from your student account. Your constructive feedback is essential for continuous instructional improvement at School AAAAA13.
 
 Thank you,
 Office of Academic Affairs
-Pamantasan ng Lungsod ng Pasig`;
+School AAAAA13`;
 });
 
 async function copyReminderNotice() {
@@ -589,7 +589,7 @@ function exportSystemUsersCsv() {
     sanitize(u.department_name || u.department_code || 'College of Computer Studies'),
     sanitize(u.is_active ? 'Active' : 'Inactive'),
   ].join(','));
-  triggerCsvDownload(headers, rows, 'PLP_System_Users_Directory');
+  triggerCsvDownload(headers, rows, 'AAAAA13_System_Users_Directory');
 }
 
 function exportAssignmentsMatrixCsv() {
@@ -609,7 +609,7 @@ function exportAssignmentsMatrixCsv() {
     sanitize(sec.is_assigned ? 'Assigned' : 'Unassigned'),
     sanitize(sec.registrar_lock ? 'Locked' : 'Open'),
   ].join(','));
-  triggerCsvDownload(headers, rows, 'PLP_Faculty_Assignments_Matrix');
+  triggerCsvDownload(headers, rows, 'AAAAA13_Faculty_Assignments_Matrix');
 }
 
 function exportQuestionnaireInstrumentCsv() {
@@ -644,7 +644,7 @@ function exportQuestionnaireInstrumentCsv() {
       sanitize(q.format || q.description || 'Open Qualitative Text'),
     ].join(','));
   });
-  triggerCsvDownload(headers, rows, 'PLP_AACCUP3_Evaluation_Instrument');
+  triggerCsvDownload(headers, rows, 'AAAAA13_AACCUP3_Evaluation_Instrument');
 }
 
 const termSearchInput = ref('');
@@ -687,7 +687,7 @@ function exportAcademicTermsCsv() {
     sanitize(t.window_status || 'CLOSED'),
     sanitize(t.is_active ? 'Active Term' : 'Archived'),
   ].join(','));
-  triggerCsvDownload(headers, rows, 'PLP_Academic_Terms');
+  triggerCsvDownload(headers, rows, 'AAAAA13_Academic_Terms');
 }
 
 const selectedSetupReportSection = ref(null);
@@ -908,7 +908,7 @@ function exportSectionRosterCsv() {
     sanitize(s.clearance_token || 'N/A'),
     sanitize(s.cleared_at || 'N/A'),
   ].join(','));
-  triggerCsvDownload(headers, rows, `PLP_Section_Roster_${sec.course_code}_${sec.section_code}`);
+  triggerCsvDownload(headers, rows, `AAAAA13_Section_Roster_${sec.course_code}_${sec.section_code}`);
 }
 
 function printSectionRoster() {
@@ -1019,7 +1019,7 @@ function exportFacultyAssignmentsCsv() {
     sanitize(s.registrar_lock ? 'Locked' : 'Open'),
     sanitize(s.double_blind_unlocked ? 'Unlocked' : 'Locked'),
   ].join(','));
-  triggerCsvDownload(headers, rows, `PLP_Faculty_Assignments_${fac.institutional_id}_${term.code}`);
+  triggerCsvDownload(headers, rows, `AAAAA13_Faculty_Assignments_${fac.institutional_id}_${term.code}`);
 }
 
 function openEditUserModal(u) {
@@ -1899,7 +1899,7 @@ async function executeDeleteSection() {
               v-model="userForm.email"
               type="email"
               class="form-input"
-              placeholder="e.g., msantos@plpasig.edu.ph"
+              placeholder="e.g., msantos@aaaaa13.edu"
               data-testid="user-email-input"
               required
             />
@@ -2459,11 +2459,11 @@ async function executeDeleteSection() {
       <div class="setup-modal-box" style="max-width: 820px; padding: 1.5rem; max-height: 90vh; overflow-y: auto;">
         <header class="setup-modal-header" style="border-bottom: 1px solid #e5e7eb; padding-bottom: 0.85rem;">
           <div>
-            <h2 id="student-enrollment-modal-title" style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #103c2e;">
+            <h2 id="student-enrollment-modal-title" style="margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--ink);">
               Student Evaluation & Course Clearance Checklist
             </h2>
             <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #6b7280;">
-              Pamantasan ng Lungsod ng Pasig — Institutional Academic Clearance Roster
+              School AAAAA13 — Institutional Academic Clearance Roster
             </p>
           </div>
           <button type="button" class="modal-close-btn" @click="showStudentEnrollmentModal = false">&times;</button>
@@ -2750,7 +2750,7 @@ async function executeDeleteSection() {
               Course Section Class Roster &amp; Clearance Checklist
             </h2>
             <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #6b7280;">
-              Pamantasan ng Lungsod ng Pasig — Section Enrollment &amp; Evaluation Clearance Roster
+              School AAAAA13 — Section Enrollment &amp; Evaluation Clearance Roster
             </p>
           </div>
           <button type="button" class="modal-close-btn" @click="showSectionRosterModal = false">&times;</button>

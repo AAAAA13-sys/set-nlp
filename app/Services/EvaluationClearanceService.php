@@ -52,8 +52,8 @@ class EvaluationClearanceService
                     'status' => 'INVALID_TOKEN',
                     'clearance_status' => 'INVALID_TOKEN',
                     'message' => 'No active student record associated with institutional ID: ' . $instId,
-                    'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
-                    'reference' => 'https://plpasig.edu.ph/',
+                    'institution' => 'SCHOOL AAAAA13',
+                    'reference' => 'https://aaaaa13.edu/',
                 ];
             }
         }
@@ -101,8 +101,8 @@ class EvaluationClearanceService
                 'status' => 'INVALID_TOKEN',
                 'clearance_status' => 'INVALID_TOKEN',
                 'message' => 'Invalid or forged evaluation clearance token.',
-                'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
-                'reference' => 'https://plpasig.edu.ph/',
+                'institution' => 'SCHOOL AAAAA13',
+                'reference' => 'https://aaaaa13.edu/',
             ];
         }
 
@@ -112,7 +112,7 @@ class EvaluationClearanceService
 
         $securityHash = hash_hmac(
             'sha256',
-            "PLP:CLEARANCE:{$student['institutional_id']}:{$queue['completed_count']}:{$now}",
+            "AAAAA13:CLEARANCE:{$student['institutional_id']}:{$queue['completed_count']}:{$now}",
             $this->appSecret
         );
 
@@ -120,14 +120,18 @@ class EvaluationClearanceService
             return [
                 'verified' => false,
                 'status' => 'PENDING',
+                'title' => 'Evaluation Completion Certificate',
+                'certificate_title' => 'Evaluation Completion Certificate',
+                'document_type' => 'evaluation_completion',
                 'clearance_status' => 'EVALUATION_PENDING',
-                'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
-                'reference' => 'https://plpasig.edu.ph/',
+                'participation_status' => 'PENDING',
+                'institution' => 'SCHOOL AAAAA13',
+                'reference' => 'https://aaaaa13.edu/',
                 'student_institutional_id' => $student['institutional_id'],
                 'student_name' => $student['name'],
                 'completed_evaluations' => $queue['completed_count'],
                 'total_enrolled_courses' => $queue['total_count'],
-                'message' => "Student has completed {$queue['completed_count']} of {$queue['total_count']} course evaluations. Institutional evaluation clearance remains pending and gated.",
+                'message' => "Student has completed {$queue['completed_count']} of {$queue['total_count']} course evaluations. Institutional evaluation completion remains pending.",
                 'verification_timestamp' => $now,
             ];
         }
@@ -135,10 +139,16 @@ class EvaluationClearanceService
         return [
             'verified' => true,
             'status' => 'CLEARED',
+            'title' => 'Evaluation Completion Certificate',
+            'certificate_title' => 'Evaluation Completion Certificate',
+            'document_type' => 'evaluation_completion',
             'permit_status' => 'VALID_FOR_FINAL_EXAMINATIONS',
             'clearance_status' => 'EVALUATION_COMPLETED_CLEARED',
-            'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
-            'reference' => 'https://plpasig.edu.ph/',
+            'participation_status' => 'DONE',
+            'submission_confirmation' => true,
+            'evaluation_receipt' => true,
+            'institution' => 'SCHOOL AAAAA13',
+            'reference' => 'https://aaaaa13.edu/',
             'office' => 'Office of the University Registrar',
             'student_institutional_id' => $student['institutional_id'],
             'student_name' => $student['name'],
@@ -146,10 +156,12 @@ class EvaluationClearanceService
             'completed_evaluations' => $queue['completed_count'],
             'total_enrolled_courses' => $queue['total_count'],
             'clearance_token' => $queue['exam_permit_token'] ?? $token,
+            'evaluation_completion_token' => $queue['exam_permit_token'] ?? $token,
+            'evaluation_receipt_token' => $queue['exam_permit_token'] ?? $token,
             'exam_permit_token' => $queue['exam_permit_token'] ?? $token,
             'security_verification_hash' => $securityHash,
             'verification_timestamp' => $now,
-            'registrar_seal' => 'PLP-REGISTRAR-AUTHENTICATED',
+            'registrar_seal' => 'AAAAA13-REGISTRAR-AUTHENTICATED',
         ];
     }
 

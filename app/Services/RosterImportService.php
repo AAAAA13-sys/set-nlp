@@ -366,8 +366,8 @@ class RosterImportService
     {
         $lines = [];
         $lines[] = 'sep=,';
-        $lines[] = '# PAMANTASAN NG LUNGSOD NG PASIG • calamanCy + VADER Qualitative SET Synthesis Export';
-        $lines[] = '# Reference: https://plpasig.edu.ph/ • NLP Engine: tl_calamancy_md';
+        $lines[] = '# SCHOOL AAAAA13 • calamanCy + VADER Qualitative SET Synthesis Export';
+        $lines[] = '# Reference: https://aaaaa13.edu/ • NLP Engine: tl_calamancy_md';
         $lines[] = '';
 
         // Section 1: Top Descriptors

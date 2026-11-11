@@ -635,8 +635,8 @@ class EvaluationReportingService
             'target_met_count' => count(array_filter($heatmapItems, fn($i) => $i['target_met'])),
             'band_distribution' => $bandCounts,
             'sections' => $heatmapItems,
-            'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
-            'portal_reference' => 'https://plpasig.edu.ph/',
+            'institution' => 'SCHOOL AAAAA13',
+            'portal_reference' => 'https://aaaaa13.edu/',
             'generated_at' => date('Y-m-d H:i:s'),
         ];
     }
@@ -1018,7 +1018,7 @@ class EvaluationReportingService
             'total_faculty_evaluated' => array_sum($tierCounts),
             'tier_counts' => $tierCounts,
             'tiers' => $tiers,
-            'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
+            'institution' => 'SCHOOL AAAAA13',
             'generated_at' => date('Y-m-d H:i:s'),
         ];
     }
@@ -1108,7 +1108,7 @@ class EvaluationReportingService
                     ':variance_thresh' => 0.0,
                     ':mean_thresh' => self::WATCHLIST_MIN_MEAN_SCORE,
                     ':neg_pct' => self::WATCHLIST_MAX_NEGATIVE_PCT,
-                    ':announcement' => 'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active.',
+                    ':announcement' => 'School AAAAA13 Student Evaluation of Teachers (SET) is currently active.',
                     ':starts_at' => '2026-08-15 08:00:00',
                     ':ends_at' => '2026-12-20 23:59:59',
                     ':timezone' => 'Asia/Manila',
@@ -1182,7 +1182,7 @@ class EvaluationReportingService
             'straight_line_variance_threshold' => is_array($config) ? (float) ($config['straight_line_variance_threshold'] ?? 0.0) : 0.0,
             'watchlist_mean_threshold' => is_array($config) ? (float) ($config['watchlist_mean_threshold'] ?? self::WATCHLIST_MIN_MEAN_SCORE) : self::WATCHLIST_MIN_MEAN_SCORE,
             'watchlist_negative_sentiment_pct' => is_array($config) ? (float) ($config['watchlist_negative_sentiment_pct'] ?? self::WATCHLIST_MAX_NEGATIVE_PCT) : self::WATCHLIST_MAX_NEGATIVE_PCT,
-            'announcement_message' => is_array($config) ? (string) ($config['announcement_message'] ?? '') : 'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active.',
+            'announcement_message' => is_array($config) ? (string) ($config['announcement_message'] ?? '') : 'School AAAAA13 Student Evaluation of Teachers (SET) is currently active.',
             'starts_at' => $startsAt,
             'ends_at' => $endsAt,
             'participation_summary' => [
@@ -1344,7 +1344,7 @@ class EvaluationReportingService
                 ':variance_thresh' => $varianceThresh,
                 ':mean_thresh' => $meanThresh,
                 ':neg_pct' => $negPctThresh,
-                ':announcement' => $announcement ?? 'Pamantasan ng Lungsod ng Pasig (PLP) Student Evaluation of Teachers (SET) is currently active.',
+                ':announcement' => $announcement ?? 'School AAAAA13 Student Evaluation of Teachers (SET) is currently active.',
                 ':starts_at' => $startsAt ?? '2026-08-15 08:00:00',
                 ':ends_at' => $endsAt ?? '2026-12-20 23:59:59',
                 ':timezone' => $timezone,

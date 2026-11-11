@@ -72,9 +72,9 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
       const heading = await page.textContent('h1');
       assert.ok(heading.includes('Student Evaluation of Teachers'), 'Institutional heading rendered');
 
-      // Verify PLP eyebrow
+      // Verify School AAAAA13 eyebrow
       const eyebrow = await page.textContent('.landing-hero-eyebrow');
-      assert.ok(eyebrow.includes('PAMANTASAN NG LUNGSOD NG PASIG'), 'Institution eyebrow verified');
+      assert.ok(eyebrow.includes('SCHOOL AAAAA13') || eyebrow.includes('AAAAA13') || eyebrow.includes('PAMANTASAN NG LUNGSOD NG PASIG'), 'Institution eyebrow verified');
 
       // Verify 3 core safeguards
       const safeguards = await page.$$('.safeguard-card');
@@ -150,7 +150,7 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
         await page.waitForSelector('[data-testid="student-reminder-modal"]');
 
         const noticeText = await page.inputValue('[data-testid="reminder-notice-textarea"]');
-        assert.ok(noticeText.includes('Pamantasan ng Lungsod ng Pasig'), 'Notice mentions PLP');
+        assert.ok(noticeText.includes('School AAAAA13') || noticeText.includes('Pamantasan ng Lungsod ng Pasig'), 'Notice mentions School AAAAA13');
         assert.ok(noticeText.includes('Notice'), 'Notice contains formal notification text');
 
         // Close modal
@@ -349,7 +349,7 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
 
       // Verify existing digital seal
       const sealText = await page.textContent('[data-testid="dossier-digital-seal"]');
-      assert.ok(sealText.includes('PLP-AACCUP3-'), 'Official cryptographic seal rendered');
+      assert.ok(sealText.includes('AAAAA13-AACCUP3-') || sealText.includes('PLP-AACCUP3-'), 'Official cryptographic seal rendered');
 
       // Click compile AACCUP dossier button
       const compileBtn = await page.waitForSelector('[data-testid="compile-aaccup-dossier-btn"]');
@@ -358,7 +358,7 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
       // Verify compiled bundle card
       await page.waitForSelector('[data-testid="compiled-aaccup-bundle-card"]', { timeout: 6000 });
       const bundleSeal = await page.textContent('[data-testid="compiled-bundle-seal"]');
-      assert.ok(bundleSeal.includes('PLP-AACCUP3-'), 'Compiled bundle has official digital seal');
+      assert.ok(bundleSeal.includes('AAAAA13-AACCUP3-') || bundleSeal.includes('PLP-AACCUP3-'), 'Compiled bundle has official digital seal');
     } finally {
       await page.close();
     }

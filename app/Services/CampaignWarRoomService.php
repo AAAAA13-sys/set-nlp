@@ -419,8 +419,8 @@ class CampaignWarRoomService
             'department_filter_id' => $departmentId,
             'total_pending_students' => count($recipients),
             'total_pending_evaluations' => $totalPendingEvaluations,
-            'reminder_subject' => "Pamantasan ng Lungsod ng Pasig · Student Evaluation Notice ({$termName})",
-            'reminder_template' => "Dear Student,\n\nThis is an institutional notice from the Office of Academic Affairs regarding your course evaluations for {$termName}. Your valuable and anonymous feedback helps improve instructional quality at Pamantasan ng Lungsod ng Pasig.\n\nPlease log in to EvaluaTech (https://evaluatech.plpasig.edu.ph) when ready to complete your remaining course evaluations.\n\nNote: Your evaluations are 100% anonymous and cryptographically decoupled. The university tracks evaluation participation to ensure institutional compliance.\n\nThank you,\nOffice of Academic Affairs\nPamantasan ng Lungsod ng Pasig",
+            'reminder_subject' => "School AAAAA13 · Student Evaluation Notice ({$termName})",
+            'reminder_template' => "Dear Student,\n\nThis is an institutional notice from the Office of Academic Affairs regarding your course evaluations for {$termName}. Your valuable and anonymous feedback helps improve instructional quality at School AAAAA13.\n\nPlease log in to EvaluaTech (https://evaluatech.aaaaa13.edu) when ready to complete your remaining course evaluations.\n\nNote: Your evaluations are 100% anonymous and cryptographically decoupled. The university tracks evaluation participation to ensure institutional compliance.\n\nThank you,\nOffice of Academic Affairs\nSchool AAAAA13",
             'recipients' => $recipients,
             'generated_at' => date('Y-m-d H:i:s'),
         ];

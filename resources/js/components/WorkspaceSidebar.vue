@@ -163,7 +163,7 @@ async function handleSignOut() {
         <div class="sidebar-brand-identity">
           <div class="sidebar-monogram" aria-hidden="true">e.</div>
           <div v-if="!collapsed" class="sidebar-brand-copy">
-            <strong class="sidebar-brand-name">PLP EvaluTech</strong>
+            <strong class="sidebar-brand-name">AAAAA13 EvaluTech</strong>
             <span class="sidebar-brand-sub">FACULTY EVALUATION</span>
           </div>
         </div>

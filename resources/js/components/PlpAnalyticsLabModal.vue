@@ -126,7 +126,7 @@ const validatedProfQuestions = computed(() =>
       class="modal-card plp-nlp-lab-card card"
       style="max-width: 860px; max-height: 90vh; overflow-y: auto;"
     >
-      <div class="plp-seal-watermark" aria-hidden="true">PLP • PASIG • 2000</div>
+      <div class="plp-seal-watermark" aria-hidden="true">AAAAA13 • EVALUATECH</div>
 
     <header class="plp-lab-header">
       <div>

@@ -86,7 +86,7 @@ onMounted(() => {
         <div class="plp-logo-badge">
           <span class="plp-seal-symbol">🏛</span>
           <div>
-            <h1 class="plp-univ-title">PAMANTASAN NG LUNGSOD NG PASIG</h1>
+            <h1 class="plp-univ-title">SCHOOL AAAAA13</h1>
             <p class="plp-sub-title">Office of the University Registrar · Student Evaluation Clearance Verification</p>
           </div>
         </div>
@@ -191,14 +191,14 @@ onMounted(() => {
             <span class="digest-label">REGISTRAR CRYPTOGRAPHIC PROOF:</span>
             <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
               <code class="digest-code font-mono" data-testid="permit-security-hash">
-                {{ verificationResult.permit_serial || verificationResult.security_hash || 'PLP-REGISTRAR-AACCUP3-SEALED-2026' }}
+                {{ verificationResult.permit_serial || verificationResult.security_hash || 'AAAAA13-REGISTRAR-AACCUP3-SEALED-2026' }}
               </code>
               <button
                 type="button"
                 class="copy-hash-btn"
                 data-testid="copy-clearance-hash-btn"
-                style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 4px; padding: 0.2rem 0.6rem; font-size: 0.75rem; cursor: pointer; color: #103c2e; font-weight: 600;"
-                @click="copyDigest(verificationResult.permit_serial || verificationResult.security_hash || 'PLP-REGISTRAR-AACCUP3-SEALED-2026')"
+                style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 4px; padding: 0.2rem 0.6rem; font-size: 0.75rem; cursor: pointer; color: var(--ink); font-weight: 600;"
+                @click="copyDigest(verificationResult.permit_serial || verificationResult.security_hash || 'AAAAA13-REGISTRAR-AACCUP3-SEALED-2026')"
               >
                 {{ copiedHash ? '✓ Copied' : '📋 Copy Hash' }}
               </button>
@@ -250,7 +250,7 @@ onMounted(() => {
       <!-- Footer Policy -->
       <footer class="verify-footer">
         <p>
-          Pamantasan ng Lungsod ng Pasig · Alcalde Jose St, Kapasigan, Pasig, Metro Manila · Protected under RA 10173 Data Privacy
+          School AAAAA13 · Office of the University Registrar · Protected under RA 10173 Data Privacy
         </p>
       </footer>
     </div>

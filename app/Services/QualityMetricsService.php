@@ -275,7 +275,7 @@ class QualityMetricsService
     }
 
     /**
-     * Evaluate a live 10-item SUS submission (1..5) and compare against the PLP 83.92 institutional benchmark.
+     * Evaluate a live 10-item SUS submission (1..5) and compare against the School AAAAA13 83.92 institutional benchmark.
      *
      * @param array<int, int|float> $items
      * @return array<string, mixed>
@@ -324,8 +324,8 @@ class QualityMetricsService
         }
 
         return [
-            'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
-            'reference' => 'https://plpasig.edu.ph/',
+            'institution' => 'SCHOOL AAAAA13',
+            'reference' => 'https://aaaaa13.edu/',
             'cohort' => $cleanCohort,
             'sus_score' => $susScore,
             'qualitative_grade' => $qualitativeGrade,
@@ -339,16 +339,16 @@ class QualityMetricsService
     }
 
     /**
-     * Return Pamantasan ng Lungsod ng Pasig (PLP) institutional accreditation metadata and quality metrics.
+     * Return School AAAAA13 institutional accreditation metadata and quality metrics.
      *
      * @param array<string, mixed>|null $actionPlanSummary
      * @return array<string, mixed>
      */
-    public function getPlpAccreditationSummary(?array $actionPlanSummary = null): array
+    public function getInstitutionalAccreditationSummary(?array $actionPlanSummary = null): array
     {
         return [
-            'institution' => 'PAMANTASAN NG LUNGSOD NG PASIG',
-            'reference' => 'https://plpasig.edu.ph/',
+            'institution' => 'SCHOOL AAAAA13',
+            'reference' => 'https://aaaaa13.edu/',
             'accreditation_frameworks' => [
                 'aaccup' => [
                     'standard' => 'AACCUP Area III: Curriculum & Instruction',
@@ -392,5 +392,16 @@ class QualityMetricsService
                 'resolved_pct' => 100.0,
             ],
         ];
+    }
+
+    /**
+     * Backward-compatible alias for existing callers.
+     *
+     * @param array<string, mixed>|null $actionPlanSummary
+     * @return array<string, mixed>
+     */
+    public function getPlpAccreditationSummary(?array $actionPlanSummary = null): array
+    {
+        return $this->getInstitutionalAccreditationSummary($actionPlanSummary);
     }
 }

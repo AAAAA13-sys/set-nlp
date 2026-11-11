@@ -1,4 +1,4 @@
-# Pamantasan ng Lungsod ng Pasig (PLP) — EvaluaTech
+# School AAAAA13 — EvaluaTech
 # Managed Kiosk Deployment Plan for Computer Laboratories
 
 **Document Version:** 1.0 (AY 2026–2027)  
@@ -14,7 +14,7 @@ A fundamental architectural distinction exists between **Web Application Fullscr
 ```
 +-----------------------------------+------------------------------------------+
 | Standard Web Fullscreen Mode      | Managed Kiosk Mode                       |
-| (Student Personal Devices)        | (PLP University Computer Labs)           |
+| (Student Personal Devices)        | (School AAAAA13 University Computer Labs)           |
 +-----------------------------------+------------------------------------------+
 | - Browser JavaScript API          | - Operating System level policy          |
 | - Focus assistance (F11 / API)    | - Complete hardware shortcut blocking    |
@@ -28,7 +28,7 @@ A fundamental architectural distinction exists between **Web Application Fullscr
 ### Critical Policy Guardrails
 1. **Never Enforce Kiosk Lockdown on Personal Devices:** Students using personal smartphones, laptops, or home computers must never have intrusive device-level lockdown scripts or unclosable window loops imposed upon them. The web application provides voluntary, focused fullscreen mode (`document.documentElement.requestFullscreen()`) with graceful degradation and visible exit controls.
 2. **Never Treat Ordinary Browser Mode as Kiosk-Secured:** Web browser tabs cannot physically block `Alt+Tab`, `Windows Key`, `Ctrl+Alt+Delete`, or OS notifications. System documentation and administrative reports must never falsely claim that browser-based SET evaluation constitutes an uncircumventable device lockdown.
-3. **No Automatic Penalization on Loss of Focus:** In accordance with PLP student privacy standards, transient focus changes (switching tabs, notifications, or exiting fullscreen) must **never** be used to invalidate evaluations, auto-submit unfinished drafts, or trigger academic misconduct reports.
+3. **No Automatic Penalization on Loss of Focus:** In accordance with School AAAAA13 student privacy standards, transient focus changes (switching tabs, notifications, or exiting fullscreen) must **never** be used to invalidate evaluations, auto-submit unfinished drafts, or trigger academic misconduct reports.
 
 ---
 
@@ -44,14 +44,14 @@ Windows Assigned Access allows a single Universal Windows Platform (UWP) app or 
 Create a non-privileged local account on the lab master image:
 ```powershell
 # Run in Administrator PowerShell
-net user PLPStudentKiosk EvaluatechLab2026! /add /passwordchg:no
-wmic useraccount where name='PLPStudentKiosk' set PasswordExpires=FALSE
+net user School AAAAA13StudentKiosk EvaluatechLab2026! /add /passwordchg:no
+wmic useraccount where name='School AAAAA13StudentKiosk' set PasswordExpires=FALSE
 ```
 
 #### Step 2: Configure Microsoft Edge Kiosk Mode
-In Windows Settings (`Accounts > Other users > Set up a kiosk`), select `PLPStudentKiosk` and specify **Microsoft Edge**:
+In Windows Settings (`Accounts > Other users > Set up a kiosk`), select `School AAAAA13StudentKiosk` and specify **Microsoft Edge**:
 - **Kiosk Mode Type:** Digital Signage / Interactive Kiosk (Full-Screen).
-- **Target URL:** `http://127.0.0.1:8000/queue` (or institutional domain `https://evaluatech.plpasig.edu.ph/queue`).
+- **Target URL:** `http://127.0.0.1:8000/queue` (or institutional domain `https://evaluatech.aaaaa13.edu/queue`).
 - **Idle Timeout:** 15 minutes (prompts user before session reset).
 
 #### Step 3: Enforce Keyboard Filtering via Group Policy
@@ -119,7 +119,7 @@ In the event of a student station malfunction, network disconnection, or physica
 ### Procedure 1: Emergency Proctor Exit (Windows Kiosk)
 1. Press `Ctrl + Alt + Delete`.
 2. Select **Sign Out** or **Switch User**.
-3. Log in with the Laboratory Administrator credential (`PLP-LabAdmin`).
+3. Log in with the Laboratory Administrator credential (`School AAAAA13-LabAdmin`).
 4. Launch Task Manager or command prompt to inspect network logs.
 
 ### Procedure 2: Interrupted Evaluation Recovery
@@ -142,7 +142,7 @@ In the event of a student station malfunction, network disconnection, or physica
 
 ```
 +---------------------------------------------------------------------------------+
-|                       PLP Campus Core Network (VLAN 40)                         |
+|                       School AAAAA13 Campus Core Network (VLAN 40)                         |
 +---------------------------------------------------------------------------------+
                                       |
          +----------------------------+----------------------------+

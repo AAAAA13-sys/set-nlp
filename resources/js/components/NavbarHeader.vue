@@ -135,7 +135,7 @@ async function handleLogout() {
   <header
     class="navbar-header sch-topbar"
     role="banner"
-    aria-label="Pamantasan ng Lungsod ng Pasig Institutional Portal Header"
+    aria-label="School AAAAA13 Institutional Portal Header"
   >
     <div class="sch-topbar-inner">
       <!-- Left: Brand / Home Link -->
@@ -164,8 +164,8 @@ async function handleLogout() {
         <router-link :to="homeDestination" class="sch-brand-link" title="EvaluaTech Home">
           <div class="sch-monogram-badge" aria-hidden="true">e.</div>
           <div class="sch-brand-stack">
-            <span class="sr-only">PAMANTASAN NG LUNGSOD NG PASIG · plpasig.edu.ph</span>
-            <div class="sch-brand-name">PLP EvaluTech</div>
+            <span class="sr-only">School AAAAA13 · aaaaa13.edu</span>
+            <div class="sch-brand-name">AAAAA13 EvaluTech</div>
             <h1 class="sch-portal-heading">Student Evaluation of Teachers<span class="sr-only"> Institutional Evaluation Portal</span></h1>
           </div>
         </router-link>
@@ -248,10 +248,16 @@ async function handleLogout() {
             data-testid="navbar-clearance-badge"
             role="status"
           >
-            <span>Role:</span>
-            <strong>
-              {{ authStore.user?.role_label || String(authStore.currentRole || '').toUpperCase() }}
-            </strong>
+            <template v-if="String(authStore.currentRole || '').toLowerCase() === 'student'">
+              <span>Evaluation:</span>
+              <strong>{{ isCleared ? 'Done' : 'Pending' }}</strong>
+            </template>
+            <template v-else>
+              <span>Role:</span>
+              <strong>
+                {{ authStore.user?.role_label || String(authStore.currentRole || '').toUpperCase() }}
+              </strong>
+            </template>
           </div>
 
           <div class="sch-signed-in" data-testid="logged-in-user">
@@ -276,7 +282,7 @@ async function handleLogout() {
             v-if="route?.path !== '/verify'"
             to="/verify"
             class="sch-nav-pill"
-            style="font-size: 0.82rem; font-weight: 700; color: #103c2e; padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid #103c2e; text-decoration: none; background: #ffffff;"
+            style="font-size: 0.82rem; font-weight: 700; color: #abc4ff; padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid #3b82f6; text-decoration: none; background: #1e293b;"
             data-testid="navbar-verify-permit-btn"
           >
             Verify Status 🔍
@@ -285,7 +291,7 @@ async function handleLogout() {
             v-if="route?.path !== '/login'"
             to="/login"
             class="sch-nav-pill"
-            style="font-size: 0.82rem; font-weight: 700; background: #f4cd42; color: #103c2e; padding: 0.35rem 0.75rem; border-radius: 8px; text-decoration: none; border: 1px solid #f4cd42;"
+            style="font-size: 0.82rem; font-weight: 700; background: #2563eb; color: #ffffff; padding: 0.35rem 0.75rem; border-radius: 8px; text-decoration: none; border: 1px solid #2563eb;"
             data-testid="navbar-signin-btn"
           >
             Sign In →
@@ -377,10 +383,10 @@ async function handleLogout() {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: #ffffff;
-  border-bottom: 1px solid #dbe3da;
-  color: #1f3028;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
+  color: #f8fafc;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .sch-topbar-inner {
@@ -415,8 +421,8 @@ async function handleLogout() {
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: #f4cd42;
-  color: #103c2e;
+  background: #abc4ff;
+  color: #0f172a;
   font-family: 'Newsreader', Georgia, serif;
   font-size: 1.15rem;
   font-weight: 700;
@@ -440,7 +446,7 @@ async function handleLogout() {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #0b3322;
+  color: #abc4ff;
 }
 
 .sch-portal-heading {
@@ -448,7 +454,7 @@ async function handleLogout() {
   font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: #1f3028;
+  color: #f8fafc;
 }
 
 /* Center Desktop Top-Bar Navigation */
@@ -467,20 +473,20 @@ async function handleLogout() {
   font-size: 0.82rem;
   font-weight: 600;
   text-decoration: none;
-  color: #4b5e53;
+  color: #cbd5e1;
   background: transparent;
   transition: background-color 0.14s ease, color 0.14s ease;
 }
 
 .sch-nav-pill:hover {
-  background: #edf3ee;
-  color: #103c2e;
+  background: #1e293b;
+  color: #abc4ff;
 }
 
 .sch-nav-pill.is-active,
 .sch-nav-pill.router-link-exact-active {
-  background: #103c2e;
-  color: #f4cd42;
+  background: #2563eb;
+  color: #ffffff;
 }
 
 /* Right Section */
@@ -499,9 +505,9 @@ async function handleLogout() {
   height: 34px;
   padding: 0 0.65rem;
   border-radius: 9px;
-  border: 1px solid #cfd9d0;
-  background: #f6f8f4;
-  color: #4b5e53;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: #cbd5e1;
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
@@ -509,9 +515,9 @@ async function handleLogout() {
 }
 
 .sch-cmdk-trigger:hover {
-  background: #edf3ee;
-  border-color: #176347;
-  color: #103c2e;
+  background: #334155;
+  border-color: #abc4ff;
+  color: #ffffff;
 }
 
 .sch-cmdk-trigger kbd {
@@ -520,9 +526,9 @@ async function handleLogout() {
   font-weight: 700;
   padding: 0.08rem 0.35rem;
   border-radius: 5px;
-  background: #ffffff;
-  border: 1px solid #cfd9d0;
-  color: #103c2e;
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #abc4ff;
 }
 
 .sch-tool-btn {
@@ -532,9 +538,9 @@ async function handleLogout() {
   height: 34px;
   padding: 0 0.65rem;
   border-radius: 9px;
-  border: 1px solid #cfd9d0;
-  background: #f6f8f4;
-  color: #4b5e53;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: #cbd5e1;
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
@@ -542,9 +548,9 @@ async function handleLogout() {
 }
 
 .sch-tool-btn:hover {
-  background: #edf3ee;
-  border-color: #176347;
-  color: #103c2e;
+  background: #334155;
+  border-color: #abc4ff;
+  color: #ffffff;
 }
 
 .sch-tool-btn-icon {
@@ -555,7 +561,7 @@ async function handleLogout() {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.72rem;
   font-weight: 700;
-  color: #103c2e;
+  color: #abc4ff;
 }
 
 .sch-ai-chip {
@@ -564,8 +570,8 @@ async function handleLogout() {
   justify-content: center;
   padding: 0.08rem 0.35rem;
   border-radius: 4px;
-  background: #f4cd42;
-  color: #103c2e;
+  background: #abc4ff;
+  color: #0f172a;
   font-size: 0.65rem;
   font-weight: 800;
   letter-spacing: 0.04em;
@@ -578,14 +584,14 @@ async function handleLogout() {
   height: 32px;
   padding: 0 0.68rem;
   border-radius: 999px;
-  background: #f6f8f4;
-  border: 1px solid #dbe3da;
+  background: #1e293b;
+  border: 1px solid #334155;
   font-size: 0.74rem;
-  color: #3f5247;
+  color: #94a3b8;
 }
 
 .sch-term-chip strong {
-  color: #103c2e;
+  color: #f1f5f9;
 }
 
 .sch-status-pill {
@@ -596,9 +602,9 @@ async function handleLogout() {
   padding: 0 0.68rem;
   border-radius: 999px;
   font-size: 0.74rem;
-  border: 1px solid #bbf7d0;
-  background: #f0fdf4;
-  color: #14532d;
+  border: 1px solid #38bdf8;
+  background: #0369a1;
+  color: #ffffff;
 }
 
 .sch-signed-in {
@@ -606,22 +612,22 @@ async function handleLogout() {
   align-items: center;
   gap: 0.3rem;
   font-size: 0.75rem;
-  color: #4b5e53;
+  color: #94a3b8;
 }
 
 .sch-user-id {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
-  color: #1f3028;
+  color: #f1f5f9;
 }
 
 .sch-logout-btn {
   height: 32px;
   padding: 0 0.72rem;
   border-radius: 8px;
-  border: 1px solid #cfd9d0;
-  background: #ffffff;
-  color: #1f3028;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: #f1f5f9;
   font-size: 0.76rem;
   font-weight: 700;
   cursor: pointer;
@@ -629,9 +635,9 @@ async function handleLogout() {
 }
 
 .sch-logout-btn:hover {
-  background: #fef2f2;
-  border-color: #fca5a5;
-  color: #991b1b;
+  background: #7f1d1d;
+  border-color: #ef4444;
+  color: #ffffff;
 }
 
 .mobile-menu-trigger {
@@ -639,9 +645,9 @@ async function handleLogout() {
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  border: 1px solid #cfd9d0;
-  background: #f6f8f4;
-  color: #103c2e;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: #f8fafc;
   align-items: center;
   justify-content: center;
   cursor: pointer;
@@ -654,10 +660,10 @@ async function handleLogout() {
   flex-direction: column;
   gap: 1rem;
   padding: 1.1rem 1.25rem 1.5rem;
-  background: #ffffff;
-  border-top: 1px solid #e5e7eb;
-  border-bottom: 2px solid #103c2e;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+  background: #0f172a;
+  border-top: 1px solid #1e293b;
+  border-bottom: 2px solid #2563eb;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
 }
 
 .mobile-menu-section {
@@ -671,7 +677,7 @@ async function handleLogout() {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #6b7280;
+  color: #94a3b8;
   margin-bottom: 0.2rem;
 }
 
@@ -683,23 +689,23 @@ async function handleLogout() {
   border-radius: 8px;
   font-size: 0.92rem;
   font-weight: 600;
-  color: #374151;
+  color: #e2e8f0;
   text-decoration: none;
-  background: #f9f9f8;
+  background: #1e293b;
   transition: background-color 0.14s ease, color 0.14s ease;
 }
 
 .mobile-nav-item.is-active {
-  background: #103c2e;
-  color: #f4cd42;
+  background: #2563eb;
+  color: #ffffff;
 }
 
 .mobile-active-tag {
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  background: #f4cd42;
-  color: #103c2e;
+  background: #abc4ff;
+  color: #0f172a;
   padding: 0.15rem 0.45rem;
   border-radius: 4px;
 }

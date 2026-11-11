@@ -1,22 +1,22 @@
-# Pamantasan ng Lungsod ng Pasig — EvaluaTech Institutional System Architecture & Operational Manual
+# School AAAAA13 — EvaluaTech Institutional System Architecture & Operational Manual
 
-**Platform:** EvaluaTech / PLP EvaluTech  
-**Governance Standard:** AACCUP Level III (Area III: Curriculum and Instruction) & CHED CMO 46 Institutional Quality Assurance  
-**Legal Framework:** Republic Act No. 10173 (Data Privacy Act of 2012)  
-**Security Architecture:** 63-Control OWASP Defense-in-Depth & Dual-Token Cryptographic Decoupling  
-**Language Intelligence:** `calamanCy` Filipino/Taglish Morphological Pipeline + VADER Sentiment Polarity ($[-1.0, +1.0]$)  
+**Platform:** EvaluaTech / EvaluaTech
+**Governance Standard:** AACCUP Level III (Area III: Curriculum and Instruction) & CHED CMO 46 Institutional Quality Assurance
+**Legal Framework:** Republic Act No. 10173 (Data Privacy Act of 2012)
+**Security Architecture:** 63-Control OWASP Defense-in-Depth & Dual-Token Cryptographic Decoupling
+**Language Intelligence:** `calamanCy` Filipino/Taglish Morphological Pipeline + VADER Sentiment Polarity ($[-1.0, +1.0]$)
 **Document Revision:** 3.0.0 (Authoritative Institutional Edition)
 
 ---
 
 ## 1. Executive Summary & Institutional Mission
 
-Pamantasan ng Lungsod ng Pasig (PLP) is an esteemed local government university dedicated to academic excellence, social transformation, and continuous quality improvement. **EvaluaTech** is the official institutional student evaluation of teachers (SET) platform engineered for the university.
+School AAAAA13 is an esteemed local government university dedicated to academic excellence, social transformation, and continuous quality improvement. **EvaluaTech** is the official institutional student evaluation of teachers (SET) platform engineered for the university.
 
 The system replaces legacy, coercive paper evaluation methods with a privacy-preserving, cryptographically decoupled digital architecture. EvaluaTech guarantees complete student anonymity, eliminates artificial answering gates, enforces double-blind grading integrity, and provides deep natural language feedback synthesis across the university's colleges and departments.
 
 ### The Institutional Zero Permits Policy
-**Pamantasan ng Lungsod ng Pasig strictly operates under a Zero Permits Policy.** Examination permits are never issued, mandated, or gated behind student evaluations. Evaluation is a formative academic instrument for instructional excellence, not an administrative barrier to student examination rights.
+**School AAAAA13 strictly operates under a Zero Permits Policy.** Examination permits are never issued, mandated, or gated behind student evaluations. Evaluation is a formative academic instrument for instructional excellence, not an administrative barrier to student examination rights.
 
 Instead, the platform implements **Institutional Evaluation Participation Tracking**:
 1. Identifies students who have completed or have pending evaluations in the active term.
@@ -91,7 +91,7 @@ flowchart TD
         Dean["4. College Dean\n(college-wide analytics, watchlist,\nAACCUP Level III dossier)"]
         Admin["5. Registrar / Administrator\n(cycle setup, Asia/Manila windows,\nbulk locks, participation tracking)"]
     end
-    
+
     Student -->|Immediate Evaluation| Vault[Anonymous Evaluation Vault]
     Student -->|Clearance Token| Cert[Completion Certificate Portal]
     Vault -->|Double-Blind Lock| Faculty
@@ -108,9 +108,9 @@ flowchart TD
 
 #### Step-by-Step Student Experience:
 1. **Public Landing Page (`/`):**
-   The student visits the official institutional portal, reviews the Pamantasan ng Lungsod ng Pasig SET mission, reads the Anonymity Charter, and navigates to **Sign In** (`/login`).
+   The student visits the official institutional portal, reviews the School AAAAA13 SET mission, reads the Anonymity Charter, and navigates to **Sign In** (`/login`).
 2. **Ephemeral Authentication:**
-   Signs in using institutional credentials (e.g., `2024-10892@plpasig.edu.ph`). The server issues an HMAC-SHA256 Bearer token stored ephemerally in `sessionStorage` (cleared immediately upon tab closure).
+   Signs in using institutional credentials (e.g., `2024-10892@aaaaa13.edu`). The server issues an HMAC-SHA256 Bearer token stored ephemerally in `sessionStorage` (cleared immediately upon tab closure).
 3. **Distraction-Free Workspace (`/queue`):**
    Renders a full-width student workspace with **zero sidebars, zero collapsible side rails, and zero exam permit banners**. The top bar indicates the active academic term and progress counter (e.g., `3 of 6 Courses Completed — 50%`).
 4. **Immediate Two-Step Evaluation Stepper (`/evaluate/:id`):**
@@ -120,7 +120,7 @@ flowchart TD
 5. **Digital Evaluation Completion Certificate:**
    Upon completing all assigned course evaluations ($100\%$), the student receives an official **Digital Evaluation Completion Certificate** bearing:
    - A signed cryptographic clearance token (`PERMIT-*-VERIFIED` / `CLR-*`).
-   - Official PLP Registrar authentication seal (`SEAL: PLP-REGISTRAR-AUTHENTICATED`).
+   - Official School AAAAA13 Registrar authentication seal (`SEAL: School AAAAA13-REGISTRAR-AUTHENTICATED`).
    - Print & PDF export layout formatted for institutional record keeping.
 
 ---
@@ -174,7 +174,7 @@ flowchart TD
    Flags instructors requiring administrative or pedagogical support based on validated thresholds:
    $$\text{Flagged} \iff \mu < 3.50 \quad\lor\quad \text{Negative Sentiment Share} > 35\%$$
 3. **AACCUP Level III Evidence Dossier Compilation:**
-   One-click compilation of sealed accreditation evidence dossiers (`PLP-AACCUP3-*`):
+   One-click compilation of sealed accreditation evidence dossiers (`School AAAAA13-AACCUP3-*`):
    - Executive quality summaries across all 8 Area III accreditation criteria.
    - Physical separation of teaching feedback from non-teaching campus facilities feedback (`Unclassified / Needs Review`).
    - Cryptographically signed dossier hash ready for accreditation auditors.
@@ -272,4 +272,4 @@ $$\text{Total Verification Suite} = 181\text{ Automated Units } (100\%\text{ PAS
 
 ## 6. Conclusion & Institutional Commitment
 
-EvaluaTech exemplifies the highest standard of academic computing for **Pamantasan ng Lungsod ng Pasig**. By uniting mathematical student anonymity, immediate submission readiness, double-blind grading protection, deep linguistic analytics, and a strict Zero Permits Policy, the platform empowers students and faculty alike in pursuit of educational excellence.
+EvaluaTech exemplifies the highest standard of academic computing for **School AAAAA13**. By uniting mathematical student anonymity, immediate submission readiness, double-blind grading protection, deep linguistic analytics, and a strict Zero Permits Policy, the platform empowers students and faculty alike in pursuit of educational excellence.

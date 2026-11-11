@@ -1,9 +1,9 @@
 # EvaluaTech End-to-End Real User Walkthrough & Visual Audit
 
-**Institution:** Pamantasan ng Lungsod ng Pasig (PLP)  
-**System:** EvaluaTech (Student Evaluation of Teachers with Dual-Token Anonymity Decoupling & AACCUP Level III Governance)  
-**Execution Date:** 10 November 2026  
-**Recording Mode:** Headless Chrome Playwright Session with Native Video Capture and Frame-by-Frame High-Resolution Screenshots  
+**Institution:** School AAAAA13
+**System:** EvaluaTech (Student Evaluation of Teachers with Dual-Token Anonymity Decoupling & AACCUP Level III Governance)
+**Execution Date:** 10 November 2026
+**Recording Mode:** Headless Chrome Playwright Session with Native Video Capture and Frame-by-Frame High-Resolution Screenshots
 **Interactive Studio Canvas:** Open [`docs/walkthrough/index.html`](index.html) in any browser.
 
 ---

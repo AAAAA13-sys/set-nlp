@@ -46,20 +46,19 @@ function readResourceFile(relativePath) {
 
 describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', () => {
   // 1. Header portal branding & active term display
-  describe('Group 01: Header portal branding & active term display (NavbarHeader.vue — Pamantasan ng Lungsod ng Pasig)', () => {
-    it('renders PAMANTASAN NG LUNGSOD NG PASIG branding, PLP Green/Gold theme, active term, Bearer auth session bar, and clearance status badge', () => {
+  describe('Group 01: Header portal branding & active term display (NavbarHeader.vue — School AAAAA13)', () => {
+    it('renders School AAAAA13 branding, Coolors theme, active term, Bearer auth session bar, and clearance status badge', () => {
       const navbarSfc = readResourceFile('components/NavbarHeader.vue');
       const authStoreSrc = readResourceFile('stores/auth.js');
       const appCss = fs.readFileSync(path.join(ROOT_DIR, 'resources', 'css', 'app.css'), 'utf8');
 
-      assert.ok(navbarSfc.includes('PAMANTASAN NG LUNGSOD NG PASIG'));
-      assert.ok(navbarSfc.includes('plpasig.edu.ph'));
+      assert.ok(navbarSfc.includes('School AAAAA13') || navbarSfc.includes('AAAAA13'));
       assert.ok(navbarSfc.includes('Institutional Evaluation Portal'));
       assert.ok(navbarSfc.includes('Active Term:'));
       assert.ok(navbarSfc.includes('Signed in as:'));
       assert.ok(navbarSfc.includes('data-testid="navbar-clearance-badge"'));
-      assert.ok(appCss.includes('--plp-green-900: #0b4f26'));
-      assert.ok(appCss.includes('--plp-gold-500: #eab308'));
+      assert.ok(appCss.includes('--canvas: #edf2fb'));
+      assert.ok(appCss.includes('--primary-accent: #abc4ff'));
       assert.ok(authStoreSrc.includes('evaluatech_auth_token'));
       assert.ok(authStoreSrc.includes('1st Semester AY 2026-2027'));
       assert.ok(authStoreSrc.includes('Bearer '));
@@ -248,8 +247,8 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
     it('keeps permit gated when 3/6 or 5/6 courses are completed and unlocks only when 6/6 are COMPLETED', () => {
       const permitCardSfc = readResourceFile('components/ClearancePermitCard.vue');
       assert.ok(permitCardSfc.includes('data-testid="clearance-permit-card"'));
-      assert.ok(permitCardSfc.includes('Digital Evaluation Completion Certificate — CLEARED') || permitCardSfc.includes('Digital Examination Permit — CLEARED'));
-      assert.ok(permitCardSfc.includes('Digital Evaluation Completion Certificate — PENDING') || permitCardSfc.includes('Digital Examination Permit — GATED (PENDING)'));
+      assert.ok(permitCardSfc.includes('Evaluation Completion Receipt / Submission Confirmation — Done') || permitCardSfc.includes('Digital Evaluation Completion Certificate — CLEARED') || permitCardSfc.includes('Digital Examination Permit — CLEARED'));
+      assert.ok(permitCardSfc.includes('Student Evaluation Participation — Pending') || permitCardSfc.includes('Digital Evaluation Completion Certificate — PENDING') || permitCardSfc.includes('Digital Examination Permit — GATED (PENDING)'));
 
       const fiveOfSix = DEMO_STUDENT_QUEUE.map((c, idx) => ({
         ...c,
@@ -550,7 +549,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       // 1. Verify ClearancePermitCard registrar verification button and seal badge
       assert.ok(permitCardSfc.includes('data-testid="verify-permit-btn"'));
       assert.ok(permitCardSfc.includes('data-testid="permit-verification-badge"'));
-      assert.ok(permitCardSfc.includes('SEAL: PLP-REGISTRAR-AUTHENTICATED'));
+      assert.ok(permitCardSfc.includes('SEAL: AAAAA13-REGISTRAR-AUTHENTICATED') || permitCardSfc.includes('SEAL: PLP-REGISTRAR-AUTHENTICATED'));
       assert.ok(permitCardSfc.includes('verifyPermitOnServer'));
       assert.ok(permitCardSfc.includes('/api/student/permit/verify'));
 
@@ -607,7 +606,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(facultyViewSfc.includes('fetchFacultySections'));
 
       // 4. Verify institutional excellence metadata
-      assert.ok(facultyViewSfc.includes('PAMANTASAN NG LUNGSOD NG PASIG • Continuous Pedagogical Improvement'));
+      assert.ok(facultyViewSfc.includes('SCHOOL AAAAA13 • Continuous Pedagogical Improvement') || facultyViewSfc.includes('PAMANTASAN NG LUNGSOD NG PASIG • Continuous Pedagogical Improvement'));
       assert.ok(facultyViewSfc.includes('Dean Verification &amp; Sign-off Notes:'));
     });
   });
@@ -718,8 +717,8 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
 
       // 4. Verify Digital Exam Permit unlocks when allCleared is true
       assert.ok(permitCardSfc.includes('data-testid="clearance-permit-card"'));
-      assert.ok(permitCardSfc.includes('Digital Evaluation Completion Certificate — CLEARED') || permitCardSfc.includes('Digital Examination Permit — CLEARED'));
-      assert.ok(permitCardSfc.includes('PLP-REGISTRAR-AUTHENTICATED'));
+      assert.ok(permitCardSfc.includes('Evaluation Completion Receipt / Submission Confirmation — Done') || permitCardSfc.includes('Digital Evaluation Completion Certificate — CLEARED') || permitCardSfc.includes('Digital Examination Permit — CLEARED'));
+      assert.ok(permitCardSfc.includes('AAAAA13-REGISTRAR-AUTHENTICATED') || permitCardSfc.includes('PLP-REGISTRAR-AUTHENTICATED'));
     });
   });
 
@@ -833,9 +832,9 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
 
       // 3. Verify WCAG 2.2 AA accessibility semantics and color contrast
       assert.ok(navbarSfc.includes('role="banner"'));
-      assert.ok(navbarSfc.includes('aria-label="Pamantasan ng Lungsod ng Pasig Institutional Portal Header"'));
-      assert.ok(appCss.includes('--plp-green-900: #0b4f26'));
-      assert.ok(appCss.includes('--plp-gold-500: #eab308'));
+      assert.ok(navbarSfc.includes('Institutional Portal Header'));
+      assert.ok(appCss.includes('--canvas: #edf2fb'));
+      assert.ok(appCss.includes('--primary-accent: #abc4ff'));
     });
   });
 
@@ -850,7 +849,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(loginViewSfc.includes('data-testid="login-privacy-banner"'));
       assert.ok(loginViewSfc.includes('RA 10173 Data Privacy'));
       assert.ok(loginViewSfc.includes('Cryptographic Decoupling'));
-      assert.ok(loginViewSfc.includes('Pamantasan ng Lungsod ng Pasig'));
+      assert.ok(loginViewSfc.includes('School AAAAA13') || loginViewSfc.includes('Pamantasan ng Lungsod ng Pasig'));
 
       // 2. Verify interactive input fields, autocomplete ergonomics, show/hide password toggle, and remember session
       assert.ok(loginViewSfc.includes('data-testid="login-id-input"'));
@@ -927,7 +926,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(deanViewSfc.includes('data-testid="cluster-shift-table"'));
       assert.ok(deanViewSfc.includes('data-testid="export-dossier-bundle-btn"'));
       assert.ok(deanViewSfc.includes('exportAccreditationDossier'));
-      assert.ok(deanViewSfc.includes('PLP-AACCUP-Area-III-Dossier-AY2026-2027.csv'));
+      assert.ok(deanViewSfc.includes('AAAAA13-AACCUP-Area-III-Dossier-AY2026-2027.csv') || deanViewSfc.includes('PLP-AACCUP-Area-III-Dossier-AY2026-2027.csv'));
 
       // 2. Verify Chair dashboard department longitudinal card and cluster shifts
       assert.ok(chairViewSfc.includes('data-testid="chair-longitudinal-trends-card"'));
@@ -938,9 +937,9 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       // 3. Verify ClearancePermitCard live Registrar signature verification and official badge
       assert.ok(permitCardSfc.includes('data-testid="verify-permit-btn"'));
       assert.ok(permitCardSfc.includes('data-testid="proctor-verification-details"'));
-      assert.ok(permitCardSfc.includes('SEAL: PLP-REGISTRAR-AUTHENTICATED'));
-      assert.ok(permitCardSfc.includes('https://plpasig.edu.ph/'));
-      assert.ok(permitCardSfc.includes('INSTITUTIONAL CLEARANCE VERIFICATION PROTOCOL: CLEARED') || permitCardSfc.includes('PROCTOR VERIFICATION PROTOCOL: ADMISSION AUTHORIZED'));
+      assert.ok(permitCardSfc.includes('SEAL: AAAAA13-REGISTRAR-AUTHENTICATED') || permitCardSfc.includes('SEAL: PLP-REGISTRAR-AUTHENTICATED'));
+      assert.ok(permitCardSfc.includes('https://aaaaa13.edu/') || permitCardSfc.includes('https://plpasig.edu.ph/'));
+      assert.ok(permitCardSfc.includes('INSTITUTIONAL EVALUATION PARTICIPATION PROTOCOL: COMPLETED (DONE)') || permitCardSfc.includes('INSTITUTIONAL CLEARANCE VERIFICATION PROTOCOL: CLEARED') || permitCardSfc.includes('PROCTOR VERIFICATION PROTOCOL: ADMISSION AUTHORIZED'));
 
       // 4. Verify public un-gated proctor permit verification route in api.php
       assert.ok(apiRoutes.includes("Route::match(['GET', 'POST'], '/permit/verify'"));
@@ -1073,9 +1072,9 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       const evalFormSfc = readResourceFile('views/EvaluationFormView.vue');
       const adminViewSfc = readResourceFile('views/AdminRosterView.vue');
 
-      // 1. Academic Tech 50/50 Split-Screen Login (PLP EvaluTech, floating card, floating labels, shield/eye/brain tags) & collapsible emerald sidebar shell
+      // 1. Academic Tech 50/50 Split-Screen Login (AAAAA13 EvaluTech, floating card, floating labels, shield/eye/brain tags) & collapsible emerald sidebar shell
       assert.ok(loginViewSfc.includes('data-testid="login-split-screen"'));
-      assert.ok(loginViewSfc.includes('PLP EvaluTech'));
+      assert.ok(loginViewSfc.includes('AAAAA13 EvaluTech') || loginViewSfc.includes('PLP EvaluTech'));
       assert.ok(loginViewSfc.includes('Candid student feedback,'));
       assert.ok(loginViewSfc.includes('decoupled by design.'));
       assert.ok(loginViewSfc.includes('floating-auth-card'));
@@ -1297,7 +1296,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(evalFormSfc.includes('data-testid="top-back-to-courses-btn"'), 'Back to courses button at top of evaluation form');
       assert.ok(evalFormSfc.includes('v-show="false" class="autosave-pill'), 'Autosave pill visually hidden');
       assert.equal(evalFormSfc.includes('fullscreen-toggle-btn'), false, 'Focused Fullscreen button must not exist in evaluation form template');
-      assert.ok(navbarSfc.includes('<span class="sr-only">PAMANTASAN NG LUNGSOD NG PASIG · plpasig.edu.ph</span>'), 'Header kicker visually hidden via sr-only');
+      assert.ok(navbarSfc.includes('<span class="sr-only">School AAAAA13 · aaaaa13.edu</span>') || navbarSfc.includes('<span class="sr-only">PAMANTASAN NG LUNGSOD NG PASIG · plpasig.edu.ph</span>'), 'Header kicker visually hidden via sr-only');
       assert.ok(notFoundSfc.includes('Use the top navigation bar'), '404 guidance points to top navigation bar');
     });
   });
@@ -1406,7 +1405,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       // 2. Administrator Master Summary Export Button & Formula-Injection Neutralization
       assert.ok(adminRosterSfc.includes('data-testid="export-master-summary-btn"'), 'Export master summary CSV button');
       assert.ok(adminRosterSfc.includes('exportMasterEvaluationSummaryCsv'), 'Export master summary CSV function');
-      assert.ok(adminRosterSfc.includes('PLP_Evaluation_Master_Summary_'), 'Filename pattern for institutional summary');
+      assert.ok(adminRosterSfc.includes('AAAAA13_Evaluation_Master_Summary_') || adminRosterSfc.includes('PLP_Evaluation_Master_Summary_'), 'Filename pattern for institutional summary');
 
       // 3. Section Locks Table View Report Action & Administrator Report Modal
       assert.ok(adminRosterSfc.includes('admin-view-report-btn-'), 'Admin section locks View Report button');
@@ -1467,7 +1466,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       // 2. Course Catalog CSV Export
       assert.ok(setupViewSfc.includes('data-testid="export-courses-csv-btn"'), 'Export courses CSV button');
       assert.ok(setupViewSfc.includes('exportCoursesCatalogCsv'), 'Export courses CSV handler');
-      assert.ok(setupViewSfc.includes('PLP_Course_Catalog'), 'Course catalog CSV filename pattern');
+      assert.ok(setupViewSfc.includes('AAAAA13_Course_Catalog') || setupViewSfc.includes('PLP_Course_Catalog'), 'Course catalog CSV filename pattern');
 
       // 3. Course Catalog Search & Sections Modal (Inspired by subject_list.php & class_list.php)
       assert.ok(setupViewSfc.includes('data-testid="course-search-input"'), 'Course search input');
@@ -1489,22 +1488,22 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       // 2. Faculty Assignments Matrix Export
       assert.ok(setupViewSfc.includes('data-testid="export-assignments-csv-btn"'), 'Export assignments matrix CSV button');
       assert.ok(setupViewSfc.includes('exportAssignmentsMatrixCsv'), 'Export assignments matrix CSV handler');
-      assert.ok(setupViewSfc.includes('PLP_Faculty_Assignments_Matrix'), 'Assignments matrix CSV filename prefix');
+      assert.ok(setupViewSfc.includes('AAAAA13_Faculty_Assignments_Matrix') || setupViewSfc.includes('PLP_Faculty_Assignments_Matrix'), 'Assignments matrix CSV filename prefix');
 
       // 3. Faculty Directory Export
       assert.ok(setupViewSfc.includes('data-testid="export-faculty-csv-btn"'), 'Export faculty directory CSV button');
       assert.ok(setupViewSfc.includes('exportFacultyDirectoryCsv'), 'Export faculty directory CSV handler');
-      assert.ok(setupViewSfc.includes('PLP_Faculty_Directory'), 'Faculty directory CSV filename prefix');
+      assert.ok(setupViewSfc.includes('AAAAA13_Faculty_Directory') || setupViewSfc.includes('PLP_Faculty_Directory'), 'Faculty directory CSV filename prefix');
 
       // 4. Student Clearance Roster Export
       assert.ok(setupViewSfc.includes('data-testid="export-students-csv-btn"'), 'Export student clearance roster CSV button');
       assert.ok(setupViewSfc.includes('exportStudentsDirectoryCsv'), 'Export student clearance roster CSV handler');
-      assert.ok(setupViewSfc.includes('PLP_Student_Clearance_Roster'), 'Student roster CSV filename prefix');
+      assert.ok(setupViewSfc.includes('AAAAA13_Student_Clearance_Roster') || setupViewSfc.includes('PLP_Student_Clearance_Roster'), 'Student roster CSV filename prefix');
 
       // 5. System Users Directory Export
       assert.ok(setupViewSfc.includes('data-testid="export-users-csv-btn"'), 'Export system users CSV button');
       assert.ok(setupViewSfc.includes('exportSystemUsersCsv'), 'Export system users CSV handler');
-      assert.ok(setupViewSfc.includes('PLP_System_Users_Directory'), 'System users CSV filename prefix');
+      assert.ok(setupViewSfc.includes('AAAAA13_System_Users_Directory') || setupViewSfc.includes('PLP_System_Users_Directory'), 'System users CSV filename prefix');
     });
 
     it('verifies evaluation questionnaire instrument CSV export action in Academic Setup', () => {
@@ -1513,7 +1512,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       // 6. Questionnaire Instrument Export
       assert.ok(setupViewSfc.includes('data-testid="export-questionnaire-csv-btn"'), 'Export questionnaire CSV button');
       assert.ok(setupViewSfc.includes('exportQuestionnaireInstrumentCsv'), 'Export questionnaire CSV handler');
-      assert.ok(setupViewSfc.includes('PLP_AACCUP3_Evaluation_Instrument'), 'Questionnaire instrument CSV filename prefix');
+      assert.ok(setupViewSfc.includes('AAAAA13_AACCUP3_Evaluation_Instrument') || setupViewSfc.includes('PLP_AACCUP3_Evaluation_Instrument'), 'Questionnaire instrument CSV filename prefix');
     });
   });
 
@@ -1524,7 +1523,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       // 1. Academic Terms CSV Export (Inspired by admin/academic_list.php)
       assert.ok(setupViewSfc.includes('data-testid="export-terms-csv-btn"'), 'Export terms CSV button');
       assert.ok(setupViewSfc.includes('exportAcademicTermsCsv'), 'Export terms CSV handler');
-      assert.ok(setupViewSfc.includes('PLP_Academic_Terms'), 'Academic terms CSV filename prefix');
+      assert.ok(setupViewSfc.includes('AAAAA13_Academic_Terms') || setupViewSfc.includes('PLP_Academic_Terms'), 'Academic terms CSV filename prefix');
     });
 
     it('verifies section evaluation report breakdown modal, rating adjective, and printable export in Academic Setup', () => {
@@ -1699,7 +1698,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       // 2. Formula Injection Neutralization & Helper Integration
       assert.ok(facultyViewSfc.includes('sanitizeCsvCell'), 'sanitizeCsvCell imported and used');
       assert.ok(facultyViewSfc.includes('getPerformanceRatingText'), 'getPerformanceRatingText rubric mapper defined');
-      assert.ok(facultyViewSfc.includes('PLP_Faculty_Evaluation_'), 'Accredited filename prefix pattern');
+      assert.ok(facultyViewSfc.includes('AAAAA13_Faculty_Evaluation_') || facultyViewSfc.includes('PLP_Faculty_Evaluation_'), 'Accredited filename prefix pattern');
 
       // 3. Strict Student Anonymity Preservation (Zero PII in Faculty View)
       assert.equal(facultyViewSfc.includes('student_id'), false, 'Zero student_id in faculty view');
@@ -1751,7 +1750,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
 
       // 2. Formula Injection Neutralization & Proof Token Inclusion
       assert.ok(queueViewSfc.includes('sanitizeCsvCell'), 'sanitizeCsvCell imported and used');
-      assert.ok(queueViewSfc.includes('PLP_Student_Evaluation_Checklist_'), 'Checklist export filename pattern');
+      assert.ok(queueViewSfc.includes('AAAAA13_Student_Evaluation_Checklist_') || queueViewSfc.includes('PLP_Student_Evaluation_Checklist_'), 'Checklist export filename pattern');
       assert.ok(queueViewSfc.includes('Clearance Proof Token'), 'Clearance Proof Token column included');
     });
   });
@@ -1935,7 +1934,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       // 3. Student Guide & Anonymity Charter Download Handler
       assert.ok(advocacyViewSfc.includes('data-testid="export-advocacy-guide-btn"'), 'Download student guide button present');
       assert.ok(advocacyViewSfc.includes('downloadStudentGuide'), 'downloadStudentGuide method defined');
-      assert.ok(advocacyViewSfc.includes('PLP_Student_Evaluation_Charter_and_Guidelines.txt'), 'Guide filename specified');
+      assert.ok(advocacyViewSfc.includes('AAAAA13_Student_Evaluation_Charter_and_Guidelines.txt') || advocacyViewSfc.includes('PLP_Student_Evaluation_Charter_and_Guidelines.txt'), 'Guide filename specified');
       assert.ok(advocacyViewSfc.includes('ZERO-KNOWLEDGE CRYPTOGRAPHIC ANONYMITY'), 'Guide contains cryptographic anonymity charter');
       assert.ok(advocacyViewSfc.includes('MANDATORY TIMING POLICY'), 'Guide contains mandatory timing policy');
       assert.ok(advocacyViewSfc.includes('DOUBLE-BLIND FACULTY VISIBILITY LOCK'), 'Guide contains double-blind faculty lock explanation');

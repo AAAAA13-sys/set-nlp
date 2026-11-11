@@ -60,11 +60,11 @@ function printRubric() {
       <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.25rem;">
         <div>
           <span class="eyebrow-badge">ACCREDITED EVALUATION RUBRIC · {{ roleTitle.toUpperCase() }}</span>
-          <h3 id="rubric-modal-title" style="margin: 0.25rem 0 0; font-size: 1.25rem; font-weight: 700; color: #103c2e;">
+          <h3 id="rubric-modal-title" style="margin: 0.25rem 0 0; font-size: 1.25rem; font-weight: 700; color: var(--ink);">
             Institutional 5-Point Rating Rubric & Standards
           </h3>
           <p style="margin: 0.2rem 0 0; font-size: 0.85rem; color: #4b5563;">
-            Pamantasan ng Lungsod ng Pasig · AACCUP Level III Accredited Pedagogical Evaluation Standards
+            School AAAAA13 · AACCUP Level III Accredited Pedagogical Evaluation Standards
           </p>
         </div>
         <div style="display: flex; gap: 0.5rem; align-items: center;">

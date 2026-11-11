@@ -1121,7 +1121,7 @@ class AcademicSetupService
     public function getQuestionnairePreview(): array
     {
         return [
-            'instrument_title' => 'Pamantasan ng Lungsod ng Pasig — Official Student Evaluation of Teachers (SET)',
+            'instrument_title' => 'School AAAAA13 — Official Student Evaluation of Teachers (SET)',
             'accreditation_standard' => 'AACCUP Area III: Faculty & Instructional Quality',
             'scale_points' => 5,
             'rating_scale_legend' => [

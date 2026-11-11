@@ -77,15 +77,15 @@ function printPermit() {
   <section
     class="clearance-permit-card"
     :class="progress.allCleared ? 'permit-unlocked' : 'permit-gated'"
-    aria-label="Digital Evaluation Completion Certificate"
+    aria-label="Student Evaluation Completion Receipt / Submission Confirmation"
     data-testid="clearance-permit-card"
   >
     <div class="permit-header">
       <div>
-        <span class="permit-eyebrow">EVALUATION CLEARANCE</span>
+        <span class="permit-eyebrow">STUDENT EVALUATION PARTICIPATION STATUS</span>
         <h3 class="permit-title">
-          {{ progress.allCleared ? 'Digital Evaluation Completion Certificate — CLEARED' : 'Digital Evaluation Completion Certificate — PENDING' }}
-          <span class="ui-hint" tabindex="0" data-hint="Complete all assigned course evaluations to unlock your official evaluation completion certificate.">?</span>
+          {{ progress.allCleared ? 'Evaluation Completion Receipt / Submission Confirmation — Done' : 'Student Evaluation Participation — Pending' }}
+          <span class="ui-hint" tabindex="0" data-hint="Complete all assigned course evaluations to record your evaluation completion receipt.">?</span>
         </h3>
       </div>
 
@@ -93,23 +93,23 @@ function printPermit() {
         class="permit-status-pill"
         :class="progress.allCleared ? 'pill-cleared' : 'pill-pending'"
       >
-        {{ progress.clearanceStatus }}
+        {{ progress.allCleared ? 'Evaluation: Done' : 'Evaluation: Pending' }}
       </span>
     </div>
 
     <div class="permit-body">
       <p v-if="!progress.allCleared" class="permit-description">
-        Finish your remaining <strong>{{ progress.pending }}</strong> course evaluation(s) ({{ progress.completed }} of {{ progress.total }} completed) to complete your institutional evaluation clearance.
+        Finish your remaining <strong>{{ progress.pending }}</strong> course evaluation(s) ({{ progress.completed }} of {{ progress.total }} completed) to complete your student evaluation requirements.
       </p>
 
       <div v-else class="permit-verified-box">
         <p class="permit-description">
-          All <strong>{{ progress.total }}</strong> course evaluations are complete. Your evaluation completion certificate is ready.
+          All <strong>{{ progress.total }}</strong> course evaluations are complete. Your evaluation completion receipt is ready.
         </p>
         <div class="permit-token-grid">
           <div>
             <span class="token-label">Institution:</span>
-            <strong>Pamantasan ng Lungsod ng Pasig (PLP)</strong>
+            <strong>School AAAAA13 (AAAAA13)</strong>
           </div>
           <div>
             <span class="token-label">Student:</span>
@@ -120,7 +120,7 @@ function printPermit() {
             <strong>{{ activeTerm }}</strong>
           </div>
           <div>
-            <span class="token-label">Master Clearance Token:</span>
+            <span class="token-label">Completion Confirmation Token:</span>
             <code data-testid="master-permit-token" style="word-break: break-all;">{{ masterPermitToken }}</code>
           </div>
         </div>
@@ -128,14 +128,14 @@ function printPermit() {
         <!-- Official Registrar Signature & Authentication Block for Print & Export -->
         <div class="print-permit-auth-block" data-testid="print-permit-signature-block">
           <div class="auth-seal-watermark">
-            <span class="seal-badge">SEAL: PLP-REGISTRAR-AUTHENTICATED</span>
-            <small class="seal-sub">Officially Cleared for Academic Records • AY 2026-2027</small>
+            <span class="seal-badge">SEAL: AAAAA13-REGISTRAR-AUTHENTICATED</span>
+            <small class="seal-sub">Officially Completed for Academic Records • AY 2026-2027</small>
           </div>
           <div class="auth-signatures-row">
             <div class="sig-column">
               <div class="sig-line"></div>
               <strong class="sig-title">ATTY. UNIVERSITY REGISTRAR</strong>
-              <span class="sig-caption">Pamantasan ng Lungsod ng Pasig</span>
+              <span class="sig-caption">School AAAAA13</span>
             </div>
             <div class="sig-column">
               <div class="sig-line"></div>
@@ -148,7 +148,7 @@ function printPermit() {
     </div>
 
     <div class="permit-footer">
-      <div class="signed-tokens-list" aria-label="Course Clearance Signatures">
+      <div class="signed-tokens-list" aria-label="Course Evaluation Tokens">
         <span
           v-for="course in courses"
           :key="course.course_section_id || course.course_code"
@@ -156,7 +156,7 @@ function printPermit() {
           :class="course.status === 'COMPLETED' ? 'chip-signed' : 'chip-unsigned'"
         >
           {{ course.course_code }}:
-          {{ course.status === 'COMPLETED' ? (course.clearance_token || 'Clearance Signed') : 'PENDING' }}
+          {{ course.status === 'COMPLETED' ? (course.clearance_token || 'Evaluation Submitted') : 'PENDING' }}
         </span>
       </div>
 
@@ -168,7 +168,7 @@ function printPermit() {
           data-testid="verify-permit-btn"
           @click="verifyPermitOnServer"
         >
-          {{ isVerifying ? 'Verifying with Registrar…' : 'Verify Registrar Signature' }}
+          {{ isVerifying ? 'Verifying with Registrar…' : 'Verify Completion Status' }}
         </button>
 
         <span
@@ -177,7 +177,7 @@ function printPermit() {
           :class="verificationResult.verified ? 'chip-signed' : 'chip-unsigned'"
           data-testid="permit-verification-badge"
         >
-          {{ verificationResult.verified ? 'SEAL: PLP-REGISTRAR-AUTHENTICATED' : 'CLEARANCE PENDING' }}
+          {{ verificationResult.verified ? 'SEAL: AAAAA13-REGISTRAR-AUTHENTICATED' : 'EVALUATION PENDING' }}
         </span>
 
         <button
@@ -186,7 +186,7 @@ function printPermit() {
           data-testid="print-permit-btn"
           @click="printPermit"
         >
-          Print / Export Signed PLP Evaluation Certificate
+          Print / Export Evaluation Completion Receipt
         </button>
       </div>
 
@@ -206,14 +206,14 @@ function printPermit() {
         data-testid="proctor-verification-details"
       >
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
-          <strong style="color: #166534;">INSTITUTIONAL CLEARANCE VERIFICATION PROTOCOL: CLEARED</strong>
+          <strong style="color: #166534;">INSTITUTIONAL EVALUATION PARTICIPATION PROTOCOL: COMPLETED (DONE)</strong>
           <span class="token-chip chip-signed" style="font-size: 0.7rem;">OFFICIAL REGISTRAR RECORD</span>
         </div>
         <div style="color: #15803d; line-height: 1.45;">
           Student <strong>{{ studentId }}</strong> has completed all {{ progress.total }} enrolled course evaluations.
-          Status: <strong>{{ verificationResult.clearance_status || verificationResult.permit_status || 'EVALUATION_COMPLETED_CLEARED' }}</strong> •
-          Seal: <strong>{{ verificationResult.registrar_seal || 'PLP-REGISTRAR-AUTHENTICATED' }}</strong> •
-          Portal: <a href="https://plpasig.edu.ph/" target="_blank" rel="noopener" style="color: #166534; text-decoration: underline;">https://plpasig.edu.ph/</a>
+          Status: <strong>{{ verificationResult.clearance_status || verificationResult.permit_status || 'EVALUATION_COMPLETED_DONE' }}</strong> •
+          Seal: <strong>{{ verificationResult.registrar_seal || 'AAAAA13-REGISTRAR-AUTHENTICATED' }}</strong> •
+          Portal: <a href="https://aaaaa13.edu/" target="_blank" rel="noopener" style="color: #166534; text-decoration: underline;">https://aaaaa13.edu/</a>
         </div>
       </div>
     </div>

@@ -1,40 +1,40 @@
 # EvaluaTech Figma Design System, Screen Inventory & Prototype Specification
 
-**Document Version:** 2.0.0  
-**Institution:** Pamantasan ng Lungsod ng Pasig (PLP)  
-**Authority:** Office of Academic Affairs & EvaluaTech Engineering Team  
+**Document Version:** 2.0.0
+**Institution:** School AAAAA13
+**Authority:** Office of Academic Affairs & EvaluaTech Engineering Team
 **Design Reference:** Single-Page Universal Top-Bar Architecture (Zero Sidebars)
 
 ---
 
 ## 1. Executive Summary & Design Principles
 
-EvaluaTech is the official Student Evaluation of Teachers (SET) platform for Pamantasan ng Lungsod ng Pasig. In accordance with the Project Lead's Memorandum on stabilization and interface redesign, this document establishes the complete screen inventory, design tokens, responsive states, and clickable navigation flows prior to frontend visual implementation.
+EvaluaTech is the official Student Evaluation of Teachers (SET) platform for School AAAAA13. In accordance with the Project Lead's Memorandum on stabilization and interface redesign, this document establishes the complete screen inventory, design tokens, responsive states, and clickable navigation flows prior to frontend visual implementation.
 
 ### Live Clickable Prototype Access
 - **Interactive Canvas & Prototype (Live Web Server):** `http://127.0.0.1:8000/prototype/`
 - **Standalone Source Files:** [`public/prototype/index.html`](file:///c:/Users/Ivan/Music/NLP%20SET/public/prototype/index.html) and [`docs/prototype/index.html`](file:///c:/Users/Ivan/Music/NLP%20SET/docs/prototype/index.html)
-- **Features:** Single-page Figma-style canvas featuring all 11 screen frames side-by-side, interactive device click-through flows, viewport toggle (Desktop 1366×768 vs Mobile 375×812), system state inspection (Normal, Loading Shimmer, Empty Roster, Validation Error, Double-Blind Locked Report), and inspectable PLP institutional tokens.
+- **Features:** Single-page Figma-style canvas featuring all 11 screen frames side-by-side, interactive device click-through flows, viewport toggle (Desktop 1366×768 vs Mobile 375×812), system state inspection (Normal, Loading Shimmer, Empty Roster, Validation Error, Double-Blind Locked Report), and inspectable School AAAAA13 institutional tokens.
 
 ### Core Design Principles
 1. **School-Based Institutional Restraint:** Eliminate generic SaaS clichés, decorative dashboards, floating particles, and oversized marketing headings. Design for purposeful academic administration.
 2. **Universal Top-Bar Single-Page Navigation:** Every page and role is reached through a consistent, responsive top navigation bar. No sidebars, no collapsible side rails, and no mobile navigation drawers.
 3. **No Quick Tools or Demo Shortcuts:** Remove all cheat/demo role switches, bypass buttons, and dwell skip buttons. Authentication strictly utilizes verified bcrypt institutional credentials.
-4. **Evaluation Participation Tracking (Zero Permits):** PLP does not gate examination permits on student evaluations. The system tracks evaluation progress, identifies students with pending evaluations by course, section, department, and college, and assists follow-up without linking student identity to evaluation responses.
-5. **Ergonomic Typography & High Contrast:** Root typography at 16.5px–17.5px with 1.62 line height, authentic PLP emerald and gold palette, meeting WCAG 2.2 AA accessibility standards.
+4. **Evaluation Participation Tracking (Zero Permits):** School AAAAA13 does not gate examination permits on student evaluations. The system tracks evaluation progress, identifies students with pending evaluations by course, section, department, and college, and assists follow-up without linking student identity to evaluation responses.
+5. **Ergonomic Typography & High Contrast:** Root typography at 16.5px–17.5px with 1.62 line height, authentic School AAAAA13 emerald and gold palette, meeting WCAG 2.2 AA accessibility standards.
 
 ---
 
 ## 2. Institutional Design Tokens
 
-### Color Palette (PLP Academic Tech)
+### Color Palette (School AAAAA13 Academic Tech)
 ```css
 :root {
   /* Primary Institutional Palette */
   --color-forest-dark: #0b3322;      /* Deep Forest Green (Header, Footers) */
-  --color-emerald-base: #103c2e;     /* PLP Emerald (Brand, Primary Buttons, Active States) */
+  --color-emerald-base: #103c2e;     /* School AAAAA13 Emerald (Brand, Primary Buttons, Active States) */
   --color-emerald-hover: #0a271e;    /* Hover State */
-  --color-gold-accent: #f4cd42;      /* PLP Gold Accent (Pills, Rating Stars, Warnings) */
+  --color-gold-accent: #f4cd42;      /* School AAAAA13 Gold Accent (Pills, Rating Stars, Warnings) */
   --color-gold-warm: #eab308;        /* Warm Gold (Badges) */
   --color-offwhite-canvas: #f9f9f8;  /* Page Background Canvas */
   --color-card-bg: #ffffff;          /* Card & Modal Surface */
@@ -74,7 +74,7 @@ EvaluaTech is the official Student Evaluation of Teachers (SET) platform for Pam
 
 | ID | Screen Name | Route | Role Scoping | Key Purpose | Primary Actions |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **SCR-01** | **Public Landing Page** | `/` | Public (Unauthenticated) | Official introduction to EvaluaTech, PLP SET purpose, AACCUP governance, data privacy. | `[Sign In →]`, `[Review Guidelines]` |
+| **SCR-01** | **Public Landing Page** | `/` | Public (Unauthenticated) | Official introduction to EvaluaTech, School AAAAA13 SET purpose, AACCUP governance, data privacy. | `[Sign In →]`, `[Review Guidelines]` |
 | **SCR-02** | **Split-Screen Login** | `/login` | Public (Guest Only) | Secure institutional sign-in with Institutional ID & password. | `[Sign In to Portal]`, `[Forgot Password]` |
 | **SCR-03** | **Student Evaluation Queue** | `/queue` | `student` | Course evaluation queue with progress bar, status chips, completion receipt modal. | `[Start Evaluation]`, `[Receipt 📜]`, `[Export CSV]` |
 | **SCR-04** | **Student Evaluation Form** | `/evaluate/:id` | `student` | 2-step stepper: Part I (25 Likert items with auto-scroll), Part II (written feedback). Immediate submission. | `[Proceed to Part II]`, `[Submit Evaluation]` |
@@ -101,7 +101,7 @@ In strict accordance with Specific Objective 2 and Lead Engineer Directive 5:
 2. **Course Section Breakdown:** Section enrollment count, submitted evaluations, pending evaluations count, turnout %.
 3. **Pending Students Follow-Up:**
    - Filter directory by `PENDING`.
-   - Export targeted `PLP_Incomplete_Student_Evaluations_FollowUp.csv`.
+   - Export targeted `School AAAAA13_Incomplete_Student_Evaluations_FollowUp.csv`.
    - Remind modal generates ready-to-send institutional notice for student reminders.
 
 ---
@@ -111,10 +111,10 @@ In strict accordance with Specific Objective 2 and Lead Engineer Directive 5:
 ### Frame 1: Public Institutional Landing Page (SCR-01: `/`)
 ```
 +----------------------------------------------------------------------------------------------------+
-| [PLP Logo] Pamantasan ng Lungsod ng Pasig | EvaluaTech                       [Sign In] [Help/Guide] |
+| [School AAAAA13 Logo] School AAAAA13 | EvaluaTech                       [Sign In] [Help/Guide] |
 +----------------------------------------------------------------------------------------------------+
 |                                                                                                    |
-|   OFFICE OF ACADEMIC AFFAIRS • PAMANTASAN NG LUNGSOD NG PASIG                                      |
+|   OFFICE OF ACADEMIC AFFAIRS • SCHOOL AAAAA13                                      |
 |   EvaluaTech: Automated Student Evaluation of Teachers                                             |
 |                                                                                                    |
 |   A secure, school-based faculty evaluation system designed to gather anonymous student feedback   |
@@ -126,7 +126,7 @@ In strict accordance with Specific Objective 2 and Lead Engineer Directive 5:
 |   HOW THE EVALUATION PROCESS WORKS                                                                 |
 |   1. Sign In             2. Review Queue         3. Complete 2-Step Form    4. Automatic Clearance |
 |   Access your account    View enrolled courses   25 Likert items + written  Your feedback is saved |
-|   with PLP credentials   and pending reviews     pedagogical feedback       with 100% anonymity    |
+|   with School AAAAA13 credentials   and pending reviews     pedagogical feedback       with 100% anonymity    |
 +----------------------------------------------------------------------------------------------------+
 |   THREE CORE INSTITUTIONAL SAFEGUARDS                                                              |
 |   [ Complete Anonymity ]         [ Double-Blind Grade Lock ]     [ Pedagogical Action Plans ]      |

@@ -257,7 +257,7 @@ function exportFacultySectionCsv() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `PLP_Faculty_Evaluation_${courseCode}_${sectionCode}_${termCode}.csv`;
+  link.download = `AAAAA13_Faculty_Evaluation_${courseCode}_${sectionCode}_${termCode}.csv`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -286,7 +286,7 @@ function printEvaluationReport() {
     <SkeletonLoader
       v-if="loadingSections"
       :rows="3"
-      label="Loading assigned PLP faculty sections…"
+      label="Loading assigned School AAAAA13 faculty sections…"
     />
 
     <section class="card faculty-header-card">
@@ -400,11 +400,11 @@ function printEvaluationReport() {
       </div>
 
       <details class="double-blind-help-details" style="margin-top: 1rem; padding: 0.75rem; background: #fdfefe; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.82rem; color: #475569;">
-        <summary style="font-weight: 600; cursor: pointer; color: #103c2e;">
+        <summary style="font-weight: 600; cursor: pointer; color: var(--brand-royal);">
           Why are evaluation results locked? (Double-Blind Governance Policy)
         </summary>
         <p style="margin: 0.5rem 0 0 0; line-height: 1.45;">
-          Under PLP academic governance guidelines and AACCUP accreditation standards, student evaluation ratings and qualitative comments remain confidential until the instructor has submitted final course grades and the Office of the University Registrar verifies the grade lock. This double-blind protocol protects students from grading retaliation and ensures honest, objective feedback.
+          Under School AAAAA13 academic governance guidelines and AACCUP accreditation standards, student evaluation ratings and qualitative comments remain confidential until the instructor has submitted final course grades and the Office of the University Registrar verifies the grade lock. This double-blind protocol protects students from grading retaliation and ensures honest, objective feedback.
         </p>
       </details>
     </section>
@@ -537,7 +537,7 @@ function printEvaluationReport() {
       >
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.5rem;">
           <span class="eyebrow-badge">
-            ACTION PLAN<span class="sr-only"> PAMANTASAN NG LUNGSOD NG PASIG • Continuous Pedagogical Improvement</span>
+            ACTION PLAN<span class="sr-only"> SCHOOL AAAAA13 • Continuous Pedagogical Improvement</span>
           </span>
           <span
             class="token-chip"
@@ -615,7 +615,7 @@ function printEvaluationReport() {
         </h4>
         <div
           v-if="anonymizedComments.length === 0"
-          style="padding: 1rem; background: var(--plp-green-50); border: 1px solid var(--border-subtle); border-radius: 8px; font-size: 0.88rem; color: var(--text-secondary);"
+          style="padding: 1rem; background: var(--surface-subtle); border: 1px solid var(--border-subtle); border-radius: 8px; font-size: 0.88rem; color: var(--text-secondary);"
         >
           No open-ended narrative comments have been submitted for this section yet.
         </div>
@@ -636,7 +636,7 @@ function printEvaluationReport() {
       <!-- Official Rating Sheet Print Endorsement & Signatures Block -->
       <div class="print-permit-auth-block" data-testid="print-faculty-report-auth">
         <div class="auth-seal-watermark">
-          <span class="seal-badge">SEAL: PLP-ACADEMIC-AFFAIRS-EVALUATION-RECORD</span>
+          <span class="seal-badge">SEAL: AAAAA13-ACADEMIC-AFFAIRS-EVALUATION-RECORD</span>
           <small class="seal-sub">Official Student Evaluation of Teachers (SET) Rating Sheet • AY 2026-2027</small>
         </div>
         <div class="auth-signatures-row">

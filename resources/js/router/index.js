@@ -20,21 +20,22 @@ export const routes = [
     path: '/',
     name: 'landing',
     component: LandingView,
-    meta: { public: true, title: 'EvaluaTech — Automated Faculty Evaluation System | Pamantasan ng Lungsod ng Pasig' },
+    meta: { public: true, title: 'EvaluaTech — Automated Faculty Evaluation System | School AAAAA13' },
   },
   {
     path: '/login',
     name: 'login',
     component: LoginView,
-    meta: { public: true, guestOnly: true, title: 'Institutional Sign In — Pamantasan ng Lungsod ng Pasig' },
+    meta: { public: true, guestOnly: true, title: 'Institutional Sign In — School AAAAA13' },
   },
   {
     path: '/queue',
+    alias: '/evaluation/queue',
     name: 'student-queue',
     component: StudentQueueView,
     meta: {
       roles: ['student'],
-      title: 'My Evaluation Queue — PLP Student Portal',
+      title: 'My Evaluation Queue — AAAAA13 Student Portal',
     },
   },
   {
@@ -43,7 +44,7 @@ export const routes = [
     component: EvaluationFormView,
     meta: {
       roles: ['student'],
-      title: 'Anonymized Faculty Evaluation — PLP Student Portal',
+      title: 'Anonymized Faculty Evaluation — AAAAA13 Student Portal',
     },
   },
   {
@@ -52,7 +53,7 @@ export const routes = [
     component: FacultyDashboardView,
     meta: {
       roles: ['faculty'],
-      title: 'Faculty Double-Blind Feedback Portal — PLP',
+      title: 'Faculty Double-Blind Feedback Portal — AAAAA13',
     },
   },
   {
@@ -61,7 +62,7 @@ export const routes = [
     component: ChairDashboardView,
     meta: {
       roles: ['chair'],
-      title: 'Department Chair Diagnostic Workspace — PLP',
+      title: 'Department Chair Diagnostic Workspace — AAAAA13',
     },
   },
   {
@@ -70,7 +71,7 @@ export const routes = [
     component: DeanDashboardView,
     meta: {
       roles: ['dean'],
-      title: "Dean's Analytical Overview — PLP",
+      title: "Dean's Analytical Overview — AAAAA13",
     },
   },
   {
@@ -79,7 +80,7 @@ export const routes = [
     component: AdminRosterView,
     meta: {
       roles: ['admin'],
-      title: 'University Registrar & System Administration Console — PLP',
+      title: 'University Registrar & System Administration Console — AAAAA13',
     },
   },
   {
@@ -88,7 +89,7 @@ export const routes = [
     component: AdminSetupView,
     meta: {
       roles: ['admin'],
-      title: 'Academic Setup & Evaluation Questionnaire — PLP',
+      title: 'Academic Setup & Evaluation Questionnaire — AAAAA13',
     },
   },
   {
@@ -97,7 +98,7 @@ export const routes = [
     component: EvaluationAdvocacyView,
     meta: {
       roles: ['faculty', 'chair', 'dean', 'admin'],
-      title: 'Campus SET Advocacy & Standards Hub — PLP',
+      title: 'Campus SET Advocacy & Standards Hub — AAAAA13',
     },
   },
   {
@@ -116,7 +117,7 @@ export const routes = [
     component: PermitVerifyView,
     meta: {
       public: true,
-      title: 'Evaluation Clearance Verification — Pamantasan ng Lungsod ng Pasig',
+      title: 'Evaluation Clearance Verification — School AAAAA13',
     },
   },
   {
@@ -125,7 +126,7 @@ export const routes = [
     component: NotFoundView,
     meta: {
       public: true,
-      title: '404 Page Not Found — Pamantasan ng Lungsod ng Pasig',
+      title: '404 Page Not Found — School AAAAA13',
     },
   },
 ];

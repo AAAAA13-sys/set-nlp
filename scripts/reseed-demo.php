@@ -6,7 +6,7 @@ $rootDir = dirname(__DIR__);
 require_once $rootDir . '/bootstrap/app.php';
 require_once $rootDir . '/database/seeders/EvaluaTechDemoSeeder.php';
 
-$sqlitePath = $rootDir . '/storage/framework/evaluatech_plp.sqlite';
+$sqlitePath = $rootDir . '/storage/framework/evaluatech_aaaaa13.sqlite';
 $pdo = new \PDO('sqlite:' . $sqlitePath);
 $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 $pdo->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);

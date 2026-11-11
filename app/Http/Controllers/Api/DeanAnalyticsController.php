@@ -244,7 +244,7 @@ class DeanAnalyticsController extends Controller
     public function accreditationSummary(): JsonResponse
     {
         $actionPlanSummary = $this->evaluationService->getActionPlansSummary();
-        return new JsonResponse($this->qualityService->getPlpAccreditationSummary($actionPlanSummary), 200);
+        return new JsonResponse($this->qualityService->getInstitutionalAccreditationSummary($actionPlanSummary), 200);
     }
 
     public function updateActionPlanStatus(Request $request): JsonResponse
@@ -362,8 +362,8 @@ class DeanAnalyticsController extends Controller
 
         $csvRows = [];
         $csvRows[] = ['ACCREDITATION MATRIX', 'AACCUP Area III: Faculty Development & Instructional Competence'];
-        $csvRows[] = ['Institution', 'PAMANTASAN NG LUNGSOD NG PASIG (PLP)'];
-        $csvRows[] = ['Reference', 'https://plpasig.edu.ph/'];
+        $csvRows[] = ['Institution', 'SCHOOL AAAAA13'];
+        $csvRows[] = ['Reference', 'https://aaaaa13.edu/'];
         $csvRows[] = ['Active Term', $trends['active_term']['term_name'] ?? 'Fall 2026'];
         $csvRows[] = ['Baseline Term', $trends['prior_term']['term_name'] ?? 'Spring 2026'];
         $csvRows[] = ['Mean Score Delta', ($trends['deltas']['mean_score_delta'] ?? 0) >= 0 ? '+' . ($trends['deltas']['mean_score_delta'] ?? 0) : (string) ($trends['deltas']['mean_score_delta'] ?? 0)];
@@ -400,7 +400,7 @@ class DeanAnalyticsController extends Controller
             'department_id' => is_array($requestedDeptId) ? null : $requestedDeptId,
             'summary' => $trends,
             'csv_content' => $csvContent,
-            'filename' => 'PLP-AACCUP-Area-III-Dossier-AY2026-2027.csv',
+            'filename' => 'AAAAA13-AACCUP-Area-III-Dossier-AY2026-2027.csv',
         ], 200);
     }
 

@@ -102,12 +102,29 @@ class StudentEvaluationController extends Controller
 
         return new JsonResponse([
             'student_id' => $studentId,
+            'title' => 'Evaluation Completion Certificate',
+            'certificate_title' => 'Evaluation Completion Certificate',
             'overall_clearance_status' => $queue['overall_clearance_status'],
+            'participation_status' => $queue['overall_clearance_status'] === 'CLEARED' ? 'DONE' : 'PENDING',
+            'evaluation_completion_unlocked' => $queue['exam_permit_unlocked'],
+            'evaluation_completion_token' => $queue['exam_permit_token'],
+            'evaluation_receipt_token' => $queue['exam_permit_token'],
+            'submission_confirmation' => (bool) $queue['exam_permit_unlocked'],
             'exam_permit_unlocked' => $queue['exam_permit_unlocked'],
             'exam_permit_token' => $queue['exam_permit_token'],
             'completed_count' => $queue['completed_count'],
             'total_count' => $queue['total_count'],
         ], 200);
+    }
+
+    public function completion(Request $request): JsonResponse
+    {
+        return $this->permit($request);
+    }
+
+    public function receipt(Request $request): JsonResponse
+    {
+        return $this->permit($request);
     }
 
     public function verifyPermit(Request $request): JsonResponse
@@ -122,5 +139,10 @@ class StudentEvaluationController extends Controller
         $status = $result['verified'] ? 200 : 422;
 
         return new JsonResponse($result, $status);
+    }
+
+    public function verifyCompletion(Request $request): JsonResponse
+    {
+        return $this->verifyPermit($request);
     }
 }
