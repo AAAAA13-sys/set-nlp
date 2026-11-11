@@ -149,3 +149,23 @@ def get_ml_provenance() -> dict[str, Any]:
         "domain_pipeline_loaded": _DOMAIN_PIPELINE is not None,
         "metadata": _METADATA,
     }
+
+def get_model_metadata() -> dict[str, Any]:
+    """Return serialized model metadata dictionary."""
+    if not _INITIALIZED:
+        init_ml_models()
+    return _METADATA
+
+def classify_text(text: str) -> dict[str, Any]:
+    """Convenience alias for sentiment classification."""
+    res = predict_ml_sentiment(text)
+    if res is None:
+        return {"polarity": 0.0, "valence": "Neutral", "confidence": 0.0, "probabilities": {}}
+    return res
+
+def classify_domain(text: str) -> dict[str, Any]:
+    """Convenience alias for pedagogical domain classification."""
+    res = predict_ml_domain(text)
+    if res is None:
+        return {"cluster": "Unclassified / Needs Review", "confidence": 0.0, "probabilities": {}}
+    return res
