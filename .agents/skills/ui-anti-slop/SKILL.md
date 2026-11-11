@@ -54,7 +54,7 @@ Scan every view in `resources/js/views/` and component in `resources/js/componen
 ### 3. Responsive & Print Rigor
 - Must render flawlessly at **$375\times812\text{ px}$** (mobile student phones) with zero horizontal overflow, thumb-friendly actions, and sticky headers.
 - Must render cleanly at **$1366\times768\text{ px}$** (standard desktop monitor in campus computer labs).
-- Examination Permit (`ClearancePermitCard.vue`) must have clean `@media print` rules, `@page { size: A4 portrait; }`, and official registrar security watermark.
+- Digital Evaluation Completion Certificate (`ClearancePermitCard.vue`) must have clean `@media print` rules, `@page { size: A4 portrait; }`, and official registrar security watermark.
 
 ---
 
