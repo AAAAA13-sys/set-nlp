@@ -103,6 +103,15 @@ function scrollToFirstUnanswered() {
   }
 }
 
+function scrollToCluster(clusterNum) {
+  if (typeof document !== 'undefined') {
+    const el = document.querySelector(`[data-testid="likert-cluster-${clusterNum}"]`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+}
+
 function proceedToStep2() {
   stepValidationMessage.value = '';
   if (!allRatingsAnswered.value) {
@@ -652,6 +661,32 @@ function returnToQueue() {
     <form v-if="!isCurrentCourseCompleted" class="evaluation-survey-form" @submit.prevent="handleInitialSubmit">
       <!-- Part I: 5 Clusters of 5-Point Likert Scale Questionnaire (Step 1) -->
       <div v-show="currentStep === 1" class="step-1-container">
+        <!-- Cluster Quick-Navigation & Progress Pills Strip -->
+        <div class="cluster-quicknav-bar" data-testid="cluster-quicknav-bar">
+          <div class="quicknav-header-strip">
+            <span class="quicknav-label">PEDAGOGICAL CLUSTERS OVERVIEW</span>
+            <span class="quicknav-count tabular-nums"><strong>{{ answeredCount }}</strong> of 25 Items Rated</span>
+          </div>
+          <div class="quicknav-pills-row" role="navigation" aria-label="Jump to pedagogical clusters">
+            <button
+              v-for="dim in PEDAGOGICAL_DIMENSIONS"
+              :key="`qnav-${dim.id}`"
+              type="button"
+              class="quicknav-pill"
+              :class="{ 'is-complete': getDimensionAnsweredCount(dim) === 5 }"
+              :data-testid="`quicknav-cluster-${dim.clusterNumber}`"
+              :title="`Scroll to Cluster ${dim.clusterNumber}: ${dim.name} (${getDimensionAnsweredCount(dim)}/5 answered)`"
+              @click="scrollToCluster(dim.clusterNumber)"
+            >
+              <span class="qnav-num">{{ dim.clusterNumber }}</span>
+              <span class="qnav-name">{{ dim.name }}</span>
+              <span class="qnav-badge tabular-nums">
+                {{ getDimensionAnsweredCount(dim) === 5 ? '✓ 5/5' : `${getDimensionAnsweredCount(dim)}/5` }}
+              </span>
+            </button>
+          </div>
+        </div>
+
         <section
           v-for="dimension in PEDAGOGICAL_DIMENSIONS"
           :key="dimension.id"
@@ -1097,6 +1132,85 @@ function returnToQueue() {
 </template>
 
 <style scoped>
+.cluster-quicknav-bar {
+  background: #ffffff;
+  border: 1px solid #dce7dc;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.quicknav-header-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.65rem;
+  font-size: 0.75rem;
+}
+
+.quicknav-label {
+  font-weight: 700;
+  color: #103c2e;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.quicknav-count {
+  color: #4b5563;
+  font-size: 0.78rem;
+}
+
+.quicknav-pills-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.quicknav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #f9f9f8;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.78rem;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.quicknav-pill:hover {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+
+.quicknav-pill.is-complete {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #166534;
+  font-weight: 600;
+}
+
+.qnav-num {
+  font-weight: 700;
+  color: #103c2e;
+}
+
+.qnav-badge {
+  font-size: 0.72rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.quicknav-pill.is-complete .qnav-badge {
+  background: #dcfce7;
+  color: #15803d;
+}
+
 .eval-header-tools {
   display: flex;
   flex-direction: column;

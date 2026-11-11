@@ -219,15 +219,29 @@ function startEvaluation(course) {
 
     <section class="card queue-table-card" aria-label="Enrolled Course Evaluations">
       <div class="queue-filter-toolbar">
-        <input
-          :value="searchInput"
-          type="search"
-          class="form-input queue-search-input"
-          placeholder="Search course or professor…"
-          aria-label="Filter enrolled courses or instructors"
-          data-testid="queue-search-input"
-          @input="onSearchInput"
-        />
+        <div style="position: relative; display: flex; align-items: center; flex: 1; max-width: 320px;">
+          <input
+            :value="searchInput"
+            type="search"
+            class="form-input queue-search-input"
+            placeholder="Search course or professor…"
+            aria-label="Filter enrolled courses or instructors"
+            data-testid="queue-search-input"
+            style="width: 100%; padding-right: 2rem;"
+            @input="onSearchInput"
+          />
+          <button
+            v-if="searchInput"
+            type="button"
+            class="search-clear-btn"
+            aria-label="Clear course search"
+            data-testid="queue-search-clear-btn"
+            style="position: absolute; right: 0.5rem; background: none; border: none; color: #9ca3af; font-size: 0.9rem; cursor: pointer; padding: 0.2rem; display: flex; align-items: center; justify-content: center;"
+            @click="searchInput = ''; updateDebouncedSearch('')"
+          >
+            ✕
+          </button>
+        </div>
 
         <div class="queue-filter-pills" role="group" aria-label="Filter queue status">
           <button
@@ -356,7 +370,7 @@ function startEvaluation(course) {
               v-if="!evaluationStore.queueLoading && filteredCourses.length === 0"
               data-testid="queue-empty-state"
             >
-              <td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+              <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">
                 <div style="font-weight: 600; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.25rem;">
                   {{ evaluationStore.courses.length === 0 ? 'No Enrolled Course Sections Found' : 'No Matching Course Sections' }}
                 </div>

@@ -69,7 +69,7 @@ Academic Year: ${authStore.activeTerm || '1st Semester AY 2026-2027'}
    - Completing 100% of your enrolled course evaluations automatically unlocks your official
      Digital Evaluation Completion Certificate.
    - You can print your clearance certificate or present your signed verification hash for institutional clearance.
-   - Proctors and academic staff verify clearance in real-time via the public verification portal (/verify).
+   - Academic staff and registrars verify clearance in real-time via the public verification portal (/verify).
 
 Pamantasan ng Lungsod ng Pasig * Office of the University Registrar * Institutional Accreditation`;
 

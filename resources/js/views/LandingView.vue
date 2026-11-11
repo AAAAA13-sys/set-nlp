@@ -114,6 +114,26 @@ function navigateToWorkspace() {
       </div>
     </section>
 
+    <!-- Institutional Trust & Metrics Strip -->
+    <section class="landing-metrics-strip" data-testid="landing-metrics-strip">
+      <div class="metric-cell">
+        <span class="metric-val">AACCUP III</span>
+        <span class="metric-lbl">Curriculum &amp; Instruction Standard</span>
+      </div>
+      <div class="metric-cell">
+        <span class="metric-val">100%</span>
+        <span class="metric-lbl">Cryptographic Student Anonymity</span>
+      </div>
+      <div class="metric-cell">
+        <span class="metric-val">5 Clusters</span>
+        <span class="metric-lbl">25-Item Pedagogical Rubric</span>
+      </div>
+      <div class="metric-cell">
+        <span class="metric-val">Zero Permits</span>
+        <span class="metric-lbl">Non-Coercive Participation Tracking</span>
+      </div>
+    </section>
+
     <!-- How the Evaluation Process Works -->
     <section class="landing-steps-section" data-testid="landing-steps-section">
       <div class="landing-section-header">
@@ -324,6 +344,43 @@ function navigateToWorkspace() {
 
 .landing-sub-btn:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+.landing-metrics-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.metric-cell {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.metric-cell:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 60, 46, 0.08);
+}
+
+.metric-val {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #103c2e;
+  margin-bottom: 0.25rem;
+}
+
+.metric-lbl {
+  font-size: 0.8rem;
+  color: #4b5563;
+  line-height: 1.4;
+  display: block;
 }
 
 .landing-section-header {

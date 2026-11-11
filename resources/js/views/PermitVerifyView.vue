@@ -11,6 +11,19 @@ const tokenInput = ref('');
 const isVerifying = ref(false);
 const verificationResult = ref(null);
 const verificationError = ref(null);
+const copiedHash = ref(false);
+
+async function copyDigest(hash) {
+  try {
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(hash);
+      copiedHash.value = true;
+      setTimeout(() => {
+        copiedHash.value = false;
+      }, 2000);
+    }
+  } catch (_) {}
+}
 
 async function executeVerification(tokenOrId) {
   const queryVal = (tokenOrId || tokenInput.value || '').trim();
@@ -176,9 +189,20 @@ onMounted(() => {
           <!-- Official Security Digest Callout -->
           <div class="security-digest-box">
             <span class="digest-label">REGISTRAR CRYPTOGRAPHIC PROOF:</span>
-            <code class="digest-code font-mono" data-testid="permit-security-hash">
-              {{ verificationResult.permit_serial || verificationResult.security_hash || 'PLP-REGISTRAR-AACCUP3-SEALED-2026' }}
-            </code>
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+              <code class="digest-code font-mono" data-testid="permit-security-hash">
+                {{ verificationResult.permit_serial || verificationResult.security_hash || 'PLP-REGISTRAR-AACCUP3-SEALED-2026' }}
+              </code>
+              <button
+                type="button"
+                class="copy-hash-btn"
+                data-testid="copy-clearance-hash-btn"
+                style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 4px; padding: 0.2rem 0.6rem; font-size: 0.75rem; cursor: pointer; color: #103c2e; font-weight: 600;"
+                @click="copyDigest(verificationResult.permit_serial || verificationResult.security_hash || 'PLP-REGISTRAR-AACCUP3-SEALED-2026')"
+              >
+                {{ copiedHash ? '✓ Copied' : '📋 Copy Hash' }}
+              </button>
+            </div>
           </div>
 
           <p class="anonymity-note">

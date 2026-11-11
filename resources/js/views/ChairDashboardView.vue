@@ -28,6 +28,17 @@ const selectedFacultyReport = ref(null);
 
 const chairFacultySearchInput = ref('');
 const chairStandingFilter = ref('ALL');
+const chairHeatmapSearchInput = ref('');
+
+const filteredChairHeatmapSections = computed(() => {
+  const list = chairHeatmapData.value?.sections || [];
+  const q = chairHeatmapSearchInput.value.trim().toLowerCase();
+  if (!q) return list;
+  return list.filter((sec) => {
+    const haystack = `${sec.course_code || ''} ${sec.course_title || ''} ${sec.section_code || ''} ${sec.faculty_name || ''}`.toLowerCase();
+    return haystack.includes(q);
+  });
+});
 
 function openFacultyReportModal(faculty) {
   selectedFacultyReport.value = faculty;
@@ -723,7 +734,22 @@ async function endorseActionPlan(item) {
         </span>
       </div>
 
-      <table class="institutional-table tabular-nums" style="margin-top:1rem;" data-testid="chair-heatmap-table">
+      <div style="margin-top: 0.85rem; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+        <input
+          v-model="chairHeatmapSearchInput"
+          type="search"
+          class="form-input"
+          style="max-width: 320px; font-size: 0.82rem; padding: 0.35rem 0.65rem;"
+          placeholder="Filter sections by course or instructor…"
+          aria-label="Filter sections in heatmap"
+          data-testid="chair-heatmap-search-input"
+        />
+        <div style="font-size: 0.8rem; color: #4b5563; margin-left: auto;">
+          Showing <strong>{{ filteredChairHeatmapSections.length }}</strong> of {{ chairHeatmapData.sections.length }} sections
+        </div>
+      </div>
+
+      <table class="institutional-table tabular-nums" style="margin-top:0.75rem;" data-testid="chair-heatmap-table">
         <thead>
           <tr>
             <th scope="col">Course Code &amp; Title</th>
@@ -737,7 +763,7 @@ async function endorseActionPlan(item) {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="sec in chairHeatmapData.sections" :key="sec.section_id">
+          <tr v-for="sec in filteredChairHeatmapSections" :key="sec.section_id">
             <td><strong>{{ sec.course_code }}</strong> — {{ sec.course_title }}</td>
             <td><code>{{ sec.section_code }}</code></td>
             <td>{{ sec.faculty_name }}</td>
@@ -772,6 +798,11 @@ async function endorseActionPlan(item) {
               >
                 Report 📊
               </button>
+            </td>
+          </tr>
+          <tr v-if="!filteredChairHeatmapSections || filteredChairHeatmapSections.length === 0">
+            <td colspan="8" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">
+              {{ chairHeatmapSearchInput ? 'No course sections match your search query.' : 'No course sections found for this department in the active term.' }}
             </td>
           </tr>
         </tbody>
