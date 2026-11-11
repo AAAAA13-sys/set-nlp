@@ -1,0 +1,55 @@
+{
+  "training_date": "2026-11-11",
+  "dataset_source": "docs/Student Evaluation of Teachers Dataset (ML Training - Tagalog, English, Taglish) - Dataset.csv",
+  "total_samples": 10000,
+  "dev_samples": 7000,
+  "test_samples": 3000,
+  "sklearn_version": "1.9.1",
+  "nltk_version": "3.10.4",
+  "joblib_version": "1.6.0",
+  "sentiment_model": {
+    "algorithm": "TfidfVectorizer(ngram_range=(1,3)) + LogisticRegression(C=2.5, balanced)",
+    "vocab_size": 11006,
+    "dev_5fold_f1_macro": 0.9865,
+    "test_accuracy": 0.988,
+    "test_macro_precision": 0.988,
+    "test_macro_recall": 0.9869,
+    "test_macro_f1": 0.9875,
+    "test_latency_ms": 0.2091,
+    "per_language": {
+      "English": {
+        "accuracy": 0.9833,
+        "macro_f1": 0.9804,
+        "count": 1017
+      },
+      "Tagalog": {
+        "accuracy": 0.9928,
+        "macro_f1": 0.9936,
+        "count": 977
+      },
+      "Taglish": {
+        "accuracy": 0.9881,
+        "macro_f1": 0.9884,
+        "count": 1006
+      }
+    },
+    "classes": [
+      "Negative",
+      "Neutral",
+      "Positive"
+    ]
+  },
+  "domain_model": {
+    "algorithm": "TfidfVectorizer(ngram_range=(1,2)) + LogisticRegression(C=1.5, balanced)",
+    "test_accuracy": 0.9857,
+    "test_macro_f1": 0.9606,
+    "classes": [
+      "Assessment & Grading",
+      "Classroom Management",
+      "Pedagogical Delivery",
+      "Professional Conduct",
+      "Student Support & Mentorship",
+      "Unclassified / Needs Review"
+    ]
+  }
+}

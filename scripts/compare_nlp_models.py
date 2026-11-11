@@ -5,7 +5,7 @@ import json
 import math
 import time
 from collections import Counter
-from analytics import engine
+from analytics import engine, ml
 
 DEV_CSV = 'docs/analysis/dev_partition.csv'
 TEST_CSV = 'docs/analysis/test_partition.csv'
@@ -16,9 +16,6 @@ METADATA_JSON = 'docs/analysis/dataset_partitions.json'
 # Model A: Uncorrected Baseline
 def model_a_score(text):
     return engine._compute_rule_based_polarity(text)
-
-def model_a_tag(text):
-    return engine.classify_pedagogical_domain(text)
 
 # Model B: Corrected Baseline (Premature zero removed, simple fallback to VADER)
 _raw_vader = engine._VaderAnalyzer() if engine._VaderAnalyzer else None
@@ -100,7 +97,6 @@ def model_b_score(text):
     if _raw_vader:
         vader_compound = _raw_vader.polarity_scores(cleaned)["compound"]
 
-    # In Model B: premature zero return removed; rule_compound or vader_compound used
     if rule_compound != 0.0:
         res = rule_compound
     else:
@@ -108,13 +104,23 @@ def model_b_score(text):
 
     return round(max(-1.0, min(1.0, res)), 4)
 
-# Model C: Enhanced Hybrid Pipeline (Directly powered by production calibrated engine)
+# Model C: Enhanced Hybrid Rule + VADER Pipeline
 def model_c_score(text):
     return engine._compute_rule_based_polarity(text)
 
+# Model D: Production Scikit-Learn + NLTK Machine Learning Pipeline (10k dataset trained)
+ml.init_ml_models()
+
+def model_d_predict(text):
+    res = ml.predict_ml_sentiment(text)
+    if res:
+        return res['polarity'], res['valence']
+    p = engine._compute_rule_based_polarity(text)
+    return p, engine.classify_valence(p)
+
 LABELS = ['Positive', 'Neutral', 'Negative']
 
-def evaluate_model(name, score_fn, partition_csv):
+def evaluate_model(name, predict_fn, partition_csv):
     with open(partition_csv, encoding='utf-8') as f:
         rows = list(csv.DictReader(f))
 
@@ -124,8 +130,7 @@ def evaluate_model(name, score_fn, partition_csv):
     langs = []
 
     for r in rows:
-        p = score_fn(r['Feedback_Text'])
-        val = engine.classify_valence(p)
+        val = predict_fn(r['Feedback_Text'])
         preds.append(val)
         refs.append(r['Sentiment'])
         langs.append(r['Language'])
@@ -205,31 +210,35 @@ def print_report(res):
     print("=" * 70 + "\n")
 
 if __name__ == '__main__':
-    print("EVALUATING ON DEVELOPMENT PARTITION (560 samples):")
-    dev_a = evaluate_model("Model A (Baseline Uncorrected)", model_a_score, DEV_CSV)
-    dev_b = evaluate_model("Model B (Corrected Baseline)", model_b_score, DEV_CSV)
-    dev_c = evaluate_model("Model C (Enhanced Hybrid Pipeline)", model_c_score, DEV_CSV)
+    def wrap_score(score_fn):
+        return lambda t: engine.classify_valence(score_fn(t))
 
-    print_report(dev_a)
-    print_report(dev_b)
-    print_report(dev_c)
+    def wrap_ml(text):
+        _, val = model_d_predict(text)
+        return val
 
-    print("\nEVALUATING ON HELD-OUT UNTOUCHED TEST PARTITION (240 samples):")
-    test_a = evaluate_model("Model A (Baseline Uncorrected)", model_a_score, TEST_CSV)
-    test_b = evaluate_model("Model B (Corrected Baseline)", model_b_score, TEST_CSV)
-    test_c = evaluate_model("Model C (Enhanced Hybrid Pipeline)", model_c_score, TEST_CSV)
+    print("EVALUATING ON HELD-OUT UNTOUCHED TEST PARTITION (3,000 samples):")
+    test_a = evaluate_model("Model A (Baseline Uncorrected)", wrap_score(model_a_score), TEST_CSV)
+    test_b = evaluate_model("Model B (Corrected Baseline)", wrap_score(model_b_score), TEST_CSV)
+    test_c = evaluate_model("Model C (Enhanced Hybrid Rule+VADER)", wrap_score(model_c_score), TEST_CSV)
+    test_d = evaluate_model("Model D (Scikit-Learn ML Model - 10k Dataset)", wrap_ml, TEST_CSV)
 
     print_report(test_a)
     print_report(test_b)
     print_report(test_c)
+    print_report(test_d)
 
     # Save results to json
     all_results = {
-        'timestamp': '2026-11-10T19:35:00',
-        'development_evaluation': {'model_a': dev_a, 'model_b': dev_b, 'model_c': dev_c},
-        'held_out_test_evaluation': {'model_a': test_a, 'model_b': test_b, 'model_c': test_c},
+        'timestamp': '2026-11-11T10:05:00',
+        'dataset_scale': '10,000 samples (7,000 train, 3,000 test)',
+        'held_out_test_evaluation': {
+            'model_a': test_a,
+            'model_b': test_b,
+            'model_c': test_c,
+            'model_d': test_d,
+        },
     }
     with open('docs/analysis/model_comparison_results.json', 'w') as f:
         json.dump(all_results, f, indent=2)
     print("Saved comparison results to docs/analysis/model_comparison_results.json")
-

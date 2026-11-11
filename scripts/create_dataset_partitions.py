@@ -30,41 +30,46 @@ def main():
                 duplicate_ids.add(g['ID'])
             print(f"Identified duplicate group of {len(group)} items: IDs {[g['ID'] for g in group]}")
 
-    # Stratified target counts (70% Dev = 1400, 30% Test = 600)
-    target_dev_counts = {
-        ('English', 'Negative'): 180,
-        ('English', 'Neutral'): 89,
-        ('English', 'Positive'): 238,
-        ('Tagalog', 'Negative'): 162,
-        ('Tagalog', 'Neutral'): 77,
-        ('Tagalog', 'Positive'): 176,
-        ('Taglish', 'Negative'): 212,
-        ('Taglish', 'Neutral'): 94,
-        ('Taglish', 'Positive'): 172,
-    }
-
-    rng = random.Random(RANDOM_SEED)
-
     by_stratum = defaultdict(list)
     for r in rows:
         by_stratum[(r['Language'], r['Sentiment'])].append(r)
 
+    # Calculate exact 70/30 counts using largest remainder method for exactly 7,000 dev rows
+    total_dev_target = 7000
+    strata_dev_targets = {}
+    remainders = []
+
+    for stratum, items in sorted(by_stratum.items()):
+        raw_count = len(items) * 0.70
+        base_count = int(raw_count)
+        rem = raw_count - base_count
+        strata_dev_targets[stratum] = base_count
+        remainders.append((rem, stratum))
+
+    current_allocated = sum(strata_dev_targets.values())
+    shortage = total_dev_target - current_allocated
+    remainders.sort(key=lambda x: x[0], reverse=True)
+    for i in range(shortage):
+        strata_dev_targets[remainders[i][1]] += 1
+
+    print("Target Dev Counts per Stratum:")
+    for stratum, count in sorted(strata_dev_targets.items()):
+        print(f"  {stratum}: {count} / {len(by_stratum[stratum])} (Test: {len(by_stratum[stratum]) - count})")
+
+    rng = random.Random(RANDOM_SEED)
+
     dev_rows = []
     test_rows = []
 
-    dev_ids = set()
-    test_ids = set()
-
     for stratum, items in sorted(by_stratum.items()):
-        # Separate items that must go to dev (duplicates)
         forced_dev = [item for item in items if item['ID'] in duplicate_ids]
         candidates = [item for item in items if item['ID'] not in duplicate_ids]
 
-        # Shuffle candidates deterministically
         rng.shuffle(candidates)
 
-        target_dev = target_dev_counts[stratum]
+        target_dev = strata_dev_targets[stratum]
         needed_from_candidates = target_dev - len(forced_dev)
+        assert needed_from_candidates >= 0, f"Forced dev ({len(forced_dev)}) exceeds target ({target_dev}) for stratum {stratum}"
 
         stratum_dev = forced_dev + candidates[:needed_from_candidates]
         stratum_test = candidates[needed_from_candidates:]
@@ -75,8 +80,8 @@ def main():
         dev_rows.extend(stratum_dev)
         test_rows.extend(stratum_test)
 
-    assert len(dev_rows) == 1400, f"Expected 1400 dev rows, got {len(dev_rows)}"
-    assert len(test_rows) == 600, f"Expected 600 test rows, got {len(test_rows)}"
+    assert len(dev_rows) == 7000, f"Expected 7000 dev rows, got {len(dev_rows)}"
+    assert len(test_rows) == 3000, f"Expected 3000 test rows, got {len(test_rows)}"
 
     dev_id_set = {r['ID'] for r in dev_rows}
     test_id_set = {r['ID'] for r in test_rows}
@@ -103,11 +108,13 @@ def main():
     def summarize(partition_rows):
         lang_counts = Counter(r['Language'] for r in partition_rows)
         sent_counts = Counter(r['Sentiment'] for r in partition_rows)
+        aspect_counts = Counter(r['Aspect'] for r in partition_rows)
         strata_counts = {f"{k[0]}_{k[1]}": v for k, v in Counter((r['Language'], r['Sentiment']) for r in partition_rows).items()}
         return {
             'total_count': len(partition_rows),
             'languages': dict(lang_counts),
             'sentiments': dict(sent_counts),
+            'top_aspects': dict(aspect_counts.most_common(10)),
             'strata': strata_counts,
             'id_list': [int(r['ID']) for r in partition_rows],
         }
@@ -115,7 +122,7 @@ def main():
     metadata = {
         'dataset_source': SOURCE_CSV,
         'random_seed': RANDOM_SEED,
-        'partition_date': '2026-11-10',
+        'partition_date': '2026-11-11',
         'policy': 'Stratified 70/30 split across Language x Sentiment; near-duplicates grouped into Dev.',
         'duplicate_groups': [{'text': t, 'ids': [g['ID'] for g in g_items]} for t, g_items in by_text.items() if len(g_items) > 1],
         'development_partition': summarize(dev_rows),
@@ -125,11 +132,10 @@ def main():
     with open(METADATA_JSON, 'w', encoding='utf-8') as f:
         json.dump(metadata, f, indent=2)
 
-    print(f"Successfully created partitions:")
+    print(f"\nSuccessfully created partitions:")
     print(f"  Dev Partition: {len(dev_rows)} rows -> {DEV_CSV}")
     print(f"  Test Partition: {len(test_rows)} rows -> {TEST_CSV}")
     print(f"  Metadata: {METADATA_JSON}")
 
 if __name__ == '__main__':
     main()
-

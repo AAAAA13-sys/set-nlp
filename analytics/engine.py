@@ -36,6 +36,11 @@ try:
 except ImportError:  # pragma: no cover - deterministic calamanCy adapter active when package is absent
     _calamancy_lib = None
 
+try:
+    from analytics import ml as _ml_module
+except ImportError:  # pragma: no cover
+    _ml_module = None
+
 
 CALAMANCY_REPO_URL: str = "https://github.com/ljvmiranda921/calamanCy"
 CALAMANCY_REPO: str = CALAMANCY_REPO_URL
@@ -1290,6 +1295,39 @@ def get_engine_provenance() -> dict[str, Any]:
     except ImportError:
         spacy_installed = False
 
+    sklearn_installed = False
+    try:
+        import sklearn  # type: ignore[import-not-found]
+
+        sklearn_installed = True
+    except ImportError:
+        sklearn_installed = False
+
+    nltk_installed = False
+    try:
+        import nltk  # type: ignore[import-not-found]
+
+        nltk_installed = True
+    except ImportError:
+        nltk_installed = False
+
+    joblib_installed = False
+    try:
+        import joblib  # type: ignore[import-not-found]
+
+        joblib_installed = True
+    except ImportError:
+        joblib_installed = False
+
+    ml_active = False
+    ml_meta: dict[str, Any] = {}
+    if _ml_module is not None:
+        try:
+            ml_active = _ml_module.is_ml_active()
+            ml_meta = _ml_module.get_ml_provenance().get("metadata", {})
+        except Exception:
+            ml_active = False
+
     return {
         "nlp_engine": "calamanCy+VADER",
         "runtime_engine": "calamanCy+VADER" if calamancy_active else "RuleBased+VADER (Heuristic Fallback)",
@@ -1299,10 +1337,16 @@ def get_engine_provenance() -> dict[str, Any]:
         "calamancy_model": CALAMANCY_DEFAULT_MODEL if calamancy_active else None,
         "calamancy_repo": CALAMANCY_REPO_URL,
         "scoring_combination": "0.60*rule + 0.40*vader (blended when both fire; fallback to non-zero)",
+        "ml_model_loaded": ml_active,
+        "ml_engine": "scikit-learn+NLTK",
+        "ml_metadata": ml_meta,
         "dependencies": {
             "vaderSentiment": _VaderAnalyzer is not None,
             "calamancy": _calamancy_lib is not None,
             "spacy": spacy_installed,
+            "scikit-learn": sklearn_installed,
+            "nltk": nltk_installed,
+            "joblib": joblib_installed,
         },
     }
 
@@ -1772,6 +1816,9 @@ def analyze_comment(text: Any) -> dict[str, Any]:
     calamancy_meta = extract_calamancy_features(comment_str)
 
     prov = get_engine_provenance()
+    ml_sentiment = _ml_module.predict_ml_sentiment(comment_str) if _ml_module is not None else None
+    ml_domain = _ml_module.predict_ml_domain(comment_str) if _ml_module is not None else None
+
     result: dict[str, Any] = {
         "polarity": polarity,
         "valence": valence,
@@ -1785,6 +1832,10 @@ def analyze_comment(text: Any) -> dict[str, Any]:
         "runtime_provenance": prov,
         "calamancy": calamancy_meta,
     }
+    if ml_sentiment is not None:
+        result["ml_sentiment"] = ml_sentiment
+    if ml_domain is not None:
+        result["ml_domain"] = ml_domain
     if item_id is not None:
         result["id"] = item_id
     return result
