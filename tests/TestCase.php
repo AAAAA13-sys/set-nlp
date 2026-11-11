@@ -266,7 +266,9 @@ namespace Tests {
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     code TEXT NOT NULL UNIQUE,
                     name TEXT NOT NULL,
-                    college_name TEXT NOT NULL DEFAULT 'College of Computer Studies'
+                    college_name TEXT NOT NULL DEFAULT 'College of Computer Studies',
+                    created_at TEXT NULL,
+                    updated_at TEXT NULL
                 );
 
                 CREATE TABLE academic_terms (
@@ -288,10 +290,13 @@ namespace Tests {
                     institutional_id TEXT NOT NULL UNIQUE,
                     name TEXT NOT NULL,
                     email TEXT NOT NULL UNIQUE,
-                    password_hash TEXT NOT NULL,
+                    password TEXT NULL,
+                    password_hash TEXT NULL,
                     role TEXT NOT NULL CHECK(role IN ('admin', 'dean', 'chair', 'faculty', 'student')),
                     department_id INTEGER NULL REFERENCES departments(id) ON DELETE SET NULL,
-                    is_active INTEGER NOT NULL DEFAULT 1
+                    is_active INTEGER NOT NULL DEFAULT 1,
+                    created_at TEXT NULL,
+                    updated_at TEXT NULL
                 );
 
                 CREATE TABLE courses (
@@ -324,6 +329,8 @@ namespace Tests {
                     course_section_id INTEGER NOT NULL REFERENCES course_sections(id) ON DELETE CASCADE,
                     academic_term_id INTEGER NOT NULL REFERENCES academic_terms(id) ON DELETE CASCADE,
                     enrollment_status TEXT NOT NULL DEFAULT 'ENROLLED',
+                    created_at TEXT NULL,
+                    updated_at TEXT NULL,
                     UNIQUE(student_id, course_section_id)
                 );
 

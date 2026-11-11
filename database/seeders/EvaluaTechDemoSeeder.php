@@ -301,6 +301,69 @@ class EvaluaTechDemoSeeder extends Seeder
             $this->evaluationService->submitEvaluation($submission);
         }
 
+        // 5c. Seed realistic section clearances across enrolled cohorts for institutional demonstration
+        $targetClearances = [
+            1 => 39,
+            2 => 36,
+            3 => 38,
+            4 => 30,
+            5 => 34,
+            6 => 37,
+            7 => 35,
+        ];
+
+        $cohortClrStmt = $this->pdo->prepare("
+            INSERT OR IGNORE INTO evaluation_clearances (
+                student_id, course_section_id, academic_term_id, submission_key, status, clearance_token, cleared_at, created_at, updated_at
+            ) VALUES (
+                :student_id, :course_section_id, 1, :submission_key, 'CLEARED', :clearance_token, :cleared_at, :created_at, :updated_at
+            )
+        ");
+
+        $appKey = 'evaluatech-app-signing-secret-2026-key';
+        foreach ($targetClearances as $secId => $targetCount) {
+            $chk = $this->pdo->prepare("SELECT COUNT(*) FROM evaluation_clearances WHERE course_section_id = :sec_id AND status = 'CLEARED'");
+            $chk->execute([':sec_id' => $secId]);
+            $existing = (int) $chk->fetchColumn();
+
+            $secDeptId = ($secId === 3 || $secId === 4 || $secId === 6) ? 2 : 1;
+
+            for ($i = $existing + 1; $i <= $targetCount; $i++) {
+                $syntheticStudentId = 1000 + ($secId * 100) + $i;
+                $subKey = "SEED-SEC{$secId}-STU{$syntheticStudentId}";
+                $token = "EVT.CLR.SEC{$secId}.STU{$syntheticStudentId}." . substr(hash_hmac('sha256', $subKey, $appKey), 0, 32);
+
+                $userStmt->execute([
+                    ':id' => $syntheticStudentId,
+                    ':inst_id' => 'STU-' . $syntheticStudentId,
+                    ':name' => 'Cohort Student ' . $syntheticStudentId,
+                    ':email' => 'stu' . $syntheticStudentId . '@plpasig.edu.ph',
+                    ':password' => $passwordHash,
+                    ':role' => 'student',
+                    ':dept_id' => $secDeptId,
+                    ':created_at' => $now,
+                    ':updated_at' => $now,
+                ]);
+
+                $enrollStmt->execute([
+                    ':student_id' => $syntheticStudentId,
+                    ':section_id' => $secId,
+                    ':created_at' => $now,
+                    ':updated_at' => $now,
+                ]);
+
+                $cohortClrStmt->execute([
+                    ':student_id' => $syntheticStudentId,
+                    ':course_section_id' => $secId,
+                    ':submission_key' => $subKey,
+                    ':clearance_token' => $token,
+                    ':cleared_at' => $now,
+                    ':created_at' => $now,
+                    ':updated_at' => $now,
+                ]);
+            }
+        }
+
         // 6. Seed additional anonymized vault records across sections (Zero student identity fields)
         $vaultStmt = $this->pdo->prepare("
             INSERT OR IGNORE INTO evaluation_vault (

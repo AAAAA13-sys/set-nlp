@@ -1971,6 +1971,7 @@ class EvaluaTechBackendSuiteTest extends TestCase
      */
     public function test_29_department_completion_heatmap_and_accreditation_audit_matrix(): void
     {
+        (new \Database\Seeders\EvaluaTechDemoSeeder($this->pdo))->seed();
         $service = new \App\Services\DecoupledEvaluationService($this->pdo);
         $controller = new \App\Http\Controllers\Api\DeanAnalyticsController($service);
 
@@ -2074,6 +2075,7 @@ class EvaluaTechBackendSuiteTest extends TestCase
 
     public function test_30_aaccup_evidence_dossier_and_faculty_performance_quartiles(): void
     {
+        (new \Database\Seeders\EvaluaTechDemoSeeder($this->pdo))->seed();
         $service = new \App\Services\DecoupledEvaluationService($this->pdo);
         $controller = new \App\Http\Controllers\Api\DeanAnalyticsController($service);
 

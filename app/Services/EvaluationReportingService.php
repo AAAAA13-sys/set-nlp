@@ -187,13 +187,13 @@ class EvaluationReportingService
 
         if (!empty($questionnaires)) {
             $profQuestionSummary = $this->analytics->synthesizeQuestionnaires($questionnaires);
-        } else {
+        } elseif ($count > 0) {
             $profQuestionSummary = [
                 'submission_count' => $count,
                 'top_descriptors' => [
-                    ['word' => 'Malinaw', 'count' => max(1, $count), 'polarity' => 0.65, 'valence' => 'Positive'],
-                    ['word' => 'Approachable', 'count' => max(1, $count), 'polarity' => 0.58, 'valence' => 'Positive'],
-                    ['word' => 'Organized', 'count' => max(1, $count), 'polarity' => 0.50, 'valence' => 'Positive'],
+                    ['word' => 'Malinaw', 'count' => $count, 'polarity' => 0.65, 'valence' => 'Positive'],
+                    ['word' => 'Approachable', 'count' => $count, 'polarity' => 0.58, 'valence' => 'Positive'],
+                    ['word' => 'Organized', 'count' => $count, 'polarity' => 0.50, 'valence' => 'Positive'],
                 ],
                 'improvement_topics' => [
                     ['sub_item' => 'a.', 'topic' => 'Faster return of quiz scores and rubrics', 'polarity' => -0.32, 'valence' => 'Negative', 'pedagogical_tag' => 'Assessment & Grading'],
@@ -205,6 +205,8 @@ class EvaluationReportingService
                 'nlp_engine' => AnalyticsClientService::NLP_ENGINE_NAME,
                 'calamancy_model' => AnalyticsClientService::CALAMANCY_DEFAULT_MODEL,
             ];
+        } else {
+            $profQuestionSummary = $this->analytics->synthesizeQuestionnaires([]);
         }
 
         $fid = (int) $section['faculty_id'];
@@ -373,23 +375,22 @@ class EvaluationReportingService
 
         $heatmap = $this->getDepartmentCompletionHeatmap($departmentId);
         $computedResponseRate = (float) ($heatmap['overall_completion_rate_pct'] ?? 0.0);
-        $effectiveResponseRate = $computedResponseRate > 0.0 ? $computedResponseRate : 91.4;
 
         $totalSubmissions = count($rows);
         if ($totalSubmissions === 0) {
             return [
                 'department_id' => is_array($departmentId) ? null : $departmentId,
-                'response_rate_pct' => $effectiveResponseRate,
+                'response_rate_pct' => $computedResponseRate,
                 'target_response_rate_pct' => 85.0,
                 'submissions_logged' => 0,
                 'total_enrolled' => (int) ($heatmap['total_enrolled'] ?? 0),
                 'total_evaluated' => (int) ($heatmap['total_evaluated'] ?? 0),
-                'average_evaluation_seconds' => 222,
-                'integrity_flag_rate_pct' => 1.2,
+                'average_evaluation_seconds' => 0,
+                'integrity_flag_rate_pct' => 0.0,
                 'sentiment_distribution_pct' => [
-                    'Positive' => 72.0,
-                    'Neutral' => 18.0,
-                    'Negative' => 10.0,
+                    'Positive' => 0.0,
+                    'Neutral' => 0.0,
+                    'Negative' => 0.0,
                 ],
                 'instructor_summaries' => [],
                 'watchlist' => [],
@@ -488,7 +489,7 @@ class EvaluationReportingService
 
         return [
             'department_id' => is_array($departmentId) ? null : $departmentId,
-            'response_rate_pct' => $effectiveResponseRate,
+            'response_rate_pct' => $computedResponseRate,
             'target_response_rate_pct' => 85.0,
             'submissions_logged' => $totalSubmissions,
             'total_enrolled' => (int) ($heatmap['total_enrolled'] ?? 0),
@@ -521,6 +522,7 @@ class EvaluationReportingService
                 cs.id AS section_id,
                 cs.section_code,
                 cs.faculty_id,
+                cs.enrolled_count,
                 u.name AS faculty_name,
                 c.department_id,
                 d.name AS department_name,
@@ -560,33 +562,29 @@ class EvaluationReportingService
             'CRITICAL' => 0,  // < 70%
         ];
 
-        // Seeded realistic section cohort sizes for institutional demonstration
-        $sectionCohorts = [
-            1 => ['enrolled' => 42, 'evaluated' => 39], // 92.9% EXCELLENT
-            2 => ['enrolled' => 38, 'evaluated' => 36], // 94.7% EXCELLENT
-            3 => ['enrolled' => 45, 'evaluated' => 38], // 84.4% OPTIMAL
-            4 => ['enrolled' => 40, 'evaluated' => 30], // 75.0% WARNING
-            5 => ['enrolled' => 36, 'evaluated' => 34], // 94.4% EXCELLENT
-            6 => ['enrolled' => 44, 'evaluated' => 37], // 84.1% OPTIMAL
-        ];
+        $clrStmt = $this->pdo->prepare("SELECT COUNT(*) AS cnt FROM evaluation_clearances WHERE course_section_id = :sec_id AND status = 'CLEARED'");
+        $enrStmt = $this->pdo->prepare("SELECT COUNT(*) AS cnt FROM enrollments WHERE course_section_id = :sec_id");
 
         foreach ($sections as $s) {
             $secId = (int) $s['section_id'];
-            $cohort = $sectionCohorts[$secId] ?? ['enrolled' => 40, 'evaluated' => 35];
 
-            // Query actual clearances in DB if available
+            $enrolled = 0;
+            $evaluated = 0;
+
             try {
-                $clrStmt = $this->pdo->prepare("SELECT count(*) as cnt FROM evaluation_clearances WHERE course_section_id = :sec_id AND status = 'CLEARED'");
-                $clrStmt->execute([':sec_id' => $secId]);
-                $realClr = (int) ($clrStmt->fetch(PDO::FETCH_ASSOC)['cnt'] ?? 0);
-                if ($realClr > 0) {
-                    $cohort['evaluated'] = max($cohort['evaluated'], $realClr + 30);
-                    $cohort['enrolled'] = max($cohort['enrolled'], $cohort['evaluated'] + 3);
-                }
+                $enrStmt->execute([':sec_id' => $secId]);
+                $enrolled = (int) ($enrStmt->fetch(PDO::FETCH_ASSOC)['cnt'] ?? 0);
             } catch (\Throwable) {}
 
-            $enrolled = (int) $cohort['enrolled'];
-            $evaluated = (int) $cohort['evaluated'];
+            if ($enrolled === 0 && !empty($s['enrolled_count'])) {
+                $enrolled = (int) $s['enrolled_count'];
+            }
+
+            try {
+                $clrStmt->execute([':sec_id' => $secId]);
+                $evaluated = (int) ($clrStmt->fetch(PDO::FETCH_ASSOC)['cnt'] ?? 0);
+            } catch (\Throwable) {}
+
             $pct = $enrolled > 0 ? round(($evaluated / $enrolled) * 100, 1) : 0.0;
 
             if ($pct >= 90.0) {
@@ -913,16 +911,6 @@ class EvaluationReportingService
             }
         }
 
-        // Baseline fallback only used when evaluation_vault has zero rows for a section in isolated unit tests
-        $emptyVaultBaselines = [
-            'CS-401' => ['mean' => 4.62, 'positive_pct' => 85.0, 'negative_pct' => 5.0, 'neutral_pct' => 10.0],
-            'CS-405' => ['mean' => 4.45, 'positive_pct' => 78.0, 'negative_pct' => 8.0, 'neutral_pct' => 14.0],
-            'ENG-102' => ['mean' => 4.18, 'positive_pct' => 72.0, 'negative_pct' => 12.0, 'neutral_pct' => 16.0],
-            'MATH-201' => ['mean' => 3.82, 'positive_pct' => 65.0, 'negative_pct' => 18.0, 'neutral_pct' => 17.0],
-            'PHYS-101' => ['mean' => 4.08, 'positive_pct' => 70.0, 'negative_pct' => 14.0, 'neutral_pct' => 16.0],
-            'CS-408' => ['mean' => 3.12, 'positive_pct' => 28.0, 'negative_pct' => 54.0, 'neutral_pct' => 18.0],
-        ];
-
         $vaultStmt = $this->pdo->prepare('
             SELECT mean_score, sentiment_valence
             FROM evaluation_vault
@@ -962,16 +950,10 @@ class EvaluationReportingService
                 $negPct = round(($negCount / $vCount) * 100.0, 1);
                 $neuPct = round(($neuCount / $vCount) * 100.0, 1);
             } else {
-                $base = $emptyVaultBaselines[$prof['course_code']] ?? [
-                    'mean' => 4.10,
-                    'positive_pct' => 70.0,
-                    'negative_pct' => 12.0,
-                    'neutral_pct' => 18.0,
-                ];
-                $mean = (float) $base['mean'];
-                $posPct = (float) $base['positive_pct'];
-                $negPct = (float) $base['negative_pct'];
-                $neuPct = (float) $base['neutral_pct'];
+                $mean = 0.0;
+                $posPct = 0.0;
+                $negPct = 0.0;
+                $neuPct = 0.0;
             }
 
             $isWatchlist = $this->shouldFlagOnWatchlist($mean, $negPct);
@@ -997,7 +979,11 @@ class EvaluationReportingService
                 'action_plan_status' => $planStatus,
             ];
 
-            if ($isWatchlist || $mean < 3.50) {
+            if ($vCount === 0) {
+                $facultyEntry['tier'] = 'PENDING';
+                $facultyEntry['tier_title'] = 'Pending Evaluations';
+                $facultyEntry['badge_color'] = '#64748b';
+            } elseif ($isWatchlist || $mean < 3.50) {
                 $facultyEntry['tier'] = 'PRIORITY_INTERVENTION';
                 $facultyEntry['tier_title'] = 'Priority Intervention';
                 $facultyEntry['badge_color'] = '#dc2626';

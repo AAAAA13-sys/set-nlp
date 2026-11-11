@@ -209,6 +209,39 @@ export const DEMO_STUDENT_QUEUE = [
   },
 ];
 
+export const INITIAL_DEAN_METRICS = {
+  department: 'Academic Affairs',
+  period: 'Evaluation Cycle',
+  activeTerm: 'Active Term',
+  responseRate: 0.0,
+  responseTarget: 85.0,
+  submissionsLogged: 0,
+  averageEvaluationTime: '—',
+  averageEvaluationSeconds: 0,
+  integrityFlagsPct: 0.0,
+  sentimentDistribution: {
+    positive: 0,
+    neutral: 0,
+    negative: 0,
+  },
+  sentiment_distribution_pct: {
+    Positive: 0.0,
+    Neutral: 0.0,
+    Negative: 0.0,
+  },
+  watchlist: [],
+  instructor_summaries: [],
+  qualitative_synthesis: {
+    submission_count: 0,
+    nlp_engine: 'calamanCy+VADER',
+    calamancy_model: 'tl_calamancy_md',
+    top_descriptors: [],
+    improvement_topics: [],
+    key_strengths: [],
+    key_recommendations: [],
+  },
+};
+
 export const DEMO_DEAN_METRICS = {
   department: 'College of Computer Studies',
   period: 'Final SET',

@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { useAuthStore } from './auth.js';
 import {
+  INITIAL_DEAN_METRICS,
   DEMO_DEAN_METRICS,
   PEDAGOGICAL_DIMENSIONS,
   calculatePopulationVariance,
@@ -43,7 +44,7 @@ export const useEvaluationStore = defineStore('evaluation', () => {
     total_vault_records: 0,
   });
 
-  const deanOverview = ref({ ...DEMO_DEAN_METRICS });
+  const deanOverview = ref({ ...INITIAL_DEAN_METRICS });
 
   // Evaluation Window & Period Control State (SOP 1 / Registrar Parameter Console)
   const evaluationWindow = ref({

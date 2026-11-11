@@ -32,15 +32,15 @@ const sentimentDist = computed(() => {
   }
   return (
     overview.value.sentimentDistribution || {
-      positive: 72,
-      neutral: 18,
-      negative: 10,
+      positive: 0,
+      neutral: 0,
+      negative: 0,
     }
   );
 });
 
 const responseRateDisplay = computed(() => {
-  const val = overview.value.response_rate_pct ?? overview.value.responseRate ?? 91.4;
+  const val = overview.value.response_rate_pct ?? overview.value.responseRate ?? 0;
   return Number(val).toFixed(1);
 });
 
