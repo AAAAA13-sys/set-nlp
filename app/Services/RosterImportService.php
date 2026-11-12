@@ -12,6 +12,9 @@ class RosterImportService
     private PDO $pdo;
     private IntegrityValidatorService $validator;
 
+    /** @var list<array{institutional_id: string, name: string, email: string, role: string, temporary_password: string}> */
+    private array $issuedCredentials = [];
+
     public function __construct(
         ?PDO $pdo = null,
         ?IntegrityValidatorService $validator = null
@@ -42,7 +45,7 @@ class RosterImportService
         $errors = [];
         foreach ($rows as $index => $row) {
             $rowNum = $index + 1;
-            $studentInstId = trim((string) ($row['student_institutional_id'] ?? $row['student_number'] ?? ''));
+            $studentInstId = trim((string) ($row['student_institutional_id'] ?? $row['student_number'] ?? $row['student_id'] ?? ''));
             $courseCode = trim((string) ($row['course_code'] ?? ''));
             $sectionCode = trim((string) ($row['section_code'] ?? 'A'));
             $instructorName = trim((string) ($row['instructor_name'] ?? $row['faculty_name'] ?? ''));
@@ -67,6 +70,7 @@ class RosterImportService
             ];
         }
 
+        $this->issuedCredentials = [];
         $this->pdo->beginTransaction();
         try {
             $this->ensureDefaultTerm($academicTermId);
@@ -86,7 +90,7 @@ class RosterImportService
                 $facultyInstId = trim((string) ($row['faculty_institutional_id'] ?? 'FAC-' . strtoupper(substr(md5($facultyEmail), 0, 6))));
                 $facultyId = $this->upsertUser($facultyInstId, $instructorName, $facultyEmail, 'faculty', $deptId);
 
-                $studentInstId = trim((string) ($row['student_institutional_id'] ?? $row['student_number']));
+                $studentInstId = trim((string) ($row['student_institutional_id'] ?? $row['student_number'] ?? $row['student_id'] ?? ''));
                 $studentName = trim((string) ($row['student_name'] ?? "Student {$studentInstId}"));
                 $studentEmail = trim((string) ($row['student_email'] ?? strtolower($studentInstId) . '@student.evaluatech.edu'));
                 $studentId = $this->upsertUser($studentInstId, $studentName, $studentEmail, 'student', $deptId);
@@ -106,11 +110,14 @@ class RosterImportService
                 'code' => 'ROSTER_IMPORTED',
                 'http_status' => 200,
                 'errors' => [],
+                // Shown to the Registrar once; only bcrypt hashes are stored.
+                'issued_credentials' => $this->issuedCredentials,
             ];
         } catch (Throwable $e) {
             if ($this->pdo->inTransaction()) {
                 $this->pdo->rollBack();
             }
+            $this->issuedCredentials = [];
 
             return [
                 'imported' => 0,
@@ -280,18 +287,27 @@ class RosterImportService
             return (int) $row['id'];
         }
 
+        $temporaryPassword = TemporaryCredential::generate();
         $ins = $this->pdo->prepare("
-            INSERT INTO users (institutional_id, name, email, password, role, department_id, is_active)
-            VALUES (:inst_id, :name, :email, :password, :role, :dept_id, 1)
+            INSERT INTO users (institutional_id, name, email, password, role, department_id, is_active, must_change_password)
+            VALUES (:inst_id, :name, :email, :password, :role, :dept_id, 1, 1)
         ");
         $ins->execute([
             ':inst_id' => $instId,
             ':name' => $name,
             ':email' => $email,
-            ':password' => password_hash('evaluatech123', PASSWORD_BCRYPT),
+            ':password' => password_hash($temporaryPassword, PASSWORD_BCRYPT),
             ':role' => $role,
             ':dept_id' => $deptId,
         ]);
+
+        $this->issuedCredentials[] = [
+            'institutional_id' => $instId,
+            'name' => $name,
+            'email' => $email,
+            'role' => $role,
+            'temporary_password' => $temporaryPassword,
+        ];
 
         return (int) $this->pdo->lastInsertId();
     }

@@ -261,7 +261,7 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
   - Modularized `AdminSetupView.vue` with dedicated tab components (`SetupWarRoomTab.vue`, `SetupAssignmentsTab.vue`, `SetupTermsTab.vue`, etc.).
   - Executed Unified Multi-Tier Verification Matrix: 181 automated units, 100% PASS (39 PHPUnit backend tests with 1,067 assertions, 80 Frontend DOM/UX tests across 76 groups, 50 Python NLP unit tests, 12 Playwright autonomous interaction tests, zero PHP syntax errors, zero UTF-8 BOM violations, and zero Vite build errors).
 
-- [ ] **Checkpoint 59:** Production Hardening, Ponytail Clean-Up, Total Permit Eradication, Demo Button Elimination & Institutional System Operations Guide (Deadline 18:00 GMT+8):
+- [x] **Checkpoint 59:** Production Hardening, Ponytail Clean-Up, Total Permit Eradication, Demo Button Elimination & Institutional System Operations Guide (Deadline 18:00 GMT+8):
   - Total eradication of "examination permit" artifacts across UI (`ClearancePermitCard.vue`, `PermitVerifyView.vue`, `NavbarHeader.vue`, `EvaluationAdvocacyView.vue`), backend services (`ExaminationPermitService.php` $\to$ `EvaluationClearanceService.php`), API payloads, and walkthrough documentation.
   - Total purge of demo/cheat buttons (deleting `quickFillSample` sample shortcuts in `PermitVerifyView.vue`).
   - Code clean-up via `ponytail`: applying the Ladder of Simplicity, removing dead code and speculative wrappers.
@@ -269,17 +269,27 @@ To design, develop, and evaluate **EvaluaTech**, a secure and user-friendly web-
   - Autonomous Playwright E2E execution with self-managed server lifecycle and updated screenshot captures.
   - Verification across all 181+ multi-tier automated test units with 100% pass rate.
 
+- [x] **Checkpoint 60:** MVP Production Readiness, Credential Hardening & Documented Testing Phase (12 November 2026):
+  - Replaced the shared default password with per-account one-time passwords (`TemporaryCredential`), shown once to the Registrar after roster import or user creation, stored as bcrypt only, with a server-enforced password change at first sign-in (`users.must_change_password`, `POST /api/auth/password`, `403 PASSWORD_CHANGE_REQUIRED`, `/account/password`).
+  - Closed production blockers: hard-coded token signing fallback in `AuthController`; demo seeding in production; broken and unsafe `scripts/production-init.php` (non-existent column, published fallback admin password, re-run resetting live data).
+  - Fixed real-use defects found by manual data entry: UI roster import always rejected (`student_id` alias), prefilled fictional roster rows, dean scope granted by user ID, invented dean dashboard figures, fictional signatory on printed records, misleading "no comments" state while loading.
+  - Completed Checkpoint 59 clean-up: removed `ExaminationPermitService`.
+  - Added backend test 41, frontend groups 77-78, and the 20-step production-mode walkthrough `scripts/manual-production-walkthrough.mjs`.
+  - Documentation: `docs/testing/TESTING_PHASE_REPORT.md` (method, results, 14 defects, evidence), `docs/PRODUCTION_DEPLOYMENT.md`.
+  - Verification: 187 automated units, 100% PASS (41 PHPUnit tests with 1,135 assertions, 82 frontend tests in 78 groups, 50 Python NLP tests, 14 Playwright E2E tests); 20 of 20 manual acceptance steps PASS on `APP_ENV=production`. Not run: `impeccable detect` (CLI not installed).
+
 ---
 
 ## 6. Multi-Tier Verification Evidence Log
 
 | Verification Tier | Command Executed | Executed Units | Pass Rate | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 39 tests (1,067 assertions) | 39 / 39 | **100% PASS** |
-| **Frontend DOM & UX Suite** | `npm.cmd test` | 76 test groups (80 tests) | 80 / 80 | **100% PASS** |
+| **Backend PHPUnit Suite** | `php scripts/run-backend-tests.php` | 41 tests (1,135 assertions) | 41 / 41 | **100% PASS** |
+| **Frontend DOM & UX Suite** | `npm.cmd test` | 78 test groups (82 tests) | 82 / 82 | **100% PASS** |
 | **Python NLP Analytics Suite** | `python -m unittest discover -s analytics/tests -p "test_*.py" -v` | 50 unit tests | 50 / 50 | **100% PASS** |
-| **Playwright E2E Suite** | `node --test tests/frontend/e2e-interaction.spec.js` | 12 interaction tests | 12 / 12 | **100% PASS** |
-| **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 60 PHP files, 262 sources | 100% clean | **100% PASS** |
+| **Playwright E2E Suite** | `node --test tests/frontend/e2e-interaction.spec.js` | 14 interaction tests | 14 / 14 | **100% PASS** |
+| **Production Acceptance Walkthrough** | `node scripts/manual-production-walkthrough.mjs` | 20 manual-entry steps (`APP_ENV=production`) | 20 / 20 | **100% PASS** |
+| **Hygiene & Syntax Audit** | `php -l` & UTF-8 BOM scan | 64 PHP files, 299 sources | 100% clean | **100% PASS** |
 | **Vite Production Bundle** | `npm.cmd run build` | 92 modules | Zero `.map` files | **100% PASS** |
-| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 181 automated units | 181 / 181 | **100% PASS** |
+| **Unified Verification Matrix** | `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` | 187 automated units | 187 / 187 | **100% PASS** |
 

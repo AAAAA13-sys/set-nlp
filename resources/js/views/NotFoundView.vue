@@ -31,7 +31,7 @@ function goHome() {
         <span class="ui-hint" tabindex="0" aria-label="Navigation help" data-hint="Your sign-in session and saved evaluation drafts remain intact.">?</span>
       </h2>
       <p class="section-subtitle notfound-subtitle">
-        The address <code class="notfound-path">{{ attemptedPath }}</code> could not be found in AAAAA13 EvaluTech.
+        The address <code class="notfound-path">{{ attemptedPath }}</code> could not be found in AAAAA13 EvaluaTech.
       </p>
 
       <div class="notfound-guidance">
@@ -85,7 +85,7 @@ function goHome() {
   letter-spacing: 0.08em;
   padding: 0.22rem 0.62rem;
   border-radius: 6px;
-  background: #103c2e;
+  background: #0f172a;
   color: #f4cd42;
 }
 
@@ -109,7 +109,7 @@ function goHome() {
   border-radius: 6px;
   background: #f6f8f4;
   border: 1px solid #dbe3da;
-  color: #103c2e;
+  color: #0f172a;
 }
 
 .notfound-guidance {

@@ -44,7 +44,6 @@ onUnmounted(() => {
   >
     <div class="modal-card">
       <div class="modal-header">
-        <span class="eyebrow-badge">CONFIRM RATINGS</span>
         <h2 id="straight-line-modal-title" class="section-title">
           All 25 items have the same rating ({{ uniformRating }} / 5)
           <span class="ui-hint" tabindex="0" data-hint="Uniform ratings (zero variance) require confirmation before submission.">?</span>

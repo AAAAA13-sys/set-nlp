@@ -1,7 +1,10 @@
 <script setup>
+import { humanizeStatus } from '../utils/uxHelpers.js';
+import AppIcon from '../components/AppIcon.vue';
 import { computed, onMounted, ref } from 'vue';
 import DestructiveConfirmModal from '../components/DestructiveConfirmModal.vue';
 import ErrorRecoveryBanner from '../components/ErrorRecoveryBanner.vue';
+import IssuedCredentialsPanel from '../components/IssuedCredentialsPanel.vue';
 import SkeletonLoader from '../components/SkeletonLoader.vue';
 import { useAuthStore } from '../stores/auth.js';
 import { useEvaluationStore } from '../stores/evaluation.js';
@@ -12,24 +15,14 @@ const authStore = useAuthStore();
 const evaluationStore = useEvaluationStore();
 
 const rosterFormat = ref('json');
-const rosterInput = ref(
-  JSON.stringify(
-    [
-      {
-        student_id: '2024-10892',
-        student_name: 'Juan Dela Cruz',
-        course_code: 'CS-410',
-        course_title: 'Cloud Security & Distributed Systems',
-        section_code: 'SEC-A',
-        instructor_name: 'Dr. H. Villanueva',
-        faculty_email: 'hvillanueva@aaaaa13.edu',
-        department_name: 'College of Computer Studies',
-      },
-    ],
-    null,
-    2,
-  ),
+// Starts empty: a prefilled sample row would be imported as a real person if submitted unedited.
+const rosterInput = ref('');
+const rosterPlaceholder = computed(() =>
+  rosterFormat.value === 'json'
+    ? '[\n  {\n    "student_id": "2026-00001",\n    "student_name": "Full Name",\n    "course_code": "CS-101",\n    "course_title": "Course Title",\n    "section_code": "A",\n    "instructor_name": "Prof. Full Name",\n    "faculty_email": "name@aaaaa13.edu",\n    "department_name": "Department of Computer Science"\n  }\n]'
+    : 'student_id,course_code,course_title,instructor_name,department_name\n2026-00001,CS-101,Course Title,Prof. Full Name,Department of Computer Science',
 );
+const issuedCredentials = ref([]);
 
 const importStatus = ref(null);
 const vaultAuditData = ref(null);
@@ -44,6 +37,15 @@ const bulkStatusMessage = ref('');
 const locksSearch = ref('');
 const locksDeptFilter = ref('ALL');
 const locksStatusFilter = ref('ALL');
+
+// Window totals summed from the per-section counts already loaded for the grade-lock table.
+const windowTotals = computed(() => {
+  const list = evaluationStore.sectionLocks || [];
+  const sum = (key) => list.reduce((acc, row) => acc + Number(row?.[key] || 0), 0);
+  return list.length
+    ? { enrollments: sum('enrolled_count'), clearances: sum('cleared_count'), vault: sum('vault_count') }
+    : null;
+});
 
 const uniqueLockDepartments = computed(() => {
   const depts = new Set();
@@ -194,6 +196,20 @@ const filteredSecurityControls = computed(() => {
   });
 });
 
+// Native date-time pickers edit "YYYY-MM-DDTHH:MM"; the window API keeps "YYYY-MM-DD HH:MM:SS" (Asia/Manila).
+function toLocalInput(value) {
+  const v = String(value || '').trim();
+  const m = v.match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2})/);
+  return m ? `${m[1]}T${m[2]}` : '';
+}
+
+function fromLocalInput(value) {
+  const v = String(value || '').trim();
+  const m = v.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})(?::(\d{2}))?$/);
+  // The picker has no seconds; 23:59 means the end of that day.
+  return m ? `${m[1]} ${m[2]}:${m[3] || (m[2] === '23:59' ? '59' : '00')}` : v;
+}
+
 const windowForm = ref({
   status: 'OPEN',
   starts_at: '2026-01-01 08:00:00',
@@ -203,6 +219,16 @@ const windowForm = ref({
   watchlist_mean_threshold: 3.5,
   watchlist_negative_sentiment_pct: 35.0,
   announcement_message: '',
+});
+
+const startsAtLocal = computed({
+  get: () => toLocalInput(windowForm.value.starts_at),
+  set: (v) => { windowForm.value.starts_at = fromLocalInput(v); },
+});
+
+const endsAtLocal = computed({
+  get: () => toLocalInput(windowForm.value.ends_at),
+  set: (v) => { windowForm.value.ends_at = fromLocalInput(v); },
 });
 
 function syncWindowFormFromStore() {
@@ -511,6 +537,10 @@ async function handleRosterImport() {
       rosterInput.value,
     );
     importStatus.value = result;
+    if (result.ok) {
+      issuedCredentials.value = Array.isArray(result.issued_credentials) ? result.issued_credentials : [];
+      rosterInput.value = '';
+    }
   } catch (err) {
     importStatus.value = {
       ok: false,
@@ -539,9 +569,6 @@ async function toggleLock(sectionId, field) {
     <section class="card admin-header-card">
       <div class="header-split">
         <div>
-          <span class="eyebrow-badge">
-            UNIVERSITY REGISTRAR
-          </span>
           <h2 id="admin-heading" class="section-title">
             Evaluation Schedule &amp; Grade Locks
             <span class="ui-hint" tabindex="0" aria-label="Registrar console overview" data-hint="Manage the evaluation window, import class rosters, and lock finalized course grades.">?</span>
@@ -557,8 +584,7 @@ async function toggleLock(sectionId, field) {
             data-testid="goto-academic-setup-btn"
             style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;"
           >
-            <span>Academic Setup &amp; Cycles</span>
-            <span aria-hidden="true">→</span>
+            <span>Academic setup</span> <AppIcon name="arrow-right" />
           </router-link>
         </div>
       </div>
@@ -567,9 +593,6 @@ async function toggleLock(sectionId, field) {
     <section class="card evaluation-window-card" aria-labelledby="window-heading" data-testid="admin-evaluation-window-card">
       <div class="watchlist-header">
         <div>
-          <span class="eyebrow-badge">
-            EVALUATION WINDOW
-          </span>
           <h3 id="window-heading" class="section-title">
             Evaluation Period &amp; Thresholds
             <span class="ui-hint" tabindex="0" aria-label="Evaluation period settings" :data-hint="`Configure the evaluation period for ${evaluationStore.evaluationWindow.term_name} (${evaluationStore.evaluationWindow.term_code}) and response thresholds.`">?</span>
@@ -585,33 +608,33 @@ async function toggleLock(sectionId, field) {
             }"
             data-testid="admin-window-status-badge"
           >
-            STATUS: {{ evaluationStore.evaluationWindow.status }}
+            Status: {{ humanizeStatus(evaluationStore.evaluationWindow.status) }}
           </span>
         </div>
       </div>
 
       <!-- Participation Summary & Institutional Timezone Strip -->
-      <div class="window-participation-strip tabular-nums" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.85rem; padding: 0.65rem 0.85rem; background: #fbfcfb; border: 1px solid #e2e8f0; border-radius: 8px;">
+      <div class="window-participation-strip tabular-nums" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.85rem; padding: 0.65rem 0.85rem">
         <div>
-          <span style="font-size: 0.75rem; color: #64748b;">Total Enrollments:</span>
-          <strong style="margin-left: 0.35rem; color: #103c2e;">{{ evaluationStore.adminStats?.total_enrollments ?? '—' }}</strong>
+          <span style="font-size: 0.75rem">Enrollments:</span>
+          <strong style="margin-left: 0.35rem">{{ windowTotals?.enrollments ?? '—' }}</strong>
         </div>
         <div>
-          <span style="font-size: 0.75rem; color: #64748b;">Total Clearances:</span>
-          <strong style="margin-left: 0.35rem; color: #103c2e;">{{ evaluationStore.adminStats?.total_clearances ?? '—' }}</strong>
+          <span style="font-size: 0.75rem">Completed evaluations:</span>
+          <strong style="margin-left: 0.35rem">{{ windowTotals?.clearances ?? '—' }}</strong>
         </div>
         <div>
-          <span style="font-size: 0.75rem; color: #64748b;">Vault Submissions:</span>
-          <strong style="margin-left: 0.35rem; color: #103c2e;">{{ evaluationStore.adminStats?.total_vault_records ?? '—' }}</strong>
+          <span style="font-size: 0.75rem">Anonymous responses:</span>
+          <strong style="margin-left: 0.35rem">{{ windowTotals?.vault ?? '—' }}</strong>
         </div>
         <div>
-          <span style="font-size: 0.75rem; color: #64748b;">Timezone:</span>
-          <strong style="margin-left: 0.35rem; color: #103c2e;" data-testid="admin-timezone-badge">Asia/Manila (PHT / UTC+8)</strong>
+          <span style="font-size: 0.75rem">Timezone:</span>
+          <strong style="margin-left: 0.35rem" data-testid="admin-timezone-badge">Asia/Manila (PHT / UTC+8)</strong>
         </div>
       </div>
 
       <div class="window-status-quick-actions">
-        <span class="param-label" style="margin-right: 0.5rem; font-weight: 600;">Window Status Actions:</span>
+        <span class="param-label window-actions-label">Window status</span>
         <button
           type="button"
           class="btn-toggle"
@@ -619,7 +642,7 @@ async function toggleLock(sectionId, field) {
           data-testid="btn-set-window-open"
           @click="executeWindowAction('OPEN')"
         >
-          OPEN (Evaluations Active)
+          <AppIcon name="check-circle" /> Open
         </button>
         <button
           type="button"
@@ -627,7 +650,7 @@ async function toggleLock(sectionId, field) {
           data-testid="btn-set-window-extend"
           @click="openDeadlineModal('EXTEND')"
         >
-          EXTEND DEADLINE
+          <AppIcon name="calendar" /> Extend deadline
         </button>
         <button
           type="button"
@@ -635,7 +658,7 @@ async function toggleLock(sectionId, field) {
           data-testid="btn-set-window-reopen"
           @click="openDeadlineModal('REOPEN')"
         >
-          REOPEN CLOSED PERIOD
+          <AppIcon name="refresh" /> Reopen period
         </button>
         <button
           type="button"
@@ -644,7 +667,7 @@ async function toggleLock(sectionId, field) {
           data-testid="btn-set-window-suspended"
           @click="executeWindowAction('SUSPEND')"
         >
-          SUSPEND (Temporary Hold)
+          <AppIcon name="clock" /> Suspend
         </button>
         <button
           type="button"
@@ -653,7 +676,7 @@ async function toggleLock(sectionId, field) {
           data-testid="btn-set-window-closed"
           @click="requestWindowStatusTransition('CLOSED')"
         >
-          CLOSE (Term Concluded)
+          <AppIcon name="lock" /> Close term
         </button>
       </div>
 
@@ -665,10 +688,10 @@ async function toggleLock(sectionId, field) {
           </label>
           <input
             id="admin-starts-at-input"
-            v-model="windowForm.starts_at"
-            type="text"
+            v-model="startsAtLocal"
+            type="datetime-local"
+            step="60"
             class="param-input tabular-nums"
-            placeholder="YYYY-MM-DD HH:MM:SS"
             data-testid="admin-starts-at-input"
           />
         </div>
@@ -680,10 +703,10 @@ async function toggleLock(sectionId, field) {
           </label>
           <input
             id="admin-ends-at-input"
-            v-model="windowForm.ends_at"
-            type="text"
+            v-model="endsAtLocal"
+            type="datetime-local"
+            step="60"
             class="param-input tabular-nums"
-            placeholder="YYYY-MM-DD HH:MM:SS"
             data-testid="admin-ends-at-input"
           />
         </div>
@@ -827,7 +850,7 @@ async function toggleLock(sectionId, field) {
             title="Download institutional evaluation and completion summary report"
             @click="exportMasterEvaluationSummaryCsv"
           >
-            📊 Export Master Summary (CSV)
+            <AppIcon name="chart" /> Export Master Summary (CSV)
           </button>
         </div>
       </div>
@@ -862,10 +885,10 @@ async function toggleLock(sectionId, field) {
             aria-label="Filter by lock or grade status"
           >
             <option value="ALL">All Statuses</option>
-            <option value="LOCKED">🔒 Locked</option>
-            <option value="UNLOCKED">🔓 Unlocked</option>
-            <option value="GRADES_SUBMITTED">✅ Grades Submitted</option>
-            <option value="GRADES_PENDING">⏳ Grades Pending</option>
+            <option value="LOCKED">Locked</option>
+            <option value="UNLOCKED">Unlocked</option>
+            <option value="GRADES_SUBMITTED">Grades Submitted</option>
+            <option value="GRADES_PENDING">Grades Pending</option>
           </select>
         </div>
         <button
@@ -960,8 +983,8 @@ async function toggleLock(sectionId, field) {
                 />
               </td>
               <td>
-                <strong class="course-code-cell">{{ sec.course_code }}</strong>
-                <span v-if="sec.section_code" style="margin-left: 0.35rem; font-size: 0.78rem; color: var(--text-secondary);">({{ sec.section_code }})</span>
+                <strong class="code-plate course-code-cell">{{ sec.course_code }}</strong>
+                <span v-if="sec.section_code" style="margin-left: 0.35rem; font-size: 0.78rem">({{ sec.section_code }})</span>
                 <div class="course-title-sub">{{ sec.course_title }}</div>
               </td>
               <td>{{ sec.instructor_name }}</td>
@@ -1025,8 +1048,8 @@ async function toggleLock(sectionId, field) {
               </td>
             </tr>
             <tr v-if="filteredSectionLocks.length === 0" data-testid="admin-locks-empty">
-              <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
-                <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem;">
+              <td colspan="7" style="text-align: center; padding: 2rem">
+                <div style="font-weight: 600; margin-bottom: 0.25rem">
                   {{ (evaluationStore.sectionLocks || []).length === 0 ? 'No Course Sections Configured' : 'No Matching Course Sections Found' }}
                 </div>
                 <p style="margin: 0; font-size: 0.85rem;">
@@ -1071,6 +1094,7 @@ async function toggleLock(sectionId, field) {
           rows="7"
           spellcheck="false"
           class="narrative-textarea code-textarea"
+          :placeholder="rosterPlaceholder"
           data-testid="roster-import-textarea"
         ></textarea>
 
@@ -1085,10 +1109,13 @@ async function toggleLock(sectionId, field) {
           {{ importStatus.message }}
         </div>
 
+        <IssuedCredentialsPanel :credentials="issuedCredentials" @dismiss="issuedCredentials = []" />
+
         <div class="form-submit-footer">
           <button
             type="submit"
             class="btn-primary"
+            :disabled="!rosterInput.trim()"
             data-testid="submit-roster-import-btn"
           >
             Import Roster
@@ -1105,7 +1132,6 @@ async function toggleLock(sectionId, field) {
     >
       <div class="watchlist-header">
         <div>
-          <span class="eyebrow-badge">SECURITY STATUS</span>
           <h3 id="security-posture-heading" class="section-title">
             System Security Status
             <span
@@ -1189,6 +1215,10 @@ async function toggleLock(sectionId, field) {
       <SkeletonLoader v-if="loadingPosture && !securityPosture" :rows="3" label="Auditing 63 security controls…" />
 
       <div v-else-if="securityPosture" class="posture-grid-scroll">
+        <details class="posture-details">
+          <summary>
+            <AppIcon name="shield" /> All {{ filteredSecurityControls.length }} controls enforced. Show the list
+          </summary>
         <div class="posture-controls-grid tabular-nums" data-testid="security-controls-grid">
           <article
             v-for="ctrl in filteredSecurityControls"
@@ -1203,6 +1233,7 @@ async function toggleLock(sectionId, field) {
             <p class="posture-desc">{{ ctrl.mechanism || ctrl.enforcement }}</p>
           </article>
         </div>
+        </details>
 
         <div v-if="securityPosture.recent_security_events?.length" class="audit-events-box" data-testid="security-audit-events-box">
           <h4>
@@ -1237,7 +1268,6 @@ async function toggleLock(sectionId, field) {
     >
       <div class="watchlist-header">
         <div>
-          <span class="eyebrow-badge">ANONYMITY CHECK</span>
           <h3 id="vault-audit-heading" class="section-title">
             Anonymity Database Check
             <span
@@ -1270,7 +1300,7 @@ async function toggleLock(sectionId, field) {
       <pre
         v-if="vaultAuditData"
         class="card"
-        style="margin-top:0.85rem;background:#f8fbf9;overflow-x:auto;"
+        style="margin-top:0.85rem; overflow-x:auto"
         data-testid="admin-vault-audit-output"
       >{{ JSON.stringify(vaultAuditData, null, 2) }}</pre>
     </section>
@@ -1370,7 +1400,7 @@ async function toggleLock(sectionId, field) {
     <div
       v-if="showAdminSectionReportModal && selectedAdminReportSection"
       class="report-modal-overlay"
-      style="position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 1rem;"
+      style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 1rem"
       data-testid="admin-section-eval-modal"
       role="dialog"
       aria-modal="true"
@@ -1379,18 +1409,17 @@ async function toggleLock(sectionId, field) {
     >
       <div
         class="modal-card print-report-card"
-        style="background: #ffffff; border-radius: 12px; max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #d1d5db;"
+        style="max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem"
       >
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #103c2e; padding-bottom: 1.25rem; margin-bottom: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 1.25rem; margin-bottom: 1.25rem">
           <div>
-            <span class="eyebrow-badge">EVALUATION &amp; ACCREDITATION REPORT · UNIVERSITY REGISTRAR</span>
-            <h3 id="admin-report-title" style="margin: 0.35rem 0 0; font-size: 1.25rem; font-weight: 800; color: #103c2e;">
+            <h3 id="admin-report-title" style="margin: 0.35rem 0 0; font-size: 1.25rem; font-weight: 800">
               {{ selectedAdminReportSection.course_code }} — {{ selectedAdminReportSection.course_title }}
             </h3>
-            <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #4b5563;">
+            <p style="margin: 0.25rem 0 0; font-size: 0.85rem">
               Assigned Instructor: <strong>{{ selectedAdminReportSection.instructor_name }}</strong> · Section: <code>{{ selectedAdminReportSection.section_code || 'SEC-A' }}</code>
             </p>
-            <p style="margin: 0.15rem 0 0; font-size: 0.78rem; color: #6b7280;">
+            <p style="margin: 0.15rem 0 0; font-size: 0.78rem">
               {{ selectedAdminReportSection.department_name || 'College of Computer Studies' }} · {{ evaluationStore.evaluationWindow?.term_name || '1st Semester AY 2026-2027' }}
             </p>
           </div>
@@ -1401,17 +1430,17 @@ async function toggleLock(sectionId, field) {
             data-testid="close-admin-report-modal-btn"
             @click="closeAdminSectionReport"
           >
-            ✕ Close
+            <AppIcon name="x" /> Close
           </button>
         </div>
 
         <!-- Completion Turnout Banner -->
-        <div style="display: flex; align-items: center; justify-content: space-between; background: #f7faf8; border: 1px solid #dce7dc; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem">
           <div>
-            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #103c2e; letter-spacing: 0.05em;">
+            <div style="font-size: 0.75rem; font-weight: 600">
               Evaluation Completion Rate
             </div>
-            <div style="font-size: 2rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">
+            <div style="font-size: 2rem; font-weight: 800; margin-top: 0.15rem">
               {{ selectedAdminReportSection.enrolled_count > 0 ? Math.round(((selectedAdminReportSection.cleared_count || selectedAdminReportSection.vault_count || 0) / selectedAdminReportSection.enrolled_count) * 100) : 100 }}%
             </div>
           </div>
@@ -1422,27 +1451,27 @@ async function toggleLock(sectionId, field) {
               style="font-size: 0.82rem; padding: 0.35rem 0.8rem;"
               data-testid="admin-report-target-status"
             >
-              {{ ((selectedAdminReportSection.cleared_count || selectedAdminReportSection.vault_count || 0) / (selectedAdminReportSection.enrolled_count || 35)) >= 0.85 ? '✓ TARGET MET (≥85%)' : 'PENDING TARGET' }}
+              {{ ((selectedAdminReportSection.cleared_count || selectedAdminReportSection.vault_count || 0) / (selectedAdminReportSection.enrolled_count || 35)) >= 0.85 ? 'TARGET MET (≥85%)' : 'PENDING TARGET' }}
             </span>
-            <div style="font-size: 0.8rem; color: #4b5563; margin-top: 0.35rem;">
+            <div style="font-size: 0.8rem; margin-top: 0.35rem">
               Turnout: <strong>{{ selectedAdminReportSection.cleared_count || selectedAdminReportSection.vault_count || 0 }}</strong> of <strong>{{ selectedAdminReportSection.enrolled_count || 35 }}</strong> students evaluated
             </div>
           </div>
         </div>
 
         <!-- Overall Score & Qualitative Adjective -->
-        <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 0.9rem 1.25rem; margin-bottom: 1.25rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1.25rem; margin-bottom: 1.25rem">
           <div>
-            <span style="font-size: 0.75rem; font-weight: 700; color: #6b7280; text-transform: uppercase;">Composite Rating</span>
-            <div style="font-size: 1.5rem; font-weight: 800; color: #103c2e;">
-              4.58 <span style="font-size: 0.85rem; font-weight: 600; color: #6b7280;">/ 5.00</span>
+            <span style="font-size: 0.75rem; font-weight: 700">Composite Rating</span>
+            <div style="font-size: 1.5rem; font-weight: 800">
+              4.58 <span style="font-size: 0.85rem; font-weight: 600">/ 5.00</span>
             </div>
           </div>
           <div style="text-align: right;">
             <span class="status-badge status-completed" style="font-size: 0.82rem; padding: 0.35rem 0.8rem;">
-              ★ Outstanding (≥ 4.50)
+              Outstanding (≥ 4.50)
             </span>
-            <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">
+            <div style="font-size: 0.75rem; margin-top: 0.25rem">
               AACCUP Performance Category
             </div>
           </div>
@@ -1450,7 +1479,7 @@ async function toggleLock(sectionId, field) {
 
         <!-- 5 Pedagogical Clusters Breakdown -->
         <div style="margin-bottom: 1.25rem;">
-          <h4 style="font-size: 0.9rem; font-weight: 700; color: #1f2937; margin: 0 0 0.65rem;">
+          <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 0.65rem">
             Pedagogical Clusters Performance Breakdown (5 Dimensions)
           </h4>
           <div style="display: flex; flex-direction: column; gap: 0.5rem;">
@@ -1465,15 +1494,15 @@ async function toggleLock(sectionId, field) {
               :key="cluster.name"
               style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.82rem;"
             >
-              <div style="width: 220px; font-weight: 600; color: #374151;">
+              <div style="width: 220px; font-weight: 600">
                 {{ cluster.name }}
               </div>
-              <div style="flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+              <div style="flex: 1; height: 8px; overflow: hidden">
                 <div
-                  :style="{ width: `${(cluster.score / 5) * 100}%`, background: '#103c2e', height: '100%' }"
+                  :style="{ width: `${(cluster.score / 5) * 100}%`, background: '#0f172a', height: '100%' }"
                 ></div>
               </div>
-              <div style="width: 45px; text-align: right; font-weight: 700; color: #111827;">
+              <div style="width: 45px; text-align: right; font-weight: 700">
                 {{ cluster.score.toFixed(2) }}
               </div>
             </div>
@@ -1481,60 +1510,60 @@ async function toggleLock(sectionId, field) {
         </div>
 
         <!-- Sentiment & Feedback Summary -->
-        <div style="border-top: 1px solid #f3f4f6; padding-top: 1rem; margin-bottom: 1.25rem;">
-          <h4 style="font-size: 0.9rem; font-weight: 700; color: #1f2937; margin: 0 0 0.5rem;">
+        <div style="padding-top: 1rem; margin-bottom: 1.25rem">
+          <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 0.5rem">
             Multilingual NLP Sentiment &amp; Qualitative Analytics
           </h4>
           <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
             <span class="token-chip chip-signed" style="font-size: 0.78rem;">
               Positive: 78.4%
             </span>
-            <span class="token-chip" style="font-size: 0.78rem; background: #f3f4f6;">
+            <span class="token-chip" style="font-size: 0.78rem">
               Neutral: 14.2%
             </span>
             <span class="token-chip chip-signed" style="font-size: 0.78rem;">
               Negative: 7.4%
             </span>
-            <span class="token-chip chip-signed" style="font-size: 0.78rem; background: #e8f5e9; color: #1b5e20;">
+            <span class="token-chip chip-signed" style="font-size: 0.78rem">
               Compound Polarity: +0.64
             </span>
           </div>
-          <div style="font-size: 0.75rem; color: #4b5563; margin-top: 0.5rem; line-height: 1.4;">
-            🔒 <strong>Dual-Token Anonymity Guaranteed:</strong> Zero student identifiers are stored in <code>evaluation_vault</code>. Feedback is synthesized via <code>calamanCy</code> + VADER NLP.
+          <div style="font-size: 0.75rem; margin-top: 0.5rem; line-height: 1.4">
+            <AppIcon name="lock" /> <strong>Dual-Token Anonymity Guaranteed:</strong> Zero student identifiers are stored in <code>evaluation_vault</code>. Feedback is synthesized via <code>calamanCy</code> + VADER NLP.
           </div>
         </div>
 
         <!-- Institutional Signature Blocks -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed #d1d5db; padding-top: 1.25rem; margin-bottom: 1.5rem; font-size: 0.78rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-top: 1.25rem; margin-bottom: 1.5rem; font-size: 0.78rem">
           <div style="text-align: center; min-width: 150px;">
-            <div style="border-bottom: 1px solid #111827; padding-bottom: 0.2rem; font-weight: 700; color: #111827;">
+            <div style="padding-bottom: 0.2rem; font-weight: 700">
               ATTY. OFFICE OF THE REGISTRAR
             </div>
-            <div style="color: #6b7280; font-size: 0.72rem; margin-top: 0.2rem;">
+            <div style="font-size: 0.72rem; margin-top: 0.2rem">
               University Registrar
             </div>
           </div>
           <div style="text-align: center; min-width: 150px;">
-            <div style="border-bottom: 1px solid #111827; padding-bottom: 0.2rem; font-weight: 700; color: #111827;">
+            <div style="padding-bottom: 0.2rem; font-weight: 700">
               DEAN OF COLLEGE
             </div>
-            <div style="color: #6b7280; font-size: 0.72rem; margin-top: 0.2rem;">
+            <div style="font-size: 0.72rem; margin-top: 0.2rem">
               College Dean
             </div>
           </div>
           <div style="text-align: center; min-width: 150px;">
-            <div style="border-bottom: 1px solid #111827; padding-bottom: 0.2rem; font-weight: 700; color: #111827;">
+            <div style="padding-bottom: 0.2rem; font-weight: 700">
               VPAA EXECUTIVE
             </div>
-            <div style="color: #6b7280; font-size: 0.72rem; margin-top: 0.2rem;">
+            <div style="font-size: 0.72rem; margin-top: 0.2rem">
               VP for Academic Affairs
             </div>
           </div>
         </div>
 
         <!-- Footer / Print actions -->
-        <div class="no-print" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 1rem; flex-wrap: wrap; gap: 0.5rem;">
-          <small style="font-size: 0.72rem; color: #6b7280;">
+        <div class="no-print" style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; flex-wrap: wrap; gap: 0.5rem">
+          <small style="font-size: 0.72rem">
             School AAAAA13 · AACCUP Level III Accreditation Audit
           </small>
           <div style="display: flex; gap: 0.5rem;">
@@ -1551,7 +1580,7 @@ async function toggleLock(sectionId, field) {
               data-testid="admin-print-report-btn"
               @click="printAdminSectionReport"
             >
-              🖨 Print / Export
+              <AppIcon name="printer" /> Print / Export
             </button>
           </div>
         </div>
@@ -1569,13 +1598,30 @@ async function toggleLock(sectionId, field) {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.65rem;
-  margin: 1rem 0;
-  padding: 0.85rem 1rem;
-  background: #f6f8f4;
-  border-radius: 10px;
-  border: 1px solid #dbe3da;
+  gap: 6px;
+  margin: 16px 0;
+  padding: 10px 12px;
+  background: var(--wf-panel-2);
+  border: 1px solid var(--wf-hair);
+  border-radius: var(--wf-radius);
 }
+
+.window-actions-label { margin-right: 6px; font-weight: 700; color: var(--wf-ink-2); }
+
+.window-status-quick-actions .btn-toggle {
+  min-height: 38px;
+  padding: 6px 12px;
+  border: 1px solid var(--wf-hair-strong);
+  border-radius: 8px;
+  background: var(--wf-panel);
+  color: var(--wf-ink);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.window-status-quick-actions .btn-toggle:hover { background: var(--wf-tint); }
+.window-status-quick-actions .btn-toggle.toggle-on { background: var(--wf-accent); border-color: var(--wf-accent); color: #ffffff; }
+
 .window-params-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -1631,7 +1677,7 @@ async function toggleLock(sectionId, field) {
   padding: 0.7rem 0.95rem;
   margin-bottom: 0.8rem;
   border-radius: 10px;
-  background: #103c2e;
+  background: #0f172a;
   color: #ffffff;
 }
 
@@ -1698,8 +1744,8 @@ async function toggleLock(sectionId, field) {
 }
 
 .posture-pill.is-active {
-  background: #103c2e;
-  border-color: #103c2e;
+  background: #0f172a;
+  border-color: #0f172a;
   color: #f4cd42;
 }
 
@@ -1732,7 +1778,7 @@ async function toggleLock(sectionId, field) {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.72rem;
   font-weight: 800;
-  color: #103c2e;
+  color: #0f172a;
   background: #e7f1eb;
   padding: 0.1rem 0.38rem;
   border-radius: 5px;
@@ -1772,7 +1818,7 @@ async function toggleLock(sectionId, field) {
   margin: 0 0 0.55rem;
   font-size: 0.8rem;
   font-weight: 800;
-  color: #103c2e;
+  color: #0f172a;
 }
 
 .audit-event-list {
@@ -1802,7 +1848,7 @@ async function toggleLock(sectionId, field) {
   font-weight: 800;
   padding: 0.08rem 0.38rem;
   border-radius: 5px;
-  background: #103c2e;
+  background: #0f172a;
   color: #f4cd42;
 }
 
@@ -1836,7 +1882,7 @@ async function toggleLock(sectionId, field) {
 .deadline-modal-header h3 {
   margin: 0 0 0.35rem 0;
   font-size: 1.15rem;
-  color: #103c2e;
+  color: #0f172a;
 }
 
 .deadline-modal-sub {

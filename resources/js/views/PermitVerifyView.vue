@@ -1,4 +1,5 @@
 <script setup>
+import AppIcon from '../components/AppIcon.vue';
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth.js';
@@ -84,7 +85,7 @@ onMounted(() => {
       <!-- Institutional Header -->
       <header class="verify-header">
         <div class="plp-logo-badge">
-          <span class="plp-seal-symbol">🏛</span>
+          <span class="plp-seal-symbol"><AppIcon name="building" /></span>
           <div>
             <h1 class="plp-univ-title">SCHOOL AAAAA13</h1>
             <p class="plp-sub-title">Office of the University Registrar · Student Evaluation Clearance Verification</p>
@@ -97,7 +98,7 @@ onMounted(() => {
             class="nav-link-btn"
             data-testid="verify-back-to-login-btn"
           >
-            Sign In →
+            Sign in <AppIcon name="arrow-right" />
           </router-link>
           <router-link
             v-else
@@ -105,7 +106,7 @@ onMounted(() => {
             class="nav-link-btn"
             data-testid="verify-back-to-portal-btn"
           >
-            ← Back to Portal
+            <AppIcon name="arrow-left" /> Back to home
           </router-link>
         </div>
       </header>
@@ -138,7 +139,7 @@ onMounted(() => {
                 :disabled="isVerifying || !tokenInput.trim()"
                 data-testid="verify-permit-btn"
               >
-                {{ isVerifying ? 'Verifying…' : '🔍 Verify Clearance Status' }}
+                {{ isVerifying ? 'Verifying…' : 'Verify Clearance Status' }}
               </button>
             </div>
           </div>
@@ -153,7 +154,7 @@ onMounted(() => {
       >
         <div class="certificate-top-bar">
           <span class="status-badge status-cleared" data-testid="permit-verified-badge">
-            ✓ EVALUATION COMPLETED — INSTITUTIONALLY CLEARED
+            <AppIcon name="check" /> EVALUATION COMPLETED — INSTITUTIONALLY CLEARED
           </span>
           <span class="timestamp-tag">
             Verified: {{ verificationResult.verification_timestamp || '2026-11-10' }}
@@ -197,16 +198,16 @@ onMounted(() => {
                 type="button"
                 class="copy-hash-btn"
                 data-testid="copy-clearance-hash-btn"
-                style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 4px; padding: 0.2rem 0.6rem; font-size: 0.75rem; cursor: pointer; color: var(--ink); font-weight: 600;"
+                style="padding: 0.2rem 0.6rem; font-size: 0.75rem; cursor: pointer; font-weight: 600"
                 @click="copyDigest(verificationResult.permit_serial || verificationResult.security_hash || 'AAAAA13-REGISTRAR-AACCUP3-SEALED-2026')"
               >
-                {{ copiedHash ? '✓ Copied' : '📋 Copy Hash' }}
+                {{ copiedHash ? 'Copied' : 'Copy Hash' }}
               </button>
             </div>
           </div>
 
           <p class="anonymity-note">
-            🔒 <strong>Dual-Token Decoupling Verified:</strong> Student evaluation responses were decoupled from identity at time of submission. Zero identifying student foreign keys exist in the evaluation vault.
+            <AppIcon name="lock" /> <strong>Dual-Token Decoupling Verified:</strong> Student evaluation responses were decoupled from identity at time of submission. Zero identifying student foreign keys exist in the evaluation vault.
           </p>
 
           <div class="certificate-actions">
@@ -216,7 +217,7 @@ onMounted(() => {
               data-testid="print-verified-permit-btn"
               @click="printPermitCertificate"
             >
-              🖨 Print Official Verification Certificate
+              <AppIcon name="printer" /> Print Official Verification Certificate
             </button>
             <button
               type="button"
@@ -237,7 +238,7 @@ onMounted(() => {
       >
         <div class="error-badge-row">
           <span class="status-badge status-gated">
-            ✕ CLEARANCE NOT VERIFIED
+            <AppIcon name="x" /> CLEARANCE NOT VERIFIED
           </span>
         </div>
         <h3 class="error-heading">Evaluation Clearance Pending</h3>
@@ -278,7 +279,7 @@ onMounted(() => {
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1.25rem;
-  border-bottom: 2px solid #103c2e;
+  border-bottom: 2px solid #0f172a;
   flex-wrap: wrap;
   gap: 1rem;
 }
@@ -297,7 +298,7 @@ onMounted(() => {
   margin: 0;
   font-size: 1.15rem;
   font-weight: 800;
-  color: #103c2e;
+  color: #0f172a;
   letter-spacing: 0.04em;
 }
 
@@ -310,17 +311,17 @@ onMounted(() => {
 .nav-link-btn {
   font-size: 0.85rem;
   font-weight: 700;
-  color: #103c2e;
+  color: #0f172a;
   text-decoration: none;
   padding: 0.45rem 0.85rem;
   border-radius: 8px;
-  border: 1px solid #103c2e;
+  border: 1px solid #0f172a;
   background: #ffffff;
   transition: all 0.15s ease;
 }
 
 .nav-link-btn:hover {
-  background: #103c2e;
+  background: #0f172a;
   color: #ffffff;
 }
 
@@ -337,7 +338,7 @@ onMounted(() => {
   margin: 0 0 0.35rem;
   font-size: 1.25rem;
   font-weight: 800;
-  color: #103c2e;
+  color: #0f172a;
 }
 
 .verify-desc {
@@ -376,7 +377,7 @@ onMounted(() => {
 }
 
 .token-input:focus {
-  border-color: #103c2e;
+  border-color: #0f172a;
   box-shadow: 0 0 0 3px rgba(16, 60, 46, 0.15);
 }
 
@@ -386,7 +387,7 @@ onMounted(() => {
   font-weight: 700;
   border-radius: 8px;
   border: none;
-  background: #103c2e;
+  background: #0f172a;
   color: #ffffff;
   cursor: pointer;
 }
@@ -397,7 +398,7 @@ onMounted(() => {
 }
 
 .certificate-card {
-  border: 2px solid #103c2e;
+  border: 2px solid #0f172a;
 }
 
 .certificate-top-bar {
@@ -458,7 +459,7 @@ onMounted(() => {
 }
 
 .text-emerald {
-  color: #103c2e;
+  color: #0f172a;
 }
 
 .font-bold {
@@ -482,7 +483,7 @@ onMounted(() => {
 
 .digest-code {
   font-size: 0.82rem;
-  color: #0b3322;
+  color: #0f172a;
   word-break: break-all;
 }
 
@@ -500,7 +501,7 @@ onMounted(() => {
 }
 
 .btn-primary {
-  background: #103c2e;
+  background: #0f172a;
   color: #ffffff;
   border: none;
   padding: 0.65rem 1.15rem;

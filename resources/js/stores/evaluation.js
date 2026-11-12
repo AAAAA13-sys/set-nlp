@@ -554,10 +554,16 @@ export const useEvaluationStore = defineStore('evaluation', () => {
           ...data,
         };
       }
+      const serverErrors = Array.isArray(data.errors) ? data.errors.filter(Boolean) : [];
       return {
         ok: false,
         imported: 0,
-        message: data.message || 'Atomic roster import rejected by server validation.',
+        errors: serverErrors,
+        message:
+          data.message ||
+          (serverErrors.length > 0
+            ? `Nothing was imported. ${serverErrors.slice(0, 3).join(' ')}${serverErrors.length > 3 ? ` (+${serverErrors.length - 3} more)` : ''}`
+            : 'Atomic roster import rejected by server validation.'),
       };
     } catch (_) {
       return {

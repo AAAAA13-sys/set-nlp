@@ -25,3 +25,7 @@ __pycache__/
 /graphify-out/cache/
 /graphify-out/.*
 
+
+# Unrelated Roblox place files dropped into docs/ must never be committed here
+/docs/*.rbxl
+/docs/*.rbxl.lock

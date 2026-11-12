@@ -1,4 +1,5 @@
 <script setup>
+import AppIcon from '../components/AppIcon.vue';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import DestructiveConfirmModal from '../components/DestructiveConfirmModal.vue';
@@ -452,8 +453,9 @@ async function executeSubmission(confirmUniform = false) {
   statusBanner.value = {
     type: 'success',
     code: 'CLEARANCE_ISSUED',
+    title: 'Thank you — your evaluation was submitted.',
     message:
-      'Your anonymized evaluation has been recorded in the decoupled vault and your course clearance token has been signed.',
+      'Your answers are anonymous. Your professor and school staff can see that you finished, but never which answers are yours.',
     token: response.clearance_token,
   };
 
@@ -484,43 +486,38 @@ function returnToQueue() {
     <!-- Removed enrolled-subjects-switcher per user request -->
 
     <section class="card eval-header-card">
-      <div class="eval-top-bar" style="margin-bottom: 0.85rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--line-soft); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+      <div class="eval-top-bar">
         <button
           type="button"
-          class="btn-secondary btn-sm eval-back-btn"
+          class="btn-ghost btn-sm eval-back-btn"
           data-testid="top-back-to-courses-btn"
           @click="returnToQueue"
         >
-          ← Back to My Courses
+          <AppIcon name="arrow-left" /> My evaluations
         </button>
-
         <button
           type="button"
           class="btn-secondary btn-xs"
           data-testid="eval-open-rubric-btn"
-          style="display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 600; padding: 0.35rem 0.75rem;"
           @click="showRubricModal = true"
         >
-          📋 Rating Rubric
+          <AppIcon name="clipboard" /> Rating guide
         </button>
       </div>
 
       <div class="eval-course-banner">
-        <div>
-          <span class="eyebrow-badge">COURSE EVALUATION</span>
-          <h2 id="eval-form-heading" class="section-title">
-            {{ evaluationStore.activeCourse?.course_code || 'CS-401' }} —
-            {{ evaluationStore.activeCourse?.instructor_name || 'Assigned Instructor' }}
-          </h2>
-          <p class="section-subtitle">
-            <strong>{{ evaluationStore.activeCourse?.course_title || 'Academic Course Section' }}</strong>
-            <span v-if="evaluationStore.activeCourse?.section_code">
-              · Section {{ evaluationStore.activeCourse.section_code }}
-            </span>
-            · Term: {{ evaluationStore.evaluationWindow?.term_name || '1st Semester AY 2026-2027' }}
-          </p>
-          <div class="eval-meta-deadline" style="font-size: 0.82rem; color: #4b5563; margin-top: 0.25rem;">
-            <span>Submission Deadline: <strong>{{ formattedDeadline }}</strong></span>
+        <div class="eval-course-id">
+          <span class="code-plate is-large">{{ evaluationStore.activeCourse?.course_code || 'CS-401' }}</span>
+          <div>
+            <h1 id="eval-form-heading" class="eval-course-title">
+              {{ evaluationStore.activeCourse?.course_title || 'Academic Course Section' }}
+            </h1>
+            <p class="eval-course-meta">
+              <span><b>{{ evaluationStore.activeCourse?.instructor_name || 'Assigned Instructor' }}</b></span>
+              <span v-if="evaluationStore.activeCourse?.section_code">Section {{ evaluationStore.activeCourse.section_code }}</span>
+              <span>{{ evaluationStore.evaluationWindow?.term_name || '1st Semester AY 2026-2027' }}</span>
+              <span>Closes <b>{{ formattedDeadline }}</b></span>
+            </p>
           </div>
         </div>
 
@@ -546,28 +543,32 @@ function returnToQueue() {
         </div>
       </div>
 
-      <!-- Step Indicator Bar -->
-      <div v-if="!isCurrentCourseCompleted" class="step-indicator-bar" role="navigation" aria-label="Evaluation Steps">
-        <button
-          type="button"
-          class="step-tab-btn"
-          :class="{ 'is-active': currentStep === 1 }"
-          @click="currentStep = 1"
-        >
-          <span class="step-number">1</span>
-          <span class="step-label">Part I: Performance Ratings ({{ answeredCount }}/25)</span>
-        </button>
-        <span class="step-connector" aria-hidden="true">→</span>
-        <button
-          type="button"
-          class="step-tab-btn"
-          :class="{ 'is-active': currentStep === 2 }"
-          @click="proceedToStep2"
-        >
-          <span class="step-number">2</span>
-          <span class="step-label">Part II: Written Feedback</span>
-        </button>
-      </div>
+      <ol v-if="!isCurrentCourseCompleted" class="step-indicator-bar" aria-label="Evaluation steps">
+        <li>
+          <button
+            type="button"
+            class="step-tab-btn"
+            :class="{ 'is-active': currentStep === 1, 'is-done': answeredCount === 25 }"
+            :aria-current="currentStep === 1 ? 'step' : undefined"
+            @click="currentStep = 1"
+          >
+            <span class="step-number" aria-hidden="true"><AppIcon v-if="answeredCount === 25 && currentStep !== 1" name="check" :size="14" /><template v-else>1</template></span>
+            <span class="step-label">Ratings <span class="tabular-nums step-count">{{ answeredCount }}/25</span></span>
+          </button>
+        </li>
+        <li>
+          <button
+            type="button"
+            class="step-tab-btn"
+            :class="{ 'is-active': currentStep === 2 }"
+            :aria-current="currentStep === 2 ? 'step' : undefined"
+            @click="proceedToStep2"
+          >
+            <span class="step-number" aria-hidden="true">2</span>
+            <span class="step-label">Written feedback</span>
+          </button>
+        </li>
+      </ol>
     </section>
 
 
@@ -579,9 +580,9 @@ function returnToQueue() {
       data-testid="submission-status-banner"
     >
       <div>
-        <strong>{{ statusBanner.code }}:</strong> {{ statusBanner.message }}
+        <strong>{{ statusBanner.title || statusBanner.code }}</strong> {{ statusBanner.message }}
         <div v-if="statusBanner.token" style="margin-top: 0.45rem;">
-          <span>Signed Clearance Token: </span>
+          <span>Receipt code: </span>
           <code class="clearance-token-code" data-testid="issued-clearance-token">{{ statusBanner.token }}</code>
         </div>
       </div>
@@ -593,7 +594,7 @@ function returnToQueue() {
           data-testid="proceed-next-professor-btn"
           @click="switchCourseSection(nextPendingCourse.course_section_id)"
         >
-          Proceed to Next Professor ({{ nextPendingCourse.course_code }} — {{ nextPendingCourse.instructor_name }}) →
+          Next: {{ nextPendingCourse.course_code }} — {{ nextPendingCourse.instructor_name }} <AppIcon name="arrow-right" />
         </button>
         <button
           type="button"
@@ -601,7 +602,7 @@ function returnToQueue() {
           data-testid="print-course-receipt-btn"
           @click="openReceiptModal"
         >
-          📄 Print Clearance Receipt
+          <AppIcon name="file" /> Print Receipt
         </button>
         <button
           type="button"
@@ -609,7 +610,7 @@ function returnToQueue() {
           data-testid="return-queue-success-btn"
           @click="returnToQueue"
         >
-          Return to Evaluation Queue
+          Back to my evaluations
         </button>
       </div>
     </div>
@@ -620,15 +621,15 @@ function returnToQueue() {
       class="card course-already-completed-card"
       data-testid="course-already-completed"
     >
-      <div class="completion-icon-badge" aria-hidden="true">✓</div>
+      <div class="completion-icon-badge" aria-hidden="true"><AppIcon name="check" /></div>
       <h3 class="section-title">
-        Evaluation Completed & Locked for {{ evaluationStore.activeCourse?.course_code }}
+        You already evaluated {{ evaluationStore.activeCourse?.course_code }}
       </h3>
       <p class="section-subtitle">
-        Your evaluation for <strong>{{ evaluationStore.activeCourse?.instructor_name }}</strong> has been submitted and cryptographically decoupled. Once submitted, evaluations cannot be modified or re-opened.
+        Your evaluation for <strong>{{ evaluationStore.activeCourse?.instructor_name }}</strong> was submitted anonymously. Submitted evaluations can't be changed.
       </p>
       <div v-if="evaluationStore.activeCourse?.clearance_token" class="clearance-token-strip">
-        <span>Clearance Token:</span>
+        <span>Receipt code:</span>
         <code class="clearance-token-code">{{ evaluationStore.activeCourse.clearance_token }}</code>
       </div>
       <div class="completion-actions">
@@ -638,7 +639,7 @@ function returnToQueue() {
           class="btn-primary"
           @click="switchCourseSection(nextPendingCourse.course_section_id)"
         >
-          Evaluate Next Professor ({{ nextPendingCourse.course_code }} — {{ nextPendingCourse.instructor_name }}) →
+          Next: {{ nextPendingCourse.course_code }} — {{ nextPendingCourse.instructor_name }}
         </button>
         <button
           type="button"
@@ -646,7 +647,7 @@ function returnToQueue() {
           data-testid="print-completed-course-receipt-btn"
           @click="openReceiptModal"
         >
-          📄 Print Clearance Receipt
+          <AppIcon name="file" /> Print Receipt
         </button>
         <button
           type="button"
@@ -664,8 +665,8 @@ function returnToQueue() {
         <!-- Cluster Quick-Navigation & Progress Pills Strip -->
         <div class="cluster-quicknav-bar" data-testid="cluster-quicknav-bar">
           <div class="quicknav-header-strip">
-            <span class="quicknav-label">PEDAGOGICAL CLUSTERS OVERVIEW</span>
-            <span class="quicknav-count tabular-nums"><strong>{{ answeredCount }}</strong> of 25 Items Rated</span>
+            <span class="quicknav-label">Jump to a section</span>
+            <span class="quicknav-count tabular-nums"><strong>{{ answeredCount }}</strong> of 25 rated</span>
           </div>
           <div class="quicknav-pills-row" role="navigation" aria-label="Jump to pedagogical clusters">
             <button
@@ -681,7 +682,7 @@ function returnToQueue() {
               <span class="qnav-num">{{ dim.clusterNumber }}</span>
               <span class="qnav-name">{{ dim.name }}</span>
               <span class="qnav-badge tabular-nums">
-                {{ getDimensionAnsweredCount(dim) === 5 ? '✓ 5/5' : `${getDimensionAnsweredCount(dim)}/5` }}
+                {{ getDimensionAnsweredCount(dim) === 5 ? '5/5' : `${getDimensionAnsweredCount(dim)}/5` }}
               </span>
             </button>
           </div>
@@ -736,6 +737,7 @@ function returnToQueue() {
                   <span>{{ option.value }}</span>
                 </label>
               </div>
+              <div class="likert-anchors" aria-hidden="true"><span>Strongly disagree</span><span>Strongly agree</span></div>
             </div>
           </fieldset>
         </section>
@@ -758,7 +760,7 @@ function returnToQueue() {
               data-testid="proceed-to-feedback-btn"
               @click="proceedToStep2"
             >
-              Proceed to Written Feedback (Step 2 of 2) →
+              Next: written feedback <AppIcon name="arrow-right" />
             </button>
           </div>
         </div>
@@ -769,7 +771,6 @@ function returnToQueue() {
         <section class="card prof-questions-card" data-testid="professor-questions-section" style="text-align: left;">
           <div class="prof-questions-header" style="text-align: left;">
             <div>
-              <span class="eyebrow-badge">WRITTEN FEEDBACK</span>
               <h3 class="section-title" style="text-align: left;">
                 Questions About Your Professor
                 <span class="ui-hint" tabindex="0" aria-label="Language options" data-hint="Share honest, constructive feedback in English, Tagalog, or Taglish.">?</span>
@@ -834,7 +835,7 @@ function returnToQueue() {
               <label class="prof-question-label" style="text-align: left; display: block; font-weight: 700;">
                 2. Constructive areas for instructional improvement:
               </label>
-              <span class="sub-topic-hint" style="font-size: 0.78rem; color: #53665a; text-align: left; display: block;">
+              <span class="sub-topic-hint" style="font-size: 0.78rem; text-align: left; display: block">
                 Answer the three key instructional areas below:
               </span>
             </div>
@@ -957,13 +958,13 @@ function returnToQueue() {
                 class="btn-secondary"
                 @click="returnToStep1"
               >
-                ← Back to Rating Questions
+                <AppIcon name="arrow-left" /> Back to ratings
               </button>
 
               <button
                 type="submit"
                 class="btn-primary"
-                style="padding: 0.65rem 1.65rem; font-weight: 700; background: #103c2e; border-color: #103c2e;"
+                style="padding: 0.65rem 1.65rem; font-weight: 700"
                 :disabled="evaluationStore.submitting"
                 data-testid="submit-evaluation-btn"
               >
@@ -984,14 +985,14 @@ function returnToQueue() {
       v-if="progress.allCleared"
       class="card all-courses-completed-card"
       data-testid="all-evaluations-completed-card"
-      style="text-align: center; padding: 2.25rem 1.5rem; margin-top: 1.25rem; background: #ffffff; border: 1px solid #dce7dc; border-radius: 12px;"
+      style="text-align: center; padding: 2.25rem 1.5rem; margin-top: 1.25rem"
     >
-      <div class="completion-icon-badge" aria-hidden="true" style="margin: 0 auto 0.75rem;">✓</div>
+      <div class="completion-icon-badge" aria-hidden="true" style="margin: 0 auto 0.75rem;"><AppIcon name="check" /></div>
       <h3 class="section-title">All Course Evaluations Completed</h3>
       <p class="section-subtitle">
         You have successfully submitted evaluations for all <strong>{{ progress.total }} enrolled courses</strong>.
       </p>
-      <p style="font-size: 0.88rem; color: #4b5563; max-width: 620px; margin: 0.75rem auto 0; line-height: 1.6;">
+      <p style="font-size: 0.88rem; max-width: 620px; margin: 0.75rem auto 0; line-height: 1.6">
         Thank you for taking the time to share your feedback. Your ratings and written comments have been recorded and cryptographically decoupled to support instructional excellence at School AAAAA13.
       </p>
     </section>
@@ -1018,7 +1019,7 @@ function returnToQueue() {
     <div
       v-if="showReceiptModal"
       class="modal-backdrop"
-      style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem;"
+      style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem"
       data-testid="student-clearance-receipt-card"
       role="dialog"
       aria-modal="true"
@@ -1027,20 +1028,20 @@ function returnToQueue() {
     >
       <div
         class="modal-card print-receipt-card"
-        style="background: #ffffff; border-radius: 12px; max-width: 620px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 2px solid #0f172a;"
+        style="max-width: 620px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem"
       >
         <!-- Institutional Header -->
-        <div style="text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
-          <div style="font-size: 0.8rem; font-weight: 700; color: #0f172a; letter-spacing: 0.08em; text-transform: uppercase;">
+        <div style="text-align: center; padding-bottom: 1.25rem; margin-bottom: 1.5rem">
+          <div style="font-size: 0.8rem; font-weight: 700">
             School AAAAA13
           </div>
-          <div style="font-size: 0.72rem; color: #4b5563; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.15rem;">
+          <div style="font-size: 0.72rem; margin-top: 0.15rem">
             Office of Academic Affairs &amp; Office of the University Registrar
           </div>
-          <h3 id="receipt-title" style="font-size: 1.2rem; font-weight: 800; color: #0f172a; margin: 0.75rem 0 0; text-transform: uppercase; letter-spacing: 0.04em;">
+          <h3 id="receipt-title" style="font-size: 1.2rem; font-weight: 800; margin: 0.75rem 0 0">
             Evaluation Completion Receipt / Submission Confirmation
           </h3>
-          <div style="font-size: 0.78rem; color: #6b7280; margin-top: 0.25rem;">
+          <div style="font-size: 0.78rem; margin-top: 0.25rem">
             Official Electronic Proof of Evaluation Completion
           </div>
         </div>
@@ -1048,62 +1049,62 @@ function returnToQueue() {
         <!-- Clearance Details Grid -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; font-size: 0.85rem;">
           <div>
-            <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase;">Course Offering</span>
-            <strong style="color: #111827; font-size: 0.95rem;">{{ evaluationStore.activeCourse?.course_code || 'CS-301' }}</strong>
-            <div style="color: #4b5563; font-size: 0.8rem;">{{ evaluationStore.activeCourse?.course_title || 'Enrolled Course' }}</div>
+            <span style="display: block; font-size: 0.72rem; font-weight: 700">Course Offering</span>
+            <strong style="font-size: 0.95rem">{{ evaluationStore.activeCourse?.course_code || 'CS-301' }}</strong>
+            <div style="font-size: 0.8rem">{{ evaluationStore.activeCourse?.course_title || 'Enrolled Course' }}</div>
           </div>
           <div>
-            <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase;">Instructor</span>
-            <strong style="color: #111827; font-size: 0.95rem;">{{ evaluationStore.activeCourse?.instructor_name || 'Assigned Faculty' }}</strong>
-            <div style="color: #4b5563; font-size: 0.8rem;">Section: {{ evaluationStore.activeCourse?.section_code || 'SEC-A' }}</div>
+            <span style="display: block; font-size: 0.72rem; font-weight: 700">Instructor</span>
+            <strong style="font-size: 0.95rem">{{ evaluationStore.activeCourse?.instructor_name || 'Assigned Faculty' }}</strong>
+            <div style="font-size: 0.8rem">Section: {{ evaluationStore.activeCourse?.section_code || 'SEC-A' }}</div>
           </div>
           <div>
-            <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase;">Academic Term</span>
-            <span style="color: #111827; font-weight: 600;">{{ authStore.activeTerm || '1st Semester AY 2026-2027' }}</span>
+            <span style="display: block; font-size: 0.72rem; font-weight: 700">Academic Term</span>
+            <span style="font-weight: 600">{{ authStore.activeTerm || '1st Semester AY 2026-2027' }}</span>
           </div>
           <div>
-            <span style="display: block; font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase;">Clearance Status</span>
+            <span style="display: block; font-size: 0.72rem; font-weight: 700">Clearance Status</span>
             <span class="status-badge status-completed" style="font-size: 0.75rem; padding: 0.2rem 0.6rem;">
-              ✓ OFFICIALLY CLEARED
+              <AppIcon name="check" /> OFFICIALLY CLEARED
             </span>
           </div>
         </div>
 
         <!-- Cryptographic Token Strip -->
-        <div style="background: #e2eafc; border: 1px solid #c1d3fe; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
-          <div style="font-size: 0.75rem; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">
+        <div style="padding: 1rem; margin-bottom: 1.5rem">
+          <div style="font-size: 0.75rem; font-weight: 700; margin-bottom: 0.35rem">
             Cryptographic Clearance Signature Token
           </div>
           <code
-            style="display: block; font-family: monospace; font-size: 0.85rem; font-weight: 700; color: #0f172a; word-break: break-all; background: #ffffff; padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid #ccdbfd;"
+            style="display: block; font-size: 0.85rem; font-weight: 700; word-break: break-all; padding: 0.5rem 0.75rem"
             data-testid="receipt-clearance-token"
           >
             {{ statusBanner?.token || evaluationStore.activeCourse?.clearance_token || 'CLR-2026-STUDENT-VERIFIED' }}
           </code>
-          <div style="font-size: 0.72rem; color: #4b5563; margin-top: 0.5rem; line-height: 1.4;">
-            🔒 <strong>Dual-Token Anonymity Guaranteed:</strong> This token proves your evaluation requirement has been satisfied without linking your student identity to specific rating scores or written comments.
+          <div style="font-size: 0.72rem; margin-top: 0.5rem; line-height: 1.4">
+            <AppIcon name="lock" /> <strong>Dual-Token Anonymity Guaranteed:</strong> This token proves your evaluation requirement has been satisfied without linking your student identity to specific rating scores or written comments.
           </div>
         </div>
 
         <!-- Verification Signature Block -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed #d1d5db; padding-top: 1.25rem; margin-bottom: 1.5rem; font-size: 0.78rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-top: 1.25rem; margin-bottom: 1.5rem; font-size: 0.78rem">
           <div>
-            <div style="font-weight: 700; color: #0f172a;">SCHOOL AAAAA13</div>
-            <div style="color: #6b7280;">Office of Academic Affairs</div>
-            <div style="color: #6b7280; margin-top: 0.2rem;">Generated: {{ new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}</div>
+            <div style="font-weight: 700">SCHOOL AAAAA13</div>
+            <div >Office of Academic Affairs</div>
+            <div style="margin-top: 0.2rem">Generated: {{ new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }}</div>
           </div>
           <div style="text-align: right;">
-            <div style="font-weight: 700; color: #111827; border-bottom: 1px solid #111827; padding-bottom: 0.2rem; min-width: 170px; text-align: center;">
+            <div style="font-weight: 700; padding-bottom: 0.2rem; min-width: 170px; text-align: center">
               OFFICE OF THE REGISTRAR
             </div>
-            <div style="color: #6b7280; font-size: 0.72rem; margin-top: 0.2rem; text-align: center;">
+            <div style="font-size: 0.72rem; margin-top: 0.2rem; text-align: center">
               Electronic Validation Stamp
             </div>
           </div>
         </div>
 
         <!-- Actions -->
-        <div class="no-print" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 1.25rem; gap: 0.5rem; flex-wrap: wrap;">
+        <div class="no-print" style="display: flex; justify-content: space-between; align-items: center; padding-top: 1.25rem; gap: 0.5rem; flex-wrap: wrap">
           <button
             type="button"
             class="btn-secondary btn-sm"
@@ -1117,7 +1118,7 @@ function returnToQueue() {
             data-testid="print-receipt-action-btn"
             @click="printCourseReceipt"
           >
-            🖨 Print / Save as PDF
+            <AppIcon name="printer" /> Print / Save as PDF
           </button>
         </div>
       </div>
@@ -1133,83 +1134,62 @@ function returnToQueue() {
 
 <style scoped>
 .cluster-quicknav-bar {
-  background: #ffffff;
-  border: 1px solid #dce7dc;
-  border-radius: 10px;
-  padding: 0.85rem 1rem;
-  margin-bottom: 1.25rem;
+  position: sticky;
+  top: 60px;
+  z-index: 20;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: rgba(237, 242, 251, 0.96);
+  border: 1px solid var(--wf-hair);
+  border-radius: var(--wf-radius);
+  backdrop-filter: saturate(1.2);
 }
 
 .quicknav-header-strip {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.65rem;
-  font-size: 0.75rem;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  color: var(--wf-ink-2);
 }
 
-.quicknav-label {
-  font-weight: 700;
-  color: #103c2e;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.quicknav-count {
-  color: #4b5563;
-  font-size: 0.78rem;
-}
+.quicknav-label { font-weight: 700; color: var(--wf-ink-2); }
+.quicknav-count strong { color: var(--wf-ink); }
 
 .quicknav-pills-row {
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+
+.quicknav-pills-row::-webkit-scrollbar { display: none; }
 
 .quicknav-pill {
+  flex: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  background: #f9f9f8;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  padding: 0.35rem 0.65rem;
-  font-size: 0.78rem;
-  color: #374151;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  font-family: inherit;
-}
-
-.quicknav-pill:hover {
-  background: #ecfdf5;
-  border-color: #a7f3d0;
-  color: #065f46;
-}
-
-.quicknav-pill.is-complete {
-  background: #f0fdf4;
-  border-color: #86efac;
-  color: #166534;
+  gap: 8px;
+  min-height: 36px;
+  padding: 4px 10px;
+  border: 1px solid var(--wf-hair);
+  border-radius: 8px;
+  background: var(--wf-panel);
+  color: var(--wf-ink);
+  font-size: 0.84rem;
   font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
 }
 
-.qnav-num {
-  font-weight: 700;
-  color: #103c2e;
-}
+.quicknav-pill:hover { border-color: var(--wf-mark); background: var(--wf-panel-2); }
+.quicknav-pill.is-complete { border-color: #bfe3cb; background: var(--wf-done-bg); color: #0f3d22; }
 
-.qnav-badge {
-  font-size: 0.72rem;
-  padding: 0.1rem 0.35rem;
-  border-radius: 4px;
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.quicknav-pill.is-complete .qnav-badge {
-  background: #dcfce7;
-  color: #15803d;
-}
+.qnav-num { font-weight: 800; color: var(--wf-ink-3); }
+.qnav-badge { font-size: 0.78rem; font-weight: 700; color: var(--wf-ink-3); }
+.quicknav-pill.is-complete .qnav-badge { color: var(--wf-done); }
 
 .eval-header-tools {
   display: flex;
@@ -1276,59 +1256,72 @@ function returnToQueue() {
 }
 
 
+.eval-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin: -8px -8px 14px;
+}
+
+.eval-course-id { display: flex; align-items: flex-start; gap: 16px; }
+.eval-course-title { margin: 0; font-size: 1.5rem; font-weight: 800; line-height: 1.25; letter-spacing: -0.01em; }
+.eval-course-meta { display: flex; flex-wrap: wrap; gap: 2px 16px; margin: 6px 0 0; color: var(--wf-ink-2); font-size: 0.92rem; }
+.eval-course-meta b { color: var(--wf-ink); }
+
 .step-indicator-bar {
   display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  margin-top: 1rem;
-  padding-top: 0.85rem;
-  border-top: 1px solid #e5ebe5;
-  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0 0;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--wf-tint);
+  list-style: none;
 }
+
+.step-indicator-bar li { flex: 1 1 0; min-width: 0; }
 
 .step-tab-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.45rem 0.95rem;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 1px solid var(--wf-hair);
   border-radius: 8px;
-  background: #f6f8f6;
-  border: 1px solid #dce4dc;
-  color: #4b5563;
-  font-size: 0.82rem;
+  background: var(--wf-panel);
+  color: var(--wf-ink-2);
+  font-size: 0.92rem;
   font-weight: 700;
+  text-align: left;
   cursor: pointer;
-  transition: all 0.15s ease;
 }
 
-.step-tab-btn.is-active {
-  background: #103c2e;
-  color: #ffffff;
-  border-color: #103c2e;
-}
+.step-tab-btn:hover { border-color: var(--wf-mark); }
+.step-tab-btn.is-active { border-color: var(--wf-accent); color: var(--wf-ink); box-shadow: inset 0 0 0 1px var(--wf-accent); }
 
 .step-tab-btn .step-number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 999px;
-  background: #e2e8e2;
-  color: #1f2937;
-  font-size: 0.75rem;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--wf-tint);
+  color: var(--wf-ink);
+  font-size: 0.82rem;
   font-weight: 800;
 }
 
-.step-tab-btn.is-active .step-number {
-  background: #f4cd42;
-  color: #103c2e;
-}
+.step-tab-btn.is-active .step-number { background: var(--wf-accent); color: #ffffff; }
+.step-tab-btn.is-done .step-number { background: var(--wf-done); color: #ffffff; }
+.step-count { font-weight: 600; color: var(--wf-ink-3); margin-left: 4px; }
 
-.step-connector {
-  color: #9ca3af;
-  font-weight: 700;
-  font-size: 0.85rem;
+@media (max-width: 640px) {
+  .eval-course-id { flex-direction: column; gap: 10px; }
+  .eval-course-title { font-size: 1.25rem; }
+  .step-tab-btn { padding: 8px 10px; font-size: 0.86rem; gap: 8px; }
+  .cluster-quicknav-bar { padding: 8px 10px; }
 }
 
 .step-navigation-bar {
@@ -1387,6 +1380,13 @@ function returnToQueue() {
   gap: 0.65rem;
   flex-wrap: wrap;
   margin-top: 0.75rem;
+}
+
+.submission-success-actions > button,
+.completion-actions > button {
+  max-width: 100%;
+  white-space: normal;
+  text-align: left;
 }
 
 .course-already-completed-card {

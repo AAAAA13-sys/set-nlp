@@ -53,6 +53,18 @@ class DatabaseSchemaManager
             )
         ");
 
+        // Additive: accounts issued a one-time Registrar password must replace it before using the system.
+        try {
+            $hasFlag = $driver === 'sqlite'
+                ? in_array('must_change_password', $db->query('PRAGMA table_info(users)')->fetchAll(PDO::FETCH_COLUMN, 1), true)
+                : $db->query("SHOW COLUMNS FROM users LIKE 'must_change_password'")->fetch() !== false;
+            if (!$hasFlag) {
+                $db->exec('ALTER TABLE users ADD COLUMN must_change_password INTEGER NOT NULL DEFAULT 0');
+            }
+        } catch (Throwable) {
+            // column already present or driver without introspection
+        }
+
         $db->exec("
             CREATE TABLE IF NOT EXISTS academic_terms (
                 id {$autoIncrement},

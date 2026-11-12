@@ -1,4 +1,5 @@
 <script setup>
+import AppIcon from '../AppIcon.vue';
 import { computed, ref } from 'vue';
 import { useAcademicSetupStore } from '../../stores/academicSetup.js';
 
@@ -173,25 +174,25 @@ function exportPendingStudentsCsv() {
           type="button"
           class="btn-secondary"
           data-testid="export-pending-students-csv-btn"
-          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; border: 1px solid #fde68a; background: #fffbeb; color: #b45309; font-weight: 700;"
+          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; font-weight: 700"
           @click="exportPendingStudentsCsv"
         >
-          ⚠️ Export Pending Evaluators (CSV)
+          <AppIcon name="alert" /> Export Pending Evaluators (CSV)
         </button>
         <button
           type="button"
           class="btn-secondary"
           data-testid="export-students-csv-btn"
-          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; font-weight: 600;"
+          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; font-weight: 600"
           @click="exportStudentsDirectoryCsv"
         >
-          📊 Export All Students (CSV)
+          <AppIcon name="chart" /> Export All Students (CSV)
         </button>
         <button
           type="button"
           class="btn-primary"
           data-testid="add-student-btn"
-          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; font-weight: 600;"
+          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; font-weight: 600"
           @click="emit('new-student')"
         >
           + New Student
@@ -204,17 +205,17 @@ function exportPendingStudentsCsv() {
 
     <!-- EVALUATION PARTICIPATION TRACKER BAR -->
     <div class="tracker-summary-bar" data-testid="student-tracker-summary-bar" style="display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap;">
-      <div class="tracker-card" style="flex: 1; min-width: 140px; background: #ffffff; border: 1px solid #dce7dc; border-radius: 8px; padding: 0.65rem 0.85rem;">
-        <small style="color: #6b7280; font-size: 0.72rem; text-transform: uppercase; font-weight: 700; display: block;">Total Students</small>
-        <div style="font-size: 1.25rem; font-weight: 800; color: #103c2e;">{{ studentTrackerMetrics.total }}</div>
+      <div class="tracker-card" style="flex: 1; min-width: 140px; padding: 0.65rem 0.85rem">
+        <small style="font-size: 0.72rem; font-weight: 700; display: block">Total Students</small>
+        <div style="font-size: 1.25rem; font-weight: 800">{{ studentTrackerMetrics.total }}</div>
       </div>
-      <div class="tracker-card" style="flex: 1; min-width: 140px; background: #ffffff; border: 1px solid #dce7dc; border-radius: 8px; padding: 0.65rem 0.85rem;">
-        <small style="color: #065f46; font-size: 0.72rem; text-transform: uppercase; font-weight: 700; display: block;">✅ Fully Cleared</small>
-        <div style="font-size: 1.25rem; font-weight: 800; color: #059669;">{{ studentTrackerMetrics.cleared }} <span style="font-size: 0.8rem; font-weight: 600;">({{ studentTrackerMetrics.clearedRate }}%)</span></div>
+      <div class="tracker-card" style="flex: 1; min-width: 140px; padding: 0.65rem 0.85rem">
+        <small style="font-size: 0.72rem; font-weight: 700; display: block"><AppIcon name="check-circle" /> Fully Cleared</small>
+        <div style="font-size: 1.25rem; font-weight: 800">{{ studentTrackerMetrics.cleared }} <span style="font-size: 0.8rem; font-weight: 600;">({{ studentTrackerMetrics.clearedRate }}%)</span></div>
       </div>
-      <div class="tracker-card" style="flex: 1; min-width: 140px; background: #ffffff; border: 1px solid #fde68a; border-radius: 8px; padding: 0.65rem 0.85rem;">
-        <small style="color: #92400e; font-size: 0.72rem; text-transform: uppercase; font-weight: 700; display: block;">⚠️ Pending Evaluators</small>
-        <div style="font-size: 1.25rem; font-weight: 800; color: #d97706;">{{ studentTrackerMetrics.pending }} <span style="font-size: 0.8rem; font-weight: 600;">({{ studentTrackerMetrics.pendingRate }}%)</span></div>
+      <div class="tracker-card" style="flex: 1; min-width: 140px; padding: 0.65rem 0.85rem">
+        <small style="font-size: 0.72rem; font-weight: 700; display: block"><AppIcon name="alert" /> Pending Evaluators</small>
+        <div style="font-size: 1.25rem; font-weight: 800">{{ studentTrackerMetrics.pending }} <span style="font-size: 0.8rem; font-weight: 600;">({{ studentTrackerMetrics.pendingRate }}%)</span></div>
       </div>
     </div>
 
@@ -238,7 +239,7 @@ function exportPendingStudentsCsv() {
             <td><strong>{{ std.name }}</strong></td>
             <td>
               <span class="dept-badge">{{ std.department_code || 'CCS' }}</span>
-              <span style="margin-left: 0.35rem; font-size: 0.8rem; color: #4b5563;">{{ std.department_name }}</span>
+              <span style="margin-left: 0.35rem; font-size: 0.8rem">{{ std.department_name }}</span>
             </td>
             <td>{{ std.email }}</td>
             <td>
@@ -246,7 +247,7 @@ function exportPendingStudentsCsv() {
             </td>
             <td>
               <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <div style="flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; min-width: 60px;">
+                <div style="flex: 1; height: 8px; overflow: hidden; min-width: 60px">
                   <div
                     :style="{
                       width: `${std.enrolled_count > 0 ? (std.cleared_count / std.enrolled_count) * 100 : 0}%`,
@@ -255,7 +256,7 @@ function exportPendingStudentsCsv() {
                     }"
                   ></div>
                 </div>
-                <strong style="font-size: 0.82rem; color: #374151;">
+                <strong style="font-size: 0.82rem">
                   {{ std.cleared_count }} / {{ std.enrolled_count }}
                 </strong>
               </div>
@@ -276,29 +277,29 @@ function exportPendingStudentsCsv() {
                   type="button"
                   class="btn-secondary btn-xs"
                   :data-testid="`student-courses-btn-${std.id}`"
-                  style="font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 6px; font-weight: 600;"
+                  style="font-size: 0.75rem; padding: 0.25rem 0.5rem; font-weight: 600"
                   @click="emit('open-student-enrollment', std)"
                 >
-                  Courses 📚
+                  Courses <AppIcon name="book" />
                 </button>
                 <button
                   v-if="!std.is_complete"
                   type="button"
                   class="btn-secondary btn-xs"
                   :data-testid="`remind-student-btn-${std.id}`"
-                  style="font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 6px; font-weight: 600; color: #b45309; border-color: #fde68a; background: #fffbeb;"
+                  style="font-size: 0.75rem; padding: 0.25rem 0.5rem; font-weight: 600"
                   @click="emit('open-student-reminder', std)"
                 >
-                  Remind ✉️
+                  Remind <AppIcon name="mail" />
                 </button>
                 <button
                   type="button"
                   class="btn-secondary btn-xs"
                   :data-testid="`edit-student-btn-${std.id}`"
-                  style="font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 6px; font-weight: 600;"
+                  style="font-size: 0.75rem; padding: 0.25rem 0.5rem; font-weight: 600"
                   @click="emit('edit-student', std)"
                 >
-                  Edit ✏️
+                  Edit <AppIcon name="edit" />
                 </button>
                 <router-link
                   v-if="std.is_complete"
@@ -307,16 +308,16 @@ function exportPendingStudentsCsv() {
                   :data-testid="`student-permit-verify-btn-${std.id}`"
                   style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
                 >
-                  Status 📜
+                  Status <AppIcon name="file" />
                 </router-link>
-                <span v-else style="font-size: 0.75rem; color: #b45309; font-weight: 600; padding: 0.25rem 0.35rem;">
+                <span v-else style="font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.35rem">
                   {{ Math.max(0, std.enrolled_count - std.cleared_count) }} Pending
                 </span>
               </div>
             </td>
           </tr>
           <tr v-if="filteredStudentsDirectory.length === 0" data-testid="students-empty-state">
-            <td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+            <td colspan="8" style="text-align: center; padding: 2rem">
               No student records match your search criteria for this academic term.
             </td>
           </tr>

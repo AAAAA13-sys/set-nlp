@@ -16,6 +16,18 @@ declare(strict_types=1);
 $rootDir = dirname(__DIR__);
 require_once $rootDir . '/bootstrap/app.php';
 
+// No default: a password committed to the repository would be public. Supply it at provisioning time.
+$adminPassword = (string) (getenv('EVALUATECH_ADMIN_PASSWORD') ?: '');
+$policyViolation = $adminPassword === ''
+    ? 'EVALUATECH_ADMIN_PASSWORD is not set.'
+    : App\Services\TemporaryCredential::policyViolation($adminPassword, 'ADM-00001', 'admin@aaaaa13.edu');
+if ($policyViolation !== null) {
+    fwrite(STDERR, "Refusing to provision the administrator account: {$policyViolation}" . PHP_EOL
+        . 'Set EVALUATECH_ADMIN_PASSWORD (at least ' . App\Services\TemporaryCredential::MIN_LENGTH
+        . ' characters, letters and numbers) in the environment or .env, then re-run.' . PHP_EOL);
+    exit(1);
+}
+
 $sqlitePath = $rootDir . '/storage/framework/evaluatech_aaaaa13.sqlite';
 $storageDir = dirname($sqlitePath);
 if (!is_dir($storageDir)) {
@@ -29,6 +41,12 @@ $pdo->exec('PRAGMA foreign_keys = ON');
 
 $schema = new App\Services\DatabaseSchemaManager();
 $schema->initializeSchema($pdo);
+
+if ((int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn() > 0) {
+    fwrite(STDERR, 'Refusing to provision: this database already has user accounts. '
+        . 'production-init.php only initialises an empty database.' . PHP_EOL);
+    exit(1);
+}
 
 $now = date('Y-m-d H:i:s');
 
@@ -61,8 +79,8 @@ foreach ($departments as [$id, $code, $name, $collegeName]) {
 
 // 2. Active Academic Term (AY 2026-2027 1st Semester)
 $pdo->exec("
-    INSERT OR REPLACE INTO academic_terms (id, code, name, academic_year, period_label, is_active, evaluation_open, starts_on, ends_on, created_at, updated_at)
-    VALUES (1, '1SEM-2026', '1st Semester', '2026-2027', 'Final SET', 1, 1, '2026-08-15', '2026-12-20', '{$now}', '{$now}')
+    INSERT OR REPLACE INTO academic_terms (id, code, name, academic_year, is_active, evaluation_open, starts_on, ends_on, created_at, updated_at)
+    VALUES (1, '1SEM-2026', '1st Semester', '2026-2027', 1, 1, '2026-08-15', '2026-12-20', '{$now}', '{$now}')
 ");
 
 // 3. Evaluation Window Parameters (Mandatory Timing Policy: 0s dwell, Asia/Manila)
@@ -80,7 +98,6 @@ $pdo->exec("
 ");
 
 // 4. Primary University Registrar Administrator Account
-$adminPassword = getenv('EVALUATECH_ADMIN_PASSWORD') ?: 'AAAAA13Admin!2026';
 $passwordHash = password_hash($adminPassword, PASSWORD_BCRYPT);
 
 $userStmt = $pdo->prepare("

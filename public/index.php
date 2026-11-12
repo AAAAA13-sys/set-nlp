@@ -123,9 +123,13 @@ if ($isApiRoute) {
         DecoupledEvaluationService::setSharedPdo($pdo);
         $service = new DecoupledEvaluationService($pdo);
 
-        $userCount = (int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
-        if ($userCount === 0) {
-            (new EvaluaTechDemoSeeder($pdo))->run();
+        // Demo accounts are a local/testing convenience only; production starts from scripts/production-init.php.
+        $runtimeEnv = strtolower((string) (getenv('APP_ENV') ?: 'production'));
+        if (in_array($runtimeEnv, ['local', 'testing'], true)) {
+            $userCount = (int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
+            if ($userCount === 0) {
+                (new EvaluaTechDemoSeeder($pdo))->run();
+            }
         }
 
         $input = $combinedPayload;
@@ -177,8 +181,18 @@ if ($isApiRoute) {
 
         $response = null;
 
+        // Accounts still holding a Registrar-issued one-time password may only change it (or sign out).
+        if ($authUser !== null && !empty($authUser->must_change_password) && !AuthController::isAllowedBeforePasswordChange($uriPath)) {
+            $response = new JsonResponse([
+                'code' => 'PASSWORD_CHANGE_REQUIRED',
+                'message' => 'Set a new password before continuing.',
+            ], 403);
+        }
+
         // Public endpoints (Health, Institutional Login, Proctor Cryptographic Permit Verification, Signed Registrar Webhook)
-        if ($uriPath === '/api/health' && $method === 'GET') {
+        if ($response !== null) {
+            // short-circuited above
+        } elseif ($uriPath === '/api/health' && $method === 'GET') {
             $response = new JsonResponse([
                 'status' => 'ok',
                 'institution' => 'SCHOOL AAAAA13',
@@ -193,6 +207,8 @@ if ($isApiRoute) {
             $response = $authController->me($request);
         } elseif ($uriPath === '/api/auth/logout' && $method === 'POST') {
             $response = $authController->logout($request);
+        } elseif ($uriPath === '/api/auth/password' && $method === 'POST') {
+            $response = $authController->changePassword($request);
         } elseif (in_array($uriPath, [
             '/api/clearance/verify',
             '/api/student/clearance/verify',
@@ -267,6 +283,8 @@ if ($isApiRoute) {
             $response = $withRoles('dean,chair,admin', static fn (Request $req) => (new DeanAnalyticsController($service))->performanceQuartiles($req));
         } elseif (($uriPath === '/api/dean/qualitative-synthesis' || $uriPath === '/api/chair/qualitative-synthesis') && $method === 'GET') {
             $response = $withRoles('dean,chair,admin', static fn (Request $req) => (new DeanAnalyticsController($service))->qualitativeSynthesis($req));
+        } elseif (($uriPath === '/api/dean/participation' || $uriPath === '/api/chair/participation') && $method === 'GET') {
+            $response = $withRoles('dean,chair,admin', static fn (Request $req) => (new DeanAnalyticsController($service))->participationTracker($req));
         } elseif (($uriPath === '/api/dean/insights-search' || $uriPath === '/api/chair/insights-search') && $method === 'GET') {
             $response = $withRoles('dean,chair,admin', static fn (Request $req) => (new DeanAnalyticsController($service))->insightsSearch($req));
         } elseif ($uriPath === '/api/dean/export-qualitative-csv' && $method === 'POST') {

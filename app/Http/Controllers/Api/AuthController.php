@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api;
 use App\Enums\UserRole;
 use App\Services\DecoupledEvaluationService;
 use App\Services\SecurityAuditService;
+use App\Services\TemporaryCredential;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -32,10 +33,8 @@ class AuthController extends Controller
     ) {
         $this->pdo = (new DecoupledEvaluationService($pdo))->getPdo();
         $this->securityAudit = new SecurityAuditService();
-        $envSecret = getenv('EVALUATECH_SIGNING_SECRET');
-        $this->appSecret = ($this->appSecret !== null && $this->appSecret !== '')
-            ? $this->appSecret
-            : ((is_string($envSecret) && trim($envSecret) !== '') ? trim($envSecret) : 'evaluatech-hmac-signing-secret-2026');
+        // Same resolver as clearance signing: refuses to run in production without a configured secret.
+        $this->appSecret = DecoupledEvaluationService::resolveSigningSecret($this->appSecret);
     }
 
     public function login(Request $request): JsonResponse
@@ -192,9 +191,105 @@ class AuthController extends Controller
                 'department_id' => isset($user->department_id) && $user->department_id !== null ? (int) $user->department_id : null,
                 'department_name' => isset($user->department_name) ? (string) $user->department_name : null,
                 'department_code' => isset($user->department_code) ? (string) $user->department_code : null,
+                'college_name' => isset($user->college_name) ? (string) $user->college_name : null,
+                'must_change_password' => (bool) ($user->must_change_password ?? false),
             ],
             'workspace_route' => $this->resolveWorkspaceRoute($roleEnum),
         ], 200);
+    }
+
+    /**
+     * Replace the signed-in user's password (required after a Registrar-issued one-time password).
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        if ($user === null) {
+            return new JsonResponse([
+                'changed' => false,
+                'code' => 'UNAUTHENTICATED',
+                'message' => 'Authentication required.',
+            ], 401);
+        }
+
+        $current = $request->input('current_password', '');
+        $next = $request->input('new_password', '');
+        if (!is_string($current) || !is_string($next)) {
+            return new JsonResponse([
+                'changed' => false,
+                'code' => 'OPERATOR_INJECTION_REJECTED',
+                'message' => 'Scalar string passwords are required.',
+            ], 422);
+        }
+
+        // Own throttle bucket so this endpoint cannot be used to guess the current password.
+        $bucketKey = $this->computeRateLimitBucket('pwchange|' . (int) $user->id);
+        $rateState = $this->checkRateLimit($bucketKey);
+        if ($rateState['blocked']) {
+            return new JsonResponse([
+                'changed' => false,
+                'code' => 'RATE_LIMITED',
+                'retry_after' => $rateState['retry_after'],
+                'message' => 'Too many attempts. Please wait 60 seconds before retrying.',
+            ], 429, ['Retry-After' => (string) $rateState['retry_after']]);
+        }
+
+        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE id = :id LIMIT 1');
+        $stmt->execute([':id' => (int) $user->id]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $pwdCol = is_array($row) && array_key_exists('password', $row) ? 'password' : 'password_hash';
+        $storedHash = is_array($row) ? (string) ($row[$pwdCol] ?? '') : '';
+
+        if ($storedHash === '' || !password_verify($current, $storedHash)) {
+            $this->recordFailedAttempt($bucketKey);
+            $this->securityAudit->logEvent($this->pdo, 'AUTH_PASSWORD_CHANGE_FAILED', 'WARN', ['outcome' => 'wrong_current_password'], null, '/api/auth/password');
+            return new JsonResponse([
+                'changed' => false,
+                'code' => 'INVALID_CURRENT_PASSWORD',
+                'message' => 'Your current password is incorrect.',
+            ], 422);
+        }
+
+        $violation = TemporaryCredential::policyViolation($next, (string) $row['institutional_id'], (string) $row['email']);
+        if ($violation === null && hash_equals($current, $next)) {
+            $violation = 'Choose a password different from your current one.';
+        }
+        if ($violation !== null) {
+            return new JsonResponse([
+                'changed' => false,
+                'code' => 'WEAK_PASSWORD',
+                'message' => $violation,
+            ], 422);
+        }
+
+        $fields = ["{$pwdCol} = :pwd"];
+        $params = [':pwd' => password_hash($next, PASSWORD_BCRYPT), ':id' => (int) $user->id];
+        if (array_key_exists('must_change_password', $row)) {
+            $fields[] = 'must_change_password = 0';
+        }
+        if (array_key_exists('updated_at', $row)) {
+            $fields[] = 'updated_at = :updated_at';
+            $params[':updated_at'] = date('Y-m-d H:i:s');
+        }
+        $upd = $this->pdo->prepare('UPDATE users SET ' . implode(', ', $fields) . ' WHERE id = :id');
+        $upd->execute($params);
+        $this->resetRateLimit($bucketKey);
+
+        $this->securityAudit->logEvent($this->pdo, 'AUTH_PASSWORD_CHANGED', 'INFO', ['outcome' => 'changed'], (string) $user->role, '/api/auth/password');
+
+        return new JsonResponse([
+            'changed' => true,
+            'must_change_password' => false,
+            'message' => 'Password updated.',
+        ], 200);
+    }
+
+    /**
+     * API paths a user holding a one-time password may still call.
+     */
+    public static function isAllowedBeforePasswordChange(string $path): bool
+    {
+        return in_array($path, ['/api/auth/me', '/api/auth/logout', '/api/auth/password', '/api/health'], true);
     }
 
     public function logout(?Request $request = null): JsonResponse
@@ -332,7 +427,7 @@ class AuthController extends Controller
         }
 
         $stmt = $this->pdo->prepare('
-            SELECT u.*, d.name AS department_name, d.code AS department_code
+            SELECT u.*, d.name AS department_name, d.code AS department_code, d.college_name AS college_name
             FROM users u
             LEFT JOIN departments d ON d.id = u.department_id
             WHERE u.id = :id
@@ -358,6 +453,8 @@ class AuthController extends Controller
             'department_id' => $row['department_id'] !== null ? (int) $row['department_id'] : null,
             'department_name' => isset($row['department_name']) ? (string) $row['department_name'] : null,
             'department_code' => isset($row['department_code']) ? (string) $row['department_code'] : null,
+            'college_name' => isset($row['college_name']) ? (string) $row['college_name'] : null,
+            'must_change_password' => (bool) ($row['must_change_password'] ?? false),
         ];
     }
 
@@ -500,7 +597,7 @@ class AuthController extends Controller
         }
 
         $stmt = $this->pdo->prepare('
-            SELECT u.*, d.name AS department_name, d.code AS department_code
+            SELECT u.*, d.name AS department_name, d.code AS department_code, d.college_name AS college_name
             FROM users u
             LEFT JOIN departments d ON d.id = u.department_id
             WHERE LOWER(u.email) = LOWER(:id) OR LOWER(u.institutional_id) = LOWER(:id)
@@ -534,6 +631,8 @@ class AuthController extends Controller
             'department_id' => $user['department_id'] !== null ? (int) $user['department_id'] : null,
             'department_name' => isset($user['department_name']) ? (string) $user['department_name'] : null,
             'department_code' => isset($user['department_code']) ? (string) $user['department_code'] : null,
+            'college_name' => isset($user['college_name']) ? (string) $user['college_name'] : null,
+            'must_change_password' => (bool) ($user['must_change_password'] ?? false),
         ];
     }
 

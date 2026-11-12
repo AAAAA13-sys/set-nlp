@@ -99,11 +99,6 @@ class DeanAnalyticsController extends Controller
                 $stmt->execute([':uid' => (int) $user->id]);
                 $deanCollege = trim((string) ($stmt->fetchColumn() ?: ''));
             }
-            if ($deanCollege === '' && (int) ($user->id ?? 0) === 2) {
-                // Canonical institutional Dean Dr. V. Mendoza
-                $deanCollege = 'College of Computer Studies';
-            }
-
             if ($deanCollege === '') {
                 return [
                     null,
@@ -457,6 +452,33 @@ class DeanAnalyticsController extends Controller
 
         $quartiles = $this->evaluationService->getFacultyPerformanceQuartiles($requestedDeptId);
         return new JsonResponse($quartiles, 200);
+    }
+
+    /**
+     * Evaluation Participation Tracker for supervisors: which students in scope are done vs. pending.
+     * Chairs are contained to their department and deans to their college via resolveScopedDepartmentId.
+     * Returns completion status only; never links a student to any submitted response.
+     */
+    public function participationTracker(Request $request): JsonResponse
+    {
+        [$requestedDeptId, $scopeError] = $this->resolveScopedDepartmentId($request);
+        if ($scopeError !== null) {
+            return $scopeError;
+        }
+
+        $termId = $request->input('academic_term_id') !== null ? (int) $request->input('academic_term_id') : null;
+
+        try {
+            $data = (new \App\Services\AcademicSetupService($this->evaluationService->getPdo()))
+                ->getPendingStudentsTracker($termId, $requestedDeptId);
+            return new JsonResponse($data, 200);
+        } catch (\RuntimeException $e) {
+            return new JsonResponse([
+                'success' => false,
+                'code' => 'ACADEMIC_TERM_NOT_FOUND',
+                'message' => $e->getMessage(),
+            ], 404);
+        }
     }
 
     public function insightsSearch(Request $request): JsonResponse

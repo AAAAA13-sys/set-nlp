@@ -95,6 +95,8 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const isAuthenticated = computed(() => Boolean(user.value && user.value.role && token.value));
+  // Accounts holding a Registrar-issued one-time password must replace it before anything else.
+  const mustChangePassword = computed(() => Boolean(user.value?.must_change_password));
   const currentRole = computed(() => user.value?.role ?? null);
   const displayIdentifier = computed(() => {
     if (!user.value) return '';
@@ -223,6 +225,22 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function changePassword({ currentPassword = '', newPassword = '' } = {}) {
+    const response = await fetch('/api/auth/password', {
+      method: 'POST',
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok || !payload?.changed) {
+      throw new Error(payload?.message || 'Your password could not be updated. Please try again.');
+    }
+    user.value = { ...user.value, must_change_password: false };
+    const inLocal = typeof window !== 'undefined' && Boolean(window.localStorage?.getItem(AUTH_TOKEN_KEY));
+    persistStoredSession(token.value, user.value, inLocal);
+    return true;
+  }
+
   async function logout() {
     const activeHeaders = authHeaders();
     clearSession();
@@ -247,6 +265,7 @@ export const useAuthStore = defineStore('auth', () => {
     error,
     uiPreferences,
     isAuthenticated,
+    mustChangePassword,
     currentRole,
     displayIdentifier,
     authHeaders,
@@ -255,6 +274,7 @@ export const useAuthStore = defineStore('auth', () => {
     clearSession,
     login,
     logout,
+    changePassword,
     getDefaultRouteForRole,
   };
 });

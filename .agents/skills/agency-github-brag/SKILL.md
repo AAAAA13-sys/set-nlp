@@ -25,29 +25,9 @@ Your mission is to turn rigorous institutional engineering, bulletproof security
 ### 1. The 10,000-Sample Multilingual ML Pipeline Benchmark
 Highlight the unassailable empirical machine learning evaluation on student evaluation feedback:
 
-- **10,000-Row Normalized Corpus:** Partitioned with deterministic stratification (`seed = 42`) across English (3,390), Tagalog (3,258), and Taglish (3,352) into 7,000 Development (70%) and 3,000 Held-Out Blind Test (30%) samples with zero test contamination.
-- **SOTA Empirical Accuracy ($98.80\%$ on 3,000 Blind Test Samples):** Surpasses baseline rule engines ($89.23\%$) by **$+9.57$ percentage points** ($2,964 / 3,000$ correct).
-- **Near-Zero Latency ($0.209\text{ ms}$):** Ultra-fast vectorizer + classifier inference, and $2.39\text{ ms}$ for the entire multi-tier pipeline.
-- **Safety-Critical Negative Sentiment Recall ($99.07\%$):** Detects $1,281 / 1,293$ negative comments accurately, preventing student grievances from being missed by academic supervisors.
-- **Multilingual Generalization:**
-  - English Accuracy: $98.33\%$ ($1,000 / 1,017$)
-  - Tagalog Accuracy: $99.28\%$ ($970 / 977$)
-  - Taglish Accuracy: $98.81\%$ ($994 / 1,006$)
-- **5-Cluster Pedagogical Domain Classification ($98.57\%$ Accuracy, $0.9606$ Macro F1):** Categorizes feedback across *Pedagogical Delivery*, *Assessment & Grading*, *Classroom Management*, *Professional Conduct*, *Student Support & Mentorship*, while isolating non-teaching facilities feedback (*Unclassified / Needs Review*).
-
-```
-Model Comparison Benchmark (3,000 Untouched Test Samples):
-+------------------------------------+------------+----------+-----------------+--------------+
-| Model Architecture                 | Accuracy   | Macro F1 | Negative Recall | Inference    |
-+------------------------------------+------------+----------+-----------------+--------------+
-| Model A: Baseline Uncorrected      | 89.23%     | 0.8388   | 91.80%          | 0.072 ms     |
-| Model B: Corrected Baseline        | 86.70%     | 0.7831   | 91.42%          | 0.081 ms     |
-| Model C: Enhanced Hybrid Rule      | 89.23%     | 0.8388   | 91.80%          | 0.075 ms     |
-| Model D: Scikit-Learn ML (10k)     | 98.80%     | 0.9875   | 99.07%          | 0.209 ms     |
-+------------------------------------+------------+----------+-----------------+--------------+
-| Net Improvement (Model D vs C)     | +9.57%     | +0.1487  | +7.27%          | SOTA Scale   |
-+------------------------------------+------------+----------+-----------------+--------------+
-```
+- **Honesty rule:** quote accuracy measured on **real** student comments only. 9,200 of the 10,000 training rows are template-generated; scores on them (≈100%) must never be presented as real-world accuracy. Source of truth: `analytics/models/model_metadata.json` (`real_comment_test`).
+- **Current real-comment results (227 held-out real comments):** 87.22% sentiment accuracy, 0.854 macro F1, 88.76% negative recall; Tagalog 94.4%, Taglish 86.3%, English 83.9%; topic accuracy 89.87%; ~1.5 ms per comment.
+- **Model:** word 1-2 + character 2-5 n-gram TF-IDF with Logistic Regression, real comments weighted x5, selected by cross-validation on real comments only. Up from 84.14% for the previous word 1-3 model.
 
 ---
 
@@ -131,8 +111,8 @@ Guide stakeholders through interactive visual evidence:
 > **Automated Student Evaluation of Teachers (SET) Platform with Dual-Token Cryptographic Decoupling, 10,000-Sample Empirical Multilingual ML Pipeline, and AACCUP Level III Governance.**
 
 [![Tests: 181/181 Passing](https://img.shields.io/badge/Tests-181%2F181%20PASS-brightgreen.svg?style=flat-square)](scripts/verify-all.ps1)
-[![ML Accuracy: 98.80%](https://img.shields.io/badge/ML%20Accuracy-98.80%25-blue.svg?style=flat-square)](docs/analysis/MODEL_COMPARISON_REPORT.md)
-[![Inference Latency: 0.209ms](https://img.shields.io/badge/ML%20Latency-0.209ms-success.svg?style=flat-square)](docs/analysis/MODEL_COMPARISON_REPORT.md)
+[![Sentiment accuracy on real comments: 87.2%](https://img.shields.io/badge/Sentiment%20(real%20comments)-87.2%25-blue.svg?style=flat-square)](docs/analysis/MODEL_COMPARISON_REPORT.md)
+[![ML Latency: 1.5ms](https://img.shields.io/badge/ML%20Latency-1.5ms-success.svg?style=flat-square)](analytics/models/model_metadata.json)
 [![Security: 63/63 Enforced](https://img.shields.io/badge/OWASP%20Controls-63%2F63%20ENFORCED-blueviolet.svg?style=flat-square)](app/Services/SecurityAuditService.php)
 [![Accessibility: WCAG 2.2 AAA](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AAA-informational.svg?style=flat-square)](resources/css/app.css)
 [![Zero Permits Policy](https://img.shields.io/badge/Governance-Zero%20Permits%20Policy-teal.svg?style=flat-square)](docs/INSTITUTIONAL_SYSTEM_ARCHITECTURE.md)
@@ -151,9 +131,9 @@ Here is what makes it unique:
 1/ 🧠 10,000-Sample Multilingual ML Pipeline:
 Trained on 10,000 unique student comments in English, Tagalog, and Taglish across 5 pedagogical clusters.
 Empirical blind test results (3,000 holdout samples):
-- 98.80% overall accuracy (+9.57% over rule baselines)
-- 99.07% negative recall (never miss teaching concerns)
-- 0.209 ms latency
+- 87.2% sentiment accuracy on real student comments
+- 88.8% negative recall on real comments
+- ~1.5 ms per comment
 
 2/ 🔐 Dual-Token Cryptographic Decoupling:
 Student identity is decoupled from feedback at the database level. Zero student IDs, IP addresses, or timestamps ever enter the evaluation vault. Completely anonymous student voice.
@@ -177,7 +157,7 @@ Across 5 layers: PHPUnit (39), Vue DOM (80), Python NLP (50), Playwright E2E (12
 
 | Engineering Dimension | School AAAAA13 EvaluaTech Implementation | Verification Proof |
 | :--- | :--- | :--- |
-| **Multilingual NLP Model** | Scikit-Learn TF-IDF $(1,3)$ + Calibrated Logistic Regression on 10,000 rows | `98.80% Accuracy`, `0.209 ms` latency on 3,000 blind test samples (`docs/analysis/`) |
+| **Multilingual NLP Model** | Word 1-2 + character 2-5 n-gram TF-IDF + Logistic Regression (800 real + 9,200 synthetic rows) | `87.2% sentiment accuracy` on 227 real held-out comments, ~1.5 ms per comment (`analytics/models/model_metadata.json`) |
 | **Cryptographic Decoupling** | Separate `clearances` and `vault` tables, HMAC-SHA256 tokens, zero foreign keys | `EvaluaTechBackendSuiteTest::test_04` & `test_05` |
 | **Concurrency & Idempotency** | `SELECT ... FOR UPDATE` row locking + `submission_key` idempotency | `EvaluaTechBackendSuiteTest::test_06` (`FT-02`) |
 | **Double-Blind Faculty Lock** | `EnsureDoubleBlindUnlocked` gate (`term_grades_submitted && registrar_lock`) | `EvaluaTechBackendSuiteTest::test_12` & `test_14` |

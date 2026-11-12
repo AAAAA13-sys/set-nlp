@@ -160,7 +160,7 @@ onUnmounted(() => {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #103c2e;
+  color: #0f172a;
 }
 
 .shortcut-list {
@@ -190,7 +190,7 @@ kbd,
   border: 1px solid #c8d5ca;
   border-radius: 6px;
   padding: 0.14rem 0.42rem;
-  color: #103c2e;
+  color: #0f172a;
   white-space: nowrap;
 }
 

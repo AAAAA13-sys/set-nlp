@@ -1,4 +1,5 @@
 <script setup>
+import AppIcon from '../AppIcon.vue';
 import { useAcademicSetupStore } from '../../stores/academicSetup.js';
 
 const emit = defineEmits([
@@ -121,10 +122,10 @@ function exportAssignmentsMatrixCsv() {
           type="button"
           class="btn-secondary"
           data-testid="export-assignments-csv-btn"
-          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; font-weight: 600;"
+          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; font-weight: 600"
           @click="exportAssignmentsMatrixCsv"
         >
-          📊 Export Assignments (CSV)
+          <AppIcon name="chart" /> Export Assignments (CSV)
         </button>
         <button
           type="button"
@@ -132,7 +133,7 @@ function exportAssignmentsMatrixCsv() {
           data-testid="import-roster-btn"
           @click="emit('import-roster')"
         >
-          + Import Roster
+          <AppIcon name="plus" :size="15" /> Import Roster
         </button>
         <button
           type="button"
@@ -140,7 +141,7 @@ function exportAssignmentsMatrixCsv() {
           data-testid="add-course-btn"
           @click="emit('new-course')"
         >
-          + New Course
+          <AppIcon name="plus" :size="15" /> New Course
         </button>
         <button
           type="button"
@@ -148,7 +149,7 @@ function exportAssignmentsMatrixCsv() {
           data-testid="add-section-btn"
           @click="emit('new-section')"
         >
-          + Add Course Section
+          <AppIcon name="plus" :size="15" /> Add Course Section
         </button>
       </div>
     </div>
@@ -177,7 +178,7 @@ function exportAssignmentsMatrixCsv() {
           >
             <td>
               <div class="course-code-cell">
-                <strong class="font-mono text-emerald">{{ sec.course_code }}</strong>
+                <strong class="code-plate">{{ sec.course_code }}</strong>
                 <span class="course-title-sub">{{ sec.course_title }}</span>
               </div>
             </td>
@@ -222,21 +223,22 @@ function exportAssignmentsMatrixCsv() {
             <td class="text-center">
               <div class="lock-cell-action">
                 <span
-                  class="lock-badge"
-                  :class="sec.double_blind_unlocked ? 'unlocked' : 'locked'"
-                  :title="sec.double_blind_unlocked ? 'Both term grades and registrar locks confirmed' : 'Awaiting instructor grade submission or registrar approval'"
+                  class="status-mark lock-badge"
+                  :class="sec.double_blind_unlocked ? 'is-done unlocked' : 'is-todo locked'"
+                  :title="sec.double_blind_unlocked ? 'Grades submitted and locked: the instructor can see results' : 'Waiting for grade submission or the registrar lock'"
                 >
-                  {{ sec.double_blind_unlocked ? 'Unlocked' : 'Locked' }}
+                  {{ sec.double_blind_unlocked ? 'Results visible' : 'Results hidden' }}
                 </span>
                 <button
                   type="button"
                   class="btn-lock-toggle"
                   :class="sec.registrar_lock ? 'locked' : 'unlocked'"
-                  :title="sec.registrar_lock ? 'Registrar Lock Active — Click to unlock' : 'Registrar Lock Inactive — Click to lock'"
+                  :title="sec.registrar_lock ? 'Grades are locked. Click to unlock.' : 'Grades are not locked yet. Click to lock.'"
                   :data-testid="`toggle-lock-btn-${sec.course_section_id}`"
                   @click="emit('toggle-registrar-lock', sec)"
                 >
-                  {{ sec.registrar_lock ? '🔒 Locked' : '🔓 Inactive' }}
+                  <AppIcon :name="sec.registrar_lock ? 'unlock' : 'lock'" :size="14" />
+                  {{ sec.registrar_lock ? 'Unlock grades' : 'Lock grades' }}
                 </button>
               </div>
             </td>
@@ -245,23 +247,23 @@ function exportAssignmentsMatrixCsv() {
                 <button
                   type="button"
                   class="btn-secondary-sm"
-                  style="font-size: 0.75rem; padding: 0.25rem 0.6rem; border-radius: 6px; border: 1px solid #103c2e; background: #ecfdf5; color: #103c2e; font-weight: 700;"
+                  style="font-size: 0.75rem; padding: 0.25rem 0.6rem; font-weight: 700"
                   :data-testid="`setup-section-roster-btn-${sec.course_code}`"
                   title="View section student roster and clearance checklist"
                   @click="emit('open-section-roster', sec)"
                 >
-                  Roster 👥
+                  Roster <AppIcon name="users" />
                 </button>
                 <button
                   v-if="sec.vault_count > 0 || sec.cleared_count > 0"
                   type="button"
                   class="btn-secondary-sm"
-                  style="font-size: 0.75rem; padding: 0.25rem 0.6rem; border-radius: 6px; border: 1px solid #103c2e; background: #f0fdf4; color: #103c2e; font-weight: 700;"
+                  style="font-size: 0.75rem; padding: 0.25rem 0.6rem; font-weight: 700"
                   :data-testid="`setup-view-report-btn-${sec.course_code}`"
                   title="View section evaluation breakdown report"
                   @click="emit('open-section-report', sec)"
                 >
-                  Report 📊
+                  Report <AppIcon name="chart" />
                 </button>
                 <button
                   type="button"

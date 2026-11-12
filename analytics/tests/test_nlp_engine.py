@@ -410,7 +410,7 @@ class EvaluaTechNLPEngineTestSuite(unittest.TestCase):
         self.assertAlmostEqual(data["summary"]["negative_pct"], 66.67, places=2)
         self.assertTrue(data["summary"]["watchlist_flagged"])
 
-        # Verify Pamantasan ng Lungsod ng Pasig (PLP) Section Dossier Endpoint
+        # Verify School AAAAA13 Section Dossier Endpoint
         dossier_resp = self.client.post(
             "/analyze/dossier",
             json={
@@ -429,7 +429,7 @@ class EvaluaTechNLPEngineTestSuite(unittest.TestCase):
         )
         self.assertEqual(dossier_resp.status_code, 200)
         dossier = dossier_resp.get_json()
-        self.assertEqual(dossier["institution"], "PAMANTASAN NG LUNGSOD NG PASIG")
+        self.assertEqual(dossier["institution"], "SCHOOL AAAAA13")
         self.assertEqual(dossier["nlp_engine"], "calamanCy+VADER")
         self.assertIn("cluster_means", dossier)
         self.assertEqual(len(dossier["cluster_means"]), 5)
@@ -538,7 +538,7 @@ class EvaluaTechNLPEngineTestSuite(unittest.TestCase):
         self.assertEqual(plan["urgency_level"], "HIGH")
         self.assertTrue(len(plan["recommended_interventions"]) >= 3)
         self.assertTrue(any("14-day" in act or "rubric" in act.lower() for act in plan["recommended_interventions"]))
-        self.assertEqual(plan["institution"], "PAMANTASAN NG LUNGSOD NG PASIG")
+        self.assertEqual(plan["institution"], "SCHOOL AAAAA13")
 
     def test_44_api_intervention_plan_endpoint(self) -> None:
         payload = {

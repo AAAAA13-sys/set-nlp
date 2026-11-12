@@ -984,7 +984,7 @@ class AcademicSetupService
         $role = strtolower(trim((string) ($data['role'] ?? 'faculty')));
         $institutionalId = strtoupper(trim((string) ($data['institutional_id'] ?? '')));
         $departmentId = !empty($data['department_id']) ? (int) $data['department_id'] : null;
-        $password = (string) ($data['password'] ?? 'evaluatech123');
+        $password = is_string($data['password'] ?? null) ? (string) $data['password'] : '';
 
         if ($name === '' || $email === '' || $institutionalId === '') {
             throw new InvalidArgumentException('Full name, email address, and institutional ID are required.');
@@ -1025,7 +1025,17 @@ class AcademicSetupService
             $departmentId = null;
         }
 
-        $passwordHash = password_hash($password !== '' ? $password : 'evaluatech123', PASSWORD_BCRYPT);
+        // Registrar may choose the first password; otherwise a random one is issued. Either way the
+        // account holder must replace it at first sign-in, and the plain value is returned only once.
+        if ($password !== '') {
+            $violation = TemporaryCredential::policyViolation($password, $institutionalId, $email);
+            if ($violation !== null) {
+                throw new InvalidArgumentException('Initial password rejected: ' . $violation);
+            }
+        } else {
+            $password = TemporaryCredential::generate();
+        }
+        $passwordHash = password_hash($password, PASSWORD_BCRYPT);
         $now = date('Y-m-d H:i:s');
 
         // Detect schema columns in users table (SQLite test harness vs production migrations)
@@ -1043,11 +1053,14 @@ class AcademicSetupService
 
         $pwdCol = in_array('password', $userCols, true) ? 'password' : 'password_hash';
         $hasTimestamps = in_array('created_at', $userCols, true);
+        $hasFlag = in_array('must_change_password', $userCols, true);
+        $flagCol = $hasFlag ? 'must_change_password, ' : '';
+        $flagVal = $hasFlag ? '1, ' : '';
 
         if ($hasTimestamps) {
             $stmt = $this->pdo->prepare("
-                INSERT INTO users (institutional_id, name, email, {$pwdCol}, role, department_id, is_active, created_at, updated_at)
-                VALUES (:inst_id, :name, :email, :pwd, :role, :dept_id, 1, :created_at, :updated_at)
+                INSERT INTO users (institutional_id, name, email, {$pwdCol}, role, department_id, is_active, {$flagCol}created_at, updated_at)
+                VALUES (:inst_id, :name, :email, :pwd, :role, :dept_id, 1, {$flagVal}:created_at, :updated_at)
             ");
             $stmt->execute([
                 ':inst_id' => $institutionalId,
@@ -1061,8 +1074,8 @@ class AcademicSetupService
             ]);
         } else {
             $stmt = $this->pdo->prepare("
-                INSERT INTO users (institutional_id, name, email, {$pwdCol}, role, department_id, is_active)
-                VALUES (:inst_id, :name, :email, :pwd, :role, :dept_id, 1)
+                INSERT INTO users (institutional_id, name, email, {$pwdCol}, role, department_id, {$flagCol}is_active)
+                VALUES (:inst_id, :name, :email, :pwd, :role, :dept_id, {$flagVal}1)
             ");
             $stmt->execute([
                 ':inst_id' => $institutionalId,
@@ -1085,6 +1098,9 @@ class AcademicSetupService
             'role' => $role,
             'department_id' => $departmentId,
             'is_active' => true,
+            'must_change_password' => true,
+            // Hand to the account holder once; it is never retrievable again.
+            'temporary_password' => $password,
         ];
     }
 
@@ -1610,8 +1626,16 @@ class AcademicSetupService
 
         $updateFields = ['name = :name', 'email = :email', 'role = :role', 'department_id = :dept_id'];
         if ($newPassword !== null) {
+            // A Registrar-side reset is a one-time password: same policy, and the holder must replace it.
+            $violation = TemporaryCredential::policyViolation($newPassword, (string) $existing['institutional_id'], $email);
+            if ($violation !== null) {
+                throw new InvalidArgumentException('Password reset rejected: ' . $violation);
+            }
             $params[':pwd'] = password_hash($newPassword, PASSWORD_BCRYPT);
             $updateFields[] = "{$pwdCol} = :pwd";
+            if (in_array('must_change_password', $userCols, true)) {
+                $updateFields[] = 'must_change_password = 1';
+            }
         }
         if ($hasUpdatedAt) {
             $params[':updated_at'] = date('Y-m-d H:i:s');
@@ -1702,10 +1726,10 @@ class AcademicSetupService
      * Includes list of specific course sections each student still needs to evaluate.
      *
      * @param int|null $academicTermId
-     * @param int|null $departmentId
+     * @param int|int[]|null $departmentId Single department, a dean's college department list, or null for all
      * @return array<string, mixed>
      */
-    public function getPendingStudentsTracker(?int $academicTermId = null, ?int $departmentId = null): array
+    public function getPendingStudentsTracker(?int $academicTermId = null, int|array|null $departmentId = null): array
     {
         $termId = $academicTermId ?: $this->getActiveTermId();
 
@@ -1735,10 +1759,76 @@ class AcademicSetupService
         ";
         $params = [':term_id' => $termId];
 
-        if ($departmentId !== null && $departmentId > 0) {
-            $sql .= ' AND u.department_id = :dept_id';
+        $deptClause = '';
+        if (is_array($departmentId)) {
+            $deptIds = array_values(array_filter(array_map('intval', $departmentId), static fn (int $id): bool => $id > 0));
+            if ($deptIds === []) {
+                $deptClause = ' AND 1 = 0';
+            } else {
+                $placeholders = [];
+                foreach ($deptIds as $i => $id) {
+                    $placeholders[] = ':dept_' . $i;
+                    $params[':dept_' . $i] = $id;
+                }
+                $deptClause = ' AND u.department_id IN (' . implode(', ', $placeholders) . ')';
+            }
+        } elseif ($departmentId !== null && $departmentId > 0) {
+            $deptClause = ' AND u.department_id = :dept_id';
             $params[':dept_id'] = $departmentId;
         }
+        $sql .= $deptClause;
+
+        // Scope-wide totals so supervisors can see "done vs. pending", not just the pending list.
+        $totalsStmt = $this->pdo->prepare("
+            SELECT COUNT(*) AS total_students,
+                   SUM(CASE WHEN cleared_count >= enrolled_count THEN 1 ELSE 0 END) AS completed_students
+            FROM (
+                SELECT u.id,
+                       COUNT(DISTINCT e.course_section_id) AS enrolled_count,
+                       COUNT(DISTINCT ec.course_section_id) AS cleared_count
+                FROM users u
+                JOIN enrollments e ON e.student_id = u.id AND e.academic_term_id = :term_id
+                LEFT JOIN evaluation_clearances ec ON ec.student_id = u.id AND ec.course_section_id = e.course_section_id
+                WHERE u.role = 'student' AND u.is_active = 1{$deptClause}
+                GROUP BY u.id
+            ) scoped
+        ");
+        $totalsStmt->execute($params);
+        $totals = $totalsStmt->fetch(PDO::FETCH_ASSOC) ?: [];
+
+        // Per-department done vs. pending counts for the supervisor "directory board".
+        $deptStmt = $this->pdo->prepare("
+            SELECT scoped.department_id, d.code AS department_code, d.name AS department_name,
+                   COUNT(*) AS total_students,
+                   SUM(CASE WHEN scoped.cleared_count >= scoped.enrolled_count THEN 1 ELSE 0 END) AS completed_students
+            FROM (
+                SELECT u.id, u.department_id,
+                       COUNT(DISTINCT e.course_section_id) AS enrolled_count,
+                       COUNT(DISTINCT ec.course_section_id) AS cleared_count
+                FROM users u
+                JOIN enrollments e ON e.student_id = u.id AND e.academic_term_id = :term_id
+                LEFT JOIN evaluation_clearances ec ON ec.student_id = u.id AND ec.course_section_id = e.course_section_id
+                WHERE u.role = 'student' AND u.is_active = 1{$deptClause}
+                GROUP BY u.id, u.department_id
+            ) scoped
+            LEFT JOIN departments d ON d.id = scoped.department_id
+            GROUP BY scoped.department_id, d.code, d.name
+            ORDER BY d.code ASC
+        ");
+        $deptStmt->execute($params);
+        $departmentBreakdown = array_map(static function (array $row): array {
+            $total = (int) $row['total_students'];
+            $done = (int) $row['completed_students'];
+            return [
+                'department_id' => $row['department_id'] !== null ? (int) $row['department_id'] : null,
+                'department_code' => (string) ($row['department_code'] ?? 'N/A'),
+                'department_name' => (string) ($row['department_name'] ?? 'Unassigned'),
+                'total_students' => $total,
+                'completed_students' => $done,
+                'pending_students' => max(0, $total - $done),
+                'completion_rate_pct' => $total > 0 ? round(($done / $total) * 100, 1) : 0.0,
+            ];
+        }, $deptStmt->fetchAll(PDO::FETCH_ASSOC));
 
         $sql .= "
             GROUP BY u.id, u.institutional_id, u.name, u.email, u.department_id, d.code, d.name
@@ -1805,7 +1895,10 @@ class AcademicSetupService
             'term_code' => (string) $term['code'],
             'term_name' => (string) $term['name'],
             'academic_year' => (string) $term['academic_year'],
+            'total_students' => (int) ($totals['total_students'] ?? 0),
+            'total_completed_students' => (int) ($totals['completed_students'] ?? 0),
             'total_pending_students' => count($pendingStudents),
+            'department_breakdown' => $departmentBreakdown,
             'pending_students' => $pendingStudents,
         ];
     }

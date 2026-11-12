@@ -163,7 +163,7 @@ async function handleSignOut() {
         <div class="sidebar-brand-identity">
           <div class="sidebar-monogram" aria-hidden="true">e.</div>
           <div v-if="!collapsed" class="sidebar-brand-copy">
-            <strong class="sidebar-brand-name">AAAAA13 EvaluTech</strong>
+            <strong class="sidebar-brand-name">AAAAA13 EvaluaTech</strong>
             <span class="sidebar-brand-sub">FACULTY EVALUATION</span>
           </div>
         </div>
@@ -347,7 +347,7 @@ async function handleSignOut() {
   position: sticky;
   top: 0;
   height: 100dvh;
-  background: #103c2e;
+  background: #0f172a;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
   color: #e6f2eb;
   display: flex;
@@ -390,8 +390,8 @@ async function handleSignOut() {
   height: 34px;
   border-radius: 9px;
   background: #f4cd42;
-  color: #103c2e;
-  font-family: 'Newsreader', Georgia, serif;
+  color: #0f172a;
+  font-family: var(--font-sans);
   font-size: 1.18rem;
   font-weight: 800;
   display: inline-flex;
@@ -459,7 +459,7 @@ async function handleSignOut() {
   padding: 0.14rem 0.42rem;
   border-radius: 6px;
   background: #f4cd42;
-  color: #103c2e;
+  color: #0f172a;
   flex-shrink: 0;
 }
 
@@ -470,7 +470,7 @@ async function handleSignOut() {
 
 .tier-chip.tone-sage {
   background: #d7ece0;
-  color: #103c2e;
+  color: #0f172a;
 }
 
 .tier-caption {
@@ -533,7 +533,7 @@ async function handleSignOut() {
 
 .sidebar-nav-pill.is-active {
   background: #f4cd42;
-  color: #103c2e;
+  color: #0f172a;
   font-weight: 800;
 }
 

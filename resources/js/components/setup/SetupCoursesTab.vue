@@ -1,4 +1,5 @@
 <script setup>
+import AppIcon from '../AppIcon.vue';
 import { computed, ref } from 'vue';
 import { useAcademicSetupStore } from '../../stores/academicSetup.js';
 
@@ -103,10 +104,10 @@ function exportCoursesCatalogCsv() {
           type="button"
           class="btn-secondary"
           data-testid="export-courses-csv-btn"
-          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; font-weight: 600;"
+          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; font-weight: 600"
           @click="exportCoursesCatalogCsv"
         >
-          📊 Export Catalog (CSV)
+          <AppIcon name="chart" /> Export Catalog (CSV)
         </button>
         <button
           type="button"
@@ -114,7 +115,7 @@ function exportCoursesCatalogCsv() {
           data-testid="catalog-new-course-btn"
           @click="emit('new-course')"
         >
-          + New Course Offering
+          <AppIcon name="plus" :size="15" /> New Course Offering
         </button>
       </div>
     </div>
@@ -143,7 +144,7 @@ function exportCoursesCatalogCsv() {
             <td>{{ c.title }}</td>
             <td>
               <span class="dept-badge">{{ c.department_code || 'CCS' }}</span>
-              <span style="font-size: 0.82rem; color: #6b7280; margin-left: 0.4rem;">{{ c.department_name }}</span>
+              <span style="font-size: 0.82rem; margin-left: 0.4rem">{{ c.department_name }}</span>
             </td>
             <td class="text-center">
               <span class="enrolled-badge">{{ c.units }} Units</span>
@@ -153,11 +154,11 @@ function exportCoursesCatalogCsv() {
                 type="button"
                 class="token-chip"
                 :class="getCourseSections(c.id).length > 0 ? 'chip-signed' : 'chip-unsigned'"
-                style="cursor: pointer; border: none; font-size: 0.78rem;"
+                style="cursor: pointer; font-size: 0.78rem"
                 :data-testid="`course-sections-btn-${c.id}`"
                 @click="emit('open-course-sections', c)"
               >
-                {{ getCourseSections(c.id).length }} Sections 📋
+                {{ getCourseSections(c.id).length }} Sections <AppIcon name="clipboard" />
               </button>
             </td>
             <td class="text-right">
@@ -176,7 +177,7 @@ function exportCoursesCatalogCsv() {
                   :data-testid="`edit-course-btn-${c.id}`"
                   @click="emit('edit-course', c)"
                 >
-                  Edit ✏️
+                  Edit <AppIcon name="edit" />
                 </button>
                 <button
                   type="button"
@@ -184,7 +185,7 @@ function exportCoursesCatalogCsv() {
                   :data-testid="`delete-course-btn-${c.id}`"
                   @click="emit('delete-course', c)"
                 >
-                  Delete 🗑️
+                  Delete <AppIcon name="trash" />
                 </button>
               </div>
             </td>

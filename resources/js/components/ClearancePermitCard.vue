@@ -139,8 +139,8 @@ function printPermit() {
             </div>
             <div class="sig-column">
               <div class="sig-line"></div>
-              <strong class="sig-title">DR. V. MENDOZA</strong>
-              <span class="sig-caption">Dean, College of Computer Studies</span>
+              <strong class="sig-title">COLLEGE DEAN</strong>
+              <span class="sig-caption">School AAAAA13</span>
             </div>
           </div>
         </div>
@@ -202,18 +202,18 @@ function printPermit() {
       <div
         v-if="verificationResult && verificationResult.verified"
         class="proctor-verification-details"
-        style="margin-top: 0.75rem; padding: 0.75rem 1rem; background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; font-size: 0.82rem; width: 100%;"
+        style="margin-top: 0.75rem; padding: 0.75rem 1rem; font-size: 0.82rem; width: 100%"
         data-testid="proctor-verification-details"
       >
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
-          <strong style="color: #166534;">INSTITUTIONAL EVALUATION PARTICIPATION PROTOCOL: COMPLETED (DONE)</strong>
+          <strong >INSTITUTIONAL EVALUATION PARTICIPATION PROTOCOL: COMPLETED (DONE)</strong>
           <span class="token-chip chip-signed" style="font-size: 0.7rem;">OFFICIAL REGISTRAR RECORD</span>
         </div>
-        <div style="color: #15803d; line-height: 1.45;">
+        <div style="line-height: 1.45">
           Student <strong>{{ studentId }}</strong> has completed all {{ progress.total }} enrolled course evaluations.
           Status: <strong>{{ verificationResult.clearance_status || verificationResult.permit_status || 'EVALUATION_COMPLETED_DONE' }}</strong> •
           Seal: <strong>{{ verificationResult.registrar_seal || 'AAAAA13-REGISTRAR-AUTHENTICATED' }}</strong> •
-          Portal: <a href="https://aaaaa13.edu/" target="_blank" rel="noopener" style="color: #166534; text-decoration: underline;">https://aaaaa13.edu/</a>
+          Portal: <a href="https://aaaaa13.edu/" target="_blank" rel="noopener" style="text-decoration: underline">https://aaaaa13.edu/</a>
         </div>
       </div>
     </div>

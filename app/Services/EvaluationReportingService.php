@@ -663,6 +663,7 @@ class EvaluationReportingService
                 c.department_id,
                 d.code AS department_code,
                 d.name AS department_name,
+                d.college_name,
                 u.name AS instructor_name
             FROM course_sections cs
             INNER JOIN courses c ON c.id = cs.course_id
@@ -721,6 +722,7 @@ class EvaluationReportingService
                 'department_id' => (int) ($row['department_id'] ?? 1),
                 'department_code' => (string) ($row['department_code'] ?? 'CCS'),
                 'department_name' => (string) ($row['department_name'] ?? 'College of Computer Studies'),
+                'college_name' => (string) ($row['college_name'] ?? ''),
                 'faculty_id' => (int) $row['faculty_id'],
                 'instructor_name' => (string) $row['instructor_name'],
                 'academic_term_id' => (int) $row['academic_term_id'],

@@ -1,6 +1,12 @@
 {
   "training_date": "2026-11-11",
   "dataset_source": "docs/Student Evaluation of Teachers Dataset (ML Training - Tagalog, English, Taglish) - Dataset.csv",
+  "dataset_composition": {
+    "real_student_comments": 799,
+    "synthetic_template_comments": 9201,
+    "note": "Synthetic rows come from scripts/generate_10k_dataset.py. Headline metrics use real comments only."
+  },
+  "headline_metric": "real_comment_test",
   "total_samples": 10000,
   "dev_samples": 7000,
   "test_samples": 3000,
@@ -8,29 +14,63 @@
   "nltk_version": "3.10.4",
   "joblib_version": "1.6.0",
   "sentiment_model": {
-    "algorithm": "TfidfVectorizer(ngram_range=(1,3)) + LogisticRegression(C=2.5, balanced)",
-    "vocab_size": 11006,
-    "dev_5fold_f1_macro": 0.9865,
-    "test_accuracy": 0.988,
-    "test_macro_precision": 0.988,
-    "test_macro_recall": 0.9869,
-    "test_macro_f1": 0.9875,
-    "test_latency_ms": 0.2091,
-    "per_language": {
+    "algorithm": "FeatureUnion[TfidfVectorizer(word 1-2) + TfidfVectorizer(char_wb 2-5)] + LogisticRegression(C=10.0, balanced), real comments weighted x5",
+    "vocab_size": 21022,
+    "real_comment_cv_accuracy": 0.8706,
+    "real_comment_cv_macro_f1": 0.8687,
+    "real_comment_test": {
+      "count": 227,
+      "accuracy": 0.8722,
+      "macro_f1": 0.8544,
+      "negative_recall": 0.8876
+    },
+    "real_comment_per_language": {
       "English": {
-        "accuracy": 0.9833,
-        "macro_f1": 0.9804,
-        "count": 1017
+        "count": 93,
+        "accuracy": 0.8387,
+        "macro_f1": 0.8027,
+        "negative_recall": 0.7857
       },
       "Tagalog": {
-        "accuracy": 0.9928,
-        "macro_f1": 0.9936,
-        "count": 977
+        "count": 54,
+        "accuracy": 0.9444,
+        "macro_f1": 0.9234,
+        "negative_recall": 1.0
       },
       "Taglish": {
-        "accuracy": 0.9881,
-        "macro_f1": 0.9884,
-        "count": 1006
+        "count": 80,
+        "accuracy": 0.8625,
+        "macro_f1": 0.8453,
+        "negative_recall": 0.9048
+      }
+    },
+    "synthetic_comment_test": {
+      "count": 2773,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "negative_recall": 1.0
+    },
+    "test_accuracy": 0.9903,
+    "test_macro_f1": 0.989,
+    "test_latency_ms": 1.5425,
+    "per_language": {
+      "English": {
+        "count": 1017,
+        "accuracy": 0.9853,
+        "macro_f1": 0.9835,
+        "negative_recall": 0.9862
+      },
+      "Tagalog": {
+        "count": 977,
+        "accuracy": 0.9969,
+        "macro_f1": 0.9959,
+        "negative_recall": 1.0
+      },
+      "Taglish": {
+        "count": 1006,
+        "accuracy": 0.9891,
+        "macro_f1": 0.9876,
+        "negative_recall": 0.9909
       }
     },
     "classes": [
@@ -40,9 +80,17 @@
     ]
   },
   "domain_model": {
-    "algorithm": "TfidfVectorizer(ngram_range=(1,2)) + LogisticRegression(C=1.5, balanced)",
-    "test_accuracy": 0.9857,
-    "test_macro_f1": 0.9606,
+    "algorithm": "FeatureUnion[TfidfVectorizer(word 1-2) + TfidfVectorizer(char_wb 2-5)] + LogisticRegression(C=4.0, balanced), real comments weighted x5",
+    "real_comment_cv_accuracy": 0.8653,
+    "real_comment_cv_macro_f1": 0.6683,
+    "real_comment_test": {
+      "count": 227,
+      "accuracy": 0.8987,
+      "macro_f1": 0.721,
+      "negative_recall": null
+    },
+    "test_accuracy": 0.9923,
+    "test_macro_f1": 0.9839,
     "classes": [
       "Assessment & Grading",
       "Classroom Management",

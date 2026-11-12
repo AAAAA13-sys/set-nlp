@@ -1,6 +1,9 @@
 <script setup>
+import { humanizeStatus } from '../utils/uxHelpers.js';
+import AppIcon from '../components/AppIcon.vue';
 import { computed, onMounted, ref } from 'vue';
 import EvaluationRubricModal from '../components/EvaluationRubricModal.vue';
+import ParticipationPanel from '../components/ParticipationPanel.vue';
 import PlpAnalyticsLabModal from '../components/PlpAnalyticsLabModal.vue';
 import QuivrNlpBrainDrawer from '../components/QuivrNlpBrainDrawer.vue';
 import { useAuthStore } from '../stores/auth.js';
@@ -329,103 +332,92 @@ async function endorseActionPlan(item) {
 <template>
   <main class="workspace-main chair-dashboard-workspace" aria-labelledby="chair-heading">
     <!-- Department Chair Identity Banner -->
-    <section class="card chair-banner-card" data-testid="chair-diagnostic-workspace">
-      <div class="chair-banner-top">
+    <section class="chair-banner-card" data-testid="chair-diagnostic-workspace">
+      <header class="page-head">
         <div>
-          <span class="eyebrow-badge">
-            DEPARTMENT OVERVIEW
-          </span>
-          <h2 id="chair-heading" class="section-title">
-            {{ departmentName }}
-          </h2>
-          <p class="section-subtitle">
-            Department Chair: <strong data-testid="chair-department-badge">{{ chairIdentifier }}</strong> ·
-            {{ authStore.activeTerm || '1st Semester AY 2026-2027' }}
+          <h1 id="chair-heading">{{ departmentName }}</h1>
+          <p class="page-meta">
+            <span>Chair <b data-testid="chair-department-badge">{{ chairIdentifier }}</b></span>
+            <span>{{ authStore.activeTerm || '1st Semester AY 2026-2027' }}</span>
+            <span>Your view covers this department only</span>
           </p>
         </div>
-
-        <div class="scope-guard-badge" style="background:var(--canvas);border:1px solid var(--line);padding:0.75rem 1rem;border-radius:10px;">
-          <span style="font-size:0.72rem;font-weight:600;color:var(--forest);text-transform:uppercase;letter-spacing:0.06em;">
-            Department Scope
-          </span>
-          <div style="font-size:0.82rem;color:var(--ink-muted);margin-top:2px;">
-            {{ departmentName }} sections only
-          </div>
-          <div style="margin-top: 0.6rem; display: flex; flex-wrap: wrap; gap: 0.45rem;">
-            <button
-              type="button"
-              class="btn-secondary btn-xs"
-              data-testid="chair-open-rubric-btn"
-              @click="showRubricModal = true"
-            >
-              <span>Rating Rubric 📋</span>
-            </button>
-            <button
-              type="button"
-              class="btn-secondary btn-xs"
-              data-testid="chair-open-analytics-lab-btn"
-              @click="showAnalyticsLab = true"
-            >
-              <span>Evaluation Analysis</span>
-            </button>
-            <button
-              type="button"
-              class="btn-primary btn-xs"
-              data-testid="chair-open-quivr-brain-btn"
-              @click="showQuivrBrain = true"
-            >
-              <span>Search Feedback</span>
-            </button>
-          </div>
+        <div class="page-actions">
+          <button
+            type="button"
+            class="btn-secondary btn-sm"
+            data-testid="chair-open-quivr-brain-btn"
+            @click="showQuivrBrain = true"
+          >
+            <AppIcon name="search" /> Search feedback
+          </button>
+          <button
+            type="button"
+            class="btn-secondary btn-sm"
+            data-testid="chair-open-analytics-lab-btn"
+            @click="showAnalyticsLab = true"
+          >
+            <AppIcon name="chart" /> Analysis
+          </button>
+          <button
+            type="button"
+            class="btn-ghost btn-sm"
+            data-testid="chair-open-rubric-btn"
+            @click="showRubricModal = true"
+          >
+            <AppIcon name="clipboard" /> Rating guide
+          </button>
         </div>
-      </div>
+      </header>
 
       <!-- Department KPIs -->
       <div class="metric-overview-grid tabular-nums" style="margin-top:1.25rem;">
         <div class="metric-card">
           <span class="metric-label">Response Rate</span>
           <strong class="metric-value">{{ responseRateDisplay }}%</strong>
-          <small style="color:#059669;font-weight:600;">Target: ≥ 85.0%</small>
+          <small class="metric-foot">Target 85% or more</small>
         </div>
 
         <div class="metric-card">
-          <span class="metric-label">Evaluations Submitted</span>
+          <span class="metric-label">Evaluations submitted</span>
           <strong class="metric-value">{{ submissionsLoggedDisplay }}</strong>
-          <small style="color:var(--text-secondary);">{{ chairHeatmapData.sections?.length || departmentFaculty.length }} Active Sections</small>
+          <small >{{ chairHeatmapData.sections?.length || departmentFaculty.length }} Active Sections</small>
         </div>
 
         <div class="metric-card">
-          <span class="metric-label">Department Average</span>
+          <span class="metric-label">Department average</span>
           <strong class="metric-value">{{ departmentMeanScore.toFixed(2) }} / 5.00</strong>
-          <small style="color:#059669;font-weight:600;">Out of 5.00</small>
+          <small class="metric-foot">Out of 5.00</small>
         </div>
 
         <div class="metric-card">
-          <span class="metric-label">Watchlist Alerts</span>
+          <span class="metric-label">On the watchlist</span>
           <strong class="metric-value" :style="{ color: departmentWatchlist.length > 0 ? '#dc2626' : 'var(--ink)' }">
             {{ departmentWatchlist.length }}
           </strong>
-          <small style="color:var(--text-secondary);">Mean &lt; 3.50 or Neg &gt; 35%</small>
+          <small class="metric-foot">Average under 3.50 or over 35% negative comments</small>
         </div>
       </div>
     </section>
+
+    <!-- Who in this department has finished their evaluations (status only, never responses) -->
+    <ParticipationPanel endpoint="/api/chair/participation" test-prefix="chair" :show-board="false" />
 
     <!-- Department Faculty Roster Table -->
     <section class="card department-roster-card" aria-label="Department Faculty Performance">
       <div class="watchlist-header">
         <div>
-          <span class="eyebrow-badge">FACULTY ROSTER</span>
           <h3 class="section-title">
             {{ departmentName }} Instructors
             <span class="ui-badge-count">{{ filteredDepartmentFaculty.length !== departmentFaculty.length ? `${filteredDepartmentFaculty.length} / ${departmentFaculty.length}` : departmentFaculty.length }}</span>
             <span class="ui-hint" tabindex="0" aria-label="Department instructor summary" data-hint="Summary of student evaluations across all active sections in this department.">?</span>
           </h3>
         </div>
-        <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
-          <div v-if="quartilesData?.tier_counts" style="display:flex;gap:0.4rem;flex-wrap:wrap;">
-            <span class="token-chip chip-signed">High Distinction: {{ quartilesData.tier_counts.high_distinction }}</span>
+        <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap">
+          <div v-if="quartilesData?.tier_counts" style="display:flex; gap:0.4rem; flex-wrap:wrap">
+            <span class="token-chip chip-signed">Excellent: {{ quartilesData.tier_counts.high_distinction }}</span>
             <span class="token-chip chip-signed">Proficient: {{ quartilesData.tier_counts.proficient }}</span>
-            <span class="token-chip chip-unsigned">Priority: {{ quartilesData.tier_counts.priority_intervention }}</span>
+            <span class="token-chip chip-unsigned">Needs support: {{ quartilesData.tier_counts.priority_intervention }}</span>
           </div>
           <button
             type="button"
@@ -434,16 +426,16 @@ async function endorseActionPlan(item) {
             style="display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 600;"
             @click="exportChairFacultyCsv"
           >
-            📥 Export Summary CSV
+            <AppIcon name="download" /> Export Summary CSV
           </button>
         </div>
       </div>
 
       <!-- Academic Supervisor Scope & Directory Filters -->
-      <div class="supervisor-filter-bar" style="display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap; margin-top: 0.75rem; padding: 0.65rem 0.85rem; background: #fbfcfb; border: 1px solid #e1e7e1; border-radius: 8px;">
+      <div class="supervisor-filter-bar" style="display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap; margin-top: 0.75rem; padding: 0.65rem 0.85rem">
         <div style="font-size: 0.8rem; margin-right: 0.25rem;">
-          <span style="color: #64748b; font-weight: 600;">Scope:</span>
-          <strong style="margin-left: 0.25rem; color: var(--ink);">{{ departmentName }}</strong>
+          <span style="font-weight: 600">Scope:</span>
+          <strong style="margin-left: 0.25rem">{{ departmentName }}</strong>
         </div>
         <div style="flex: 1; min-width: 200px;">
           <input
@@ -453,7 +445,7 @@ async function endorseActionPlan(item) {
             placeholder="Search instructor, course code, section…"
             data-testid="chair-faculty-search-input"
             aria-label="Search department faculty"
-            style="width: 100%; padding: 0.4rem 0.75rem; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px;"
+            style="width: 100%; padding: 0.4rem 0.75rem; font-size: 0.85rem"
           />
         </div>
         <div style="min-width: 160px;">
@@ -462,11 +454,11 @@ async function endorseActionPlan(item) {
             class="form-input"
             data-testid="chair-standing-filter-select"
             aria-label="Filter faculty by standing status"
-            style="padding: 0.4rem 0.75rem; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px;"
+            style="padding: 0.4rem 0.75rem; font-size: 0.85rem"
           >
             <option value="ALL">All Standings</option>
-            <option value="GOOD_STANDING">✅ Good Standing</option>
-            <option value="WATCHLIST_ACTION">⚠️ Watchlist Action</option>
+            <option value="GOOD_STANDING">Good standing</option>
+            <option value="WATCHLIST_ACTION">Needs support</option>
           </select>
         </div>
         <button
@@ -481,9 +473,8 @@ async function endorseActionPlan(item) {
       </div>
 
       <!-- Contextual Interpretation Notice -->
-      <div class="alert-banner alert-neutral" style="margin-top: 0.65rem; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 0.78rem; color: #475569;" data-testid="chair-nlp-contextual-note">
-        <strong>Contextual Interpretation Notice:</strong> Natural Language Processing (NLP) sentiment classifications and topic summaries provide supporting diagnostic context to inform developmental conversations and faculty growth plans. They do not constitute a definitive or punitive judgment of teaching quality.
-      </div>
+      <div class="alert-banner alert-neutral" style="margin-top: 0.65rem; font-size: 0.78rem" data-testid="chair-nlp-contextual-note">
+        <strong>How to read the sentiment analysis:</strong> the AI labels written comments to help plan conversations and growth. It is supporting context, not a verdict on anyone's teaching.</div>
 
       <div class="table-responsive" style="margin-top:0.75rem;">
         <table class="institutional-table tabular-nums" data-testid="chair-faculty-table">
@@ -492,8 +483,8 @@ async function endorseActionPlan(item) {
               <th scope="col">Professor / Faculty Member</th>
               <th scope="col">Subject ID and Name / Course Code</th>
               <th scope="col">Section</th>
-              <th scope="col">Aggregate Rating (Mean μ)</th>
-              <th scope="col">Response Count / Vault Responses</th>
+              <th scope="col">Average rating</th>
+              <th scope="col">Responses</th>
               <th scope="col">Negative Sentiment %</th>
               <th scope="col">Primary Domain</th>
               <th scope="col">Support-Plan Status / Standing</th>
@@ -504,7 +495,7 @@ async function endorseActionPlan(item) {
             <tr v-for="f in filteredDepartmentFaculty" :key="f.id" :data-testid="`chair-row-${f.course_code}`">
               <td><strong>{{ f.faculty_name }}</strong></td>
               <td>
-                <strong class="course-code-cell">{{ f.course_code }}</strong>
+                <strong class="code-plate course-code-cell">{{ f.course_code }}</strong>
                 <div class="course-title-sub">{{ f.course_title }}</div>
               </td>
               <td>{{ f.section_code || 'SEC-A' }}</td>
@@ -527,7 +518,7 @@ async function endorseActionPlan(item) {
                   class="status-badge"
                   :class="f.status === 'WATCHLIST_TRIGGERED' ? 'status-pending' : 'status-completed'"
                 >
-                  {{ f.status === 'WATCHLIST_TRIGGERED' ? 'WATCHLIST ACTION' : 'GOOD STANDING' }}
+                  {{ f.status === 'WATCHLIST_TRIGGERED' ? 'Needs support' : 'Good standing' }}
                 </span>
               </td>
               <td>
@@ -542,7 +533,7 @@ async function endorseActionPlan(item) {
               </td>
             </tr>
             <tr v-if="filteredDepartmentFaculty.length === 0" data-testid="chair-faculty-empty-state">
-              <td colspan="9" style="text-align:center;padding:1.5rem;color:var(--text-muted);">
+              <td colspan="9" style="text-align:center; padding:1.5rem">
                 {{ departmentFaculty.length === 0 ? 'No departmental evaluation records available yet for the active term.' : 'No faculty records match your search or filter criteria. Try adjusting your query or resetting filters.' }}
               </td>
             </tr>
@@ -555,9 +546,6 @@ async function endorseActionPlan(item) {
     <section class="card chair-watchlist-card" data-testid="chair-watchlist-card">
       <div class="watchlist-header">
         <div>
-          <span class="eyebrow-badge">
-            WATCHLIST &amp; SUPPORT
-          </span>
           <h3 class="section-title">
             Faculty Watchlist &amp; Support Plans
             <span class="ui-hint" tabindex="0" data-hint="Review and endorse action plans for instructors below 3.50 mean rating or above 35% negative comments.">?</span>
@@ -580,10 +568,10 @@ async function endorseActionPlan(item) {
         style="margin-top: 1rem; flex-direction: column; align-items: flex-start; gap: 4px;"
         data-testid="chair-watchlist-empty"
       >
-        <div style="font-weight: 700; color: var(--forest-deep); font-size: 0.95rem;">
+        <div style="font-weight: 700; font-size: 0.95rem">
           Department Quality Benchmark Met
         </div>
-        <p style="margin: 0; font-size: 0.85rem; color: var(--ink-muted);">
+        <p style="margin: 0; font-size: 0.85rem">
           All department faculty members currently meet or exceed institutional accreditation standards (Mean ≥ 3.50, Negative Sentiment ≤ 35%).
         </p>
       </div>
@@ -592,27 +580,27 @@ async function endorseActionPlan(item) {
         <div
           v-for="item in departmentWatchlist"
           :key="item.id"
-          style="margin-top:1rem;padding:1.1rem 1.25rem;background:var(--canvas);border:1px solid var(--line);border-radius:10px;"
+          style="margin-top:1rem; padding:1.1rem 1.25rem"
         >
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem">
             <div>
-              <h4 style="margin:0;font-size:1.02rem;color:var(--ink);">
+              <h4 style="margin:0; font-size:1.02rem">
                 {{ item.faculty_name }} — {{ item.course_code }} (Mean: {{ item.mean_score.toFixed(2) }} / Negative: {{ item.negative_sentiment_pct.toFixed(1) }}%)
               </h4>
-              <p style="margin:0.25rem 0 0;font-size:0.84rem;color:var(--ink-muted);">
+              <p style="margin:0.25rem 0 0; font-size:0.84rem">
                 Primary Pedagogical Focus: <strong>{{ item.primary_tag }}</strong>
                 <span v-if="item.sample_comment"> • Representative Comment: “{{ item.sample_comment }}”</span>
               </p>
             </div>
             <span class="token-chip" :class="planEndorsed[item.id] ? 'chip-signed' : 'chip-unsigned'">
-              {{ planEndorsed[item.id] ? 'CHAIR ENDORSED' : item.action_plan_status || 'PENDING CHAIR REVIEW' }}
+              {{ planEndorsed[item.id] ? 'Endorsed by chair' : humanizeStatus(item.action_plan_status || 'PENDING_CHAIR_REVIEW') }}
             </span>
           </div>
 
           <div style="margin-top:0.75rem;">
             <label
               :for="`chair-notes-${item.id}`"
-              style="display:block;font-size:0.82rem;font-weight:600;color:var(--ink);margin-bottom:0.35rem;"
+              style="display:block; font-size:0.82rem; font-weight:600; margin-bottom:0.35rem"
             >
               Department Chair Intervention Notes &amp; Recommendation to Dean:
             </label>
@@ -625,7 +613,7 @@ async function endorseActionPlan(item) {
             ></textarea>
           </div>
 
-          <div style="margin-top:0.5rem;display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+          <div style="margin-top:0.5rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap">
             <button
               type="button"
               class="btn-primary btn-xs"
@@ -643,59 +631,57 @@ async function endorseActionPlan(item) {
     <section class="card chair-longitudinal-card" data-testid="chair-longitudinal-trends-card">
       <div class="iso-header">
         <div>
-          <span class="eyebrow-badge">
-            SEMESTER TRENDS
-          </span>
           <h3 class="section-title">
-            Department Longitudinal Quality Trends
+            Trends across semesters
             <span class="ui-hint" tabindex="0" data-hint="Comparison of current semester evaluation ratings against the prior semester baseline.">?</span>
           </h3>
         </div>
         <span class="token-chip chip-signed tabular-nums" style="font-size:0.8rem;">
-          Δμ: {{ departmentLongitudinal.deltas.mean_delta >= 0 ? '+' : '' }}{{ departmentLongitudinal.deltas.mean_delta.toFixed(2) }}
+          Change in average: {{ departmentLongitudinal.deltas.mean_delta >= 0 ? '+' : '' }}{{ departmentLongitudinal.deltas.mean_delta.toFixed(2) }}
         </span>
       </div>
 
       <div class="metric-overview-grid tabular-nums" style="margin-top:1rem;" data-testid="chair-longitudinal-grid">
         <div class="metric-card">
           <span class="metric-label">Department Mean</span>
-          <strong class="metric-value" style="color:var(--brand-royal);">
+          <strong class="metric-value" >
             {{ departmentLongitudinal.active_term.mean_score.toFixed(2) }} / 5.00
           </strong>
-          <small style="color:var(--text-muted);font-size:0.75rem;">
+          <small style="font-size:0.75rem">
             {{ departmentLongitudinal.deltas.mean_delta >= 0 ? '+' : '' }}{{ departmentLongitudinal.deltas.mean_delta.toFixed(2) }} vs Baseline
           </small>
         </div>
         <div class="metric-card">
           <span class="metric-label">Negative Sentiment</span>
-          <strong class="metric-value" style="color:#16a34a;">
+          <strong class="metric-value" >
             {{ departmentLongitudinal.active_term.negative_pct }}%
           </strong>
-          <small style="color:var(--text-muted);font-size:0.75rem;">{{ departmentLongitudinal.deltas.neg_shift }}% Shift</small>
+          <small style="font-size:0.75rem">{{ departmentLongitudinal.deltas.neg_shift }}% change</small>
         </div>
         <div class="metric-card">
-          <span class="metric-label">Response Velocity</span>
-          <strong class="metric-value" style="color:var(--brand-royal);">
+          <span class="metric-label">Response rate</span>
+          <strong class="metric-value" >
             {{ departmentLongitudinal.active_term.response_rate }}%
           </strong>
-          <small style="color:var(--text-muted);font-size:0.75rem;">Target: ≥ 85%</small>
+          <small style="font-size:0.75rem">Target: ≥ 85%</small>
         </div>
         <div class="metric-card">
-          <span class="metric-label">Action Plan Resolution</span>
-          <strong class="metric-value" style="color:var(--brand-royal);">
+          <span class="metric-label">Support plans resolved</span>
+          <strong class="metric-value" >
             {{ departmentLongitudinal.deltas.plan_resolution }}%
           </strong>
-          <small style="color:var(--text-muted);font-size:0.75rem;">Pedagogical Intervention Rate</small>
+          <small style="font-size:0.75rem">Of plans opened this term</small>
         </div>
       </div>
 
+      <div class="table-responsive">
       <table class="institutional-table tabular-nums" style="margin-top:1rem;" data-testid="chair-cluster-shifts-table">
         <thead>
           <tr>
             <th scope="col">Pedagogical Dimension</th>
             <th scope="col">Active Term</th>
             <th scope="col">Prior Baseline</th>
-            <th scope="col">Delta (Δ)</th>
+            <th scope="col">Change</th>
             <th scope="col">Instructional Quality Status</th>
           </tr>
         </thead>
@@ -704,33 +690,31 @@ async function endorseActionPlan(item) {
             <td><strong>{{ cs.cluster }}</strong></td>
             <td>{{ cs.active.toFixed(2) }}</td>
             <td>{{ cs.prior.toFixed(2) }}</td>
-            <td style="font-weight:700;color:var(--brand-royal);">
+            <td style="font-weight:700">
               {{ cs.delta >= 0 ? '+' : '' }}{{ cs.delta.toFixed(2) }}
             </td>
             <td>
               <span class="token-chip chip-signed" style="font-size:0.75rem;">
-                {{ cs.status }}
+                {{ humanizeStatus(cs.status) }}
               </span>
             </td>
           </tr>
         </tbody>
       </table>
+      </div>
     </section>
 
     <!-- Department Completion Heatmap Matrix -->
     <section class="card chair-heatmap-card" data-testid="chair-completion-heatmap-card">
       <div class="iso-header">
         <div>
-          <span class="eyebrow-badge">
-            COMPLETION HEATMAP
-          </span>
           <h3 class="section-title">
             {{ departmentName }} Section Completion Heatmap
             <span class="ui-hint" tabindex="0" data-hint="Section-by-section evaluation completion rates compared against the 85% target.">?</span>
           </h3>
         </div>
         <span class="token-chip chip-signed tabular-nums" style="font-size:0.8rem;">
-          Completion Velocity: {{ chairHeatmapData.overall_completion_rate_pct ?? chairHeatmapData.overall_completion_rate ?? 0 }}%
+          Completion: {{ chairHeatmapData.overall_completion_rate_pct ?? chairHeatmapData.overall_completion_rate ?? 0 }}%
         </span>
       </div>
 
@@ -744,11 +728,12 @@ async function endorseActionPlan(item) {
           aria-label="Filter sections in heatmap"
           data-testid="chair-heatmap-search-input"
         />
-        <div style="font-size: 0.8rem; color: #4b5563; margin-left: auto;">
+        <div style="font-size: 0.8rem; margin-left: auto">
           Showing <strong>{{ filteredChairHeatmapSections.length }}</strong> of {{ chairHeatmapData.sections.length }} sections
         </div>
       </div>
 
+      <div class="table-responsive">
       <table class="institutional-table tabular-nums" style="margin-top:0.75rem;" data-testid="chair-heatmap-table">
         <thead>
           <tr>
@@ -770,8 +755,8 @@ async function endorseActionPlan(item) {
             <td>{{ sec.enrolled_count ?? sec.enrolled }}</td>
             <td>{{ sec.evaluated_count ?? sec.evaluated }}</td>
             <td>
-              <div style="display:flex;align-items:center;gap:0.5rem;">
-                <div style="flex:1;height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden;min-width:60px;">
+              <div style="display:flex; align-items:center; gap:0.5rem">
+                <div style="flex:1; height:8px; overflow:hidden; min-width:60px">
                   <div :style="{ width: `${sec.completion_rate_pct ?? sec.rate}%`, background: sec.color_hex, height: '100%' }"></div>
                 </div>
                 <strong :style="{ color: sec.color_hex, fontSize: '0.85rem' }">
@@ -785,7 +770,7 @@ async function endorseActionPlan(item) {
                 :class="sec.target_met ? 'chip-signed' : 'chip-unsigned'"
                 style="font-size:0.72rem;"
               >
-                {{ sec.target_met ? 'TARGET MET (≥85%)' : 'IN PROGRESS' }}
+                {{ sec.target_met ? 'Target met' : 'In progress' }}
               </span>
             </td>
             <td class="text-right">
@@ -796,24 +781,25 @@ async function endorseActionPlan(item) {
                 style="display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
                 @click="openSectionHeatmapReport(sec)"
               >
-                Report 📊
+                Report <AppIcon name="chart" />
               </button>
             </td>
           </tr>
           <tr v-if="!filteredChairHeatmapSections || filteredChairHeatmapSections.length === 0">
-            <td colspan="8" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">
+            <td colspan="8" style="text-align: center; padding: 1.5rem">
               {{ chairHeatmapSearchInput ? 'No course sections match your search query.' : 'No course sections found for this department in the active term.' }}
             </td>
           </tr>
         </tbody>
       </table>
+      </div>
     </section>
 
     <!-- Modal: Faculty Evaluation Report -->
     <div
       v-if="showReportModal && selectedFacultyReport"
       class="modal-backdrop"
-      style="position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem;"
+      style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem"
       data-testid="chair-faculty-eval-modal"
       role="dialog"
       aria-modal="true"
@@ -822,18 +808,17 @@ async function endorseActionPlan(item) {
     >
       <div
         class="modal-card"
-        style="background: #ffffff; border-radius: 12px; max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 1.75rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); border: 1px solid #d1d5db;"
+        style="max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 1.75rem"
       >
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 1rem; margin-bottom: 1.25rem">
           <div>
-            <span class="eyebrow-badge">EVALUATION REPORT · DEPARTMENT CHAIR</span>
-            <h3 id="eval-report-title" style="margin: 0.25rem 0 0; font-size: 1.25rem; font-weight: 700; color: #103c2e;">
+            <h3 id="eval-report-title" style="margin: 0.25rem 0 0; font-size: 1.25rem; font-weight: 700">
               {{ selectedFacultyReport.faculty_name }}
             </h3>
-            <p style="margin: 0.2rem 0 0; font-size: 0.85rem; color: #4b5563;">
+            <p style="margin: 0.2rem 0 0; font-size: 0.85rem">
               <strong>{{ selectedFacultyReport.course_code }}</strong> — {{ selectedFacultyReport.course_title }} (Section {{ selectedFacultyReport.section_code }})
             </p>
-            <p style="margin: 0.15rem 0 0; font-size: 0.78rem; color: #6b7280;">
+            <p style="margin: 0.15rem 0 0; font-size: 0.78rem">
               {{ departmentName }} · {{ authStore.activeTerm || '1st Semester AY 2026-2027' }}
             </p>
           </div>
@@ -844,18 +829,18 @@ async function endorseActionPlan(item) {
             data-testid="close-eval-report-modal-btn"
             @click="closeFacultyReportModal"
           >
-            ✕ Close
+            <AppIcon name="x" /> Close
           </button>
         </div>
 
         <!-- Rating Hero Banner -->
-        <div style="display: flex; align-items: center; justify-content: space-between; background: #f7faf8; border: 1px solid #dce7dc; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem">
           <div>
-            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #103c2e; letter-spacing: 0.05em;">
+            <div style="font-size: 0.75rem; font-weight: 600">
               Overall Evaluation Rating
             </div>
-            <div style="font-size: 2rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">
-              {{ selectedFacultyReport.mean_score.toFixed(2) }} <span style="font-size: 1rem; font-weight: 500; color: #6b7280;">/ 5.00</span>
+            <div style="font-size: 2rem; font-weight: 800; margin-top: 0.15rem">
+              {{ selectedFacultyReport.mean_score.toFixed(2) }} <span style="font-size: 1rem; font-weight: 500">/ 5.00</span>
             </div>
           </div>
           <div style="text-align: right;">
@@ -867,7 +852,7 @@ async function endorseActionPlan(item) {
             >
               {{ getPerformanceRatingText(selectedFacultyReport.mean_score) }}
             </span>
-            <div style="font-size: 0.8rem; color: #4b5563; margin-top: 0.35rem;">
+            <div style="font-size: 0.8rem; margin-top: 0.35rem">
               Turnout: <strong>{{ selectedFacultyReport.evaluated_count }}</strong> of <strong>{{ selectedFacultyReport.enrolled_count }}</strong> students ({{ Math.round((selectedFacultyReport.evaluated_count / Math.max(selectedFacultyReport.enrolled_count, 1)) * 100) }}%)
             </div>
           </div>
@@ -875,7 +860,7 @@ async function endorseActionPlan(item) {
 
         <!-- 5 Pedagogical Clusters -->
         <div style="margin-bottom: 1.25rem;">
-          <h4 style="font-size: 0.9rem; font-weight: 700; color: #1f2937; margin: 0 0 0.65rem;">
+          <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 0.65rem">
             Pedagogical Clusters Performance
           </h4>
           <div style="display: flex; flex-direction: column; gap: 0.5rem;">
@@ -890,15 +875,15 @@ async function endorseActionPlan(item) {
               :key="cluster.name"
               style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.82rem;"
             >
-              <div style="width: 210px; font-weight: 600; color: #374151;">
+              <div style="width: 210px; font-weight: 600">
                 {{ cluster.name }}
               </div>
-              <div style="flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+              <div style="flex: 1; height: 8px; overflow: hidden">
                 <div
-                  :style="{ width: `${(cluster.score / 5) * 100}%`, background: cluster.score < 3.5 ? '#dc2626' : '#103c2e', height: '100%' }"
+                  :style="{ width: `${(cluster.score / 5) * 100}%`, background: cluster.score < 3.5 ? '#dc2626' : '#0f172a', height: '100%' }"
                 ></div>
               </div>
-              <div style="width: 45px; text-align: right; font-weight: 700; color: #111827;">
+              <div style="width: 45px; text-align: right; font-weight: 700">
                 {{ cluster.score.toFixed(2) }}
               </div>
             </div>
@@ -906,15 +891,15 @@ async function endorseActionPlan(item) {
         </div>
 
         <!-- Sentiment & Feedback Summary -->
-        <div style="border-top: 1px solid #f3f4f6; padding-top: 1rem; margin-bottom: 1.25rem;">
-          <h4 style="font-size: 0.9rem; font-weight: 700; color: #1f2937; margin: 0 0 0.5rem;">
+        <div style="padding-top: 1rem; margin-bottom: 1.25rem">
+          <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 0.5rem">
             NLP Sentiment &amp; Feedback Classification
           </h4>
           <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.65rem;">
             <span class="token-chip chip-signed" style="font-size: 0.78rem;">
               Positive: {{ Math.max(0, 100 - selectedFacultyReport.negative_sentiment_pct - 15).toFixed(1) }}%
             </span>
-            <span class="token-chip" style="font-size: 0.78rem; background: #f3f4f6;">
+            <span class="token-chip" style="font-size: 0.78rem">
               Neutral: 15.0%
             </span>
             <span
@@ -929,36 +914,36 @@ async function endorseActionPlan(item) {
             </span>
           </div>
 
-          <div v-if="selectedFacultyReport.sample_comment" style="background: #f9fafb; border: 1px solid #e5e7eb; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.82rem; color: #374151; font-style: italic;">
+          <div v-if="selectedFacultyReport.sample_comment" style="padding: 0.65rem 0.85rem; font-size: 0.82rem; font-style: italic">
             “{{ selectedFacultyReport.sample_comment }}”
           </div>
         </div>
 
         <!-- Institutional Tripartite Signature Blocks -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed #d1d5db; padding-top: 1.25rem; margin-bottom: 1.25rem; font-size: 0.78rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-top: 1.25rem; margin-bottom: 1.25rem; font-size: 0.78rem">
           <div style="text-align: center; min-width: 150px;">
-            <div style="border-bottom: 1px solid #111827; padding-bottom: 0.2rem; font-weight: 700; color: #111827;">
+            <div style="padding-bottom: 0.2rem; font-weight: 700">
               {{ selectedFacultyReport.faculty_name }}
             </div>
-            <div style="color: #6b7280; margin-top: 0.25rem;">Course Instructor</div>
+            <div style="margin-top: 0.25rem">Course Instructor</div>
           </div>
           <div style="text-align: center; min-width: 150px;">
-            <div style="border-bottom: 1px solid #111827; padding-bottom: 0.2rem; font-weight: 700; color: #111827;">
+            <div style="padding-bottom: 0.2rem; font-weight: 700">
               {{ chairIdentifier }}
             </div>
-            <div style="color: #6b7280; margin-top: 0.25rem;">Department Chair Attested</div>
+            <div style="margin-top: 0.25rem">Department Chair Attested</div>
           </div>
           <div style="text-align: center; min-width: 150px;">
-            <div style="border-bottom: 1px solid #111827; padding-bottom: 0.2rem; font-weight: 700; color: #111827;">
+            <div style="padding-bottom: 0.2rem; font-weight: 700">
               OFFICE OF ACADEMIC AFFAIRS
             </div>
-            <div style="color: #6b7280; margin-top: 0.25rem;">AACCUP Level III Certified</div>
+            <div style="margin-top: 0.25rem">AACCUP Level III Certified</div>
           </div>
         </div>
 
         <!-- Footer / Print actions -->
-        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 1rem; flex-wrap: wrap; gap: 0.5rem;">
-          <small style="font-size: 0.72rem; color: #6b7280;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; flex-wrap: wrap; gap: 0.5rem">
+          <small style="font-size: 0.72rem">
             School AAAAA13 · AACCUP Level III Compliance Evidence
           </small>
           <div style="display: flex; gap: 0.5rem;">
@@ -968,7 +953,7 @@ async function endorseActionPlan(item) {
               data-testid="print-chair-report-btn"
               @click="printChairReport"
             >
-              🖨 Print / Export
+              <AppIcon name="printer" /> Print / Export
             </button>
             <button
               type="button"

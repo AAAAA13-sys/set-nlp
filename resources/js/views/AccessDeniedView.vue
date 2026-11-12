@@ -40,9 +40,6 @@ async function switchAccount() {
           </svg>
         </div>
         <div>
-          <span class="eyebrow-badge" style="color: var(--danger);">
-            ACCESS RESTRICTED
-          </span>
           <h2 id="access-denied-heading" class="section-title">
             403 Forbidden — Access Restricted
             <span class="ui-hint" tabindex="0" aria-label="Access restriction note" data-hint="Each role is limited to its assigned workspace.">?</span>
@@ -53,22 +50,22 @@ async function switchAccount() {
         </div>
       </div>
 
-      <div class="denied-details-grid" style="margin: 1.25rem 0; padding: 1rem; background: #fff5f5; border: 1px solid #fecaca; border-radius: 8px;">
+      <div class="denied-details-grid" style="margin: 1.25rem 0; padding: 1rem">
         <div style="margin-bottom: 0.5rem;">
-          <span style="font-weight: 600; color: #7f1d1d;">Attempted URL:</span>
-          <code style="margin-left: 0.5rem; background: #fff; padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid #fca5a5;" data-testid="denied-attempted-route">
+          <span style="font-weight: 600">Attempted URL:</span>
+          <code style="margin-left: 0.5rem; padding: 0.2rem 0.5rem" data-testid="denied-attempted-route">
             {{ attemptedPath }}
           </code>
         </div>
         <div style="margin-bottom: 0.5rem;">
-          <span style="font-weight: 600; color: #7f1d1d;">Signed-in Account:</span>
+          <span style="font-weight: 600">Signed-in Account:</span>
           <span class="token-chip chip-unsigned" style="margin-left: 0.5rem;" data-testid="denied-current-role">
             {{ authStore.displayIdentifier || currentRole }}
           </span>
         </div>
         <div>
-          <span style="font-weight: 600; color: #7f1d1d;">Authorized Role(s) for this Workspace:</span>
-          <code style="margin-left: 0.5rem; color: #991b1b; font-weight: bold;" data-testid="denied-required-roles">
+          <span style="font-weight: 600">Authorized Role(s) for this Workspace:</span>
+          <code style="margin-left: 0.5rem; font-weight: bold" data-testid="denied-required-roles">
             {{ requiredRoles }}
           </code>
         </div>

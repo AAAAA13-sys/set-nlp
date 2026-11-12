@@ -1,4 +1,5 @@
 <script setup>
+import AppIcon from './AppIcon.vue';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth.js';
@@ -23,6 +24,8 @@ const isCleared = computed(() => evaluationStore.queueProgress.allCleared);
 const showAuthenticatedBar = computed(
   () => authStore.isAuthenticated && route?.path !== '/login',
 );
+
+const isStudent = computed(() => String(authStore.currentRole || '').toLowerCase() === 'student');
 
 const isEvaluationView = computed(() =>
   String(route?.path || '').startsWith('/evaluate'),
@@ -52,33 +55,33 @@ const firstPendingSectionId = computed(() => {
 
 const roleNavLinks = computed(() => ({
   student: [
-    { to: '/queue', label: 'Evaluation Queue', testId: 'nav-link-student-queue' },
+    { to: '/queue', label: 'My evaluations', testId: 'nav-link-student-queue' },
     ...(firstPendingSectionId.value
       ? [
           {
             to: `/evaluate/${firstPendingSectionId.value}`,
-            label: 'Active SET Form',
+            label: 'Current evaluation',
             testId: 'nav-link-student-survey',
           },
         ]
       : []),
   ],
   faculty: [
-    { to: '/faculty', label: 'Faculty Portal', testId: 'nav-link-faculty-portal', exact: true },
-    { to: '/advocacy', label: 'Campus Advocacy & Standards', testId: 'nav-link-faculty-advocacy' },
+    { to: '/faculty', label: 'My results', testId: 'nav-link-faculty-portal', exact: true },
+    { to: '/advocacy', label: 'Evaluation standards', testId: 'nav-link-faculty-advocacy' },
   ],
   chair: [
-    { to: '/chair', label: 'Department Chair Portal', testId: 'nav-link-chair-portal', exact: true },
-    { to: '/advocacy', label: 'Campus Advocacy & Standards', testId: 'nav-link-chair-advocacy' },
+    { to: '/chair', label: 'Department overview', testId: 'nav-link-chair-portal', exact: true },
+    { to: '/advocacy', label: 'Evaluation standards', testId: 'nav-link-chair-advocacy' },
   ],
   dean: [
-    { to: '/dean', label: 'Dean Analytics', testId: 'nav-link-dean-analytics', exact: true },
-    { to: '/advocacy', label: 'Campus Advocacy & Standards', testId: 'nav-link-dean-advocacy' },
+    { to: '/dean', label: 'College overview', testId: 'nav-link-dean-analytics', exact: true },
+    { to: '/advocacy', label: 'Evaluation standards', testId: 'nav-link-dean-advocacy' },
   ],
   admin: [
-    { to: '/admin', label: 'Registrar Console', testId: 'nav-link-admin-console', exact: true },
-    { to: '/admin/setup', label: 'Academic Setup', testId: 'nav-link-admin-setup' },
-    { to: '/advocacy', label: 'Campus Advocacy & Standards', testId: 'nav-link-admin-advocacy' },
+    { to: '/admin', label: 'Registrar console', testId: 'nav-link-admin-console', exact: true },
+    { to: '/admin/setup', label: 'Academic setup', testId: 'nav-link-admin-setup' },
+    { to: '/advocacy', label: 'Evaluation standards', testId: 'nav-link-admin-advocacy' },
   ],
 }));
 
@@ -138,7 +141,6 @@ async function handleLogout() {
     aria-label="School AAAAA13 Institutional Portal Header"
   >
     <div class="sch-topbar-inner">
-      <!-- Left: Brand / Home Link -->
       <div class="sch-topbar-left">
         <button
           v-if="showAuthenticatedBar"
@@ -146,36 +148,27 @@ async function handleLogout() {
           class="mobile-menu-trigger"
           :aria-expanded="mobileMenuOpen"
           aria-controls="mobile-nav-menu"
-          aria-label="Toggle navigation menu"
+          :aria-label="mobileMenuOpen ? 'Close menu' : 'Open menu'"
           data-testid="mobile-topbar-toggle"
           @click="toggleMobileMenu"
         >
-          <svg v-if="!mobileMenuOpen" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-          <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
+          <AppIcon :name="mobileMenuOpen ? 'x' : 'menu'" :size="22" />
         </button>
 
-        <router-link :to="homeDestination" class="sch-brand-link" title="EvaluaTech Home">
-          <div class="sch-monogram-badge" aria-hidden="true">e.</div>
-          <div class="sch-brand-stack">
+        <router-link :to="homeDestination" class="sch-brand-link" title="EvaluaTech home">
+          <span class="sch-monogram-badge" aria-hidden="true">e</span>
+          <span class="sch-brand-stack">
             <span class="sr-only">School AAAAA13 · aaaaa13.edu</span>
-            <div class="sch-brand-name">AAAAA13 EvaluTech</div>
-            <h1 class="sch-portal-heading">Student Evaluation of Teachers<span class="sr-only"> Institutional Evaluation Portal</span></h1>
-          </div>
+            <span class="sch-brand-name">EvaluaTech</span>
+            <span class="sch-portal-heading">School AAAAA13<span class="sr-only"> Student Evaluation of Teachers, Institutional Evaluation Portal</span></span>
+          </span>
         </router-link>
       </div>
 
-      <!-- Center: Desktop Top-Bar Role Navigation Links -->
       <nav
         v-if="showAuthenticatedBar && !isEvaluationView"
         class="sch-inline-nav"
-        aria-label="Primary Workspace Navigation"
+        aria-label="Primary"
         data-testid="navbar-quick-nav"
       >
         <router-link
@@ -191,90 +184,82 @@ async function handleLogout() {
         </router-link>
       </nav>
 
-      <!-- Right: Quick Tools, Term Chip, Role, Account & Sign Out -->
       <div class="sch-topbar-right">
-        <!-- Quick Tools (Command Palette, AI Brain, Shortcuts) -->
-        <template v-if="showAuthenticatedBar && !isEvaluationView">
+        <template v-if="showAuthenticatedBar && !isEvaluationView && !isStudent">
           <button
             type="button"
-            class="sch-cmdk-trigger"
+            class="sch-tool-btn"
             data-testid="navbar-cmdk-btn"
-            title="Search or jump… (Ctrl+K)"
+            title="Search or jump (Ctrl+K)"
+            aria-label="Search or jump (Ctrl+K)"
             @click="$emit('open-command-palette')"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <span>Search or jump…</span>
-            <kbd>Ctrl K</kbd>
+            <AppIcon name="search" />
           </button>
-
           <button
             v-if="canUseQuivrBrain"
             type="button"
-            class="sch-tool-btn"
+            class="sch-tool-btn has-label"
             data-testid="navbar-quivr-btn"
-            title="Professor's Evaluation Analysis (AI)"
+            title="Search and analyse written feedback"
+            aria-label="Feedback analysis"
             @click="$emit('open-quivr-brain')"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-            <span>Evaluation Analysis</span>
-            <span class="sch-ai-chip">AI</span>
+            <AppIcon name="message" />
+            <span>Feedback analysis</span>
           </button>
-
           <button
             type="button"
-            class="sch-tool-btn sch-tool-btn-icon"
+            class="sch-tool-btn"
             data-testid="navbar-shortcuts-btn"
-            title="Keyboard Shortcuts &amp; Rules (?)"
+            title="Keyboard shortcuts and rules (?)"
+            aria-label="Keyboard shortcuts and rules"
             @click="$emit('open-shortcuts')"
           >
-            <kbd>?</kbd>
+            <AppIcon name="keyboard" />
           </button>
         </template>
 
-        <div class="sch-term-chip" aria-label="Active Academic Term">
-          <span class="sr-only">Active Term:</span>
-          <span>Term:</span>
-          <strong>{{ authStore.activeTerm || '1st Semester AY 2026-2027' }}</strong>
-        </div>
+        <span class="sr-only" aria-label="Active Academic Term">Active Term: {{ authStore.activeTerm || '1st Semester AY 2026-2027' }}</span>
 
         <template v-if="showAuthenticatedBar">
-          <div
-            class="sch-status-pill is-cleared"
-            data-testid="navbar-clearance-badge"
-            role="status"
-          >
-            <template v-if="String(authStore.currentRole || '').toLowerCase() === 'student'">
-              <span>Evaluation:</span>
-              <strong>{{ isCleared ? 'Done' : 'Pending' }}</strong>
-            </template>
-            <template v-else>
-              <span>Role:</span>
-              <strong>
-                {{ authStore.user?.role_label || String(authStore.currentRole || '').toUpperCase() }}
-              </strong>
-            </template>
-          </div>
-
-          <div class="sch-signed-in" data-testid="logged-in-user">
+          <div class="sch-account" data-testid="logged-in-user">
             <span class="sr-only">Signed in as: {{ authStore.displayIdentifier }}</span>
-            <strong class="sch-user-id" :title="authStore.displayIdentifier">
+            <span class="sch-user-id" :title="authStore.displayIdentifier">
               {{ authStore.user?.institutional_id || authStore.user?.email }}
-            </strong>
+            </span>
+            <span
+              class="sch-status-pill"
+              :class="{ 'is-done': isCleared && String(authStore.currentRole || '').toLowerCase() === 'student' }"
+              data-testid="navbar-clearance-badge"
+              role="status"
+            >
+              <template v-if="isStudent">
+                {{ authStore.user?.name || 'Student' }}
+              </template>
+              <template v-else>
+                {{ authStore.user?.role_label || String(authStore.currentRole || '').toUpperCase() }}
+              </template>
+            </span>
           </div>
 
+          <router-link
+            to="/account/password"
+            class="sch-logout-btn"
+            data-testid="navbar-change-password-link"
+            title="Change password"
+          >
+            <AppIcon name="lock" />
+            <span class="sr-only">Change password</span>
+          </router-link>
           <button
             type="button"
             class="sch-logout-btn"
             data-testid="navbar-logout-btn"
-            title="Sign out of current institutional workspace"
             @click="handleLogout"
           >
-            Sign Out
+            <AppIcon name="log-out" />
+            <span>Sign out</span>
           </button>
         </template>
         <template v-else>
@@ -282,96 +267,61 @@ async function handleLogout() {
             v-if="route?.path !== '/verify'"
             to="/verify"
             class="sch-nav-pill"
-            style="font-size: 0.82rem; font-weight: 700; color: #abc4ff; padding: 0.35rem 0.75rem; border-radius: 8px; border: 1px solid #3b82f6; text-decoration: none; background: #1e293b;"
             data-testid="navbar-verify-permit-btn"
           >
-            Verify Status 🔍
+            Verify a receipt
           </router-link>
           <router-link
             v-if="route?.path !== '/login'"
             to="/login"
-            class="sch-nav-pill"
-            style="font-size: 0.82rem; font-weight: 700; background: #2563eb; color: #ffffff; padding: 0.35rem 0.75rem; border-radius: 8px; text-decoration: none; border: 1px solid #2563eb;"
+            class="sch-signin-link"
             data-testid="navbar-signin-btn"
           >
-            Sign In →
+            Sign in
           </router-link>
         </template>
       </div>
     </div>
 
-    <!-- Mobile Dropdown Menu (Expands directly beneath top bar, NOT a sidebar) -->
     <nav
       v-if="mobileMenuOpen && showAuthenticatedBar"
       id="mobile-nav-menu"
       class="sch-mobile-dropdown-menu"
-      aria-label="Mobile Workspace Navigation"
+      aria-label="Mobile"
       data-testid="mobile-topbar-menu"
     >
-      <div class="mobile-menu-section">
-        <span class="mobile-section-heading">Navigation</span>
-        <router-link
-          v-for="link in authorizedNavLinks"
-          :key="link.to"
-          :to="link.to"
-          class="mobile-nav-item"
-          :class="{ 'is-active': isLinkActive(link) }"
-          :aria-current="isLinkActive(link) ? 'page' : undefined"
-          :data-testid="`mobile-${link.testId}`"
-          @click="closeMobileMenu"
-        >
-          <span>{{ link.label }}</span>
-          <span v-if="isLinkActive(link)" class="mobile-active-tag">Active</span>
-        </router-link>
-      </div>
+      <router-link
+        v-for="link in authorizedNavLinks"
+        :key="link.to"
+        :to="link.to"
+        class="mobile-nav-item"
+        :class="{ 'is-active': isLinkActive(link) }"
+        :aria-current="isLinkActive(link) ? 'page' : undefined"
+        :data-testid="`mobile-${link.testId}`"
+        @click="closeMobileMenu"
+      >
+        {{ link.label }}
+      </router-link>
 
-      <div class="mobile-menu-section">
-        <span class="mobile-section-heading">Quick Actions</span>
-        <button
-          type="button"
-          class="mobile-action-item"
-          @click="$emit('open-command-palette'); closeMobileMenu()"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <span>Command Palette (Ctrl+K)</span>
-        </button>
-
-        <button
-          v-if="canUseQuivrBrain"
-          type="button"
-          class="mobile-action-item"
-          @click="$emit('open-quivr-brain'); closeMobileMenu()"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-          </svg>
-          <span>Evaluation Analysis (AI)</span>
-        </button>
-
-        <button
-          type="button"
-          class="mobile-action-item"
-          @click="$emit('open-shortcuts'); closeMobileMenu()"
-        >
-          <kbd class="mobile-kbd">?</kbd>
-          <span>Keyboard Shortcuts</span>
-        </button>
-      </div>
+      <button type="button" class="mobile-nav-item" @click="$emit('open-command-palette'); closeMobileMenu()">
+        <AppIcon name="search" /> Search or jump
+      </button>
+      <button
+        v-if="canUseQuivrBrain"
+        type="button"
+        class="mobile-nav-item"
+        @click="$emit('open-quivr-brain'); closeMobileMenu()"
+      >
+        <AppIcon name="message" /> Feedback analysis
+      </button>
 
       <div class="mobile-menu-footer">
-        <div class="mobile-user-row">
-          <strong class="mobile-user-name">{{ authStore.user?.name || authStore.displayIdentifier }}</strong>
-          <span class="mobile-user-role">{{ authStore.user?.role_label || String(authStore.currentRole || '').toUpperCase() }}</span>
-        </div>
-        <button
-          type="button"
-          class="mobile-logout-btn"
-          @click="handleLogout"
-        >
-          Sign Out
+        <span class="mobile-user-name">{{ authStore.user?.name || authStore.displayIdentifier }}</span>
+        <router-link to="/account/password" class="btn-secondary btn-sm" @click="closeMobileMenu">
+          <AppIcon name="lock" /> Password
+        </router-link>
+        <button type="button" class="btn-secondary btn-sm" @click="handleLogout">
+          <AppIcon name="log-out" /> Sign out
         </button>
       </div>
     </nav>
@@ -384,428 +334,202 @@ async function handleLogout() {
   top: 0;
   z-index: 50;
   background: #0f172a;
-  border-bottom: 1px solid #1e293b;
   color: #f8fafc;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .sch-topbar-inner {
   display: flex;
-  flex-wrap: nowrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  min-height: 60px;
-  padding: 0.5rem 1.35rem;
-  max-width: 1440px;
+  gap: 24px;
+  max-width: 1320px;
   margin: 0 auto;
+  min-height: 60px;
+  padding: 0 32px;
 }
 
-.sch-topbar-left {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  min-width: 0;
-  flex-shrink: 0;
-}
+.sch-topbar-left { display: flex; align-items: center; gap: 10px; flex: none; }
 
-.sch-brand-link {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  text-decoration: none;
-  color: inherit;
-}
-
-.sch-monogram-badge {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: #abc4ff;
-  color: #0f172a;
-  font-family: 'Newsreader', Georgia, serif;
-  font-size: 1.15rem;
-  font-weight: 700;
-  display: flex;
+.mobile-menu-trigger {
+  display: none;
+  width: 44px;
+  height: 44px;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-}
-
-.sch-brand-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 0.05rem;
-  min-width: 0;
-  white-space: nowrap;
-}
-
-.sch-brand-name {
-  font-size: 0.76rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #abc4ff;
-}
-
-.sch-portal-heading {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
   color: #f8fafc;
+  cursor: pointer;
 }
 
-/* Center Desktop Top-Bar Navigation */
+.mobile-menu-trigger:hover { background: #1e293b; }
+
+.sch-brand-link { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+
+.sch-monogram-badge {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  background: #abc4ff;
+  color: #0f172a;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.sch-brand-stack { display: flex; flex-direction: column; line-height: 1.15; }
+.sch-brand-name { font-weight: 800; font-size: 1rem; color: #ffffff; letter-spacing: -0.005em; }
+.sch-portal-heading { font-size: 0.75rem; font-weight: 600; color: #cbd5e1; margin: 0; }
+
 .sch-inline-nav {
   display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  flex-shrink: 0;
+  align-items: stretch;
+  align-self: stretch;
+  gap: 4px;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+
+.sch-inline-nav::-webkit-scrollbar { display: none; }
 
 .sch-nav-pill {
   display: inline-flex;
   align-items: center;
-  padding: 0.4rem 0.8rem;
-  border-radius: 9999px;
-  font-size: 0.82rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+  padding: 0 12px;
+  color: #cbd5e1;
+  font-size: 0.9rem;
   font-weight: 600;
   text-decoration: none;
-  color: #cbd5e1;
-  background: transparent;
-  transition: background-color 0.14s ease, color 0.14s ease;
+  box-shadow: inset 0 -3px 0 transparent;
+  transition: color 150ms ease, box-shadow 150ms ease;
 }
 
-.sch-nav-pill:hover {
-  background: #1e293b;
-  color: #abc4ff;
-}
-
+.sch-nav-pill:hover { color: #ffffff; box-shadow: inset 0 -3px 0 #334155; }
 .sch-nav-pill.is-active,
-.sch-nav-pill.router-link-exact-active {
-  background: #2563eb;
-  color: #ffffff;
-}
+.sch-nav-pill.router-link-exact-active { color: #ffffff; box-shadow: inset 0 -3px 0 #abc4ff; }
 
-/* Right Section */
-.sch-topbar-right {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: 0.45rem;
-  flex-shrink: 0;
-}
-
-.sch-cmdk-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  height: 34px;
-  padding: 0 0.65rem;
-  border-radius: 9px;
-  border: 1px solid #334155;
-  background: #1e293b;
-  color: #cbd5e1;
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: border-color 0.14s ease, background-color 0.14s ease;
-}
-
-.sch-cmdk-trigger:hover {
-  background: #334155;
-  border-color: #abc4ff;
-  color: #ffffff;
-}
-
-.sch-cmdk-trigger kbd {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.68rem;
-  font-weight: 700;
-  padding: 0.08rem 0.35rem;
-  border-radius: 5px;
-  background: #0f172a;
-  border: 1px solid #334155;
-  color: #abc4ff;
-}
+.sch-topbar-right { display: flex; align-items: center; gap: 6px; margin-left: auto; flex: none; }
 
 .sch-tool-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  height: 34px;
-  padding: 0 0.65rem;
-  border-radius: 9px;
-  border: 1px solid #334155;
-  background: #1e293b;
+  gap: 6px;
+  height: 36px;
+  min-width: 36px;
+  justify-content: center;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
   color: #cbd5e1;
-  font-size: 0.78rem;
+  font-size: 0.86rem;
   font-weight: 600;
   cursor: pointer;
-  transition: border-color 0.14s ease, background-color 0.14s ease;
 }
 
-.sch-tool-btn:hover {
-  background: #334155;
-  border-color: #abc4ff;
-  color: #ffffff;
+.sch-tool-btn:hover { background: #1e293b; color: #ffffff; }
+
+.sch-account {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.2;
+  padding: 0 10px 0 14px;
+  margin-left: 6px;
+  border-left: 1px solid #334155;
 }
 
-.sch-tool-btn-icon {
-  padding: 0 0.5rem;
-}
+.sch-user-id { font-weight: 700; font-size: 0.86rem; color: #ffffff; font-variant-numeric: tabular-nums; }
+.sch-status-pill { font-size: 0.75rem; font-weight: 600; color: #cbd5e1; white-space: nowrap; max-width: 14rem; overflow: hidden; text-overflow: ellipsis; }
+.sch-status-pill.is-done { color: #86efac; }
 
-.sch-tool-btn-icon kbd {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #abc4ff;
-}
-
-.sch-ai-chip {
+.sch-logout-btn,
+.sch-signin-link {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 0.08rem 0.35rem;
-  border-radius: 4px;
-  background: #abc4ff;
-  color: #0f172a;
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-}
-
-.sch-term-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.32rem;
-  height: 32px;
-  padding: 0 0.68rem;
-  border-radius: 999px;
-  background: #1e293b;
-  border: 1px solid #334155;
-  font-size: 0.74rem;
-  color: #94a3b8;
-}
-
-.sch-term-chip strong {
-  color: #f1f5f9;
-}
-
-.sch-status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  height: 32px;
-  padding: 0 0.68rem;
-  border-radius: 999px;
-  font-size: 0.74rem;
-  border: 1px solid #38bdf8;
-  background: #0369a1;
-  color: #ffffff;
-}
-
-.sch-signed-in {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.75rem;
-  color: #94a3b8;
-}
-
-.sch-user-id {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
-  color: #f1f5f9;
-}
-
-.sch-logout-btn {
-  height: 32px;
-  padding: 0 0.72rem;
-  border-radius: 8px;
-  border: 1px solid #334155;
-  background: #1e293b;
-  color: #f1f5f9;
-  font-size: 0.76rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.14s ease, border-color 0.14s ease;
-}
-
-.sch-logout-btn:hover {
-  background: #7f1d1d;
-  border-color: #ef4444;
-  color: #ffffff;
-}
-
-.mobile-menu-trigger {
-  display: none;
-  width: 36px;
+  gap: 6px;
   height: 36px;
-  border-radius: 8px;
+  padding: 0 12px;
   border: 1px solid #334155;
-  background: #1e293b;
+  border-radius: 8px;
+  background: transparent;
   color: #f8fafc;
-  align-items: center;
-  justify-content: center;
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-decoration: none;
   cursor: pointer;
-  flex-shrink: 0;
 }
 
-/* Mobile Dropdown Menu */
+.sch-logout-btn:hover,
+.sch-signin-link:hover { background: #1e293b; border-color: #475569; }
+.sch-signin-link { background: #abc4ff; border-color: #abc4ff; color: #0f172a; }
+.sch-signin-link:hover { background: #c1d3fe; border-color: #c1d3fe; }
+
 .sch-mobile-dropdown-menu {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 1.1rem 1.25rem 1.5rem;
+  padding: 8px 14px 14px;
   background: #0f172a;
   border-top: 1px solid #1e293b;
-  border-bottom: 2px solid #2563eb;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-}
-
-.mobile-menu-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.mobile-section-heading {
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #94a3b8;
-  margin-bottom: 0.2rem;
 }
 
 .mobile-nav-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0.65rem 0.85rem;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 10px;
+  border: 0;
   border-radius: 8px;
-  font-size: 0.92rem;
-  font-weight: 600;
+  background: transparent;
   color: #e2e8f0;
-  text-decoration: none;
-  background: #1e293b;
-  transition: background-color 0.14s ease, color 0.14s ease;
-}
-
-.mobile-nav-item.is-active {
-  background: #2563eb;
-  color: #ffffff;
-}
-
-.mobile-active-tag {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  background: #abc4ff;
-  color: #0f172a;
-  padding: 0.15rem 0.45rem;
-  border-radius: 4px;
-}
-
-.mobile-action-item {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.65rem 0.85rem;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  background: #ffffff;
-  color: #374151;
-  font-size: 0.88rem;
+  font: inherit;
   font-weight: 600;
   text-align: left;
+  text-decoration: none;
   cursor: pointer;
 }
 
-.mobile-kbd {
-  font-family: monospace;
-  font-weight: 700;
-  padding: 0.1rem 0.35rem;
-  background: #f3f4f6;
-  border-radius: 4px;
-  border: 1px solid #d1d5db;
-}
+.mobile-nav-item:hover { background: #1e293b; }
+.mobile-nav-item.is-active { color: #ffffff; box-shadow: inset 3px 0 0 #abc4ff; background: #1e293b; }
 
 .mobile-menu-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding-top: 0.85rem;
-  border-top: 1px solid #f3f4f6;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #1e293b;
 }
 
-.mobile-user-row {
-  display: flex;
-  flex-direction: column;
+.mobile-user-name { font-weight: 700; color: #ffffff; }
+
+@media (max-width: 1440px) {
+  .sch-tool-btn.has-label span { display: none; }
+  .sch-status-pill { max-width: 13rem; }
+  .sch-topbar-inner { gap: 16px; }
 }
 
-.mobile-user-name {
-  font-size: 0.85rem;
-  color: #111827;
-}
-
-.mobile-user-role {
-  font-size: 0.75rem;
-  color: #6b7280;
-}
-
-.mobile-logout-btn {
-  padding: 0.45rem 0.95rem;
-  border-radius: 6px;
-  border: 1px solid #fca5a5;
-  background: #fef2f2;
-  color: #991b1b;
-  font-size: 0.82rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-@media (max-width: 1200px) {
-  .sch-term-chip,
-  .sch-signed-in {
-    display: none;
-  }
-}
-
-@media (max-width: 960px) {
+@media (max-width: 900px) {
   .sch-inline-nav,
-  .sch-cmdk-trigger,
   .sch-tool-btn,
-  .sch-status-pill,
-  .sch-logout-btn {
-    display: none !important;
-  }
-
-  .mobile-menu-trigger {
-    display: inline-flex;
-  }
-
-  .sch-topbar-inner {
-    padding: 0.55rem 0.9rem;
-  }
+  .sch-logout-btn,
+  .sch-account { display: none !important; }
+  .mobile-menu-trigger { display: inline-flex; }
+  .sch-topbar-inner { padding: 0 10px 0 6px; gap: 8px; }
 }
 
-@media (max-width: 640px) {
-  .sch-brand-sub {
-    display: none;
-  }
-  .sch-topbar-right .sch-nav-pill:not(.sch-nav-pill-active) {
-    display: none;
-  }
+@media (max-width: 480px) {
+  .sch-topbar-right .sch-nav-pill { display: none; }
 }
 
 @media print {
-  .sch-topbar {
-    display: none !important;
-  }
+  .sch-topbar { display: none !important; }
 }
 </style>

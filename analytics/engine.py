@@ -45,8 +45,8 @@ except ImportError:  # pragma: no cover
 CALAMANCY_REPO_URL: str = "https://github.com/ljvmiranda921/calamanCy"
 CALAMANCY_REPO: str = CALAMANCY_REPO_URL
 CALAMANCY_DEFAULT_MODEL: str = "tl_calamancy_md-0.1.0"
-PLP_INSTITUTION_NAME: str = "PAMANTASAN NG LUNGSOD NG PASIG"
-PLP_REFERENCE_URL: str = "https://plpasig.edu.ph/"
+INSTITUTION_NAME: str = "SCHOOL AAAAA13"
+INSTITUTION_REFERENCE_URL: str = "https://aaaaa13.edu/"
 MAX_PROFESSOR_QUESTIONS: int = 5
 MIN_PROFESSOR_QUESTIONS: int = 4
 MAX_COMMENT_LENGTH: int = 2000
@@ -2314,10 +2314,10 @@ def analyze_plp_section_dossier(
     cluster_ratings: Any = None,
     professor_questions: Any = None,
 ) -> dict[str, Any]:
-    """Synthesize a Pamantasan ng Lungsod ng Pasig (PLP) Faculty Section Evaluation Dossier.
+    """Synthesize a School AAAAA13 Faculty Section Evaluation Dossier.
 
     Combines:
-      - Institutional metadata (`PAMANTASAN NG LUNGSOD NG PASIG`, `https://plpasig.edu.ph/`)
+      - Institutional metadata (`SCHOOL AAAAA13`, `https://aaaaa13.edu/`)
       - `calamanCy+VADER` narrative comment sentiment and 5-cluster breakdown
       - Structured 4-to-5 professor qualitative questions summary (if provided)
       - 5-cluster Likert rating means across `FIVE_PEDAGOGICAL_CLUSTERS` (if provided)
@@ -2346,8 +2346,8 @@ def analyze_plp_section_dossier(
     watchlist_triggered = bool(low_rating_flag or high_negative_flag)
 
     return {
-        "institution": PLP_INSTITUTION_NAME,
-        "reference": PLP_REFERENCE_URL,
+        "institution": INSTITUTION_NAME,
+        "reference": INSTITUTION_REFERENCE_URL,
         "nlp_engine": "calamanCy+VADER",
         "calamancy_model": CALAMANCY_DEFAULT_MODEL,
         "calamancy_repo": CALAMANCY_REPO,
@@ -2368,7 +2368,7 @@ def generate_pedagogical_action_plan(
 ) -> dict[str, Any]:
     """Generate an institutional Pedagogical Action & Intervention Plan for a watchlist instructor.
 
-    Tailored for Pamantasan ng Lungsod ng Pasig (PLP) Deans and Department Chairs.
+    Tailored for School AAAAA13 Deans and Department Chairs.
     """
     clean_name = str(faculty_name or "Faculty Member").strip()
     score = float(mean_score) if mean_score is not None else 3.10
@@ -2397,7 +2397,7 @@ def generate_pedagogical_action_plan(
         "Pedagogical Delivery": [
             "Incorporate step-by-step live coding and practical laboratory demonstrations during dynamic programming lectures.",
             "Implement periodic formative check-ins (e.g., 5-minute exit tickets) to calibrate pacing to learner comprehension.",
-            "Participate in the PLP College of Computer Studies Peer Teaching Observation & Active Learning Workshop.",
+            "Participate in the AAAAA13 College of Computer Studies Peer Teaching Observation & Active Learning Workshop.",
         ],
         "Assessment & Grading": [
             "Establish a strict 14-day turnaround SLA for returning graded quizzes, assignments, and programming deliverables.",
@@ -2406,13 +2406,13 @@ def generate_pedagogical_action_plan(
         ],
         "Classroom Management": [
             "Enforce strict session start punctuality and instructional time budgeting across all scheduled lecture and lab hours.",
-            "Align weekly topic pacing directly with the approved PLP departmental course syllabus timeline.",
+            "Align weekly topic pacing directly with the approved AAAAA13 departmental course syllabus timeline.",
             "Structure 90-minute lecture blocks into 20-minute active learning segments to sustain student engagement.",
         ],
         "Professional Conduct": [
             "Maintain an open, empathetic, and professional classroom environment conducive to active student inquiry.",
             "Ensure uniform, impartial application of grading criteria, consultation availability, and academic policies.",
-            "Participate in the PLP Academic Integrity & Student-Centered Pedagogical Communication Seminar.",
+            "Participate in the AAAAA13 Academic Integrity & Student-Centered Pedagogical Communication Seminar.",
         ],
         "Student Support & Mentorship": [
             "Publish and adhere to regular weekly office consultation hours (minimum 4 scheduled hours per week).",
@@ -2422,12 +2422,12 @@ def generate_pedagogical_action_plan(
     }
 
     interventions = cluster_strategies.get(tag, cluster_strategies["Pedagogical Delivery"])
-    plan_id = f"PLP-ACT-{re.sub(r'[^A-Z0-9]', '', clean_name.upper())[:8]}-{math.floor(score * 10)}"
+    plan_id = f"AAAAA13-ACT-{re.sub(r'[^A-Z0-9]', '', clean_name.upper())[:8]}-{math.floor(score * 10)}"
 
     return {
         "plan_id": plan_id,
-        "institution": PLP_INSTITUTION_NAME,
-        "reference": PLP_REFERENCE_URL,
+        "institution": INSTITUTION_NAME,
+        "reference": INSTITUTION_REFERENCE_URL,
         "faculty_name": clean_name,
         "mean_score": round(score, 2),
         "negative_sentiment_pct": round(neg_pct, 1),

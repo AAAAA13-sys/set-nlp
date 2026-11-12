@@ -2,6 +2,7 @@ import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router'
 import { getDefaultRouteForRole, useAuthStore } from '../stores/auth.js';
 import { sanitizeRedirectPath } from '../utils/uxHelpers.js';
 import AccessDeniedView from '../views/AccessDeniedView.vue';
+import AccountPasswordView from '../views/AccountPasswordView.vue';
 import AdminRosterView from '../views/AdminRosterView.vue';
 import AdminSetupView from '../views/AdminSetupView.vue';
 import ChairDashboardView from '../views/ChairDashboardView.vue';
@@ -102,6 +103,14 @@ export const routes = [
     },
   },
   {
+    path: '/account/password',
+    name: 'account-password',
+    component: AccountPasswordView,
+    meta: {
+      title: 'Set Your Password — School AAAAA13',
+    },
+  },
+  {
     path: '/access-denied',
     name: 'access-denied',
     component: AccessDeniedView,
@@ -181,6 +190,11 @@ export function createEvaluaTechRouter(history) {
           path: '/login',
           query: safeRedirect && safeRedirect !== '/' ? { redirect: safeRedirect } : {},
         };
+      }
+
+      // A Registrar-issued one-time password must be replaced before any workspace opens.
+      if (authStore.mustChangePassword && to.name !== 'account-password') {
+        return { path: '/account/password' };
       }
 
       const allowedRoles = to.meta?.roles || [];

@@ -7,6 +7,11 @@
 **Dataset:** 10,000-Row Multilingual Higher-Ed Student Evaluation of Teachers (SET) Corpus<br>
 **Partitions:** 70% Development (7,000 samples) / 30% Untouched Held-Out Test (3,000 samples), Stratified across 9 Strata (Language $\times$ Sentiment)
 
+> **Correction (2026-11-11): read this before any number below.**
+> Only 800 of the 10,000 rows are real student comments; the other 9,200 were generated from templates by `scripts/generate_10k_dataset.py`. Of the 3,000 held-out test rows, 2,773 are synthetic and only 227 are real. The model scores 100% on the synthetic rows because it learns the generator's patterns, which inflated the overall figures below (98.80% accuracy, 99.07% negative recall). **On the 227 real comments, that Model D scored 84.14% accuracy and 86.52% negative recall.**
+>
+> The model was remodeled on 2026-11-11 (word 1-2 + character 2-5 n-grams, real comments weighted x5, selected by cross-validation on real comments only; `scripts/train_ml_model.py`). Current results on the 227 real held-out comments: **87.22% sentiment accuracy, 0.854 macro F1, 88.76% negative recall; topic accuracy 89.87%**. Source of truth: `analytics/models/model_metadata.json`. The sections below are kept as the historical record of the earlier evaluation.
+
 ---
 
 ## Executive Summary

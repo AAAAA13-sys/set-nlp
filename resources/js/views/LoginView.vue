@@ -1,4 +1,5 @@
 <script setup>
+import AppIcon from '../components/AppIcon.vue';
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getDefaultRouteForRole, useAuthStore } from '../stores/auth.js';
@@ -94,44 +95,42 @@ const handleLogin = throttle(() => {
     <!-- Left Column: Story Panel -->
     <aside class="brand-column" aria-label="School AAAAA13 Faculty Evaluation">
       <div class="brand-top-bar">
-        <div class="brand-crest-mark" aria-hidden="true">e.</div>
+        <div class="brand-crest-mark" aria-hidden="true">e</div>
         <div class="brand-wordmark">
-          <strong>AAAAA13 EvaluTech</strong>
-          <span>STUDENT EVALUATION SYSTEM</span>
+          <strong>AAAAA13 EvaluaTech</strong>
+          <span>Student Evaluation of Teachers</span>
         </div>
       </div>
 
       <div class="brand-hero-content">
-        <span class="brand-eyebrow">School AAAAA13</span>
-
         <h1 class="brand-display-headline">
-          Candid student feedback,<br />decoupled by design.
+          Candid student feedback,<br />anonymous by design.
         </h1>
 
         <p class="brand-lead-copy">
-          Evaluate your professors honestly each semester to complete your academic clearance.
+          Evaluate each of your teachers once a semester. It takes about five minutes a course.
         </p>
 
         <div class="feature-tags-stack" role="list" aria-label="Student Privacy Guarantees">
           <div class="feature-tag-item" role="listitem">
             <span class="feature-tag-dot" aria-hidden="true"></span>
-            <span><strong>100% anonymous</strong> · Your name and student number are never linked to your ratings</span>
+            <span><strong>Anonymous.</strong> Your name and student number are never linked to your ratings.</span>
           </div>
 
           <div class="feature-tag-item" role="listitem">
             <span class="feature-tag-dot" aria-hidden="true"></span>
-            <span><strong>Fair to students</strong> · Professors only see results after final grades are submitted</span>
+            <span><strong>Fair to students.</strong> Teachers only see results after final grades are submitted.</span>
           </div>
 
           <div class="feature-tag-item" role="listitem">
             <span class="feature-tag-dot" aria-hidden="true"></span>
-            <span><strong>Academic clearance</strong> · Complete evaluations for all enrolled courses seamlessly</span>
+            <span><strong>A receipt for each course.</strong> Proof that you finished, kept apart from your answers.</span>
           </div>
         </div>
       </div>
 
       <div class="brand-bottom-meta">
-        SCHOOL AAAAA13 · STUDENT EVALUATION OF TEACHERS
+        School AAAAA13 · Protected under RA 10173
       </div>
     </aside>
 
@@ -139,7 +138,6 @@ const handleLogin = throttle(() => {
     <section class="auth-canvas">
       <div class="floating-auth-card" data-testid="login-card">
         <header class="auth-card-header">
-          <span class="portal-access-label">STUDENT &amp; FACULTY ACCESS</span>
           <h2 id="login-heading" class="auth-card-title">
             Sign in to your account
             <span class="ui-hint" tabindex="0" aria-label="Sign-in instructions" data-hint="Use your School AAAAA13 student number (e.g., 2024-10892), employee ID, or university email.">?</span>
@@ -267,18 +265,18 @@ const handleLogin = throttle(() => {
           <router-link
             to="/"
             class="login-home-link"
-            style="font-size: 0.82rem; font-weight: 600; color: #4b5563; text-decoration: underline;"
+            style="font-size: 0.82rem; font-weight: 600; text-decoration: underline"
             data-testid="login-home-link"
           >
-            ← Public Home
+            <AppIcon name="arrow-left" /> Home
           </router-link>
           <router-link
             to="/verify"
             class="proctor-verify-link"
-            style="font-size: 0.82rem; font-weight: 600; color: #2563eb; text-decoration: underline; display: inline-flex; align-items: center; gap: 0.35rem;"
+            style="font-size: 0.82rem; font-weight: 600; text-decoration: underline; display: inline-flex; align-items: center; gap: 0.35rem"
             data-testid="proctor-verify-link"
           >
-            🔍 Check Evaluation Completion Status
+            <AppIcon name="search" /> Check Evaluation Completion Status
           </router-link>
         </div>
       </div>
@@ -443,7 +441,7 @@ const handleLogin = throttle(() => {
   line-height: 18px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #2563eb;
+  color: #22379a;
 }
 
 .auth-card-title {
@@ -511,7 +509,7 @@ const handleLogin = throttle(() => {
 
 .clean-form-input:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #22379a;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
@@ -574,7 +572,7 @@ const handleLogin = throttle(() => {
 .trust-device-checkbox input {
   width: 16px;
   height: 16px;
-  accent-color: #2563eb;
+  accent-color: #22379a;
   cursor: pointer;
 }
 
@@ -582,9 +580,9 @@ const handleLogin = throttle(() => {
   width: 100%;
   min-height: 44px;
   padding: 11px 18px;
-  border: 1px solid #2563eb;
+  border: 1px solid #22379a;
   border-radius: 8px;
-  background: #2563eb;
+  background: #22379a;
   color: #ffffff;
   font-size: 15px;
   font-weight: 600;
@@ -594,8 +592,8 @@ const handleLogin = throttle(() => {
 }
 
 .primary-signin-btn:hover:not(:disabled) {
-  background: #1d4ed8;
-  border-color: #1d4ed8;
+  background: #1a2b7d;
+  border-color: #1a2b7d;
 }
 
 .primary-signin-btn:disabled {

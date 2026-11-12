@@ -15,7 +15,7 @@ use RuntimeException;
  *  - DatabaseSchemaManager: Relational schema DDL and table setup
  *  - EvaluationSubmissionService: Dual-token cryptographic decoupled submissions
  *  - StudentQueueService: Evaluation queue generation and start token issuance
- *  - ExaminationPermitService: Clearance verification for exam proctors & registrar
+ *  - EvaluationClearanceService: Evaluation participation clearance verification
  *  - EvaluationReportingService: Aggregates, grade locks, watchlist, and search
  *  - AccreditationGovernanceService: AACCUP Level III compliance, dossiers & seals
  */
@@ -34,7 +34,7 @@ class DecoupledEvaluationService
     private DatabaseSchemaManager $schemaManager;
     private EvaluationSubmissionService $submissionService;
     private StudentQueueService $queueService;
-    private ExaminationPermitService $permitService;
+    private EvaluationClearanceService $permitService;
     private EvaluationReportingService $reporting;
     private AccreditationGovernanceService $governance;
 
@@ -55,7 +55,7 @@ class DecoupledEvaluationService
         $this->reporting = new EvaluationReportingService($this->pdo, $this->validator, $this->analytics, $this);
         $this->governance = new AccreditationGovernanceService($this->pdo, $this->validator, $this->analytics, $this);
         $this->queueService = new StudentQueueService($this->pdo, $this->validator, $this->appSecret);
-        $this->permitService = new ExaminationPermitService($this->pdo, $this->queueService, $this->appSecret);
+        $this->permitService = new EvaluationClearanceService($this->pdo, $this->queueService, $this->appSecret);
         $this->submissionService = new EvaluationSubmissionService(
             $this->pdo,
             $this->validator,
@@ -85,7 +85,7 @@ class DecoupledEvaluationService
         return $this->queueService;
     }
 
-    public function getPermitService(): ExaminationPermitService
+    public function getPermitService(): EvaluationClearanceService
     {
         return $this->permitService;
     }

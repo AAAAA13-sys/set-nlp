@@ -1,0 +1,181 @@
+{
+  "base_url": "http://127.0.0.1:8140",
+  "run_at": "2026-11-11T22:17:38.780Z",
+  "passed": 20,
+  "failed": 0,
+  "steps": [
+    {
+      "id": "MT-01",
+      "title": "Shared demo password is rejected on a production database",
+      "result": "PASS",
+      "ms": 760,
+      "detail": "01-demo-password-rejected.png"
+    },
+    {
+      "id": "MT-02",
+      "title": "Registrar admin signs in with the provisioned password",
+      "result": "PASS",
+      "ms": 682,
+      "detail": "02-admin-console.png"
+    },
+    {
+      "id": "MT-03",
+      "title": "Roster import form starts empty (no prefilled sample person)",
+      "result": "PASS",
+      "ms": 14,
+      "detail": null
+    },
+    {
+      "id": "MT-04",
+      "title": "Malformed roster row is rejected with the server reason and nothing imported",
+      "result": "PASS",
+      "ms": 166,
+      "detail": "Nothing was imported. Row 1: Invalid course_code format 'not-a-code' (expected e.g. CS-401)."
+    },
+    {
+      "id": "MT-05",
+      "title": "Real roster (3 students, 2 instructors, 2 courses) imports and issues one-time passwords",
+      "result": "PASS",
+      "ms": 1262,
+      "detail": {
+        "accounts": [
+          "FAC-05D6A0 (faculty)",
+          "2026-10001 (student)",
+          "FAC-A100BE (faculty)",
+          "2026-10002 (student)",
+          "2026-10003 (student)"
+        ],
+        "screenshot": "03-roster-imported-credentials.png"
+      }
+    },
+    {
+      "id": "MT-06",
+      "title": "Admin creates a Dean account by hand; blank password issues a one-time password",
+      "result": "PASS",
+      "ms": 831,
+      "detail": "04-dean-created-one-time-password.png"
+    },
+    {
+      "id": "MT-07",
+      "title": "Weak initial password chosen by admin is refused",
+      "result": "PASS",
+      "ms": 320,
+      "detail": "Initial password rejected: Include at least one letter and one number."
+    },
+    {
+      "id": "MT-08",
+      "title": "Student signs in with the one-time password and is forced to /account/password",
+      "result": "PASS",
+      "ms": 645,
+      "detail": "05-student-forced-password-change.png"
+    },
+    {
+      "id": "MT-09",
+      "title": "Server blocks other APIs until the password is changed",
+      "result": "PASS",
+      "ms": 182,
+      "detail": "403 PASSWORD_CHANGE_REQUIRED; /queue redirects back"
+    },
+    {
+      "id": "MT-10",
+      "title": "Wrong one-time password and a password containing the student number are refused",
+      "result": "PASS",
+      "ms": 640,
+      "detail": {
+        "wrong": "Your current password is incorrect.",
+        "personal": "Do not include your student number, employee ID, or email name."
+      }
+    },
+    {
+      "id": "MT-11",
+      "title": "Student sets a valid password and reaches the evaluation queue (2 courses)",
+      "result": "PASS",
+      "ms": 1175,
+      "detail": "08-student-queue.png"
+    },
+    {
+      "id": "MT-12",
+      "title": "Student completes the CS-201 evaluation: 25 varied Likert answers + Taglish comment",
+      "result": "PASS",
+      "ms": 2107,
+      "detail": "10-evaluation-submitted-receipt.png"
+    },
+    {
+      "id": "MT-13",
+      "title": "Queue shows CS-201 completed and MATH-102 still pending",
+      "result": "PASS",
+      "ms": 343,
+      "detail": {
+        "done": "CS-201Data Structures and AlgorithmsProf. Ramon Garcia · ADone Receipt",
+        "pending": "MATH-102You are hereDiscrete MathematicsProf. Elena Torres · ATo do Start evaluation"
+      }
+    },
+    {
+      "id": "MT-14",
+      "title": "Receipt verifies publicly at /verify without revealing answers",
+      "result": "PASS",
+      "ms": 2052,
+      "detail": "12-public-receipt-verification.png"
+    },
+    {
+      "id": "MT-15",
+      "title": "Faculty (Prof. Ramon Garcia) reaches a locked report before grades are registrar-locked",
+      "result": "PASS",
+      "ms": 1098,
+      "detail": "13-faculty-double-blind-locked.png"
+    },
+    {
+      "id": "MT-16",
+      "title": "Registrar marks CS-201 grades submitted and registrar-locked",
+      "result": "PASS",
+      "ms": 2026,
+      "detail": "14-registrar-locks-applied.png"
+    },
+    {
+      "id": "MT-17",
+      "title": "Faculty now sees the anonymous CS-201 report",
+      "result": "PASS",
+      "ms": 510,
+      "detail": "15-faculty-report-unlocked.png"
+    },
+    {
+      "id": "MT-18",
+      "title": "Dean signs in with one-time password, sets own password, sees college overview",
+      "result": "PASS",
+      "ms": 1293,
+      "detail": {
+        "college": "College of Computer Studies",
+        "enrolled": 3,
+        "submitted": 1
+      }
+    },
+    {
+      "id": "MT-19",
+      "title": "Mobile 375x812: password screen and queue have no horizontal overflow",
+      "result": "PASS",
+      "ms": 1729,
+      "detail": {
+        "overflowPwd": 0,
+        "overflowQueue": 0
+      }
+    },
+    {
+      "id": "MT-20",
+      "title": "Old one-time password no longer signs in after the change",
+      "result": "PASS",
+      "ms": 763,
+      "detail": null
+    }
+  ],
+  "console_errors": [],
+  "expected_http_error_logs": [
+    "http://127.0.0.1:8140/login :: Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "http://127.0.0.1:8140/admin :: Failed to load resource: the server responded with a status of 422 (Unknown Status Code)",
+    "http://127.0.0.1:8140/admin/setup?tab=users :: Failed to load resource: the server responded with a status of 422 (Unknown Status Code)",
+    "http://127.0.0.1:8140/account/password :: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "http://127.0.0.1:8140/account/password :: Failed to load resource: the server responded with a status of 422 (Unknown Status Code)",
+    "http://127.0.0.1:8140/account/password :: Failed to load resource: the server responded with a status of 422 (Unknown Status Code)",
+    "http://127.0.0.1:8140/verify :: Failed to load resource: the server responded with a status of 422 (Unknown Status Code)",
+    "http://127.0.0.1:8140/login :: Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+  ]
+}

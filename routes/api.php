@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::get('/auth/me', [AuthController::class, 'me']);
 Route::post('/auth/logout', [AuthController::class, 'logout']);
+Route::post('/auth/password', [AuthController::class, 'changePassword']);
 
 // Public / Institutional Evaluation Clearance Verification & Signed Registrar Webhook
 Route::match(['GET', 'POST'], '/clearance/verify', [StudentEvaluationController::class, 'verifyPermit']);
@@ -70,6 +71,8 @@ Route::middleware(['role:dean,chair,admin'])->group(function (): void {
     Route::post('/dean/sus/evaluate', [DeanAnalyticsController::class, 'evaluateLiveSus']);
     Route::post('/dean/export-csv', [DeanAnalyticsController::class, 'exportCsv']);
     Route::get('/dean/insights-search', [DeanAnalyticsController::class, 'insightsSearch']);
+    Route::get('/dean/participation', [DeanAnalyticsController::class, 'participationTracker']);
+    Route::get('/chair/participation', [DeanAnalyticsController::class, 'participationTracker']);
     Route::post('/dean/accreditation/compile', [DeanAnalyticsController::class, 'compileAccreditationDossier']);
 
     // Dedicated Chair Workspace Endpoints (SOP 2)

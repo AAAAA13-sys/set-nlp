@@ -274,7 +274,7 @@ function onKeyDown(event) {
   letter-spacing: 0.05em;
   padding: 0.14rem 0.42rem;
   border-radius: 6px;
-  background: #103c2e;
+  background: #0f172a;
   color: #f4cd42;
   flex-shrink: 0;
 }

@@ -1,4 +1,5 @@
 <script setup>
+import AppIcon from '../AppIcon.vue';
 import { computed, ref } from 'vue';
 import { useAcademicSetupStore } from '../../stores/academicSetup.js';
 
@@ -72,10 +73,10 @@ function exportAcademicTermsCsv() {
           type="button"
           class="btn-secondary"
           data-testid="export-terms-csv-btn"
-          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; font-weight: 600;"
+          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; font-weight: 600"
           @click="exportAcademicTermsCsv"
         >
-          📊 Export Terms (CSV)
+          <AppIcon name="chart" /> Export Terms (CSV)
         </button>
         <button
           type="button"
@@ -106,12 +107,12 @@ function exportAcademicTermsCsv() {
         aria-label="Filter terms by status"
       >
         <option value="ALL">All Statuses</option>
-        <option value="ACTIVE">⭐ Active Term</option>
-        <option value="ARCHIVED">📦 Archived</option>
-        <option value="OPEN">🟢 Open Window</option>
-        <option value="EXTENDED">🟡 Extended Window</option>
-        <option value="REOPENED">🔵 Reopened Window</option>
-        <option value="CLOSED">🔴 Closed Window</option>
+        <option value="ACTIVE">Active Term</option>
+        <option value="ARCHIVED">Archived</option>
+        <option value="OPEN">Open Window</option>
+        <option value="EXTENDED">Extended Window</option>
+        <option value="REOPENED">Reopened Window</option>
+        <option value="CLOSED">Closed Window</option>
       </select>
       <button
         v-if="termSearchInput || termStatusFilter !== 'ALL'"
@@ -195,14 +196,14 @@ function exportAcademicTermsCsv() {
                   :data-testid="`delete-term-btn-${t.id}`"
                   @click="emit('delete-term', t)"
                 >
-                  Delete 🗑️
+                  Delete <AppIcon name="trash" />
                 </button>
               </div>
             </td>
           </tr>
           <tr v-if="filteredTerms.length === 0" data-testid="terms-empty-state">
-            <td colspan="7" style="text-align: center; padding: 2rem; color: #6b7280;">
-              <div style="font-weight: 600; color: #111827; margin-bottom: 0.25rem;">
+            <td colspan="7" style="text-align: center; padding: 2rem">
+              <div style="font-weight: 600; margin-bottom: 0.25rem">
                 No Academic Terms Match Filter
               </div>
               <p style="margin: 0; font-size: 0.85rem;">

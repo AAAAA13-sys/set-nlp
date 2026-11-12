@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#103c2e">
+    <meta name="theme-color" content="#0f172a">
     <meta name="color-scheme" content="light">
     <meta name="robots" content="noindex, nofollow">
     <meta name="description" content="School AAAAA13 (AAAAA13) — EvaluaTech Automated Student Evaluation of Teachers (SET) Platform with Dual-Token Cryptographic Decoupling and calamanCy + VADER NLP Sentiment Analytics">
@@ -15,7 +15,7 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Crect x='8' y='8' width='48' height='48' rx='10' fill='%23abc4ff'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia,serif' font-size='34' font-weight='800' fill='%230f172a'%3Ee.%3C/text%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Newsreader:opsz,wght@6..72,700;6..72,800&family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/resources/css/app.css">
     @if (function_exists('vite'))
         @vite(['resources/css/app.css', 'resources/js/app.js'])

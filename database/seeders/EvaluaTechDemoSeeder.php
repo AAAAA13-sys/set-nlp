@@ -82,7 +82,7 @@ class EvaluaTechDemoSeeder extends Seeder
         // 3. Canonical Five-Role Institutional Users + 6 Course Instructors + 2 Students
         $users = [
             [1, 'ADM-00001', 'University Registrar Admin', 'admin@aaaaa13.edu', 'admin', 1],
-            [2, 'DEAN-0001', 'Dr. V. Mendoza', 'dean@aaaaa13.edu', 'dean', null],
+            [2, 'DEAN-0001', 'Dr. V. Mendoza', 'dean@aaaaa13.edu', 'dean', 1],
             [3, 'CHR-00001', 'Dr. L. Bautista', 'chair@aaaaa13.edu', 'chair', 1],
             [4, 'FAC-10001', 'Prof. A. Dela Cruz', 'adelacruz@aaaaa13.edu', 'faculty', 1],
             [5, 'FAC-10002', 'Dr. M. Santos', 'msantos@aaaaa13.edu', 'faculty', 1],

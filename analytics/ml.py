@@ -112,7 +112,7 @@ def predict_ml_sentiment(text: str) -> dict[str, Any] | None:
             "valence": pred_valence,
             "confidence": confidence,
             "probabilities": prob_dict,
-            "algorithm": "scikit-learn LogisticRegression (TfidfVectorizer 1-3 grams)",
+            "algorithm": "scikit-learn LogisticRegression (word 1-2 + char 2-5 n-gram TF-IDF)",
         }
     except Exception as exc:
         logger.warning("ML sentiment prediction failed: %s", exc)

@@ -1,4 +1,6 @@
 <script setup>
+import { humanizeStatus } from '../utils/uxHelpers.js';
+import AppIcon from '../components/AppIcon.vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAcademicSetupStore } from '../stores/academicSetup.js';
@@ -13,6 +15,7 @@ import SetupStudentsTab from '../components/setup/SetupStudentsTab.vue';
 import SetupUsersTab from '../components/setup/SetupUsersTab.vue';
 import SetupQuestionnaireTab from '../components/setup/SetupQuestionnaireTab.vue';
 import SetupWarRoomTab from '../components/setup/SetupWarRoomTab.vue';
+import IssuedCredentialsPanel from '../components/IssuedCredentialsPanel.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -119,11 +122,25 @@ function openNewUserModal(role = 'faculty') {
   showNewUserModal.value = true;
 }
 
+// One-time passwords from account creation or roster import; shown once, never retrievable later.
+const issuedCredentials = ref([]);
+
 async function submitNewUser() {
   try {
     const res = await setupStore.createUser(userForm.value);
     showNewUserModal.value = false;
-    flashSuccess(`User account "${res.name}" (${res.institutional_id}) created successfully.`);
+    if (res.temporary_password) {
+      issuedCredentials.value = [
+        {
+          institutional_id: res.institutional_id,
+          name: res.name,
+          email: res.email,
+          role: res.role,
+          temporary_password: res.temporary_password,
+        },
+      ];
+    }
+    flashSuccess(`User account "${res.name}" (${res.institutional_id}) created. Hand them the one-time password below.`);
   } catch (err) {
     flashError(err.message || 'Failed to create user account.', 'Account Creation Error');
   }
@@ -134,17 +151,16 @@ const rosterImportFormat = ref('json');
 const rosterImportContent = ref('');
 const rosterImporting = ref(false);
 
+// Starts empty: a prefilled sample row would be imported as a real person if submitted unedited.
+const rosterImportPlaceholder = computed(() =>
+  rosterImportFormat.value === 'json'
+    ? '[\n  {\n    "student_id": "2026-00001",\n    "student_name": "Full Name",\n    "course_code": "CS-101",\n    "course_title": "Course Title",\n    "section_code": "A",\n    "instructor_name": "Prof. Full Name",\n    "department_name": "Department of Computer Science"\n  }\n]'
+    : 'student_id,course_code,course_title,instructor_name,department_name\n2026-00001,CS-101,Course Title,Prof. Full Name,Department of Computer Science',
+);
+
 function openImportRosterModal() {
   rosterImportFormat.value = 'json';
-  rosterImportContent.value = JSON.stringify([
-    {
-      student_id: '2024-10892',
-      course_code: 'CS-401',
-      course_title: 'Design and Analysis of Algorithms',
-      instructor_name: 'Prof. A. Dela Cruz',
-      department_name: 'Department of Computer Science',
-    },
-  ], null, 2);
+  rosterImportContent.value = '';
   showImportRosterModal.value = true;
 }
 
@@ -175,6 +191,7 @@ async function submitRosterImport() {
 
     if (res.ok) {
       showImportRosterModal.value = false;
+      issuedCredentials.value = Array.isArray(res.issued_credentials) ? res.issued_credentials : [];
       await setupStore.fetchOverview(setupStore.selectedTermId);
       flashSuccess(res.message || 'Successfully imported academic roster into term.');
     } else {
@@ -1129,7 +1146,6 @@ async function executeDeleteSection() {
     <header class="setup-header">
       <div class="setup-header-main">
         <div class="setup-title-group">
-          <span class="setup-kicker">University Academic Operations</span>
           <h1 class="setup-title">Academic Setup &amp; Cycle Management</h1>
           <p class="setup-subtitle">
             Configure academic terms, faculty-to-section teaching assignments, and verify evaluation questionnaire readiness.
@@ -1160,9 +1176,9 @@ async function executeDeleteSection() {
             to="/admin"
             class="btn-secondary"
             data-testid="goto-admin-console-btn"
-            style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.85rem; font-size: 0.82rem; font-weight: 600; border-radius: 8px; border: 1px solid #d1d5db; background: #ffffff; color: #374151;"
+            style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.85rem; font-size: 0.82rem; font-weight: 600"
           >
-            <span>← Registrar Schedule &amp; Locks</span>
+            <AppIcon name="arrow-left" /> <span>Registrar console</span>
           </router-link>
         </div>
       </div>
@@ -1185,6 +1201,8 @@ async function executeDeleteSection() {
         <span>{{ errorMessage }}</span>
       </div>
 
+      <IssuedCredentialsPanel :credentials="issuedCredentials" @dismiss="issuedCredentials = []" />
+
       <!-- Cycle Readiness Summary Bar -->
       <div class="readiness-bar-card" data-testid="cycle-readiness-bar">
         <div class="readiness-status-header">
@@ -1194,10 +1212,10 @@ async function executeDeleteSection() {
               :class="setupStore.isCycleReady ? 'ready' : 'incomplete'"
               data-testid="readiness-chip"
             >
-              {{ setupStore.isCycleReady ? '✓ Cycle Ready to Open' : '⚠ Setup Incomplete' }}
+              {{ setupStore.isCycleReady ? 'Cycle Ready to Open' : 'Setup Incomplete' }}
             </span>
             <span class="window-chip" :class="setupStore.readinessSummary.window_status?.toLowerCase()">
-              Window: {{ setupStore.readinessSummary.window_status }}
+              Window: {{ humanizeStatus(setupStore.readinessSummary.window_status) }}
             </span>
           </div>
 
@@ -1256,60 +1274,60 @@ async function executeDeleteSection() {
           type="button"
           class="stat-card-btn"
           data-testid="stat-card-courses"
-          style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 10px; padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease;"
+          style="padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease"
           @click="switchTab('courses')"
         >
-          <div style="font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Course Offerings</div>
-          <div style="font-size: 1.65rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">{{ setupStore.courses.length }}</div>
-          <div style="font-size: 0.75rem; color: #15803d; margin-top: 0.2rem; font-weight: 600;">Catalog Offerings →</div>
+          <div style="font-size: 0.72rem; font-weight: 700">Course Offerings</div>
+          <div style="font-size: 1.65rem; font-weight: 800; margin-top: 0.15rem">{{ setupStore.courses.length }}</div>
+          <div style="font-size: 0.75rem; margin-top: 0.2rem; font-weight: 600">Catalog Offerings</div>
         </button>
 
         <button
           type="button"
           class="stat-card-btn"
           data-testid="stat-card-sections"
-          style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 10px; padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease;"
+          style="padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease"
           @click="switchTab('assignments')"
         >
-          <div style="font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Course Sections</div>
-          <div style="font-size: 1.65rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">{{ setupStore.sections.length }}</div>
-          <div style="font-size: 0.75rem; color: #15803d; margin-top: 0.2rem; font-weight: 600;">Teaching Loads →</div>
+          <div style="font-size: 0.72rem; font-weight: 700">Course Sections</div>
+          <div style="font-size: 1.65rem; font-weight: 800; margin-top: 0.15rem">{{ setupStore.sections.length }}</div>
+          <div style="font-size: 0.75rem; margin-top: 0.2rem; font-weight: 600">Teaching Loads</div>
         </button>
 
         <button
           type="button"
           class="stat-card-btn"
           data-testid="stat-card-faculty"
-          style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 10px; padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease;"
+          style="padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease"
           @click="switchTab('faculty')"
         >
-          <div style="font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Faculty Members</div>
-          <div style="font-size: 1.65rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">{{ setupStore.facultyList.length }}</div>
-          <div style="font-size: 0.75rem; color: #15803d; margin-top: 0.2rem; font-weight: 600;">Faculty Directory →</div>
+          <div style="font-size: 0.72rem; font-weight: 700">Faculty Members</div>
+          <div style="font-size: 1.65rem; font-weight: 800; margin-top: 0.15rem">{{ setupStore.facultyList.length }}</div>
+          <div style="font-size: 0.75rem; margin-top: 0.2rem; font-weight: 600">Faculty Directory</div>
         </button>
 
         <button
           type="button"
           class="stat-card-btn"
           data-testid="stat-card-students"
-          style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 10px; padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease;"
+          style="padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease"
           @click="switchTab('students')"
         >
-          <div style="font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">Enrolled Students</div>
-          <div style="font-size: 1.65rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">{{ setupStore.studentsList.length }}</div>
-          <div style="font-size: 0.75rem; color: #15803d; margin-top: 0.2rem; font-weight: 600;">Clearance Tracker →</div>
+          <div style="font-size: 0.72rem; font-weight: 700">Enrolled Students</div>
+          <div style="font-size: 1.65rem; font-weight: 800; margin-top: 0.15rem">{{ setupStore.studentsList.length }}</div>
+          <div style="font-size: 0.75rem; margin-top: 0.2rem; font-weight: 600">Clearance Tracker</div>
         </button>
 
         <button
           type="button"
           class="stat-card-btn"
           data-testid="stat-card-users"
-          style="background: #ffffff; border: 1px solid #d1d5db; border-radius: 10px; padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease;"
+          style="padding: 0.85rem 1rem; text-align: left; cursor: pointer; transition: all 0.15s ease"
           @click="switchTab('users')"
         >
-          <div style="font-size: 0.72rem; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;">System Accounts</div>
-          <div style="font-size: 1.65rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">{{ setupStore.systemUsers.length }}</div>
-          <div style="font-size: 0.75rem; color: #15803d; margin-top: 0.2rem; font-weight: 600;">Staff &amp; Users →</div>
+          <div style="font-size: 0.72rem; font-weight: 700">System Accounts</div>
+          <div style="font-size: 1.65rem; font-weight: 800; margin-top: 0.15rem">{{ setupStore.systemUsers.length }}</div>
+          <div style="font-size: 0.75rem; margin-top: 0.2rem; font-weight: 600">Staff &amp; Users</div>
         </button>
       </div>
 
@@ -1613,7 +1631,7 @@ async function executeDeleteSection() {
           <div class="form-group">
             <div class="label-with-link">
               <label for="sec-course">Course Offering:</label>
-              <button type="button" class="text-link-btn" @click="openNewCourseModal">+ New Course</button>
+              <button type="button" class="text-link-btn" @click="openNewCourseModal"><AppIcon name="plus" :size="14" /> New Course</button>
             </div>
             <select
               id="sec-course"
@@ -1948,9 +1966,14 @@ async function executeDeleteSection() {
               v-model="userForm.password"
               type="password"
               class="form-input"
-              placeholder="Default: evaluatech123"
+              autocomplete="new-password"
+              placeholder="Leave blank to generate a one-time password"
+              aria-describedby="new-user-pwd-help"
               data-testid="user-password-input"
             />
+            <small id="new-user-pwd-help" class="form-help">
+              At least 10 characters with letters and numbers. The user must change it at first sign-in.
+            </small>
           </div>
 
           <footer class="setup-modal-footer">
@@ -2026,7 +2049,7 @@ async function executeDeleteSection() {
 
         <form class="setup-modal-form" @submit.prevent="submitRosterImport">
           <div class="setup-modal-body">
-            <p style="font-size: 0.88rem; color: #4b5563; margin-bottom: 0.75rem;">
+            <p style="font-size: 0.88rem; margin-bottom: 0.75rem">
               Atomically ingest student enrollments, course offerings, and section faculty assignments for the selected academic term.
             </p>
 
@@ -2051,8 +2074,9 @@ async function executeDeleteSection() {
               <textarea
                 id="roster-import-data"
                 v-model="rosterImportContent"
+                :placeholder="rosterImportPlaceholder"
                 rows="8"
-                style="width: 100%; font-family: monospace; font-size: 0.82rem; padding: 0.65rem; border: 1px solid var(--line-soft); border-radius: 6px; box-sizing: border-box;"
+                style="width: 100%; font-size: 0.82rem; padding: 0.65rem; box-sizing: border-box"
                 data-testid="academic-setup-roster-textarea"
                 required
               ></textarea>
@@ -2078,7 +2102,7 @@ async function executeDeleteSection() {
     <div
       v-if="showSetupSectionReportModal && selectedSetupReportSection"
       class="report-modal-overlay"
-      style="position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 1rem;"
+      style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 1rem"
       data-testid="setup-section-eval-modal"
       role="dialog"
       aria-modal="true"
@@ -2087,18 +2111,17 @@ async function executeDeleteSection() {
     >
       <div
         class="modal-card print-report-card"
-        style="background: #ffffff; border-radius: 12px; max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #d1d5db;"
+        style="max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem"
       >
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #103c2e; padding-bottom: 1.25rem; margin-bottom: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 1.25rem; margin-bottom: 1.25rem">
           <div>
-            <span class="eyebrow-badge">EVALUATION &amp; ACCREDITATION REPORT · UNIVERSITY REGISTRAR</span>
-            <h3 id="setup-report-title" style="margin: 0.35rem 0 0; font-size: 1.25rem; font-weight: 800; color: #103c2e;">
+            <h3 id="setup-report-title" style="margin: 0.35rem 0 0; font-size: 1.25rem; font-weight: 800">
               {{ selectedSetupReportSection.course_code }} — {{ selectedSetupReportSection.course_title }}
             </h3>
-            <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #4b5563;">
+            <p style="margin: 0.25rem 0 0; font-size: 0.85rem">
               Assigned Instructor: <strong>{{ selectedSetupReportSection.instructor_name || 'Assigned Faculty' }}</strong> · Section: <code>{{ selectedSetupReportSection.section_code || 'SEC-A' }}</code>
             </p>
-            <p style="margin: 0.15rem 0 0; font-size: 0.78rem; color: #6b7280;">
+            <p style="margin: 0.15rem 0 0; font-size: 0.78rem">
               {{ selectedSetupReportSection.department_name || selectedSetupReportSection.department_code || 'College of Computer Studies' }} · {{ setupStore.activeTerm?.name || 'Academic Term' }}
             </p>
           </div>
@@ -2109,17 +2132,17 @@ async function executeDeleteSection() {
             data-testid="close-setup-report-modal-btn"
             @click="closeSetupSectionReport"
           >
-            ✕ Close
+            <AppIcon name="x" /> Close
           </button>
         </div>
 
         <!-- Completion Turnout Banner -->
-        <div style="display: flex; align-items: center; justify-content: space-between; background: #f7faf8; border: 1px solid #dce7dc; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem">
           <div>
-            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #103c2e; letter-spacing: 0.05em;">
+            <div style="font-size: 0.75rem; font-weight: 600">
               Evaluation Completion Rate
             </div>
-            <div style="font-size: 2rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">
+            <div style="font-size: 2rem; font-weight: 800; margin-top: 0.15rem">
               {{ selectedSetupReportSection.enrolled_count > 0 ? Math.round(((selectedSetupReportSection.cleared_count || selectedSetupReportSection.vault_count || 0) / selectedSetupReportSection.enrolled_count) * 100) : 100 }}%
             </div>
           </div>
@@ -2130,27 +2153,27 @@ async function executeDeleteSection() {
               style="font-size: 0.82rem; padding: 0.35rem 0.8rem;"
               data-testid="setup-report-target-status"
             >
-              {{ ((selectedSetupReportSection.cleared_count || selectedSetupReportSection.vault_count || 0) / (selectedSetupReportSection.enrolled_count || 35)) >= 0.85 ? '✓ TARGET MET (≥85%)' : 'PENDING TARGET' }}
+              {{ ((selectedSetupReportSection.cleared_count || selectedSetupReportSection.vault_count || 0) / (selectedSetupReportSection.enrolled_count || 35)) >= 0.85 ? 'TARGET MET (≥85%)' : 'PENDING TARGET' }}
             </span>
-            <div style="font-size: 0.8rem; color: #4b5563; margin-top: 0.35rem;">
+            <div style="font-size: 0.8rem; margin-top: 0.35rem">
               Turnout: <strong>{{ selectedSetupReportSection.cleared_count || selectedSetupReportSection.vault_count || 0 }}</strong> of <strong>{{ selectedSetupReportSection.enrolled_count || 35 }}</strong> students evaluated
             </div>
           </div>
         </div>
 
         <!-- Overall Score & Qualitative Adjective -->
-        <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 0.9rem 1.25rem; margin-bottom: 1.25rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1.25rem; margin-bottom: 1.25rem">
           <div>
-            <span style="font-size: 0.75rem; font-weight: 700; color: #6b7280; text-transform: uppercase;">Composite Rating</span>
-            <div style="font-size: 1.5rem; font-weight: 800; color: #103c2e;">
-              4.62 <span style="font-size: 0.85rem; font-weight: 600; color: #6b7280;">/ 5.00</span>
+            <span style="font-size: 0.75rem; font-weight: 700">Composite Rating</span>
+            <div style="font-size: 1.5rem; font-weight: 800">
+              4.62 <span style="font-size: 0.85rem; font-weight: 600">/ 5.00</span>
             </div>
           </div>
           <div style="text-align: right;">
             <span class="status-badge status-completed" style="font-size: 0.82rem; padding: 0.35rem 0.8rem;" data-testid="setup-report-adjective">
-              ★ Outstanding (≥ 4.50)
+              Outstanding (≥ 4.50)
             </span>
-            <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">
+            <div style="font-size: 0.75rem; margin-top: 0.25rem">
               AACCUP Performance Category
             </div>
           </div>
@@ -2158,7 +2181,7 @@ async function executeDeleteSection() {
 
         <!-- 5 Pedagogical Clusters Breakdown -->
         <div style="margin-bottom: 1.25rem;">
-          <h4 style="font-size: 0.9rem; font-weight: 700; color: #1f2937; margin: 0 0 0.65rem;">
+          <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 0.65rem">
             Pedagogical Clusters Performance Breakdown (5 Dimensions)
           </h4>
           <div style="display: flex; flex-direction: column; gap: 0.5rem;">
@@ -2173,15 +2196,15 @@ async function executeDeleteSection() {
               :key="cluster.name"
               style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.82rem;"
             >
-              <div style="width: 220px; font-weight: 600; color: #374151;">
+              <div style="width: 220px; font-weight: 600">
                 {{ cluster.name }}
               </div>
-              <div style="flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+              <div style="flex: 1; height: 8px; overflow: hidden">
                 <div
-                  :style="{ width: `${(cluster.score / 5) * 100}%`, background: '#103c2e', height: '100%' }"
+                  :style="{ width: `${(cluster.score / 5) * 100}%`, background: '#0f172a', height: '100%' }"
                 ></div>
               </div>
-              <div style="width: 45px; text-align: right; font-weight: 700; color: #111827;">
+              <div style="width: 45px; text-align: right; font-weight: 700">
                 {{ cluster.score.toFixed(2) }}
               </div>
             </div>
@@ -2189,42 +2212,42 @@ async function executeDeleteSection() {
         </div>
 
         <!-- Sentiment & Feedback Summary -->
-        <div style="border-top: 1px solid #f3f4f6; padding-top: 1rem; margin-bottom: 1.25rem;">
-          <h4 style="font-size: 0.9rem; font-weight: 700; color: #1f2937; margin: 0 0 0.5rem;">
+        <div style="padding-top: 1rem; margin-bottom: 1.25rem">
+          <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 0.5rem">
             Multilingual NLP Sentiment &amp; Qualitative Analytics
           </h4>
           <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
             <span class="token-chip chip-signed" style="font-size: 0.78rem;">
               Positive: 80.5%
             </span>
-            <span class="token-chip" style="font-size: 0.78rem; background: #f3f4f6;">
+            <span class="token-chip" style="font-size: 0.78rem">
               Neutral: 12.8%
             </span>
             <span class="token-chip chip-signed" style="font-size: 0.78rem;">
               Negative: 6.7%
             </span>
-            <span class="token-chip chip-signed" style="font-size: 0.78rem; background: #e8f5e9; color: #1b5e20;">
+            <span class="token-chip chip-signed" style="font-size: 0.78rem">
               Compound Polarity: +0.68
             </span>
           </div>
-          <div style="font-size: 0.75rem; color: #4b5563; margin-top: 0.5rem; line-height: 1.4;">
-            🔒 <strong>Dual-Token Anonymity Guaranteed:</strong> Zero student identifiers are stored in <code>evaluation_vault</code>. Feedback is synthesized via <code>calamanCy</code> + VADER NLP.
+          <div style="font-size: 0.75rem; margin-top: 0.5rem; line-height: 1.4">
+            <AppIcon name="lock" /> <strong>Dual-Token Anonymity Guaranteed:</strong> Zero student identifiers are stored in <code>evaluation_vault</code>. Feedback is synthesized via <code>calamanCy</code> + VADER NLP.
           </div>
         </div>
 
         <!-- Institutional Signature Blocks -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed #d1d5db; padding-top: 1.25rem; margin-bottom: 1.5rem; font-size: 0.78rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-top: 1.25rem; margin-bottom: 1.5rem; font-size: 0.78rem">
           <div style="text-align: center; min-width: 150px;">
-            <div style="border-bottom: 1px solid #111827; padding-bottom: 0.2rem; font-weight: 700; color: #111827;">
+            <div style="padding-bottom: 0.2rem; font-weight: 700">
               OFFICE OF ACADEMIC AFFAIRS
             </div>
-            <div style="color: #6b7280; margin-top: 0.25rem;">Academic Dean / Chair</div>
+            <div style="margin-top: 0.25rem">Academic Dean / Chair</div>
           </div>
           <div style="text-align: center; min-width: 150px;">
-            <div style="border-bottom: 1px solid #111827; padding-bottom: 0.2rem; font-weight: 700; color: #111827;">
+            <div style="padding-bottom: 0.2rem; font-weight: 700">
               ATTY. OFFICE OF THE REGISTRAR
             </div>
-            <div style="color: #6b7280; margin-top: 0.25rem;">University Registrar Certified</div>
+            <div style="margin-top: 0.25rem">University Registrar Certified</div>
           </div>
         </div>
 
@@ -2242,7 +2265,7 @@ async function executeDeleteSection() {
             data-testid="print-setup-report-btn"
             @click="printSetupSectionReport"
           >
-            🖨 Print / Export Rating Sheet
+            <AppIcon name="printer" /> Print / Export Rating Sheet
           </button>
         </div>
       </div>
@@ -2252,7 +2275,7 @@ async function executeDeleteSection() {
     <div
       v-if="showFacultyDossierModal && selectedDossierFaculty"
       class="report-modal-overlay"
-      style="position: fixed; inset: 0; background: rgba(0, 0, 0, 0.65); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 1rem;"
+      style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 1rem"
       data-testid="faculty-consolidated-eval-modal"
       role="dialog"
       aria-modal="true"
@@ -2261,18 +2284,17 @@ async function executeDeleteSection() {
     >
       <div
         class="modal-card print-report-card"
-        style="background: #ffffff; border-radius: 12px; max-width: 760px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1px solid #d1d5db;"
+        style="max-width: 760px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 2rem"
       >
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #103c2e; padding-bottom: 1.25rem; margin-bottom: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 1.25rem; margin-bottom: 1.25rem">
           <div>
-            <span class="eyebrow-badge">FACULTY EVALUATION DOSSIER · AACCUP LEVEL III ACCREDITED</span>
-            <h3 id="faculty-dossier-title" style="margin: 0.35rem 0 0; font-size: 1.35rem; font-weight: 800; color: #103c2e;">
+            <h3 id="faculty-dossier-title" style="margin: 0.35rem 0 0; font-size: 1.35rem; font-weight: 800">
               {{ selectedDossierFaculty.name }}
             </h3>
-            <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #4b5563;">
-              Institutional ID: <code>{{ selectedDossierFaculty.institutional_id }}</code> · Email: <strong>{{ selectedDossierFaculty.email }}</strong> · Academic Rank: <span style="text-transform: uppercase; font-weight: 700; color: #103c2e;">{{ selectedDossierFaculty.role }}</span>
+            <p style="margin: 0.25rem 0 0; font-size: 0.85rem">
+              Institutional ID: <code>{{ selectedDossierFaculty.institutional_id }}</code> · Email: <strong>{{ selectedDossierFaculty.email }}</strong> · Academic Rank: <span style="font-weight: 700">{{ selectedDossierFaculty.role }}</span>
             </p>
-            <p style="margin: 0.15rem 0 0; font-size: 0.78rem; color: #6b7280;">
+            <p style="margin: 0.15rem 0 0; font-size: 0.78rem">
               {{ selectedDossierFaculty.department_name }} ({{ selectedDossierFaculty.department_code }}) · {{ setupStore.activeTerm?.name || 'Academic Term' }}
             </p>
           </div>
@@ -2283,17 +2305,17 @@ async function executeDeleteSection() {
             data-testid="close-faculty-dossier-modal-btn"
             @click="closeFacultyDossier"
           >
-            ✕ Close
+            <AppIcon name="x" /> Close
           </button>
         </div>
 
         <!-- Completion Turnout Banner -->
-        <div style="display: flex; align-items: center; justify-content: space-between; background: #f7faf8; border: 1px solid #dce7dc; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem">
           <div>
-            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #103c2e; letter-spacing: 0.05em;">
+            <div style="font-size: 0.75rem; font-weight: 600">
               Consolidated Turnout Rate
             </div>
-            <div style="font-size: 2rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">
+            <div style="font-size: 2rem; font-weight: 800; margin-top: 0.15rem">
               {{ facultyCompletionRate }}%
             </div>
           </div>
@@ -2304,27 +2326,27 @@ async function executeDeleteSection() {
               style="font-size: 0.82rem; padding: 0.35rem 0.8rem;"
               data-testid="faculty-dossier-target-status"
             >
-              {{ facultyCompletionRate >= 85 ? '✓ TARGET MET (≥85%)' : 'PENDING TARGET' }}
+              {{ facultyCompletionRate >= 85 ? 'TARGET MET (≥85%)' : 'PENDING TARGET' }}
             </span>
-            <div style="font-size: 0.8rem; color: #4b5563; margin-top: 0.35rem;">
+            <div style="font-size: 0.8rem; margin-top: 0.35rem">
               Turnout: <strong>{{ facultyTotalCleared }}</strong> evaluations logged across <strong>{{ facultyTotalEnrolled }}</strong> enrolled students
             </div>
           </div>
         </div>
 
         <!-- Overall Score & Qualitative Adjective -->
-        <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 0.9rem 1.25rem; margin-bottom: 1.25rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1.25rem; margin-bottom: 1.25rem">
           <div>
-            <span style="font-size: 0.75rem; font-weight: 700; color: #6b7280; text-transform: uppercase;">Composite Faculty Score</span>
-            <div style="font-size: 1.5rem; font-weight: 800; color: #103c2e;">
-              4.68 <span style="font-size: 0.85rem; font-weight: 600; color: #6b7280;">/ 5.00</span>
+            <span style="font-size: 0.75rem; font-weight: 700">Composite Faculty Score</span>
+            <div style="font-size: 1.5rem; font-weight: 800">
+              4.68 <span style="font-size: 0.85rem; font-weight: 600">/ 5.00</span>
             </div>
           </div>
           <div style="text-align: right;">
             <span class="status-badge status-completed" style="font-size: 0.82rem; padding: 0.35rem 0.8rem;" data-testid="faculty-dossier-adjective">
-              ★ Outstanding (≥ 4.50)
+              Outstanding (≥ 4.50)
             </span>
-            <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">
+            <div style="font-size: 0.75rem; margin-top: 0.25rem">
               AACCUP Performance Category
             </div>
           </div>
@@ -2332,7 +2354,7 @@ async function executeDeleteSection() {
 
         <!-- 5 Pedagogical Clusters Breakdown -->
         <div style="margin-bottom: 1.25rem;">
-          <h4 style="font-size: 0.9rem; font-weight: 700; color: #1f2937; margin: 0 0 0.65rem;">
+          <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 0.65rem">
             Pedagogical Clusters Performance Breakdown (5 Dimensions)
           </h4>
           <div style="display: flex; flex-direction: column; gap: 0.5rem;">
@@ -2347,15 +2369,15 @@ async function executeDeleteSection() {
               :key="cluster.name"
               style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.82rem;"
             >
-              <div style="width: 220px; font-weight: 600; color: #374151;">
+              <div style="width: 220px; font-weight: 600">
                 {{ cluster.name }}
               </div>
-              <div style="flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+              <div style="flex: 1; height: 8px; overflow: hidden">
                 <div
-                  :style="{ width: `${(cluster.score / 5) * 100}%`, background: '#103c2e', height: '100%' }"
+                  :style="{ width: `${(cluster.score / 5) * 100}%`, background: '#0f172a', height: '100%' }"
                 ></div>
               </div>
-              <div style="width: 45px; text-align: right; font-weight: 700; color: #111827;">
+              <div style="width: 45px; text-align: right; font-weight: 700">
                 {{ cluster.score.toFixed(2) }}
               </div>
             </div>
@@ -2364,7 +2386,7 @@ async function executeDeleteSection() {
 
         <!-- Assigned Sections Table -->
         <div style="margin-bottom: 1.25rem;">
-          <h4 style="font-size: 0.9rem; font-weight: 700; color: #1f2937; margin: 0 0 0.5rem;">
+          <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 0.5rem">
             Assigned Teaching Sections ({{ facultyAssignedSections.length }})
           </h4>
           <div class="table-responsive">
@@ -2401,7 +2423,7 @@ async function executeDeleteSection() {
                   </td>
                 </tr>
                 <tr v-if="facultyAssignedSections.length === 0">
-                  <td colspan="7" style="text-align: center; padding: 1rem; color: #6b7280;">
+                  <td colspan="7" style="text-align: center; padding: 1rem">
                     No teaching sections assigned in this academic term.
                   </td>
                 </tr>
@@ -2411,18 +2433,18 @@ async function executeDeleteSection() {
         </div>
 
         <!-- Institutional Signature Blocks -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed #d1d5db; padding-top: 1.25rem; margin-bottom: 1.5rem; font-size: 0.78rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-top: 1.25rem; margin-bottom: 1.5rem; font-size: 0.78rem">
           <div style="text-align: center; min-width: 150px;">
-            <div style="border-bottom: 1px solid #111827; padding-bottom: 0.2rem; font-weight: 700; color: #111827;">
+            <div style="padding-bottom: 0.2rem; font-weight: 700">
               OFFICE OF ACADEMIC AFFAIRS
             </div>
-            <div style="color: #6b7280; margin-top: 0.25rem;">Academic Dean / Chair</div>
+            <div style="margin-top: 0.25rem">Academic Dean / Chair</div>
           </div>
           <div style="text-align: center; min-width: 150px;">
-            <div style="border-bottom: 1px solid #111827; padding-bottom: 0.2rem; font-weight: 700; color: #111827;">
+            <div style="padding-bottom: 0.2rem; font-weight: 700">
               ATTY. OFFICE OF THE REGISTRAR
             </div>
-            <div style="color: #6b7280; margin-top: 0.25rem;">University Registrar Certified</div>
+            <div style="margin-top: 0.25rem">University Registrar Certified</div>
           </div>
         </div>
 
@@ -2440,7 +2462,7 @@ async function executeDeleteSection() {
             data-testid="print-faculty-dossier-btn"
             @click="printFacultyDossier"
           >
-            🖨 Print / Export Dossier
+            <AppIcon name="printer" /> Print / Export Dossier
           </button>
         </div>
       </div>
@@ -2457,12 +2479,12 @@ async function executeDeleteSection() {
       @click.self="showStudentEnrollmentModal = false"
     >
       <div class="setup-modal-box" style="max-width: 820px; padding: 1.5rem; max-height: 90vh; overflow-y: auto;">
-        <header class="setup-modal-header" style="border-bottom: 1px solid #e5e7eb; padding-bottom: 0.85rem;">
+        <header class="setup-modal-header" style="padding-bottom: 0.85rem">
           <div>
-            <h2 id="student-enrollment-modal-title" style="margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--ink);">
+            <h2 id="student-enrollment-modal-title" style="margin: 0; font-size: 1.25rem; font-weight: 700">
               Student Evaluation & Course Clearance Checklist
             </h2>
-            <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #6b7280;">
+            <p style="margin: 0.25rem 0 0; font-size: 0.85rem">
               School AAAAA13 — Institutional Academic Clearance Roster
             </p>
           </div>
@@ -2471,32 +2493,32 @@ async function executeDeleteSection() {
 
         <div v-if="studentEnrollmentLoading" style="text-align: center; padding: 3rem 1rem;">
           <div class="spinner" style="margin: 0 auto 1rem;"></div>
-          <p style="color: #6b7280; font-size: 0.9rem;">Loading student enrollment and clearance checklist…</p>
+          <p style="font-size: 0.9rem">Loading student enrollment and clearance checklist…</p>
         </div>
 
         <div v-else-if="selectedStudentEnrollment" style="padding: 1.25rem 0; display: flex; flex-direction: column; gap: 1.25rem;">
           <!-- Student Summary Info Card -->
-          <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          <div style="padding: 1rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem">
             <div>
-              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Student Name</div>
-              <div style="font-weight: 700; font-size: 1.05rem; color: #111827;" data-testid="student-enrollment-name">
+              <div style="font-size: 0.75rem; font-weight: 600">Student Name</div>
+              <div style="font-weight: 700; font-size: 1.05rem" data-testid="student-enrollment-name">
                 {{ selectedStudentEnrollment.student.name }}
               </div>
-              <div style="font-size: 0.85rem; color: #4b5563;">
+              <div style="font-size: 0.85rem">
                 {{ selectedStudentEnrollment.student.email }}
               </div>
             </div>
             <div>
-              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Institutional ID</div>
-              <div style="font-family: monospace; font-weight: 700; font-size: 1rem; color: #047857;" data-testid="student-enrollment-id">
+              <div style="font-size: 0.75rem; font-weight: 600">Institutional ID</div>
+              <div style="font-weight: 700; font-size: 1rem" data-testid="student-enrollment-id">
                 {{ selectedStudentEnrollment.student.institutional_id }}
               </div>
-              <div style="font-size: 0.82rem; color: #4b5563;">
+              <div style="font-size: 0.82rem">
                 {{ selectedStudentEnrollment.student.department_name }} ({{ selectedStudentEnrollment.student.department_code }})
               </div>
             </div>
             <div>
-              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Overall Clearance</div>
+              <div style="font-size: 0.75rem; font-weight: 600">Overall Clearance</div>
               <div style="margin-top: 0.25rem;">
                 <span
                   class="token-chip"
@@ -2506,7 +2528,7 @@ async function executeDeleteSection() {
                   {{ selectedStudentEnrollment.overall_clearance_status === 'CLEARED' ? 'CLEARED (100%)' : `PENDING (${selectedStudentEnrollment.completed_count} / ${selectedStudentEnrollment.total_count})` }}
                 </span>
               </div>
-              <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.35rem;">
+              <div style="font-size: 0.8rem; margin-top: 0.35rem">
                 Progress: {{ selectedStudentEnrollment.completion_percentage }}%
               </div>
             </div>
@@ -2514,10 +2536,10 @@ async function executeDeleteSection() {
 
           <!-- Enrolled Sections Table -->
           <div>
-            <h3 style="font-size: 0.95rem; font-weight: 700; color: #1f2937; margin: 0 0 0.5rem;">
+            <h3 style="font-size: 0.95rem; font-weight: 700; margin: 0 0 0.5rem">
               Enrolled Course Sections ({{ (selectedStudentEnrollment.courses || []).length }})
             </h3>
-            <div class="table-responsive-wrapper" style="max-height: 280px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px;">
+            <div class="table-responsive-wrapper" style="max-height: 280px; overflow-y: auto">
               <table class="setup-data-table" data-testid="student-enrollment-courses-table">
                 <thead>
                   <tr>
@@ -2545,14 +2567,14 @@ async function executeDeleteSection() {
                         :class="crs.clearance_status === 'CLEARED' ? 'chip-signed' : 'chip-unsigned'"
                         style="font-size: 0.75rem;"
                       >
-                        {{ crs.clearance_status === 'CLEARED' ? '✅ Evaluated' : '⏳ Pending' }}
+                        {{ crs.clearance_status === 'CLEARED' ? 'Evaluated' : 'Pending' }}
                       </span>
                     </td>
                     <td>
-                      <code v-if="crs.clearance_token" style="font-size: 0.72rem; color: #047857;">
+                      <code v-if="crs.clearance_token" style="font-size: 0.72rem">
                         {{ crs.clearance_token.substring(0, 16) }}…
                       </code>
-                      <span v-else style="font-size: 0.75rem; color: #9ca3af;">—</span>
+                      <span v-else style="font-size: 0.75rem">—</span>
                     </td>
                   </tr>
                   <tr v-if="!selectedStudentEnrollment.courses || selectedStudentEnrollment.courses.length === 0">
@@ -2564,7 +2586,7 @@ async function executeDeleteSection() {
           </div>
         </div>
 
-        <footer class="setup-modal-footer" style="border-top: 1px solid #e5e7eb; padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+        <footer class="setup-modal-footer" style="padding-top: 1rem; display: flex; justify-content: space-between; align-items: center">
           <div>
             <router-link
               v-if="selectedStudentEnrollment && selectedStudentEnrollment.exam_permit_unlocked"
@@ -2573,7 +2595,7 @@ async function executeDeleteSection() {
               data-testid="student-enrollment-view-permit-btn"
               style="text-decoration: none; font-size: 0.85rem; padding: 0.45rem 0.85rem; display: inline-flex; align-items: center; gap: 0.35rem;"
             >
-              📜 View Evaluation Clearance Certificate
+              <AppIcon name="file" /> View Evaluation Clearance Certificate
             </router-link>
           </div>
           <button
@@ -2599,12 +2621,12 @@ async function executeDeleteSection() {
       @click.self="closeCourseSectionsModal"
     >
       <div class="setup-modal-box" style="max-width: 820px; padding: 1.5rem; max-height: 90vh; overflow-y: auto;">
-        <header class="setup-modal-header" style="border-bottom: 1px solid #e5e7eb; padding-bottom: 0.85rem;">
+        <header class="setup-modal-header" style="padding-bottom: 0.85rem">
           <div>
-            <h2 id="course-sections-modal-title" style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #103c2e;">
+            <h2 id="course-sections-modal-title" style="margin: 0; font-size: 1.25rem; font-weight: 700">
               Course Sections & Term Offerings
             </h2>
-            <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #6b7280;">
+            <p style="margin: 0.25rem 0 0; font-size: 0.85rem">
               <strong class="font-mono text-emerald">{{ selectedCourseForModal.code }}</strong> — {{ selectedCourseForModal.title }} ({{ selectedCourseForModal.units }} Units) · {{ selectedCourseForModal.department_name }}
             </p>
           </div>
@@ -2613,28 +2635,28 @@ async function executeDeleteSection() {
 
         <div style="padding: 1.25rem 0; display: flex; flex-direction: column; gap: 1.25rem;">
           <!-- Offering Summary Stats -->
-          <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+          <div style="padding: 1rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem">
             <div>
-              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Active Term</div>
-              <div style="font-weight: 700; font-size: 0.95rem; color: #111827;">
+              <div style="font-size: 0.75rem; font-weight: 600">Active Term</div>
+              <div style="font-weight: 700; font-size: 0.95rem">
                 {{ setupStore.selectedTerm?.name || 'Current Term' }}
               </div>
             </div>
             <div>
-              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Sections Offered</div>
-              <div style="font-weight: 700; font-size: 1.15rem; color: #047857;" data-testid="course-sections-count">
+              <div style="font-size: 0.75rem; font-weight: 600">Sections Offered</div>
+              <div style="font-weight: 700; font-size: 1.15rem" data-testid="course-sections-count">
                 {{ getCourseSections(selectedCourseForModal.id).length }} Sections
               </div>
             </div>
             <div>
-              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Enrolled Students</div>
-              <div style="font-weight: 700; font-size: 1.15rem; color: #111827;">
+              <div style="font-size: 0.75rem; font-weight: 600">Enrolled Students</div>
+              <div style="font-weight: 700; font-size: 1.15rem">
                 {{ getCourseEnrolledTotal(selectedCourseForModal.id) }} Total
               </div>
             </div>
             <div>
-              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Evaluations Turnout</div>
-              <div style="font-weight: 700; font-size: 1.15rem; color: #059669;">
+              <div style="font-size: 0.75rem; font-weight: 600">Evaluations Turnout</div>
+              <div style="font-weight: 700; font-size: 1.15rem">
                 {{ getCourseEnrolledTotal(selectedCourseForModal.id) > 0 ? Math.round((getCourseClearedTotal(selectedCourseForModal.id) / getCourseEnrolledTotal(selectedCourseForModal.id)) * 100) : 100 }}%
               </div>
             </div>
@@ -2642,10 +2664,10 @@ async function executeDeleteSection() {
 
           <!-- Sections Table -->
           <div>
-            <h3 style="font-size: 0.95rem; font-weight: 700; color: #1f2937; margin: 0 0 0.5rem;">
+            <h3 style="font-size: 0.95rem; font-weight: 700; margin: 0 0 0.5rem">
               Active Sections for {{ selectedCourseForModal.code }}
             </h3>
-            <div class="table-responsive-wrapper" style="border: 1px solid #e5e7eb; border-radius: 8px;">
+            <div class="table-responsive-wrapper" >
               <table class="setup-data-table" data-testid="course-sections-list-table">
                 <thead>
                   <tr>
@@ -2677,7 +2699,7 @@ async function executeDeleteSection() {
                         :class="sec.registrar_lock ? 'chip-signed' : 'chip-unsigned'"
                         style="font-size: 0.72rem; padding: 0.15rem 0.45rem;"
                       >
-                        {{ sec.registrar_lock ? '🔒 Locked' : '🔓 Inactive' }}
+                        {{ sec.registrar_lock ? 'Locked' : 'Inactive' }}
                       </span>
                     </td>
                     <td class="text-right">
@@ -2688,7 +2710,7 @@ async function executeDeleteSection() {
                         style="display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600; margin-right: 0.35rem;"
                         @click="openSectionRosterModal(sec)"
                       >
-                        Roster 👥
+                        Roster <AppIcon name="users" />
                       </button>
                       <button
                         type="button"
@@ -2697,7 +2719,7 @@ async function executeDeleteSection() {
                         style="display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
                         @click="closeCourseSectionsModal(); openSetupSectionReport(sec)"
                       >
-                        Report 📊
+                        Report <AppIcon name="chart" />
                       </button>
                     </td>
                   </tr>
@@ -2712,7 +2734,7 @@ async function executeDeleteSection() {
           </div>
         </div>
 
-        <footer class="setup-modal-footer" style="border-top: 1px solid #e5e7eb; padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+        <footer class="setup-modal-footer" style="padding-top: 1rem; display: flex; justify-content: space-between; align-items: center">
           <button
             type="button"
             class="btn-primary"
@@ -2744,12 +2766,12 @@ async function executeDeleteSection() {
       @click.self="showSectionRosterModal = false"
     >
       <div class="setup-modal-box" style="max-width: 860px; padding: 1.5rem; max-height: 90vh; overflow-y: auto;">
-        <header class="setup-modal-header" style="border-bottom: 1px solid #e5e7eb; padding-bottom: 0.85rem;">
+        <header class="setup-modal-header" style="padding-bottom: 0.85rem">
           <div>
-            <h2 id="section-roster-modal-title" style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #103c2e;">
+            <h2 id="section-roster-modal-title" style="margin: 0; font-size: 1.25rem; font-weight: 700">
               Course Section Class Roster &amp; Clearance Checklist
             </h2>
-            <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: #6b7280;">
+            <p style="margin: 0.25rem 0 0; font-size: 0.85rem">
               School AAAAA13 — Section Enrollment &amp; Evaluation Clearance Roster
             </p>
           </div>
@@ -2758,32 +2780,32 @@ async function executeDeleteSection() {
 
         <div v-if="sectionRosterLoading" style="text-align: center; padding: 3rem 1rem;">
           <div class="spinner" style="margin: 0 auto 1rem;"></div>
-          <p style="color: #6b7280; font-size: 0.9rem;">Loading section enrollment roster and clearance records…</p>
+          <p style="font-size: 0.9rem">Loading section enrollment roster and clearance records…</p>
         </div>
 
         <div v-else-if="selectedSectionRoster" style="padding: 1.25rem 0; display: flex; flex-direction: column; gap: 1.25rem;">
           <!-- Section Summary Card -->
-          <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 1rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+          <div style="padding: 1rem 1.25rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem">
             <div>
-              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Course &amp; Section</div>
-              <div style="font-weight: 700; font-size: 1.05rem; color: #111827;" data-testid="section-roster-course-code">
+              <div style="font-size: 0.75rem; font-weight: 600">Course &amp; Section</div>
+              <div style="font-weight: 700; font-size: 1.05rem" data-testid="section-roster-course-code">
                 {{ selectedSectionRoster.section.course_code }} ({{ selectedSectionRoster.section.section_code }})
               </div>
-              <div style="font-size: 0.82rem; color: #4b5563;">
+              <div style="font-size: 0.82rem">
                 {{ selectedSectionRoster.section.course_title }}
               </div>
             </div>
             <div>
-              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Instructor</div>
-              <div style="font-weight: 700; font-size: 0.95rem; color: #047857;" data-testid="section-roster-instructor">
+              <div style="font-size: 0.75rem; font-weight: 600">Instructor</div>
+              <div style="font-weight: 700; font-size: 0.95rem" data-testid="section-roster-instructor">
                 {{ selectedSectionRoster.section.instructor_name }}
               </div>
-              <div style="font-size: 0.82rem; color: #6b7280;">
+              <div style="font-size: 0.82rem">
                 {{ selectedSectionRoster.section.department_name }} ({{ selectedSectionRoster.section.department_code }})
               </div>
             </div>
             <div>
-              <div style="font-size: 0.75rem; text-transform: uppercase; color: #6b7280; font-weight: 600;">Turnout Status</div>
+              <div style="font-size: 0.75rem; font-weight: 600">Turnout Status</div>
               <div style="margin-top: 0.25rem;">
                 <span
                   class="token-chip"
@@ -2793,7 +2815,7 @@ async function executeDeleteSection() {
                   {{ selectedSectionRoster.section.evaluated_count }} / {{ selectedSectionRoster.section.enrolled_count }} Evaluated ({{ selectedSectionRoster.section.turnout_pct }}%)
                 </span>
               </div>
-              <div style="font-size: 0.8rem; color: #6b7280; margin-top: 0.35rem;">
+              <div style="font-size: 0.8rem; margin-top: 0.35rem">
                 Term: {{ selectedSectionRoster.section.term_code }}
               </div>
             </div>
@@ -2827,10 +2849,10 @@ async function executeDeleteSection() {
 
           <!-- Students Roster Table -->
           <div>
-            <h3 style="font-size: 0.95rem; font-weight: 700; color: #1f2937; margin: 0 0 0.5rem;">
+            <h3 style="font-size: 0.95rem; font-weight: 700; margin: 0 0 0.5rem">
               Enrolled Students ({{ filteredSectionRosterStudents.length }} of {{ selectedSectionRoster.students.length }})
             </h3>
-            <div class="table-responsive-wrapper" style="max-height: 320px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px;">
+            <div class="table-responsive-wrapper" style="max-height: 320px; overflow-y: auto">
               <table class="setup-data-table" data-testid="section-roster-students-table">
                 <thead>
                   <tr>
@@ -2850,8 +2872,8 @@ async function executeDeleteSection() {
                     :data-testid="`section-roster-row-${s.student_id}`"
                   >
                     <td><strong class="font-mono text-emerald">{{ s.institutional_id }}</strong></td>
-                    <td style="font-weight: 600; color: #111827;">{{ s.name }}</td>
-                    <td style="color: #6b7280; font-size: 0.82rem;">{{ s.email }}</td>
+                    <td style="font-weight: 600">{{ s.name }}</td>
+                    <td style="font-size: 0.82rem">{{ s.email }}</td>
                     <td><span class="dept-badge">{{ s.department_code }}</span></td>
                     <td class="text-center">
                       <span
@@ -2860,14 +2882,14 @@ async function executeDeleteSection() {
                         :data-testid="`roster-status-${s.student_id}`"
                         style="font-size: 0.72rem; padding: 0.15rem 0.45rem;"
                       >
-                        {{ s.has_evaluated ? '✅ Evaluated' : '⏳ Pending' }}
+                        {{ s.has_evaluated ? 'Evaluated' : 'Pending' }}
                       </span>
                     </td>
                     <td>
-                      <code v-if="s.clearance_token" class="font-mono" style="font-size: 0.72rem; background: #ecfdf5; color: #065f46; padding: 0.15rem 0.35rem; border-radius: 4px;">
+                      <code v-if="s.clearance_token" class="font-mono" style="font-size: 0.72rem; padding: 0.15rem 0.35rem">
                         {{ s.clearance_token.slice(0, 16) }}…
                       </code>
-                      <span v-else style="color: #9ca3af; font-size: 0.8rem;">—</span>
+                      <span v-else style="font-size: 0.8rem">—</span>
                     </td>
                     <td class="text-right">
                       <router-link
@@ -2877,9 +2899,9 @@ async function executeDeleteSection() {
                         :data-testid="`roster-permit-verify-btn-${s.student_id}`"
                         style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
                       >
-                        Certificate 📜
+                        Certificate <AppIcon name="file" />
                       </router-link>
-                      <span v-else style="font-size: 0.75rem; color: #9ca3af; padding: 0.25rem 0.35rem;">Awaiting</span>
+                      <span v-else style="font-size: 0.75rem; padding: 0.25rem 0.35rem">Awaiting</span>
                     </td>
                   </tr>
                   <tr v-if="filteredSectionRosterStudents.length === 0">
@@ -2893,7 +2915,7 @@ async function executeDeleteSection() {
           </div>
         </div>
 
-        <footer class="setup-modal-footer" style="border-top: 1px solid #e5e7eb; padding-top: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+        <footer class="setup-modal-footer" style="padding-top: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem">
           <div style="display: flex; gap: 0.5rem;">
             <button
               v-if="selectedSectionRoster"
@@ -2902,7 +2924,7 @@ async function executeDeleteSection() {
               data-testid="export-section-roster-csv-btn"
               @click="exportSectionRosterCsv"
             >
-              📥 Export Roster CSV
+              <AppIcon name="download" /> Export Roster CSV
             </button>
             <button
               v-if="selectedSectionRoster"
@@ -2911,7 +2933,7 @@ async function executeDeleteSection() {
               data-testid="print-section-roster-btn"
               @click="printSectionRoster"
             >
-              🖨 Print Roster
+              <AppIcon name="printer" /> Print Roster
             </button>
           </div>
           <button
@@ -2939,8 +2961,8 @@ async function executeDeleteSection() {
       <div class="setup-modal-box" style="max-width: 820px; width: 92%;">
         <header class="setup-modal-header" style="display: flex; justify-content: space-between; align-items: center;">
           <div>
-            <span class="setup-kicker" style="font-size: 0.75rem; text-transform: uppercase; color: #103c2e; font-weight: 700;">Faculty Teaching Portfolio</span>
-            <h2 id="faculty-assignments-modal-title" style="margin: 0.2rem 0 0; font-size: 1.25rem; font-weight: 700; color: #111827;">
+            <span class="setup-kicker" style="font-size: 0.75rem; font-weight: 700">Faculty Teaching Portfolio</span>
+            <h2 id="faculty-assignments-modal-title" style="margin: 0.2rem 0 0; font-size: 1.25rem; font-weight: 700">
               Assigned Course Sections &amp; Class Turnout
             </h2>
           </div>
@@ -2949,17 +2971,17 @@ async function executeDeleteSection() {
 
         <div v-if="facultyAssignmentsLoading" style="text-align: center; padding: 2.5rem 1rem;">
           <div class="spinner" style="margin: 0 auto 0.75rem;"></div>
-          <p style="color: #4b5563; font-size: 0.9rem;">Loading faculty teaching assignments...</p>
+          <p style="font-size: 0.9rem">Loading faculty teaching assignments...</p>
         </div>
 
         <div v-else-if="selectedFacultyAssignments" class="modal-body-content" style="padding: 1rem 0;">
           <!-- Profile & Term Header -->
-          <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+          <div style="padding: 0.85rem 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem">
             <div>
-              <div style="font-size: 1.05rem; font-weight: 700; color: #111827;">
+              <div style="font-size: 1.05rem; font-weight: 700">
                 {{ selectedFacultyAssignments.faculty.name }}
               </div>
-              <div style="font-size: 0.82rem; color: #4b5563; display: flex; gap: 0.75rem; align-items: center; margin-top: 0.2rem;">
+              <div style="font-size: 0.82rem; display: flex; gap: 0.75rem; align-items: center; margin-top: 0.2rem">
                 <code>{{ selectedFacultyAssignments.faculty.institutional_id }}</code>
                 <span>{{ selectedFacultyAssignments.faculty.email }}</span>
                 <span class="dept-badge">{{ selectedFacultyAssignments.faculty.department_code }}</span>
@@ -2974,27 +2996,27 @@ async function executeDeleteSection() {
 
           <!-- Summary Metric Cards -->
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem;">
-            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 0.75rem 1rem; text-align: center;">
-              <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #166534;">Total Sections</div>
-              <div style="font-size: 1.5rem; font-weight: 800; color: #14532d; margin-top: 0.2rem;" data-testid="faculty-summary-sections">
+            <div style="padding: 0.75rem 1rem; text-align: center">
+              <div style="font-size: 0.75rem; font-weight: 600">Total Sections</div>
+              <div style="font-size: 1.5rem; font-weight: 800; margin-top: 0.2rem" data-testid="faculty-summary-sections">
                 {{ selectedFacultyAssignments.summary.total_sections }}
               </div>
             </div>
-            <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.75rem 1rem; text-align: center;">
-              <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #1e40af;">Enrolled Students</div>
-              <div style="font-size: 1.5rem; font-weight: 800; color: #1e3a8a; margin-top: 0.2rem;" data-testid="faculty-summary-enrolled">
+            <div style="padding: 0.75rem 1rem; text-align: center">
+              <div style="font-size: 0.75rem; font-weight: 600">Enrolled Students</div>
+              <div style="font-size: 1.5rem; font-weight: 800; margin-top: 0.2rem" data-testid="faculty-summary-enrolled">
                 {{ selectedFacultyAssignments.summary.total_enrolled }}
               </div>
             </div>
-            <div style="background: #fefce8; border: 1px solid #fef08a; border-radius: 8px; padding: 0.75rem 1rem; text-align: center;">
-              <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #854d0e;">Evaluations Received</div>
-              <div style="font-size: 1.5rem; font-weight: 800; color: #713f12; margin-top: 0.2rem;" data-testid="faculty-summary-evaluations">
+            <div style="padding: 0.75rem 1rem; text-align: center">
+              <div style="font-size: 0.75rem; font-weight: 600">Evaluations Received</div>
+              <div style="font-size: 1.5rem; font-weight: 800; margin-top: 0.2rem" data-testid="faculty-summary-evaluations">
                 {{ selectedFacultyAssignments.summary.total_evaluations }}
               </div>
             </div>
-            <div style="background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 8px; padding: 0.75rem 1rem; text-align: center;">
-              <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #6b21a8;">Turnout Rate</div>
-              <div style="font-size: 1.5rem; font-weight: 800; color: #581c87; margin-top: 0.2rem;" data-testid="faculty-summary-turnout">
+            <div style="padding: 0.75rem 1rem; text-align: center">
+              <div style="font-size: 0.75rem; font-weight: 600">Turnout Rate</div>
+              <div style="font-size: 1.5rem; font-weight: 800; margin-top: 0.2rem" data-testid="faculty-summary-turnout">
                 {{ selectedFacultyAssignments.summary.overall_turnout_pct }}%
               </div>
             </div>
@@ -3028,7 +3050,7 @@ async function executeDeleteSection() {
                   <td>{{ s.enrolled_count }}</td>
                   <td>{{ s.cleared_count }}</td>
                   <td>
-                    <span style="font-weight: 700; color: #103c2e;">
+                    <span style="font-weight: 700">
                       {{ s.turnout_pct }}%
                     </span>
                   </td>
@@ -3043,7 +3065,7 @@ async function executeDeleteSection() {
                   </td>
                 </tr>
                 <tr v-if="selectedFacultyAssignments.sections.length === 0" data-testid="faculty-assignments-empty">
-                  <td colspan="8" style="text-align: center; padding: 1.5rem; color: #6b7280;">
+                  <td colspan="8" style="text-align: center; padding: 1.5rem">
                     No teaching course sections assigned to this faculty member for this term.
                   </td>
                 </tr>
@@ -3061,7 +3083,7 @@ async function executeDeleteSection() {
             style="font-size: 0.82rem; padding: 0.4rem 0.8rem;"
             @click="exportFacultyAssignmentsCsv"
           >
-            📊 Export Assignments (CSV)
+            <AppIcon name="chart" /> Export Assignments (CSV)
           </button>
           <div style="margin-left: auto;">
             <button type="button" class="btn-secondary" data-testid="close-faculty-assignments-btn" @click="showFacultyAssignmentsModal = false">Close</button>
@@ -3094,7 +3116,7 @@ async function executeDeleteSection() {
               type="text"
               class="form-input font-mono"
               disabled
-              style="background: #f3f4f6; color: #6b7280;"
+
             />
           </div>
 
@@ -3169,7 +3191,7 @@ async function executeDeleteSection() {
               data-testid="edit-user-password-input"
               autocomplete="new-password"
             />
-            <small style="font-size: 0.76rem; color: #6b7280; margin-top: 0.2rem; display: block;">
+            <small style="font-size: 0.76rem; margin-top: 0.2rem; display: block">
               Enter a new password to reset, or leave empty to keep current password unchanged.
             </small>
           </div>
@@ -3212,24 +3234,24 @@ async function executeDeleteSection() {
             aria-label="Close reminder modal"
             @click="closeStudentReminderModal"
           >
-            ✕
+            <AppIcon name="x" />
           </button>
         </div>
 
         <div class="modal-body" style="padding: 1.25rem 1.5rem;">
-          <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1rem;">
+          <div style="padding: 0.85rem 1rem; margin-bottom: 1rem">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem; flex-wrap: wrap; gap: 0.5rem;">
-              <strong style="color: #92400e; font-size: 0.95rem;">{{ reminderStudent.name }} ({{ reminderStudent.institutional_id }})</strong>
+              <strong style="font-size: 0.95rem">{{ reminderStudent.name }} ({{ reminderStudent.institutional_id }})</strong>
               <span class="token-chip chip-unsigned" style="font-size: 0.75rem;">
                 {{ Math.max(0, reminderStudent.enrolled_count - reminderStudent.cleared_count) }} Pending Evaluations
               </span>
             </div>
-            <div style="font-size: 0.82rem; color: #78350f;">
+            <div style="font-size: 0.82rem">
               Department: {{ reminderStudent.department_name || reminderStudent.department_code || 'CCS' }} • Email: {{ reminderStudent.email }}
             </div>
           </div>
 
-          <label for="reminder-text-area" class="form-label" style="font-size: 0.82rem; font-weight: 700; color: #374151;">
+          <label for="reminder-text-area" class="form-label" style="font-size: 0.82rem; font-weight: 700">
             Institutional Follow-Up Notice / Email Template:
           </label>
           <textarea
@@ -3237,7 +3259,7 @@ async function executeDeleteSection() {
             readonly
             class="form-input"
             rows="10"
-            style="font-family: 'JetBrains Mono', Consolas, monospace; font-size: 0.82rem; line-height: 1.5; background: #f9f9f8; resize: vertical;"
+            style="font-size: 0.82rem; line-height: 1.5; resize: vertical"
             :value="reminderNoticeText"
             data-testid="reminder-notice-textarea"
           ></textarea>
@@ -3252,8 +3274,8 @@ async function executeDeleteSection() {
             Close
           </button>
           <div style="display: flex; gap: 0.5rem; align-items: center;">
-            <span v-if="reminderCopied" style="font-size: 0.82rem; color: #059669; font-weight: 700;" data-testid="reminder-copied-indicator">
-              Notice Copied to Clipboard! ✓
+            <span v-if="reminderCopied" style="font-size: 0.82rem; font-weight: 700" data-testid="reminder-copied-indicator">
+              Notice Copied to Clipboard! <AppIcon name="check" />
             </span>
             <button
               type="button"
@@ -3262,7 +3284,7 @@ async function executeDeleteSection() {
               style="padding: 0.45rem 1rem; font-weight: 700;"
               @click="copyReminderNotice"
             >
-              Copy Reminder Notice 📋
+              Copy Reminder Notice <AppIcon name="clipboard" />
             </button>
           </div>
         </div>
@@ -3273,6 +3295,8 @@ async function executeDeleteSection() {
 
 <style scoped>
 .setup-workspace {
+  width: 100%;
+  min-width: 0;
   max-width: 1360px;
   margin: 0 auto;
   padding: 1.5rem;
@@ -3300,14 +3324,14 @@ async function executeDeleteSection() {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 700;
-  color: #0b3322;
+  color: #0f172a;
 }
 
 .setup-title {
-  font-family: 'Newsreader', Georgia, serif;
+  font-family: var(--font-sans);
   font-size: 1.85rem;
   font-weight: 700;
-  color: #0b3322;
+  color: #0f172a;
   margin: 0.2rem 0 0.4rem 0;
 }
 
@@ -3339,7 +3363,7 @@ async function executeDeleteSection() {
   background: transparent;
   font-size: 0.88rem;
   font-weight: 600;
-  color: #0b3322;
+  color: #0f172a;
   outline: none;
   cursor: pointer;
 }
@@ -3448,7 +3472,7 @@ async function executeDeleteSection() {
 }
 
 .metric-value {
-  font-family: 'Newsreader', Georgia, serif;
+  font-family: var(--font-sans);
   font-size: 1.35rem;
   font-weight: 700;
   color: #111827;
@@ -3464,7 +3488,7 @@ async function executeDeleteSection() {
 }
 
 .text-emerald {
-  color: #0b3322 !important;
+  color: #0f172a !important;
 }
 
 .text-amber {
@@ -3496,10 +3520,14 @@ async function executeDeleteSection() {
   display: flex;
   gap: 0.5rem;
   border-bottom: 1px solid #e5e7eb;
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 
 .setup-tab-btn {
   display: flex;
+  flex-shrink: 0;
+  white-space: nowrap;
   align-items: center;
   gap: 0.5rem;
   padding: 0.65rem 1.1rem;
@@ -3514,12 +3542,12 @@ async function executeDeleteSection() {
 }
 
 .setup-tab-btn:hover {
-  color: #0b3322;
+  color: #0f172a;
 }
 
 .setup-tab-btn.active {
-  color: #0b3322;
-  border-bottom-color: #0b3322;
+  color: #0f172a;
+  border-bottom-color: #0f172a;
 }
 
 /* Pane Controls */
@@ -3549,6 +3577,7 @@ async function executeDeleteSection() {
 }
 
 .filter-select {
+  max-width: 100%;
   padding: 0.45rem 0.65rem;
   border: 1px solid #d1d5db;
   border-radius: 6px;
@@ -3559,8 +3588,26 @@ async function executeDeleteSection() {
 
 .pane-actions-group {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.65rem;
+}
+
+.setup-header-controls,
+.setup-header-controls > *,
+.setup-header-controls select {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.term-picker-select {
+  flex: 1 1 auto;
+}
+
+@media (max-width: 640px) {
+  .setup-workspace {
+    padding: 1rem 0;
+  }
 }
 
 .pane-description {
@@ -3668,7 +3715,7 @@ async function executeDeleteSection() {
   display: inline-block;
   font-weight: 600;
   font-size: 0.85rem;
-  color: #0b3322;
+  color: #0f172a;
 }
 
 .lock-badge {
@@ -3799,7 +3846,7 @@ async function executeDeleteSection() {
 
 /* Buttons */
 .btn-primary {
-  background: #0b3322;
+  background: #0f172a;
   color: #ffffff;
   padding: 0.45rem 0.95rem;
   border: none;
@@ -3891,7 +3938,7 @@ async function executeDeleteSection() {
 .text-link-btn {
   background: transparent;
   border: none;
-  color: #0b3322;
+  color: #0f172a;
   font-weight: 600;
   font-size: 0.82rem;
   cursor: pointer;
@@ -3919,7 +3966,7 @@ async function executeDeleteSection() {
 .accreditation-seal {
   font-size: 0.8rem;
   font-weight: 700;
-  color: #0b3322;
+  color: #0f172a;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -3961,7 +4008,7 @@ async function executeDeleteSection() {
 .cluster-card-title {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #0b3322;
+  color: #0f172a;
   margin: 0;
 }
 
@@ -4000,7 +4047,7 @@ async function executeDeleteSection() {
   font-family: monospace;
   font-weight: 700;
   font-size: 0.82rem;
-  color: #0b3322;
+  color: #0f172a;
   width: 32px;
   flex-shrink: 0;
 }
@@ -4110,7 +4157,7 @@ async function executeDeleteSection() {
 .setup-modal-header h2 {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #0b3322;
+  color: #0f172a;
   margin: 0;
 }
 
@@ -4174,7 +4221,7 @@ async function executeDeleteSection() {
 }
 
 .form-input:focus {
-  border-color: #0b3322;
+  border-color: #0f172a;
 }
 
 .form-checkbox-group {

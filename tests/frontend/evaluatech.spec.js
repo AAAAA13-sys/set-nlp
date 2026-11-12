@@ -819,7 +819,8 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(permitCardSfc.includes('data-testid="print-permit-signature-block"'));
       assert.ok(permitCardSfc.includes('data-testid="print-permit-btn"'));
       assert.ok(permitCardSfc.includes('ATTY. UNIVERSITY REGISTRAR'));
-      assert.ok(permitCardSfc.includes('DR. V. MENDOZA'));
+      assert.ok(permitCardSfc.includes('COLLEGE DEAN'), 'dean signature line carries the role title');
+      assert.ok(!permitCardSfc.includes('MENDOZA') && !readResourceFile('views/FacultyDashboardView.vue').includes('MENDOZA'), 'no hard-coded signatory names on official records');
       assert.ok(permitCardSfc.includes('printPermit'));
 
       // 2. Verify master print CSS rules
@@ -1072,11 +1073,11 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       const evalFormSfc = readResourceFile('views/EvaluationFormView.vue');
       const adminViewSfc = readResourceFile('views/AdminRosterView.vue');
 
-      // 1. Academic Tech 50/50 Split-Screen Login (AAAAA13 EvaluTech, floating card, floating labels, shield/eye/brain tags) & collapsible emerald sidebar shell
+      // 1. Academic Tech 50/50 Split-Screen Login (AAAAA13 EvaluaTech, floating card, floating labels, shield/eye/brain tags) & collapsible emerald sidebar shell
       assert.ok(loginViewSfc.includes('data-testid="login-split-screen"'));
-      assert.ok(loginViewSfc.includes('AAAAA13 EvaluTech') || loginViewSfc.includes('PLP EvaluTech'));
+      assert.ok(loginViewSfc.includes('AAAAA13 EvaluaTech'));
       assert.ok(loginViewSfc.includes('Candid student feedback,'));
-      assert.ok(loginViewSfc.includes('decoupled by design.'));
+      assert.ok(loginViewSfc.includes('anonymous by design.'));
       assert.ok(loginViewSfc.includes('floating-auth-card'));
       assert.ok(loginViewSfc.includes('floating-label'));
       assert.ok(loginViewSfc.includes('feature-tag-item'));
@@ -1193,7 +1194,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       }
 
       // 4. Front-End Checklist <head> & skip-link hygiene
-      assert.ok(bladeHtml.includes('name="theme-color" content="#103c2e"'));
+      assert.ok(bladeHtml.includes('name="theme-color" content="#0f172a"'));
       assert.ok(bladeHtml.includes('property="og:title"'));
       assert.ok(bladeHtml.includes('rel="icon" type="image/svg+xml"'));
       assert.ok(bladeHtml.includes('class="skip-link" href="#main-workspace"'));
@@ -1919,7 +1920,7 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
 
       // 1. Guidelines & Standards Section Structure
       assert.ok(advocacyViewSfc.includes('data-testid="advocacy-guidelines-section"'), 'Advocacy guidelines section present');
-      assert.ok(advocacyViewSfc.includes('EVALUATION STANDARDS &amp; CHARTER'), 'Advocacy standards badge present');
+      assert.ok(advocacyViewSfc.includes('Student Evaluation Guidelines &amp; Anonymity Charter'), 'Advocacy standards heading present');
       assert.ok(advocacyViewSfc.includes('Complete Cryptographic Anonymity'), 'Pillar 1 present');
       assert.ok(advocacyViewSfc.includes('Immediate Submission Readiness'), 'Pillar 2 present');
       assert.ok(advocacyViewSfc.includes('Double-Blind Grade Protection'), 'Pillar 3 present');
@@ -2148,6 +2149,66 @@ describe('EvaluaTech Vue 3 SPA & Domain Verification Suite (38 Test Groups)', ()
       assert.ok(quivrSfc.includes('selectedCluster'), 'Cluster filter reactive ref in Quivr drawer');
       assert.ok(quivrSfc.includes('executeSearch'), 'executeSearch method defined in Quivr drawer');
       assert.ok(quivrSfc.includes('zero_student_identity_verified'), 'Guarantees zero student identity disclosure');
+    });
+  });
+
+  describe('Group 77: Mandatory first-sign-in password change (one-time Registrar credentials)', () => {
+    it('routes flagged accounts to /account/password, exposes the change form, and calls the password API', () => {
+      const routerSrc = readResourceFile('router/index.js');
+      const authStoreSrc = readResourceFile('stores/auth.js');
+      const viewSfc = readResourceFile('views/AccountPasswordView.vue');
+      const navbarSfc = readResourceFile('components/NavbarHeader.vue');
+
+      // Router: dedicated route + guard that redirects before any workspace opens
+      assert.ok(routerSrc.includes("path: '/account/password'"), 'account password route registered');
+      assert.ok(routerSrc.includes('authStore.mustChangePassword'), 'router guard checks mustChangePassword');
+      const guardIdx = routerSrc.indexOf('authStore.mustChangePassword');
+      const roleIdx = routerSrc.indexOf('const allowedRoles = to.meta?.roles');
+      assert.ok(guardIdx > 0 && guardIdx < roleIdx, 'password guard runs before role checks');
+
+      // Store: flag and API call
+      assert.ok(authStoreSrc.includes('must_change_password'), 'auth store reads must_change_password');
+      assert.ok(authStoreSrc.includes("'/api/auth/password'"), 'auth store posts to /api/auth/password');
+      assert.ok(authStoreSrc.includes('changePassword'), 'changePassword exported from auth store');
+
+      // View: labelled inputs with autocomplete hints, live rules, sign-out escape hatch
+      for (const id of ['current-password', 'new-password', 'confirm-password']) {
+        assert.ok(viewSfc.includes(`for="${id}"`) && viewSfc.includes(`id="${id}"`), `${id} input is labelled`);
+      }
+      assert.ok(viewSfc.includes('autocomplete="current-password"'), 'current password autocomplete hint');
+      assert.ok(viewSfc.includes('autocomplete="new-password"'), 'new password autocomplete hint');
+      assert.ok(viewSfc.includes('aria-describedby="password-rules"'), 'rules announced to screen readers');
+      assert.ok(viewSfc.includes('data-testid="save-password-btn"'), 'save button present');
+      assert.ok(viewSfc.includes('data-testid="password-sign-out-btn"'), 'forced users can still sign out');
+      assert.ok(viewSfc.includes('min-height: 44px'), '44px tap targets on actions');
+
+      // Navbar: everyone can change their password later
+      assert.ok(navbarSfc.includes('data-testid="navbar-change-password-link"'), 'navbar change password link');
+    });
+  });
+
+  describe('Group 78: Production credential hygiene (no shared default password, no prefilled fake rosters)', () => {
+    it('removes the shared default password from the UI, starts roster imports empty, and shows issued credentials once', () => {
+      const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+        e.isDirectory() ? walk(path.join(dir, e.name)) : [path.join(dir, e.name)]);
+      const uiFiles = walk(JS_DIR).filter((f) => f.endsWith('.vue') || f.endsWith('.js'));
+      for (const file of uiFiles) {
+        assert.ok(!fs.readFileSync(file, 'utf8').includes('evaluatech123'), `no shared default password in ${path.relative(ROOT_DIR, file)}`);
+      }
+
+      const rosterSfc = readResourceFile('views/AdminRosterView.vue');
+      const setupSfc = fs.readFileSync(path.join(JS_DIR, 'views', 'AdminSetupView.vue'), 'utf8');
+      assert.ok(rosterSfc.includes("const rosterInput = ref('');"), 'roster console import starts empty');
+      assert.ok(setupSfc.includes("rosterImportContent.value = '';"), 'setup import modal starts empty');
+      assert.ok(!rosterSfc.includes('Juan Dela Cruz') && !setupSfc.includes('Prof. A. Dela Cruz'), 'no fake sample people prefilled');
+      assert.ok(rosterSfc.includes(':placeholder="rosterPlaceholder"'), 'format shown as placeholder only');
+
+      const panelSfc = readResourceFile('components/IssuedCredentialsPanel.vue');
+      assert.ok(rosterSfc.includes('<IssuedCredentialsPanel') && setupSfc.includes('<IssuedCredentialsPanel'), 'both import paths show issued credentials');
+      assert.ok(panelSfc.includes('temporary_password'), 'panel renders temporary passwords');
+      assert.ok(panelSfc.includes('cannot be recovered later'), 'panel warns credentials are shown once');
+      assert.ok(panelSfc.includes("/^[=+\\-@\\t\\r]/"), 'CSV download neutralises formula injection');
+      assert.ok(setupSfc.includes('Leave blank to generate a one-time password'), 'create-user form explains generated password');
     });
   });
 });

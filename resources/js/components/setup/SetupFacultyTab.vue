@@ -1,4 +1,5 @@
 <script setup>
+import AppIcon from '../AppIcon.vue';
 import { computed, ref } from 'vue';
 import { useAcademicSetupStore } from '../../stores/academicSetup.js';
 
@@ -111,16 +112,16 @@ function exportFacultyDirectoryCsv() {
           type="button"
           class="btn-secondary"
           data-testid="export-faculty-csv-btn"
-          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; font-weight: 600;"
+          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; font-weight: 600"
           @click="exportFacultyDirectoryCsv"
         >
-          📊 Export Faculty (CSV)
+          <AppIcon name="chart" /> Export Faculty (CSV)
         </button>
         <button
           type="button"
           class="btn-primary"
           data-testid="add-faculty-btn"
-          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; font-weight: 600;"
+          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; font-weight: 600"
           @click="emit('new-faculty')"
         >
           + New Faculty
@@ -150,11 +151,11 @@ function exportFacultyDirectoryCsv() {
             <td><strong>{{ fac.name }}</strong></td>
             <td>
               <span class="dept-badge">{{ fac.department_code || 'CCS' }}</span>
-              <span style="margin-left: 0.35rem; font-size: 0.8rem; color: #4b5563;">{{ fac.department_name }}</span>
+              <span style="margin-left: 0.35rem; font-size: 0.8rem">{{ fac.department_name }}</span>
             </td>
             <td>{{ fac.email }}</td>
             <td>
-              <span class="role-pill" style="font-size: 0.75rem; text-transform: uppercase;">
+              <span class="role-pill" style="font-size: 0.75rem">
                 {{ fac.role }}
               </span>
             </td>
@@ -175,7 +176,7 @@ function exportFacultyDirectoryCsv() {
                   style="display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
                   @click="emit('open-faculty-dossier', fac)"
                 >
-                  Report 📊
+                  Report <AppIcon name="chart" />
                 </button>
                 <button
                   type="button"
@@ -184,7 +185,7 @@ function exportFacultyDirectoryCsv() {
                   style="display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
                   @click="emit('view-faculty-assignments', fac)"
                 >
-                  Assignments 📚
+                  Assignments <AppIcon name="book" />
                 </button>
                 <button
                   type="button"
@@ -192,7 +193,7 @@ function exportFacultyDirectoryCsv() {
                   :data-testid="`assign-faculty-shortcut-btn-${fac.id}`"
                   @click="quickAssignFaculty(fac)"
                 >
-                  Sections →
+                  Sections <AppIcon name="chevron-right" :size="14" />
                 </button>
                 <button
                   type="button"
@@ -201,13 +202,13 @@ function exportFacultyDirectoryCsv() {
                   style="display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
                   @click="emit('edit-faculty', fac)"
                 >
-                  Edit ✏️
+                  Edit <AppIcon name="edit" />
                 </button>
               </div>
             </td>
           </tr>
           <tr v-if="filteredFacultyDirectory.length === 0" data-testid="faculty-empty-state">
-            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+            <td colspan="7" style="text-align: center; padding: 2rem">
               No faculty members match your search criteria.
             </td>
           </tr>

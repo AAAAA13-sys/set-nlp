@@ -495,8 +495,8 @@ defineExpose({
 }
 
 .pro-facet-btn.is-active {
-  background: #103c2e;
-  border-color: #103c2e;
+  background: #0f172a;
+  border-color: #0f172a;
   color: #f4cd42;
 }
 
@@ -520,7 +520,7 @@ defineExpose({
   gap: 0.65rem;
   padding: 0.65rem 0.95rem;
   border-radius: 10px;
-  background: #103c2e;
+  background: #0f172a;
   color: #ffffff;
 }
 

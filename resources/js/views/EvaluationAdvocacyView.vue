@@ -1,4 +1,5 @@
 <script setup>
+import AppIcon from '../components/AppIcon.vue';
 import { computed, ref } from 'vue';
 import EvaluationRubricModal from '../components/EvaluationRubricModal.vue';
 import { useAuthStore } from '../stores/auth.js';
@@ -141,7 +142,6 @@ async function copyText(text, key) {
     <section class="card advocacy-hero-card">
       <div class="advocacy-header-row">
         <div>
-          <span class="eyebrow-badge">CLASS LINK &amp; CLEARANCE</span>
           <h2 id="advocacy-heading" class="section-title">
             Share Portal Link &amp; Check Clearance Status
             <span class="ui-hint" tabindex="0" aria-label="Class link and clearance help" data-hint="Share the evaluation link with classmates or copy your signed evaluation clearance code.">?</span>
@@ -215,7 +215,7 @@ async function copyText(text, key) {
               style="font-size: 0.82rem; padding: 0.4rem 0.8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;"
               data-testid="advocacy-verify-portal-btn"
             >
-              🔍 Open Public Verification Portal
+              <AppIcon name="search" /> Open Public Verification Portal
             </router-link>
           </div>
         </div>
@@ -226,7 +226,6 @@ async function copyText(text, key) {
     <section class="card advocacy-guidelines-card" data-testid="advocacy-guidelines-section">
       <div class="guidelines-header-row">
         <div>
-          <span class="eyebrow-badge">EVALUATION STANDARDS &amp; CHARTER</span>
           <h3 class="section-title">
             Student Evaluation Guidelines &amp; Anonymity Charter
             <span class="ui-hint" tabindex="0" aria-label="Guidelines help" data-hint="Learn how your feedback is cryptographically protected and how faculty performance is evaluated.">?</span>
@@ -242,7 +241,7 @@ async function copyText(text, key) {
             data-testid="advocacy-open-rubric-btn"
             @click="openAdvocacyRubricModal"
           >
-            Rating Rubric 📋
+            Rating Rubric <AppIcon name="clipboard" />
           </button>
           <button
             type="button"
@@ -250,7 +249,7 @@ async function copyText(text, key) {
             data-testid="export-advocacy-guide-btn"
             @click="downloadStudentGuide"
           >
-            Download Guide 📄
+            Download Guide <AppIcon name="file" />
           </button>
         </div>
       </div>
@@ -290,7 +289,6 @@ async function copyText(text, key) {
     <section class="card advocacy-drives-card">
       <div class="drives-header">
         <div>
-          <span class="eyebrow-badge">COLLEGE PARTICIPATION</span>
           <h3 class="section-title">College Completion Targets</h3>
         </div>
       </div>
@@ -413,7 +411,7 @@ async function copyText(text, key) {
   background: #f6f8f4;
   border: 1px solid #dbe3da;
   font-size: 0.78rem;
-  color: #103c2e;
+  color: #0f172a;
 }
 
 .advocacy-share-grid {
@@ -505,7 +503,7 @@ async function copyText(text, key) {
 .drive-code {
   padding: 0.16rem 0.5rem;
   border-radius: 6px;
-  background: #103c2e;
+  background: #0f172a;
   color: #f4cd42;
   font-weight: 800;
 }

@@ -55,10 +55,10 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
     if (serverProcess) {
       try {
         serverProcess.kill('SIGTERM');
-      } catch (_) {}
+      } catch (_) { }
       try {
         process.kill(serverProcess.pid);
-      } catch (_) {}
+      } catch (_) { }
     }
   });
 
@@ -99,7 +99,7 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
       await page.waitForSelector('[data-testid="login-id-input"]');
 
       // Test failed login with incorrect password
-      await page.fill('[data-testid="login-id-input"]', 'admin@plpasig.edu.ph');
+      await page.fill('[data-testid="login-id-input"]', 'admin@aaaaa13.edu');
       await page.fill('[data-testid="login-password-input"]', 'wrongpassword');
       await page.click('[data-testid="login-submit-btn"]');
       await page.waitForSelector('[data-testid="login-error-alert"]', { timeout: 4000 });
@@ -123,7 +123,7 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
     const page = await browser.newPage({ viewport: { width: 1366, height: 768 } });
     try {
       await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
-      await page.fill('[data-testid="login-id-input"]', 'admin@plpasig.edu.ph');
+      await page.fill('[data-testid="login-id-input"]', 'admin@aaaaa13.edu');
       await page.fill('[data-testid="login-password-input"]', 'evaluatech123');
       await page.click('[data-testid="login-submit-btn"]');
       const setupNav = await page.waitForSelector('[data-testid="nav-link-admin-setup"]', { timeout: 6000 });
@@ -167,7 +167,7 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
     try {
       // Login as student 2024-10892
       await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
-      await page.fill('[data-testid="login-id-input"]', '2024-10892@plpasig.edu.ph');
+      await page.fill('[data-testid="login-id-input"]', '2024-10892@aaaaa13.edu');
       await page.fill('[data-testid="login-password-input"]', 'evaluatech123');
       await page.click('[data-testid="login-submit-btn"]');
       await page.waitForSelector('[data-testid="student-queue-table"]', { timeout: 6000 });
@@ -188,7 +188,7 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
     try {
       // Login as faculty Prof. Dela Cruz
       await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
-      await page.fill('[data-testid="login-id-input"]', 'adelacruz@plpasig.edu.ph');
+      await page.fill('[data-testid="login-id-input"]', 'adelacruz@aaaaa13.edu');
       await page.fill('[data-testid="login-password-input"]', 'evaluatech123');
       await page.click('[data-testid="login-submit-btn"]');
       await page.waitForSelector('[data-testid="faculty-section-select"], [data-testid="double-blind-lock-screen"]', { timeout: 6000 });
@@ -233,7 +233,7 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
     const page = await browser.newPage({ viewport: { width: 1366, height: 768 } });
     try {
       await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
-      await page.fill('[data-testid="login-id-input"]', 'admin@plpasig.edu.ph');
+      await page.fill('[data-testid="login-id-input"]', 'admin@aaaaa13.edu');
       await page.fill('[data-testid="login-password-input"]', 'evaluatech123');
       await page.click('[data-testid="login-submit-btn"]');
       await page.waitForSelector('[data-testid="nav-link-admin-setup"]', { timeout: 6000 });
@@ -263,7 +263,7 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
     const page = await browser.newPage({ viewport: { width: 1366, height: 768 } });
     try {
       await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
-      await page.fill('[data-testid="login-id-input"]', 'admin@plpasig.edu.ph');
+      await page.fill('[data-testid="login-id-input"]', 'admin@aaaaa13.edu');
       await page.fill('[data-testid="login-password-input"]', 'evaluatech123');
       await page.click('[data-testid="login-submit-btn"]');
       await page.waitForSelector('[data-testid="nav-link-admin-setup"]', { timeout: 6000 });
@@ -296,7 +296,7 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
     try {
       // Login as faculty Prof. Dela Cruz
       await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
-      await page.fill('[data-testid="login-id-input"]', 'adelacruz@plpasig.edu.ph');
+      await page.fill('[data-testid="login-id-input"]', 'adelacruz@aaaaa13.edu');
       await page.fill('[data-testid="login-password-input"]', 'evaluatech123');
       await page.click('[data-testid="login-submit-btn"]');
       await page.waitForSelector('[data-testid="faculty-workspace"]', { timeout: 6000 });
@@ -315,7 +315,7 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
     try {
       // Login as Department Chair
       await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
-      await page.fill('[data-testid="login-id-input"]', 'chair@plpasig.edu.ph');
+      await page.fill('[data-testid="login-id-input"]', 'chair@aaaaa13.edu');
       await page.fill('[data-testid="login-password-input"]', 'evaluatech123');
       await page.click('[data-testid="login-submit-btn"]');
       await page.waitForSelector('[data-testid="chair-diagnostic-workspace"]', { timeout: 6000 });
@@ -337,7 +337,7 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
     try {
       // Login as College Dean
       await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
-      await page.fill('[data-testid="login-id-input"]', 'dean@plpasig.edu.ph');
+      await page.fill('[data-testid="login-id-input"]', 'dean@aaaaa13.edu');
       await page.fill('[data-testid="login-password-input"]', 'evaluatech123');
       await page.click('[data-testid="login-submit-btn"]');
       await page.waitForSelector('[data-testid="dean-analytical-overview"]', { timeout: 6000 });
@@ -369,7 +369,7 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
     try {
       // Login as Department Chair
       await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
-      await page.fill('[data-testid="login-id-input"]', 'chair@plpasig.edu.ph');
+      await page.fill('[data-testid="login-id-input"]', 'chair@aaaaa13.edu');
       await page.fill('[data-testid="login-password-input"]', 'evaluatech123');
       await page.click('[data-testid="login-submit-btn"]');
       await page.waitForSelector('[data-testid="chair-open-quivr-brain-btn"], [data-testid="open-quivr-brain-btn"]', { timeout: 6000 });
@@ -390,6 +390,61 @@ describe('EvaluaTech End-to-End User Interaction & Institutional Safeguards Suit
       await page.click('[data-testid="close-quivr-brain-btn"]');
     } finally {
       await page.close();
+    }
+  });
+
+  async function loginAs(page, email) {
+    await page.goto(`${BASE_URL}/login`, { waitUntil: 'domcontentloaded' });
+    await page.fill('[data-testid="login-id-input"]', email);
+    await page.fill('[data-testid="login-password-input"]', 'evaluatech123');
+    await page.click('[data-testid="login-submit-btn"]');
+    await page.waitForURL((url) => !url.pathname.startsWith('/login'), { timeout: 6000 });
+  }
+
+  test('E2E-13: Dean participation tab lists students with pending evaluations (status only, no responses)', async () => {
+    const page = await browser.newPage({ viewport: { width: 1366, height: 768 } });
+    try {
+      await loginAs(page, 'dean@aaaaa13.edu');
+      await page.goto(`${BASE_URL}/dean`, { waitUntil: 'networkidle' });
+      await page.click('[data-testid="tab-dean-participation"]');
+      await page.waitForSelector('[data-testid="dean-participation-summary"]');
+
+      const table = await page.waitForSelector('[data-testid="dean-pending-students-table"]', { timeout: 6000 });
+      const text = await table.textContent();
+      assert.ok(text.includes('2024-10892'), 'Seeded pending student is listed for the dean');
+      const pendingBadges = await table.$$('.code-plate');
+      assert.ok(pendingBadges.length > 0, 'Each pending student shows which course evaluations are still owed');
+
+      await page.fill('[data-testid="dean-participation-search"]', 'zzz-no-match');
+      const filtered = await page.textContent('[data-testid="dean-pending-students-table"]');
+      assert.ok(filtered.includes('No students match'), 'Search filters the pending list');
+    } finally {
+      await page.close();
+    }
+  });
+
+  test('E2E-14: Signed-in workspaces have zero horizontal overflow on desktop (1366) and mobile (375)', async () => {
+    const cases = [
+      ['2024-10892@aaaaa13.edu', ['/queue']],
+      ['adelacruz@aaaaa13.edu', ['/faculty']],
+      ['chair@aaaaa13.edu', ['/chair']],
+      ['dean@aaaaa13.edu', ['/dean']],
+      ['admin@aaaaa13.edu', ['/admin', '/admin/setup']],
+    ];
+    for (const viewport of [{ width: 1366, height: 768 }, { width: 375, height: 812 }]) {
+      for (const [email, paths] of cases) {
+        const page = await browser.newPage({ viewport });
+        try {
+          await loginAs(page, email);
+          for (const p of paths) {
+            await page.goto(`${BASE_URL}${p}`, { waitUntil: 'networkidle' });
+            const extra = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+            assert.ok(extra <= 0, `${p} at ${viewport.width}px overflows horizontally by ${extra}px`);
+          }
+        } finally {
+          await page.close();
+        }
+      }
     }
   });
 });

@@ -130,10 +130,7 @@ const validatedProfQuestions = computed(() =>
 
     <header class="plp-lab-header">
       <div>
-        <span class="eyebrow-badge">
-          EVALUATION ANALYSIS
-          <span class="sr-only">{{ CALAMANCY_CONFIG.framework }} ({{ CALAMANCY_CONFIG.model }})</span>
-        </span>
+        <span class="sr-only">{{ CALAMANCY_CONFIG.framework }} ({{ CALAMANCY_CONFIG.model }})</span>
         <h3 id="plp-nlp-lab-heading" class="section-title">
           Professor's Evaluation Analysis
           <span

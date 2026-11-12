@@ -6,7 +6,7 @@ This document walks through **every page, button, input, tab, filter, and modal*
 
 ## Quick Test Accounts (Seeded via `database/seeders/EvaluaTechDemoSeeder.php`)
 
-All seeded accounts use the password **`evaluatech123`**:
+These accounts exist only in the local demo database (`APP_ENV=local`; seeded automatically when the database is empty) and use the password **`evaluatech123`**. A production database has none of them: it is provisioned with `scripts/production-init.php`, and every account created there receives its own one-time password (see [`docs/PRODUCTION_DEPLOYMENT.md`](docs/PRODUCTION_DEPLOYMENT.md)).
 
 | Role | ID / Email | Default Landing Route | Description |
 | :--- | :--- | :--- | :--- |

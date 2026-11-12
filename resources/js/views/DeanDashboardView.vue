@@ -1,6 +1,9 @@
 <script setup>
+import { humanizeStatus } from '../utils/uxHelpers.js';
+import AppIcon from '../components/AppIcon.vue';
 import { computed, onMounted, ref } from 'vue';
 import EvaluationRubricModal from '../components/EvaluationRubricModal.vue';
+import ParticipationPanel from '../components/ParticipationPanel.vue';
 import PlpAnalyticsLabModal from '../components/PlpAnalyticsLabModal.vue';
 import QuivrNlpBrainDrawer from '../components/QuivrNlpBrainDrawer.vue';
 import ReusableDataTable from '../components/ReusableDataTable.vue';
@@ -14,7 +17,7 @@ import {
 
 const authStore = useAuthStore();
 const evaluationStore = useEvaluationStore();
-const activeTab = ref('overview'); // 'overview' | 'longitudinal' | 'quality' | 'qualitative'
+const activeTab = ref('participation'); // 'participation' | 'overview' | 'longitudinal' | 'quality' | 'qualitative'
 const showAnalyticsLab = ref(false);
 const showQuivrBrain = ref(false);
 const showRubricModal = ref(false);
@@ -227,41 +230,48 @@ function generateAccreditationCsv() {
 
 const selectedDepartment = ref('ALL');
 
-const departmentsList = [
-  { id: 'ALL', name: 'All Colleges & Departments' },
-  { id: '1', name: 'College of Computer Studies (CCS)' },
-  { id: '2', name: 'College of Arts and Sciences (CAS)' },
-];
+// Departments come from the server's scoped participation data, so a dean only
+// ever sees (and can only pick) departments inside their own college.
+const scopedDepartments = ref([]);
+
+const departmentsList = computed(() => [
+  { id: 'ALL', name: 'All departments' },
+  ...scopedDepartments.value
+    .filter((d) => d.department_id !== null)
+    .map((d) => ({ id: String(d.department_id), name: `${d.department_name} (${d.department_code})` })),
+]);
 
 const selectedDepartmentLabel = computed(() => {
-  const match = departmentsList.find((d) => d.id === selectedDepartment.value);
-  return match ? match.name : overview.value.department || 'All Colleges & Departments';
+  if (selectedDepartment.value === 'ALL') return 'College overview';
+  const match = departmentsList.value.find((d) => d.id === selectedDepartment.value);
+  return match ? match.name : overview.value.department || 'College overview';
 });
 
+// Zeroed until the server answers: numbers shown to deans are measured, never placeholders.
 const longitudinalData = ref({
   accreditation_standard: 'AACCUP Area III: Curriculum & Instruction / Faculty Competence',
   active_term: {
-    term_code: '1SEM-2026',
-    term_name: '1st Semester AY 2026-2027 (Active Term)',
-    mean_score: 4.42,
-    negative_sentiment_pct: 10.0,
-    positive_sentiment_pct: 72.0,
-    response_rate_pct: 91.4,
+    term_code: '',
+    term_name: '',
+    mean_score: 0,
+    negative_sentiment_pct: 0,
+    positive_sentiment_pct: 0,
+    response_rate_pct: 0,
   },
   prior_term: {
-    term_code: '2SEM-2025',
-    term_name: '2nd Semester AY 2025-2026 (Baseline)',
-    mean_score: 4.14,
-    negative_sentiment_pct: 15.8,
-    positive_sentiment_pct: 68.4,
-    response_rate_pct: 87.2,
+    term_code: '',
+    term_name: '',
+    mean_score: 0,
+    negative_sentiment_pct: 0,
+    positive_sentiment_pct: 0,
+    response_rate_pct: 0,
   },
   deltas: {
-    mean_score_delta: 0.28,
-    negative_sentiment_shift_pct: -5.8,
-    positive_sentiment_shift_pct: 3.6,
-    action_plan_resolution_rate_pct: 94.2,
-    overall_trend: 'POSITIVE_GROWTH',
+    mean_score_delta: 0,
+    negative_sentiment_shift_pct: 0,
+    positive_sentiment_shift_pct: 0,
+    action_plan_resolution_rate_pct: 0,
+    overall_trend: '',
   },
   cluster_comparisons: [],
   historical_semesters: [],
@@ -444,6 +454,24 @@ async function fetchPerformanceQuartiles() {
   } catch (_) {}
 }
 
+// Participation (done vs. pending) is rendered by the shared ParticipationPanel;
+// the dean view keeps the latest totals for the tab badge and the department picker.
+const participationData = ref(null);
+
+function onParticipationLoaded({ data, scoped }) {
+  participationData.value = data;
+  if (scoped && Array.isArray(data?.department_breakdown)) {
+    scopedDepartments.value = data.department_breakdown;
+  }
+}
+
+const participationSummary = computed(() => {
+  const d = participationData.value || {};
+  const total = Number(d.total_students || 0);
+  const done = Number(d.total_completed_students || 0);
+  return { total, done, pending: Math.max(0, total - done) };
+});
+
 async function loadAllDeanData() {
   const deptId = selectedDepartment.value === 'ALL' ? null : Number(selectedDepartment.value);
   await Promise.all([
@@ -576,106 +604,39 @@ async function compileAaccupDossier() {
 <template>
   <main class="workspace-main dean-dashboard-workspace" aria-labelledby="dean-heading">
     <!-- Chapter II Wireframe Header -->
-    <section class="card dean-banner-card" data-testid="dean-analytical-overview">
-      <div class="dean-banner-top">
+    <section class="dean-banner-card" data-testid="dean-analytical-overview">
+      <header class="page-head">
         <div>
-          <span class="eyebrow-badge">
-            COLLEGE OVERVIEW
-          </span>
-          <h2 id="dean-heading" class="section-title">
-            {{ selectedDepartmentLabel }}
-          </h2>
-          <p class="section-subtitle">
-            Dean: <strong>{{ authStore.user?.name || 'Dr. V. Mendoza' }}</strong> ·
-            <strong>{{ overview.period || 'Final SET' }}</strong> ({{ authStore.activeTerm || overview.activeTerm }})
+          <h1 id="dean-heading">{{ selectedDepartmentLabel }}</h1>
+          <p class="page-meta">
+            <span>Dean <b>{{ authStore.user?.name || 'College Dean' }}</b></span>
+            <span v-if="authStore.user?.college_name" data-testid="dean-college-name">{{ authStore.user.college_name }}</span>
+            <span>{{ authStore.activeTerm || overview.activeTerm }}</span>
           </p>
-          <div class="department-filter-box" style="margin-top: 0.5rem;">
-            <label for="dean-dept-filter" style="font-size: 0.8rem; font-weight: 600; color: #374151; display: inline-flex; align-items: center; gap: 0.5rem;">
-              <span>Department:</span>
-              <select
-                id="dean-dept-filter"
-                v-model="selectedDepartment"
-                class="form-input"
-                style="width: auto; min-width: 220px;"
-                data-testid="dean-dept-filter-select"
-                @change="onDepartmentChange"
-              >
-                <option v-for="d in departmentsList" :key="d.id" :value="d.id">
-                  {{ d.name }}
-                </option>
-              </select>
-            </label>
-          </div>
-
-          <!-- Contextual Interpretation Notice -->
-          <div class="alert-banner alert-neutral" style="margin-top: 0.65rem; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 0.78rem; color: #475569;" data-testid="dean-nlp-contextual-note">
-            <strong>Contextual Interpretation Notice:</strong> Natural Language Processing (NLP) sentiment classifications and topic summaries provide supporting diagnostic context to inform developmental conversations and faculty growth plans. They do not constitute a definitive or punitive judgment of teaching quality.
-          </div>
         </div>
-
-        <div class="tab-switcher" role="tablist" aria-label="Dean Analytical Views">
-          <button
-            type="button"
-            role="tab"
-            class="tab-btn"
-            :class="{ active: activeTab === 'overview' }"
-            :aria-selected="activeTab === 'overview'"
-            data-testid="tab-dean-overview"
-            @click="activeTab = 'overview'"
-          >
-            Overview &amp; Watchlist
-          </button>
-          <button
-            type="button"
-            role="tab"
-            class="tab-btn"
-            :class="{ active: activeTab === 'longitudinal' }"
-            :aria-selected="activeTab === 'longitudinal'"
-            data-testid="tab-longitudinal-trends"
-            @click="activeTab = 'longitudinal'"
-          >
-            Semester Trends &amp; Dossier
-          </button>
-          <button
-            type="button"
-            role="tab"
-            class="tab-btn"
-            :class="{ active: activeTab === 'quality' }"
-            :aria-selected="activeTab === 'quality'"
-            data-testid="tab-quality-sus"
-            @click="activeTab = 'quality'"
-          >
-            System Quality &amp; Compliance
-          </button>
-          <button
-            type="button"
-            role="tab"
-            class="tab-btn"
-            :class="{ active: activeTab === 'qualitative' }"
-            :aria-selected="activeTab === 'qualitative'"
-            data-testid="tab-qualitative-synthesis"
-            @click="activeTab = 'qualitative'"
-          >
-            Written Feedback
-          </button>
-        </div>
-
-        <div style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.45rem;">
+        <div class="page-actions">
+          <label class="dept-filter department-filter-box" for="dean-dept-filter">
+            <span class="sr-only">Department</span>
+            <AppIcon name="building" />
+            <select
+              id="dean-dept-filter"
+              v-model="selectedDepartment"
+              class="form-input"
+              data-testid="dean-dept-filter-select"
+              @change="onDepartmentChange"
+            >
+              <option v-for="d in departmentsList" :key="d.id" :value="d.id">
+                {{ d.name }}
+              </option>
+            </select>
+          </label>
           <button
             type="button"
             class="btn-secondary btn-sm"
-            data-testid="dean-open-rubric-btn"
-            @click="showRubricModal = true"
-          >
-            Rating Rubric 📋
-          </button>
-          <button
-            type="button"
-            class="btn-primary btn-sm"
             data-testid="open-quivr-brain-btn"
             @click="showQuivrBrain = true"
           >
-            Search Feedback
+            <AppIcon name="search" /> Search feedback
           </button>
           <button
             type="button"
@@ -683,30 +644,102 @@ async function compileAaccupDossier() {
             data-testid="open-analytics-lab-btn"
             @click="showAnalyticsLab = true"
           >
-            Evaluation Analysis
+            <AppIcon name="chart" /> Analysis
+          </button>
+          <button
+            type="button"
+            class="btn-ghost btn-sm"
+            data-testid="dean-open-rubric-btn"
+            @click="showRubricModal = true"
+          >
+            <AppIcon name="clipboard" /> Rating guide
           </button>
         </div>
-      </div>
+      </header>
 
-      <!-- Live Database Metric Overview Strip -->
       <div class="metric-overview-grid tabular-nums" data-testid="dean-metrics-grid">
         <div class="metric-card">
           <span class="metric-label">Response Rate</span>
-          <strong class="metric-value">{{ responseRateDisplay }}% (Target: &gt;85%)</strong>
+          <strong class="metric-value">{{ responseRateDisplay }}%</strong>
+          <span class="metric-foot">Target above 85%</span>
         </div>
         <div class="metric-card">
-          <span class="metric-label">Evaluations Submitted<span class="sr-only"> Submissions Logged</span></span>
+          <span class="metric-label">Evaluations submitted<span class="sr-only"> Submissions Logged</span></span>
           <strong class="metric-value">{{ submissionsLoggedDisplay }}</strong>
         </div>
         <div class="metric-card">
-          <span class="metric-label">Average Completion Time</span>
+          <span class="metric-label">Average completion time</span>
           <strong class="metric-value">{{ averageEvalTimeDisplay }}</strong>
         </div>
         <div class="metric-card">
-          <span class="metric-label">Integrity Flags</span>
+          <span class="metric-label">Uniform-answer flags</span>
           <strong class="metric-value">{{ integrityFlagsDisplay }}</strong>
         </div>
       </div>
+
+      <div class="tab-switcher" role="tablist" aria-label="Dean views">
+        <button
+          type="button"
+          role="tab"
+          class="tab-btn"
+          :class="{ active: activeTab === 'participation' }"
+          :aria-selected="activeTab === 'participation'"
+          data-testid="tab-dean-participation"
+          @click="activeTab = 'participation'"
+        >
+          Participation
+          <span v-if="participationSummary.pending > 0" class="ui-badge-count">{{ participationSummary.pending }}</span>
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="tab-btn"
+          :class="{ active: activeTab === 'overview' }"
+          :aria-selected="activeTab === 'overview'"
+          data-testid="tab-dean-overview"
+          @click="activeTab = 'overview'"
+        >
+          Results &amp; watchlist
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="tab-btn"
+          :class="{ active: activeTab === 'qualitative' }"
+          :aria-selected="activeTab === 'qualitative'"
+          data-testid="tab-qualitative-synthesis"
+          @click="activeTab = 'qualitative'"
+        >
+          Written feedback
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="tab-btn"
+          :class="{ active: activeTab === 'longitudinal' }"
+          :aria-selected="activeTab === 'longitudinal'"
+          data-testid="tab-longitudinal-trends"
+          @click="activeTab = 'longitudinal'"
+        >
+          Trends &amp; dossier
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="tab-btn"
+          :class="{ active: activeTab === 'quality' }"
+          :aria-selected="activeTab === 'quality'"
+          data-testid="tab-quality-sus"
+          @click="activeTab = 'quality'"
+        >
+          Compliance
+        </button>
+      </div>
+
+      <p class="nlp-note" data-testid="dean-nlp-contextual-note">
+        <AppIcon name="info" :size="15" />
+        <span><strong>How to read the sentiment analysis:</strong> the AI labels written comments to help plan conversations and growth. It is supporting context, not a verdict on anyone's teaching.</span>
+      </p>
     </section>
 
     <div v-if="activeTab === 'overview'" class="dean-overview-panels">
@@ -768,7 +801,6 @@ async function compileAaccupDossier() {
       >
         <div class="iso-header">
           <div>
-            <span class="eyebrow-badge">PERFORMANCE TIERS</span>
             <h3 class="section-title">
               Faculty Performance Quartiles
               <span class="ui-hint" tabindex="0" data-hint="Distribution of evaluated instructors across High Distinction, Proficient, Developmental, and Priority Intervention tiers.">?</span>
@@ -797,7 +829,7 @@ async function compileAaccupDossier() {
           </div>
           <div class="metric-card">
             <span class="metric-label">Priority Intervention</span>
-            <strong class="metric-value" style="color: var(--danger);">{{ performanceQuartiles.tier_counts.priority_intervention }}</strong>
+            <strong class="metric-value" >{{ performanceQuartiles.tier_counts.priority_intervention }}</strong>
             <small class="metric-sub">μ &lt; 3.50 or Neg &gt; 35%</small>
           </div>
         </div>
@@ -807,9 +839,6 @@ async function compileAaccupDossier() {
       <section class="card completion-heatmap-card" style="margin-top: 1.25rem;" data-testid="completion-heatmap-card">
         <div class="iso-header">
           <div>
-            <span class="eyebrow-badge">
-              COMPLETION HEATMAP
-            </span>
             <h3 class="section-title">
               Section Evaluation Completion Heatmap
               <span class="ui-hint" tabindex="0" data-hint="Section-by-section evaluation completion rates across active departments.">?</span>
@@ -827,7 +856,7 @@ async function compileAaccupDossier() {
 
         <!-- Heatmap Color-Coded Performance Band Legend -->
         <div class="heatmap-legend tabular-nums" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-top: 0.85rem; font-size: 0.78rem;" data-testid="heatmap-legend">
-          <span style="font-weight: 600; color: var(--ink-muted);">Response Density Bands:</span>
+          <span style="font-weight: 600">Response Density Bands:</span>
           <span class="token-chip chip-signed">≥ 90% EXCELLENT ({{ heatmapData.band_distribution.EXCELLENT }} sections)</span>
           <span class="token-chip chip-signed">80–89% OPTIMAL ({{ heatmapData.band_distribution.OPTIMAL }} sections)</span>
           <span class="token-chip chip-unsigned">70–79% WARNING ({{ heatmapData.band_distribution.WARNING }} sections)</span>
@@ -835,7 +864,7 @@ async function compileAaccupDossier() {
         </div>
 
         <!-- Dean Heatmap Search and Target Filter Controls -->
-        <div class="filter-controls-row" style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-top: 0.85rem; padding: 0.65rem 0.85rem; background: #fbfcfb; border: 1px solid #e1e7e1; border-radius: 8px;">
+        <div class="filter-controls-row" style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-top: 0.85rem; padding: 0.65rem 0.85rem">
           <div style="flex: 1; min-width: 220px;">
             <input
               type="search"
@@ -844,7 +873,7 @@ async function compileAaccupDossier() {
               placeholder="Search course code, title, section, instructor…"
               data-testid="dean-heatmap-search-input"
               aria-label="Search college heatmap sections"
-              style="width: 100%; padding: 0.4rem 0.75rem; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px;"
+              style="width: 100%; padding: 0.4rem 0.75rem; font-size: 0.85rem"
             />
           </div>
           <div style="min-width: 170px;">
@@ -853,11 +882,11 @@ async function compileAaccupDossier() {
               class="form-input"
               data-testid="dean-heatmap-target-filter"
               aria-label="Filter sections by institutional target"
-              style="padding: 0.4rem 0.75rem; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 6px;"
+              style="padding: 0.4rem 0.75rem; font-size: 0.85rem"
             >
               <option value="ALL">All Participation Targets</option>
-              <option value="TARGET_MET">🎯 Target Met (&gt;85%)</option>
-              <option value="PENDING_CLEARANCE">⏳ Pending Target</option>
+              <option value="TARGET_MET">Target Met (&gt;85%)</option>
+              <option value="PENDING_CLEARANCE">Pending Target</option>
             </select>
           </div>
           <button
@@ -895,7 +924,7 @@ async function compileAaccupDossier() {
                 <td>{{ sec.evaluated_count }}</td>
                 <td>
                   <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <div style="flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden; min-width: 60px;">
+                    <div style="flex: 1; height: 8px; overflow: hidden; min-width: 60px">
                       <div :style="{ width: `${sec.completion_rate_pct}%`, background: sec.color_hex, height: '100%' }"></div>
                     </div>
                     <strong :style="{ color: sec.color_hex, fontSize: '0.85rem' }">
@@ -924,7 +953,7 @@ async function compileAaccupDossier() {
                 </td>
               </tr>
               <tr v-if="filteredHeatmapSections.length === 0" data-testid="dean-heatmap-empty-state">
-                <td colspan="8" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">
+                <td colspan="8" style="text-align: center; padding: 1.5rem">
                   {{ (heatmapData.sections || []).length === 0 ? 'No section heatmap records available yet for the active term.' : 'No course sections match your search or target filter. Try adjusting your query or resetting filters.' }}
                 </td>
               </tr>
@@ -953,11 +982,11 @@ async function compileAaccupDossier() {
           </button>
         </div>
 
-        <div v-if="flaggedWatchlist.length === 0" style="padding: 1.5rem; text-align: center; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; margin-top: 1rem;" data-testid="dean-watchlist-empty">
-          <div style="font-weight: 700; color: #166534; font-size: 1rem;">
+        <div v-if="flaggedWatchlist.length === 0" style="padding: 1.5rem; text-align: center; margin-top: 1rem" data-testid="dean-watchlist-empty">
+          <div style="font-weight: 700; font-size: 1rem">
             College-Wide Quality Benchmark Met
           </div>
-          <p style="margin: 0.35rem 0 0; font-size: 0.85rem; color: #15803d;">
+          <p style="margin: 0.35rem 0 0; font-size: 0.85rem">
             All academic department instructors currently meet or exceed institutional quality standards. Zero faculty members trigger the exception threshold (Mean &lt; 3.50 or Negative Sentiment &gt; 35%).
           </p>
         </div>
@@ -971,7 +1000,7 @@ async function compileAaccupDossier() {
           >
             <div class="watchlist-main tabular-nums">
               <strong>{{ item.faculty_name }} (Avg: {{ item.mean_score.toFixed(2) }} / 5.00)</strong>
-              <span aria-hidden="true">→</span>
+              <AppIcon name="arrow-right" :size="14" />
               <span class="watchlist-tag-badge">
                 Primary Tag: {{ item.primary_tag }}
               </span>
@@ -984,7 +1013,7 @@ async function compileAaccupDossier() {
                 style="margin-left: 0.5rem; font-size: 0.72rem;"
                 :data-testid="`plan-status-badge-${item.id}`"
               >
-                Status: {{ getPlanStatus(item.id) }}
+                Status: {{ humanizeStatus(getPlanStatus(item.id)) }}
               </span>
             </div>
             <div class="watchlist-sub tabular-nums">
@@ -1005,19 +1034,18 @@ async function compileAaccupDossier() {
             <div
               v-if="selectedInterventionPlan?.faculty_id === item.id"
               class="intervention-plan-box"
-              style="margin-top: 0.75rem; padding: 1rem 1.15rem; background: var(--canvas); border: 1px solid var(--line); border-radius: 10px;"
+              style="margin-top: 0.75rem; padding: 1rem 1.15rem"
               data-testid="dean-intervention-plan"
             >
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
-                <span class="eyebrow-badge">SCHOOL AAAAA13 • Academic Excellence Intervention</span>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem">
                 <span class="status-badge status-pending">
                   Urgency: {{ selectedInterventionPlan.urgency_level }}
                 </span>
               </div>
-              <h4 style="margin: 0.2rem 0; color: var(--ink);">
+              <h4 style="margin: 0.2rem 0">
                 Intervention Strategy: {{ selectedInterventionPlan.faculty_name }} ({{ selectedInterventionPlan.primary_cluster }})
               </h4>
-              <p style="font-size: 0.84rem; margin: 0.3rem 0; color: var(--ink-muted);">
+              <p style="font-size: 0.84rem; margin: 0.3rem 0">
                 Timeline: <strong>{{ selectedInterventionPlan.timeline }}</strong> • Target: <strong>Mean ≥ {{ selectedInterventionPlan.target_milestone.target_mean_score }} / Negative ≤ {{ selectedInterventionPlan.target_milestone.target_negative_pct }}%</strong>
               </p>
               <ul style="font-size: 0.84rem; margin: 0.4rem 0 0 1.2rem; padding: 0; line-height: 1.5;">
@@ -1025,8 +1053,8 @@ async function compileAaccupDossier() {
                   {{ act }}
                 </li>
               </ul>
-              <div style="display:flex;gap:0.5rem;margin-top:0.75rem;align-items:center;flex-wrap:wrap;">
-                <span style="font-size:0.8rem;font-weight:600;">Dean Sign-off / Milestone Action:</span>
+              <div style="display:flex; gap:0.5rem; margin-top:0.75rem; align-items:center; flex-wrap:wrap">
+                <span style="font-size:0.8rem; font-weight:600">Dean Sign-off / Milestone Action:</span>
                 <button
                   type="button"
                   class="btn-primary btn-xs"
@@ -1044,7 +1072,7 @@ async function compileAaccupDossier() {
                   Mark Milestone Resolved
                 </button>
               </div>
-              <p v-if="getDeanNotes(selectedInterventionPlan.faculty_id)" style="font-size:0.8rem;color:var(--forest);margin-top:0.4rem;">
+              <p v-if="getDeanNotes(selectedInterventionPlan.faculty_id)" style="font-size:0.8rem; margin-top:0.4rem">
                 <strong>Dean Verification Notes:</strong> {{ getDeanNotes(selectedInterventionPlan.faculty_id) }}
               </p>
             </div>
@@ -1060,7 +1088,6 @@ async function compileAaccupDossier() {
 
       <section class="card" style="margin-top: 1.25rem;" data-testid="dean-reusable-instructor-card">
         <div style="margin-bottom: 0.85rem;">
-          <span class="eyebrow-badge">FACULTY DIRECTORY</span>
           <h3 class="section-title">
             College Section &amp; Sentiment Explorer
             <span class="ui-hint" tabindex="0" data-hint="Sort by mean rating or negative sentiment share, toggle row density, or press / to search.">?</span>
@@ -1089,7 +1116,7 @@ async function compileAaccupDossier() {
               style="display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;"
               @click="openDeanInstructorReport(row)"
             >
-              Report 📊
+              Report <AppIcon name="chart" />
             </button>
           </template>
         </ReusableDataTable>
@@ -1097,14 +1124,20 @@ async function compileAaccupDossier() {
     </div>
 
     <!-- SOP 3: ISO/IEC 25010 & System Usability Scale (SUS) Tab -->
+    <div v-else-if="activeTab === 'participation'" class="dean-participation-panels">
+      <ParticipationPanel
+        endpoint="/api/dean/participation"
+        :department-id="selectedDepartment"
+        test-prefix="dean"
+        @loaded="onParticipationLoaded"
+      />
+    </div>
+
     <div v-else-if="activeTab === 'quality'" class="dean-quality-panels" data-testid="iso-sus-panel">
       <!-- AACCUP Level III & CHED CMO 46 Comprehensive Compliance Checklist -->
       <section class="card compliance-audit-card" style="margin-bottom: 1.25rem;" data-testid="compliance-audit-checklist-card">
         <div class="iso-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem;">
           <div>
-            <span class="eyebrow-badge">
-              QUALITY &amp; COMPLIANCE
-            </span>
             <h3 class="section-title">
               Accreditation &amp; Quality Standards Checklist
               <span class="ui-hint" tabindex="0" aria-label="Checklist details" data-hint="Verification of evaluation privacy, response quality, and accreditation requirements.">?</span>
@@ -1125,14 +1158,14 @@ async function compileAaccupDossier() {
             v-for="cp in complianceAuditData.checkpoints"
             :key="cp.criterion_id"
             class="checkpoint-card"
-            style="padding: 0.85rem 1rem; background: var(--canvas); border: 1px solid var(--line); border-radius: 10px;"
+            style="padding: 0.85rem 1rem"
             :data-testid="`checkpoint-${cp.criterion_id}`"
           >
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
-              <strong style="font-size: 0.82rem; color: var(--ink);">{{ cp.criterion_id }}: {{ cp.title }}</strong>
-              <span class="token-chip chip-signed" style="font-size: 0.68rem;">{{ cp.status }}</span>
+              <strong style="font-size: 0.82rem">{{ cp.criterion_id }}: {{ cp.title }}</strong>
+              <span class="token-chip chip-signed" style="font-size: 0.68rem;">{{ humanizeStatus(cp.status) }}</span>
             </div>
-            <p style="margin: 0.25rem 0 0; font-size: 0.76rem; color: var(--ink-muted); line-height: 1.45;">
+            <p style="margin: 0.25rem 0 0; font-size: 0.76rem; line-height: 1.45">
               {{ cp.evidence }}
             </p>
           </div>
@@ -1143,13 +1176,12 @@ async function compileAaccupDossier() {
       <section class="card accreditation-card" style="margin-bottom: 1.25rem;" data-testid="accreditation-compliance-card">
         <div class="iso-header">
           <div>
-            <span class="eyebrow-badge">SCHOOL AAAAA13 • Institutional Quality Assurance</span>
             <h3 class="section-title">
               Institutional Accreditation Compliance (AACCUP • CHED • ISO 25010)
               <span class="ui-hint" tabindex="0" aria-label="Accreditation alignment details" data-hint="Alignment with AACCUP Area III, CHED CMO 46 s. 2012, and 5-cluster pedagogical benchmarks.">?</span>
             </h3>
           </div>
-          <div style="display:flex;gap:0.5rem;align-items:center;">
+          <div style="display:flex; gap:0.5rem; align-items:center">
             <span class="badge-unlocked">
               AACCUP Area III: COMPLIANT
             </span>
@@ -1304,7 +1336,6 @@ async function compileAaccupDossier() {
       >
         <div class="iso-header">
           <div>
-            <span class="eyebrow-badge">ACCREDITATION DOSSIER</span>
             <h3 class="section-title">
               Accreditation Evidence Summary
               <span class="ui-hint" tabindex="0" aria-label="Evidence dossier details" data-hint="Summary of response sample size, overall rating average, watchlist resolution, and verification seal.">?</span>
@@ -1319,25 +1350,25 @@ async function compileAaccupDossier() {
           <div class="metric-card">
             <span class="metric-label">Statistical Margin of Error (95% CI)</span>
             <strong class="metric-value">±{{ evidenceDossier.statistical_representation.margin_of_error_pct }}%</strong>
-            <small style="color: var(--text-secondary);">
+            <small >
               {{ evidenceDossier.statistical_representation.total_evaluations_submitted }} / {{ evidenceDossier.statistical_representation.total_enrolled }} Sampled
             </small>
           </div>
           <div class="metric-card">
             <span class="metric-label">Institutional Composite Mean</span>
             <strong class="metric-value">{{ evidenceDossier.composite_domain_scores.institutional_mean_likert.toFixed(2) }} / 5.00</strong>
-            <small style="color: var(--brand-royal); font-weight: 600;">Exceeds 3.50 Benchmark</small>
+            <small style="font-weight: 600">Exceeds 3.50 Benchmark</small>
           </div>
           <div class="metric-card">
             <span class="metric-label">Watchlist Resolution Velocity</span>
             <strong class="metric-value">{{ evidenceDossier.watchlist_resolution_velocity.resolution_velocity_pct }}%</strong>
-            <small style="color: var(--text-secondary);">
+            <small >
               {{ evidenceDossier.watchlist_resolution_velocity.watchlist_flagged_count }} Priority Intervention(s)
             </small>
           </div>
           <div class="metric-card">
             <span class="metric-label">SHA-256 Document Digest</span>
-            <code style="font-size: 0.72rem; word-break: break-all; color: var(--ink);" data-testid="dossier-sha256-digest">
+            <code style="font-size: 0.72rem; word-break: break-all" data-testid="dossier-sha256-digest">
               {{ evidenceDossier.cryptographic_seal.document_digest }}
             </code>
           </div>
@@ -1346,15 +1377,14 @@ async function compileAaccupDossier() {
 
       <!-- Longitudinal Trends Header Card -->
       <section class="card longitudinal-banner-card" style="margin-bottom: 1.25rem;" data-testid="longitudinal-trends-card">
-        <div class="iso-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+        <div class="iso-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem">
           <div>
-            <span class="eyebrow-badge">SEMESTER TRENDS</span>
             <h3 class="section-title">
               Semester-Over-Semester Trend Comparison
               <span class="ui-hint" tabindex="0" aria-label="Semester trend details" data-hint="Comparison of current semester ratings, comment sentiment, and action plan resolution against the prior semester.">?</span>
             </h3>
           </div>
-          <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+          <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap">
             <button
               type="button"
               class="btn-primary btn-sm"
@@ -1379,13 +1409,12 @@ async function compileAaccupDossier() {
         <div
           v-if="compiledBundle"
           class="card dossier-compiled-bundle-card"
-          style="margin-top: 1rem; background: var(--canvas); border: 1px solid var(--forest); border-radius: 8px; padding: 1rem;"
+          style="margin-top: 1rem; padding: 1rem"
           data-testid="compiled-aaccup-bundle-card"
         >
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom: 0.5rem;">
             <div>
-              <span class="eyebrow-badge">OFFICIAL ACCREDITATION BUNDLE</span>
-              <h4 style="margin: 0.2rem 0; font-size: 1rem; color: var(--ink);">
+              <h4 style="margin: 0.2rem 0; font-size: 1rem">
                 {{ compiledBundle.bundle_filename }}
               </h4>
             </div>
@@ -1395,16 +1424,16 @@ async function compileAaccupDossier() {
           </div>
 
           <!-- Facilities Separation Banner -->
-          <div style="background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 0.75rem; margin-bottom: 0.75rem; font-size: 0.85rem;">
-            <div style="font-weight: 600; color: var(--forest); margin-bottom: 0.25rem;">
+          <div style="padding: 0.75rem; margin-bottom: 0.75rem; font-size: 0.85rem">
+            <div style="font-weight: 600; margin-bottom: 0.25rem">
               Instructional Pedagogy vs Campus Facilities Separation (Purity: {{ compiledBundle.facilities_isolation.pedagogical_purity_pct }}%)
             </div>
-            <p style="margin: 0; color: var(--ink-muted); font-size: 0.8rem; line-height: 1.4;">
+            <p style="margin: 0; font-size: 0.8rem; line-height: 1.4">
               {{ compiledBundle.facilities_isolation.governance_rule }} ({{ compiledBundle.facilities_isolation.campus_facilities_isolated_records }} non-instructional comment(s) isolated).
             </p>
           </div>
 
-          <div style="font-size: 0.82rem; color: var(--ink-muted); margin-bottom: 0.5rem;">
+          <div style="font-size: 0.82rem; margin-bottom: 0.5rem">
             <strong>Manifest Files:</strong>
             <span class="font-mono text-xs" style="margin-left: 0.5rem;">
               {{ (compiledBundle.manifest_files || []).join(' • ') }}
@@ -1416,31 +1445,31 @@ async function compileAaccupDossier() {
         <div class="metric-overview-grid tabular-nums" style="margin-top: 1rem;" data-testid="longitudinal-kpi-grid">
           <div class="metric-card">
             <span class="metric-label">Mean Rating Delta (Δμ)</span>
-            <strong class="metric-value" style="color: var(--brand-royal);">
+            <strong class="metric-value" >
               {{ longitudinalData.deltas.mean_score_delta >= 0 ? '+' : '' }}{{ longitudinalData.deltas.mean_score_delta.toFixed(2) }} vs Baseline
             </strong>
-            <small style="color: var(--text-muted); font-size: 0.75rem;">Active: {{ longitudinalData.active_term.mean_score.toFixed(2) }} | Prior: {{ longitudinalData.prior_term.mean_score.toFixed(2) }}</small>
+            <small style="font-size: 0.75rem">Active: {{ longitudinalData.active_term.mean_score.toFixed(2) }} | Prior: {{ longitudinalData.prior_term.mean_score.toFixed(2) }}</small>
           </div>
           <div class="metric-card">
             <span class="metric-label">Negative Sentiment Shift</span>
-            <strong class="metric-value" style="color: #16a34a;">
+            <strong class="metric-value" >
               {{ longitudinalData.deltas.negative_sentiment_shift_pct }}%
             </strong>
-            <small style="color: var(--text-muted); font-size: 0.75rem;">Current: {{ longitudinalData.active_term.negative_sentiment_pct }}% | Baseline: {{ longitudinalData.prior_term.negative_sentiment_pct }}%</small>
+            <small style="font-size: 0.75rem">Current: {{ longitudinalData.active_term.negative_sentiment_pct }}% | Baseline: {{ longitudinalData.prior_term.negative_sentiment_pct }}%</small>
           </div>
           <div class="metric-card">
             <span class="metric-label">Positive Sentiment Growth</span>
-            <strong class="metric-value" style="color: var(--brand-royal);">
+            <strong class="metric-value" >
               {{ longitudinalData.deltas.positive_sentiment_shift_pct >= 0 ? '+' : '' }}{{ longitudinalData.deltas.positive_sentiment_shift_pct }}%
             </strong>
-            <small style="color: var(--text-muted); font-size: 0.75rem;">Current: {{ longitudinalData.active_term.positive_sentiment_pct }}% | Baseline: {{ longitudinalData.prior_term.positive_sentiment_pct }}%</small>
+            <small style="font-size: 0.75rem">Current: {{ longitudinalData.active_term.positive_sentiment_pct }}% | Baseline: {{ longitudinalData.prior_term.positive_sentiment_pct }}%</small>
           </div>
           <div class="metric-card">
             <span class="metric-label">Action Plan Resolution</span>
-            <strong class="metric-value" style="color: var(--brand-royal);">
+            <strong class="metric-value" >
               {{ longitudinalData.deltas.action_plan_resolution_rate_pct }}% Resolved
             </strong>
-            <small style="color: var(--text-muted); font-size: 0.75rem;">Target: ≥ 80.0%</small>
+            <small style="font-size: 0.75rem">Target: ≥ 80.0%</small>
           </div>
         </div>
       </section>
@@ -1500,12 +1529,12 @@ async function compileAaccupDossier() {
               <td><strong>{{ c.cluster }}</strong></td>
               <td>{{ c.active_score.toFixed(2) }}</td>
               <td>{{ c.prior_score.toFixed(2) }}</td>
-              <td style="font-weight: 700; color: var(--brand-royal);">
+              <td style="font-weight: 700">
                 {{ c.delta >= 0 ? '+' : '' }}{{ c.delta.toFixed(2) }}
               </td>
               <td>
                 <span class="token-chip chip-signed" style="font-size: 0.75rem;">
-                  {{ c.status }}
+                  {{ humanizeStatus(c.status) }}
                 </span>
               </td>
             </tr>
@@ -1520,7 +1549,6 @@ async function compileAaccupDossier() {
       <section class="card synthesis-banner-card" style="margin-bottom: 1.25rem;" data-testid="calamancy-header-card">
         <div class="iso-header">
           <div>
-            <span class="eyebrow-badge">EVALUATION ANALYSIS</span>
             <h3 class="section-title">
               Professor's Evaluation Analysis
               <span
@@ -1536,7 +1564,7 @@ async function compileAaccupDossier() {
               Summary of student responses to the open-ended professor evaluation questions across all sections.
             </p>
           </div>
-          <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+          <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap">
             <button
               type="button"
               class="btn-secondary btn-xs"
@@ -1567,7 +1595,6 @@ async function compileAaccupDossier() {
       <section class="card descriptors-card" style="margin-bottom: 1.25rem;" data-testid="q1-top-descriptors-card">
         <div class="watchlist-header">
           <div>
-            <span class="eyebrow-badge">QUESTION 1</span>
             <h3 class="section-title">
               Three Words Describing the Professor
               <span
@@ -1581,7 +1608,7 @@ async function compileAaccupDossier() {
           </div>
         </div>
 
-        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.75rem;" data-testid="top-descriptors-cloud">
+        <div style="display:flex; gap:0.6rem; flex-wrap:wrap; margin-top:0.75rem" data-testid="top-descriptors-cloud">
           <div
             v-for="item in qualitativeSynthesis.top_descriptors"
             :key="item.word"
@@ -1591,11 +1618,11 @@ async function compileAaccupDossier() {
             :data-testid="`descriptor-${item.word.toLowerCase()}`"
           >
             <strong>{{ item.word }}</strong>
-            <span style="font-size:0.75rem;opacity:0.85;">(×{{ item.count }})</span>
+            <span style="font-size:0.75rem; opacity:0.85">(×{{ item.count }})</span>
             <span
               class="status-badge"
               :class="item.valence === 'Positive' ? 'status-completed' : (item.valence === 'Negative' ? 'status-flagged' : 'status-pending')"
-              style="font-size:0.68rem;padding:0.1rem 0.4rem;"
+              style="font-size:0.68rem; padding:0.1rem 0.4rem"
             >
               {{ item.valence }} ({{ item.polarity > 0 ? '+' : '' }}{{ item.polarity.toFixed(2) }})
             </span>
@@ -1607,7 +1634,6 @@ async function compileAaccupDossier() {
       <section class="card improvement-clusters-card" style="margin-bottom: 1.25rem;" data-testid="q2-improvement-clusters-card">
         <div class="watchlist-header">
           <div>
-            <span class="eyebrow-badge">QUESTION 2</span>
             <h3 class="section-title">
               Areas for Improvement
               <span
@@ -1622,16 +1648,16 @@ async function compileAaccupDossier() {
           </div>
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:0.85rem;margin-top:0.85rem;">
+        <div style="display:flex; flex-direction:column; gap:0.85rem; margin-top:0.85rem">
           <div
             v-for="clusterName in clustersList"
             :key="clusterName"
             class="cluster-box"
-            style="padding:0.95rem 1.1rem;background:var(--canvas);border:1px solid var(--line);border-radius:10px;"
+            style="padding:0.95rem 1.1rem"
             :data-testid="`cluster-box-${clusterName.toLowerCase().replace(/[^a-z0-9]/g, '-')}`"
           >
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
-              <strong style="color:var(--ink);font-size:0.95rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem">
+              <strong style="font-size:0.95rem">
                 {{ clusterName }}
               </strong>
               <span class="token-chip chip-signed tabular-nums" style="font-size:0.72rem;">
@@ -1639,11 +1665,11 @@ async function compileAaccupDossier() {
               </span>
             </div>
 
-            <div v-if="getClusterTopics(clusterName).length === 0" style="font-size:0.82rem;color:var(--ink-muted);font-style:italic;">
+            <div v-if="getClusterTopics(clusterName).length === 0" style="font-size:0.82rem; font-style:italic">
               No critical improvement topics flagged under this pedagogical dimension.
             </div>
 
-            <ul v-else style="margin:0;padding-left:1.2rem;font-size:0.85rem;line-height:1.5;">
+            <ul v-else style="margin:0; padding-left:1.2rem; font-size:0.85rem; line-height:1.5">
               <li
                 v-for="(tItem, tIdx) in getClusterTopics(clusterName)"
                 :key="tIdx"
@@ -1655,7 +1681,7 @@ async function compileAaccupDossier() {
                 <span
                   class="token-chip tabular-nums"
                   :class="tItem.valence === 'Negative' ? 'chip-unsigned' : 'chip-signed'"
-                  style="margin-left:0.35rem;font-size:0.7rem;padding:0.1rem 0.35rem;"
+                  style="margin-left:0.35rem; font-size:0.7rem; padding:0.1rem 0.35rem"
                 >
                   {{ tItem.valence }} ({{ tItem.polarity > 0 ? '+' : '' }}{{ tItem.polarity.toFixed(2) }})
                 </span>
@@ -1666,9 +1692,8 @@ async function compileAaccupDossier() {
       </section>
 
       <!-- Q3 & Q4: Key Strengths & Recommendations Split Grid -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.25rem;">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.25rem">
         <section class="card strengths-card" data-testid="q3-key-strengths-card">
-          <span class="eyebrow-badge">QUESTION 3</span>
           <h3 class="section-title" style="font-size:1.1rem;">
             Teaching Strengths
             <span
@@ -1679,7 +1704,7 @@ async function compileAaccupDossier() {
               data-hint="Key teaching strengths highlighted by students."
             >?</span>
           </h3>
-          <ul style="margin:0.75rem 0 0 1.2rem;padding:0;font-size:0.85rem;line-height:1.55;">
+          <ul style="margin:0.75rem 0 0 1.2rem; padding:0; font-size:0.85rem; line-height:1.55">
             <li
               v-for="(strItem, strIdx) in qualitativeSynthesis.key_strengths"
               :key="strIdx"
@@ -1692,7 +1717,6 @@ async function compileAaccupDossier() {
         </section>
 
         <section class="card recommendations-card" data-testid="q4-key-recommendations-card">
-          <span class="eyebrow-badge">QUESTION 4</span>
           <h3 class="section-title" style="font-size:1.1rem;">
             Student Recommendations
             <span
@@ -1703,7 +1727,7 @@ async function compileAaccupDossier() {
               data-hint="Actionable student suggestions for course delivery and pacing."
             >?</span>
           </h3>
-          <ul style="margin:0.75rem 0 0 1.2rem;padding:0;font-size:0.85rem;line-height:1.55;">
+          <ul style="margin:0.75rem 0 0 1.2rem; padding:0; font-size:0.85rem; line-height:1.55">
             <li
               v-for="(recItem, recIdx) in qualitativeSynthesis.key_recommendations"
               :key="recIdx"
@@ -1721,7 +1745,7 @@ async function compileAaccupDossier() {
     <div
       v-if="showSectionReportModal && selectedSectionReport"
       class="modal-backdrop"
-      style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem;"
+      style="position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem"
       data-testid="dean-section-report-modal"
       role="dialog"
       aria-modal="true"
@@ -1730,18 +1754,17 @@ async function compileAaccupDossier() {
     >
       <div
         class="modal-card"
-        style="background: #ffffff; border-radius: 12px; max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 1.75rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); border: 1px solid #d1d5db;"
+        style="max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 1.75rem"
       >
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 1rem; margin-bottom: 1.25rem">
           <div>
-            <span class="eyebrow-badge">EVALUATION BREAKDOWN · COLLEGE DEAN</span>
-            <h3 id="dean-report-title" style="margin: 0.25rem 0 0; font-size: 1.25rem; font-weight: 700; color: #103c2e;">
+            <h3 id="dean-report-title" style="margin: 0.25rem 0 0; font-size: 1.25rem; font-weight: 700">
               {{ selectedSectionReport.course_code }} — {{ selectedSectionReport.course_title }}
             </h3>
-            <p style="margin: 0.2rem 0 0; font-size: 0.85rem; color: #4b5563;">
+            <p style="margin: 0.2rem 0 0; font-size: 0.85rem">
               Assigned Instructor: <strong>{{ selectedSectionReport.faculty_name }}</strong> · Section: <code>{{ selectedSectionReport.section_code }}</code>
             </p>
-            <p style="margin: 0.15rem 0 0; font-size: 0.78rem; color: #6b7280;">
+            <p style="margin: 0.15rem 0 0; font-size: 0.78rem">
               {{ selectedDepartmentLabel }} · {{ authStore.activeTerm || '1st Semester AY 2026-2027' }}
             </p>
           </div>
@@ -1752,17 +1775,17 @@ async function compileAaccupDossier() {
             data-testid="close-dean-report-modal-btn"
             @click="closeDeanSectionReport"
           >
-            ✕ Close
+            <AppIcon name="x" /> Close
           </button>
         </div>
 
         <!-- Completion Turnout Banner -->
-        <div style="display: flex; align-items: center; justify-content: space-between; background: #f7faf8; border: 1px solid #dce7dc; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem">
           <div>
-            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: #103c2e; letter-spacing: 0.05em;">
+            <div style="font-size: 0.75rem; font-weight: 600">
               Evaluation Completion Rate
             </div>
-            <div style="font-size: 2rem; font-weight: 800; color: #103c2e; margin-top: 0.15rem;">
+            <div style="font-size: 2rem; font-weight: 800; margin-top: 0.15rem">
               {{ selectedSectionReport.completion_rate_pct }}%
             </div>
           </div>
@@ -1773,9 +1796,9 @@ async function compileAaccupDossier() {
               style="font-size: 0.82rem; padding: 0.35rem 0.8rem;"
               data-testid="dean-report-target-status"
             >
-              {{ selectedSectionReport.target_met ? '✓ TARGET MET (≥85%)' : 'PENDING TARGET' }}
+              {{ selectedSectionReport.target_met ? 'TARGET MET (≥85%)' : 'PENDING TARGET' }}
             </span>
-            <div style="font-size: 0.8rem; color: #4b5563; margin-top: 0.35rem;">
+            <div style="font-size: 0.8rem; margin-top: 0.35rem">
               Turnout: <strong>{{ selectedSectionReport.evaluated_count }}</strong> of <strong>{{ selectedSectionReport.enrolled_count }}</strong> students evaluated
             </div>
           </div>
@@ -1783,7 +1806,7 @@ async function compileAaccupDossier() {
 
         <!-- 5 Pedagogical Clusters Estimation -->
         <div style="margin-bottom: 1.25rem;">
-          <h4 style="font-size: 0.9rem; font-weight: 700; color: #1f2937; margin: 0 0 0.65rem;">
+          <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 0.65rem">
             Estimated Pedagogical Clusters Distribution
           </h4>
           <div style="display: flex; flex-direction: column; gap: 0.5rem;">
@@ -1798,15 +1821,15 @@ async function compileAaccupDossier() {
               :key="cluster.name"
               style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.82rem;"
             >
-              <div style="width: 210px; font-weight: 600; color: #374151;">
+              <div style="width: 210px; font-weight: 600">
                 {{ cluster.name }}
               </div>
-              <div style="flex: 1; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+              <div style="flex: 1; height: 8px; overflow: hidden">
                 <div
-                  :style="{ width: `${(cluster.score / 5) * 100}%`, background: '#103c2e', height: '100%' }"
+                  :style="{ width: `${(cluster.score / 5) * 100}%`, background: '#0f172a', height: '100%' }"
                 ></div>
               </div>
-              <div style="width: 45px; text-align: right; font-weight: 700; color: #111827;">
+              <div style="width: 45px; text-align: right; font-weight: 700">
                 {{ cluster.score.toFixed(2) }}
               </div>
             </div>
@@ -1814,15 +1837,15 @@ async function compileAaccupDossier() {
         </div>
 
         <!-- Sentiment & Feedback Summary -->
-        <div style="border-top: 1px solid #f3f4f6; padding-top: 1rem; margin-bottom: 1.25rem;">
-          <h4 style="font-size: 0.9rem; font-weight: 700; color: #1f2937; margin: 0 0 0.5rem;">
+        <div style="padding-top: 1rem; margin-bottom: 1.25rem">
+          <h4 style="font-size: 0.9rem; font-weight: 700; margin: 0 0 0.5rem">
             NLP Sentiment Polarity Overview
           </h4>
           <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
             <span class="token-chip chip-signed" style="font-size: 0.78rem;">
               Positive: 74.5%
             </span>
-            <span class="token-chip" style="font-size: 0.78rem; background: #f3f4f6;">
+            <span class="token-chip" style="font-size: 0.78rem">
               Neutral: 16.0%
             </span>
             <span class="token-chip chip-signed" style="font-size: 0.78rem;">
@@ -1835,30 +1858,30 @@ async function compileAaccupDossier() {
         </div>
 
         <!-- Institutional Tripartite Signature Blocks -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed #d1d5db; padding-top: 1.25rem; margin-bottom: 1.25rem; font-size: 0.78rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; padding-top: 1.25rem; margin-bottom: 1.25rem; font-size: 0.78rem">
           <div style="text-align: center; min-width: 150px;">
-            <div style="border-bottom: 1px solid #111827; padding-bottom: 0.2rem; font-weight: 700; color: #111827;">
+            <div style="padding-bottom: 0.2rem; font-weight: 700">
               {{ selectedSectionReport.faculty_name }}
             </div>
-            <div style="color: #6b7280; margin-top: 0.25rem;">Course Instructor</div>
+            <div style="margin-top: 0.25rem">Course Instructor</div>
           </div>
           <div style="text-align: center; min-width: 150px;">
-            <div style="border-bottom: 1px solid #111827; padding-bottom: 0.2rem; font-weight: 700; color: #111827;">
+            <div style="padding-bottom: 0.2rem; font-weight: 700">
               {{ selectedDepartmentLabel }}
             </div>
-            <div style="color: #6b7280; margin-top: 0.25rem;">Department Chair Reviewed</div>
+            <div style="margin-top: 0.25rem">Department Chair Reviewed</div>
           </div>
           <div style="text-align: center; min-width: 150px;">
-            <div style="border-bottom: 1px solid #111827; padding-bottom: 0.2rem; font-weight: 700; color: #111827;">
+            <div style="padding-bottom: 0.2rem; font-weight: 700">
               OFFICE OF THE COLLEGE DEAN
             </div>
-            <div style="color: #6b7280; margin-top: 0.25rem;">Dean Approval &amp; Certification</div>
+            <div style="margin-top: 0.25rem">Dean Approval &amp; Certification</div>
           </div>
         </div>
 
         <!-- Footer / Print actions -->
-        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; padding-top: 1rem; flex-wrap: wrap; gap: 0.5rem;">
-          <small style="font-size: 0.72rem; color: #6b7280;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; flex-wrap: wrap; gap: 0.5rem">
+          <small style="font-size: 0.72rem">
             School AAAAA13 · AACCUP Level III Accreditation Audit
           </small>
           <div style="display: flex; gap: 0.5rem;">
@@ -1868,7 +1891,7 @@ async function compileAaccupDossier() {
               data-testid="print-dean-report-btn"
               @click="printDeanSectionReport"
             >
-              🖨 Print / Export
+              <AppIcon name="printer" /> Print / Export
             </button>
             <button
               type="button"

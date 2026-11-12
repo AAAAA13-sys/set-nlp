@@ -3315,4 +3315,179 @@ class EvaluaTechBackendSuiteTest extends TestCase
         $this->assertSame(403, $crossProbeRes->getStatusCode());
         $this->assertSame('FORBIDDEN_DEPARTMENT_SCOPE', $crossProbeRes->getData(true)['code']);
     }
+
+    public function test_40_supervisor_participation_tracker_scoping_and_anonymity(): void
+    {
+        $controller = new \App\Http\Controllers\Api\DeanAnalyticsController(new \App\Services\DecoupledEvaluationService($this->pdo));
+        $call = function (object $user, array $input = []) use ($controller) {
+            $req = new \Illuminate\Http\Request($input);
+            $req->setUserResolver(fn () => $user);
+            $res = $controller->participationTracker($req);
+            return [$res->getStatusCode(), $res->getData(true)];
+        };
+
+        $collegeDean = new class {
+            public int $id = 2;
+            public string $role = 'dean';
+            public string $college_name = 'College of Computer Studies';
+            public ?int $department_id = null;
+        };
+        $chair = new class {
+            public int $id = 3;
+            public string $role = 'chair';
+            public int $department_id = 1;
+        };
+        $admin = new class {
+            public int $id = 1;
+            public string $role = 'admin';
+        };
+
+        // Dean with omitted department sees only their college, with done-vs-pending totals.
+        [$status, $data] = $call($collegeDean);
+        $this->assertSame(200, $status);
+        $this->assertGreaterThan(0, $data['total_students']);
+        $this->assertSame($data['total_students'] - $data['total_completed_students'], $data['total_pending_students']);
+        $this->assertNotEmpty($data['department_breakdown']);
+        $this->assertSame($data['total_students'], array_sum(array_column($data['department_breakdown'], 'total_students')));
+        foreach ($data['department_breakdown'] as $dept) {
+            $this->assertSame(1, $dept['department_id'], 'Breakdown must stay inside the dean\'s college');
+        }
+        $ids = array_column($data['pending_students'], 'institutional_id');
+        $this->assertContains('2024-10892', $ids, 'Seeded student with 3 pending evaluations must be listed');
+        foreach ($data['pending_students'] as $s) {
+            $this->assertSame(1, $s['department_id'], 'College Dean must not see students outside their college');
+            $this->assertGreaterThan(0, $s['pending_count']);
+            $this->assertCount($s['pending_count'], $s['pending_courses']);
+            // Completion status only: no ratings, comments, hashes, or clearance tokens.
+            foreach (['ratings', 'comment', 'comment_hash', 'clearance_token', 'sentiment'] as $forbidden) {
+                $this->assertArrayNotHasKey($forbidden, $s);
+            }
+        }
+
+        // Admin sees the whole institution, so at least as many students as the college dean.
+        [$adminStatus, $adminData] = $call($admin);
+        $this->assertSame(200, $adminStatus);
+        $this->assertGreaterThanOrEqual($data['total_students'], $adminData['total_students']);
+
+        // Containment: dean cannot probe another college, chair cannot probe another department.
+        [$deanCross] = $call($collegeDean, ['department_id' => 2]);
+        $this->assertSame(403, $deanCross);
+        [$chairCross] = $call($chair, ['department_id' => 2]);
+        $this->assertSame(403, $chairCross);
+        [$chairOwn, $chairData] = $call($chair);
+        $this->assertSame(200, $chairOwn);
+        foreach ($chairData['pending_students'] as $s) {
+            $this->assertSame(1, $s['department_id']);
+        }
+
+        // Non-supervisor roles are rejected.
+        $student = new class {
+            public int $id = 10;
+            public string $role = 'student';
+        };
+        [$studentStatus] = $call($student);
+        $this->assertSame(403, $studentStatus);
+    }
+
+    /**
+     * Test 41: Registrar-issued one-time credentials and mandatory first-sign-in password change.
+     * No account created by import or by the admin console may share a known default password.
+     */
+    public function test_41_one_time_credentials_and_mandatory_password_change(): void
+    {
+        $pdo = new PDO('sqlite::memory:');
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        $pdo->exec('PRAGMA foreign_keys = ON');
+        new \App\Services\DecoupledEvaluationService($pdo);
+        $auth = new \App\Http\Controllers\Api\AuthController($pdo);
+        $login = static function (string $id, string $password) use ($auth): array {
+            $res = $auth->login(new \Illuminate\Http\Request(['identifier' => $id, 'password' => $password]));
+            return [$res->getStatusCode(), $res->getData(true)];
+        };
+
+        // 1. Roster import issues a distinct random password per new account and returns it once.
+        $rows = [
+            ['student_institutional_id' => '2026-00001', 'student_name' => 'Ana Reyes', 'course_code' => 'CS-101', 'section_code' => 'A', 'instructor_name' => 'Prof. L. Santos'],
+            ['student_institutional_id' => '2026-00002', 'student_name' => 'Ben Cruz', 'course_code' => 'CS-101', 'section_code' => 'A', 'instructor_name' => 'Prof. L. Santos'],
+        ];
+        $import = (new \App\Services\RosterImportService($pdo))->importRows($rows);
+        $this->assertSame('IMPORTED', $import['status']);
+        $issued = [];
+        foreach ($import['issued_credentials'] as $cred) {
+            $issued[$cred['institutional_id']] = $cred['temporary_password'];
+            $this->assertGreaterThanOrEqual(12, strlen($cred['temporary_password']));
+        }
+        $this->assertCount(3, $issued, 'two students and one faculty account are new');
+        $this->assertCount(3, array_unique($issued), 'temporary passwords are unique per account');
+
+        // Re-importing existing people issues nothing new (no silent password resets).
+        $again = (new \App\Services\RosterImportService($pdo))->importRows([$rows[0]]);
+        $this->assertSame([], $again['issued_credentials']);
+
+        // Only hashes are stored, and the old shared default no longer works for anyone.
+        $stored = $pdo->query("SELECT password, must_change_password FROM users WHERE institutional_id = '2026-00001'")->fetch();
+        $this->assertStringStartsWith('$2y$', $stored['password']);
+        $this->assertSame(1, (int) $stored['must_change_password']);
+        $this->assertSame(401, $login('2026-00001', 'evaluatech123')[0]);
+
+        // 2. The temporary password signs in, and the session is flagged for a mandatory change.
+        [$status, $data] = $login('2026-00001', $issued['2026-00001']);
+        $this->assertSame(200, $status);
+        $this->assertTrue($data['user']['must_change_password']);
+        $user = $auth->verifyBearerHeader('Bearer ' . $data['token']);
+        $this->assertTrue($user->must_change_password);
+        $this->assertTrue(\App\Http\Controllers\Api\AuthController::isAllowedBeforePasswordChange('/api/auth/password'));
+        $this->assertFalse(\App\Http\Controllers\Api\AuthController::isAllowedBeforePasswordChange('/api/student/queue'));
+
+        $change = static function (array $input) use ($auth, $user): array {
+            $req = new \Illuminate\Http\Request($input);
+            $req->setUserResolver(static fn () => $user);
+            $res = $auth->changePassword($req);
+            return [$res->getStatusCode(), $res->getData(true)];
+        };
+
+        // 3. Policy: wrong current password, too short, no digit, personal identifier, reuse, injection.
+        $temp = $issued['2026-00001'];
+        $this->assertSame('INVALID_CURRENT_PASSWORD', $change(['current_password' => 'nope', 'new_password' => 'Brand1NewPass'])[1]['code']);
+        $this->assertSame('WEAK_PASSWORD', $change(['current_password' => $temp, 'new_password' => 'short1'])[1]['code']);
+        $this->assertSame('WEAK_PASSWORD', $change(['current_password' => $temp, 'new_password' => 'nodigitsatall'])[1]['code']);
+        $this->assertSame('WEAK_PASSWORD', $change(['current_password' => $temp, 'new_password' => 'my2026-00001pass'])[1]['code']);
+        $this->assertSame('WEAK_PASSWORD', $change(['current_password' => $temp, 'new_password' => $temp])[1]['code']);
+        $this->assertSame(422, $change(['current_password' => ['$ne' => ''], 'new_password' => 'Brand1NewPass'])[0]);
+
+        // 4. A valid change clears the flag; old password stops working, new one works.
+        [$okStatus, $okData] = $change(['current_password' => $temp, 'new_password' => 'Sampaguita2026']);
+        $this->assertSame(200, $okStatus);
+        $this->assertTrue($okData['changed']);
+        $this->assertSame(0, (int) $pdo->query("SELECT must_change_password FROM users WHERE institutional_id = '2026-00001'")->fetchColumn());
+        $this->assertSame(401, $login('2026-00001', $temp)[0]);
+        [$newStatus, $newData] = $login('2026-00001', 'Sampaguita2026');
+        $this->assertSame(200, $newStatus);
+        $this->assertFalse($newData['user']['must_change_password']);
+
+        // 5. Admin console: no password -> random one returned once; weak chosen password -> rejected.
+        $setup = new \App\Services\AcademicSetupService($pdo);
+        $created = $setup->createUser(['name' => 'Carla Dean', 'email' => 'cdean@aaaaa13.edu', 'institutional_id' => 'DEAN-0099', 'role' => 'dean']);
+        $this->assertTrue($created['must_change_password']);
+        $this->assertGreaterThanOrEqual(12, strlen($created['temporary_password']));
+        $this->assertSame(200, $login('DEAN-0099', $created['temporary_password'])[0]);
+        $this->assertSame(401, $login('DEAN-0099', 'evaluatech123')[0]);
+        try {
+            $setup->createUser(['name' => 'Weak Pass', 'email' => 'weak@aaaaa13.edu', 'institutional_id' => 'FAC-0099', 'role' => 'faculty', 'password' => 'evaluatech']);
+            $this->fail('A password without digits must be rejected');
+        } catch (\InvalidArgumentException $e) {
+            $this->assertStringContainsString('Initial password rejected', $e->getMessage());
+        }
+
+        // 6. Admin reset re-arms the mandatory change.
+        $setup->updateUser((int) $created['user_id'], ['password' => 'Narra2026Reset']);
+        $this->assertSame(1, (int) $pdo->query("SELECT must_change_password FROM users WHERE institutional_id = 'DEAN-0099'")->fetchColumn());
+
+        // 7. Audit trail records the change without any password material.
+        $audit = (string) json_encode($pdo->query('SELECT * FROM security_audit_logs')->fetchAll());
+        $this->assertStringContainsString('AUTH_PASSWORD_CHANGED', $audit);
+        $this->assertFalse(str_contains($audit, 'Sampaguita2026'), "audit log must not contain password material");
+        $this->assertFalse(str_contains($audit, $temp), "audit log must not contain password material");
+    }
 }

@@ -254,3 +254,13 @@ export function getRoleTierBadge(role) {
   }
 }
 
+
+/**
+ * Turn backend status codes (PENDING_REVIEW, TARGET_MET) into plain sentence-case labels.
+ */
+export function humanizeStatus(value) {
+  const text = String(value ?? '').trim();
+  if (!text) return '';
+  const words = text.replace(/[_-]+/g, ' ').toLowerCase();
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}

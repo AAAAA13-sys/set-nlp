@@ -1,4 +1,5 @@
 <script setup>
+import AppIcon from '../AppIcon.vue';
 import { computed, ref } from 'vue';
 import { useAcademicSetupStore } from '../../stores/academicSetup.js';
 
@@ -113,16 +114,16 @@ function exportSystemUsersCsv() {
           type="button"
           class="btn-secondary"
           data-testid="export-users-csv-btn"
-          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; font-weight: 600;"
+          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; font-weight: 600"
           @click="exportSystemUsersCsv"
         >
-          📊 Export Users (CSV)
+          <AppIcon name="chart" /> Export Users (CSV)
         </button>
         <button
           type="button"
           class="btn-primary"
           data-testid="add-user-btn"
-          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; border-radius: 8px; font-weight: 600;"
+          style="font-size: 0.85rem; padding: 0.45rem 0.85rem; font-weight: 600"
           @click="emit('new-user')"
         >
           + New User Account
@@ -152,23 +153,23 @@ function exportSystemUsersCsv() {
             <td>
               <div style="display: flex; align-items: center; gap: 0.65rem;">
                 <div
-                  style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.78rem; color: #ffffff;"
+                  style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.78rem"
                   :style="{
-                    background: u.role === 'admin' ? '#7c2d12' : (u.role === 'dean' ? '#1e3a8a' : (u.role === 'chair' ? '#065f46' : (u.role === 'faculty' ? '#103c2e' : '#4b5563')))
+                    background: u.role === 'admin' ? '#7c2d12' : (u.role === 'dean' ? '#1e3a8a' : (u.role === 'chair' ? '#065f46' : (u.role === 'faculty' ? '#0f172a' : '#4b5563')))
                   }"
                 >
                   {{ (u.name || 'U').charAt(0).toUpperCase() }}
                 </div>
                 <div>
-                  <strong style="color: #111827; font-size: 0.88rem;">{{ u.name }}</strong>
+                  <strong style="font-size: 0.88rem">{{ u.name }}</strong>
                 </div>
               </div>
             </td>
             <td>
-              <code style="font-family: monospace; font-size: 0.82rem; background: #f3f4f6; padding: 0.15rem 0.4rem; border-radius: 4px;">{{ u.institutional_id || 'N/A' }}</code>
+              <code style="font-size: 0.82rem; padding: 0.15rem 0.4rem">{{ u.institutional_id || 'N/A' }}</code>
             </td>
             <td>
-              <span style="font-size: 0.82rem; color: #4b5563;">{{ u.email }}</span>
+              <span style="font-size: 0.82rem">{{ u.email }}</span>
             </td>
             <td>
               <span
@@ -187,8 +188,8 @@ function exportSystemUsersCsv() {
               </span>
             </td>
             <td>
-              <span style="font-size: 0.82rem; color: #374151;">{{ u.department_name }}</span>
-              <div style="font-size: 0.72rem; color: #6b7280;">({{ u.department_code }})</div>
+              <span style="font-size: 0.82rem">{{ u.department_name }}</span>
+              <div style="font-size: 0.72rem">({{ u.department_code }})</div>
             </td>
             <td>
               <span
@@ -209,7 +210,7 @@ function exportSystemUsersCsv() {
                   style="font-weight: 600;"
                   @click="emit('edit-user', u)"
                 >
-                  Edit ✏️
+                  Edit <AppIcon name="edit" />
                 </button>
                 <button
                   type="button"
@@ -222,13 +223,13 @@ function exportSystemUsersCsv() {
                   }"
                   @click="emit('toggle-user-status', u)"
                 >
-                  {{ u.is_active ? 'Deactivate ⏸️' : 'Activate ▶️' }}
+                  {{ u.is_active ? 'Deactivate' : 'Activate ▶️' }}
                 </button>
               </div>
             </td>
           </tr>
           <tr v-if="filteredSystemUsers.length === 0" data-testid="users-empty-state">
-            <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+            <td colspan="7" style="text-align: center; padding: 2rem">
               No system user accounts match the specified search or role filter.
             </td>
           </tr>

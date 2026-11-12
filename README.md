@@ -2,9 +2,9 @@
 
 > **Automated Student Evaluation of Teachers (SET) Platform with Dual-Token Cryptographic Decoupling, 10,000-Sample Empirical Multilingual ML Pipeline, Coolors Periwinkle Design System, and AACCUP Level III Governance.**
 
-[![Tests: 181/181 Passing](https://img.shields.io/badge/Tests-181%2F181%20PASS-brightgreen.svg?style=flat-square)](scripts/verify-all.ps1)
-[![ML Accuracy: 98.80%](https://img.shields.io/badge/ML%20Accuracy-98.80%25-blue.svg?style=flat-square)](docs/analysis/MODEL_COMPARISON_REPORT.md)
-[![ML Latency: 0.209ms](https://img.shields.io/badge/ML%20Latency-0.209ms-success.svg?style=flat-square)](docs/analysis/MODEL_COMPARISON_REPORT.md)
+[![Tests: 187/187 Passing](https://img.shields.io/badge/Tests-187%2F187%20PASS-brightgreen.svg?style=flat-square)](scripts/verify-all.ps1)
+[![Sentiment accuracy on real comments: 87.2%](https://img.shields.io/badge/Sentiment%20(real%20comments)-87.2%25-blue.svg?style=flat-square)](docs/analysis/MODEL_COMPARISON_REPORT.md)
+[![ML Latency: 1.5ms](https://img.shields.io/badge/ML%20Latency-1.5ms-success.svg?style=flat-square)](analytics/models/model_metadata.json)
 [![Security: 63/63 Enforced](https://img.shields.io/badge/OWASP%20Controls-63%2F63%20ENFORCED-blueviolet.svg?style=flat-square)](app/Services/SecurityAuditService.php)
 [![Accessibility: WCAG 2.2 AAA](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AAA-informational.svg?style=flat-square)](resources/css/app.css)
 [![Zero Permits Policy](https://img.shields.io/badge/Governance-Zero%20Permits%20Policy-teal.svg?style=flat-square)](docs/INSTITUTIONAL_SYSTEM_ARCHITECTURE.md)
@@ -13,7 +13,7 @@
 - **Institution**: **School AAAAA13**
 - **Repository Reference**: [https://github.com/AAAAA13-sys/set-nlp](https://github.com/AAAAA13-sys/set-nlp)
 - **Showcase Video Artifact**: [`docs/showcase/evalua_tech_showcase.webm`](docs/showcase/evalua_tech_showcase.webm) (Interactive Chromium Playwright Walkthrough)
-- **NLP Pipeline Reference**: 10,000-Sample Multilingual ML Pipeline (`scikit-learn` TF-IDF $(1,3)$ + Calibrated Logistic Regression) + `calamanCy` & VADER Polarity Engine ($P \in [-1.0, +1.0]$)
+- **NLP Pipeline Reference**: Multilingual ML Pipeline (`scikit-learn` word 1-2 + character 2-5 n-gram TF-IDF + Logistic Regression) + `calamanCy` & VADER Polarity Engine ($P \in [-1.0, +1.0]$)
 - **Specialized Brag Skill**: [`.agents/skills/agency-github-brag/SKILL.md`](.agents/skills/agency-github-brag/SKILL.md)
 
 ---
@@ -53,15 +53,16 @@
 - **Digital Evaluation Completion Certificate**: Students receive a cryptographically signed completion certificate (`EVT.CLR.*`) immediately upon evaluating all enrolled courses.
 - **Non-Coercive Follow-Ups**: Administrators can export pending student rosters and generate polite reminder notices with zero student-to-response linkage.
 
-### 1.4 10,000-Sample Empirical Multilingual ML Pipeline (`analytics/`)
-- **Corpus Scale & Stratification**: 10,000 unique student evaluation comments across English (3,390), Tagalog (3,258), and Taglish (3,352). Stratified 70/30 (`seed = 42`) into 7,000 Development and 3,000 Untouched Held-Out Test samples.
-- **Empirical Blind Test Benchmark (3,000 Samples)**:
-  - **Overall Accuracy**: **$98.80\%$** ($2,964 / 3,000$ correct), outperforming rule-based baselines ($89.23\%$) by **$+9.57\%$**.
-  - **Inference Latency**: **$0.209\text{ ms}$** raw model inference ($2.39\text{ ms}$ end-to-end multi-tier pipeline).
-  - **Negative Sentiment Recall**: **$99.07\%$** ($1,281 / 1,293$) — critical for Dean and Chair early-warning interventions.
-  - **Macro F1-Score**: **$0.9875$** across Positive ($0.9872$), Neutral ($0.9856$), and Negative ($0.9896$).
-  - **Language Generalization**: English: $98.33\%$, Tagalog: $99.28\%$, Taglish: $98.81\%$.
-- **5-Cluster Pedagogical Domain Classifier**: Achieves $98.57\%$ accuracy and $0.9606$ Macro F1, with explicit isolation of non-teaching campus facilities feedback (*Unclassified / Needs Review*).
+### 1.4 Multilingual ML Pipeline (`analytics/`)
+- **Training data**: 10,000 comments in English, Tagalog and Taglish. **800 are real student comments**; the other 9,200 were generated from templates by `scripts/generate_10k_dataset.py`. Split 70/30 (`seed = 42`) into 7,000 development and 3,000 held-out test rows (227 of the test rows are real).
+- **Model**: word 1-2 grams + character 2-5 grams (robust to Taglish spelling variants) with Logistic Regression; real comments are weighted x5 in training. Selected by 5-fold cross-validation scored on real comments only (`scripts/train_ml_model.py`).
+- **Headline results, measured on the 227 real held-out student comments** (`analytics/models/model_metadata.json`):
+  - **Sentiment accuracy**: **87.22%** (macro F1 0.854); **negative recall 88.76%**.
+  - **By language**: Tagalog 94.4%, Taglish 86.3%, English 83.9%.
+  - **Topic (5 clusters + Unclassified) accuracy**: 89.87% (macro F1 0.721).
+  - **Latency**: about 1.5 ms per comment.
+- **Why not quote the 99% figure**: on the template-generated test rows the model scores 100%, because it learns the generator's patterns. That number says nothing about real students and is reported only as `synthetic_comment_test` in the metadata.
+- **Known weaknesses**: Taglish intensifiers used as praise (e.g. "grabe") and facilities complaints can be misread as negative feedback about the teacher. More real, labelled comments are the most valuable next step.
 
 ---
 
@@ -75,12 +76,24 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-all.ps1
 
 | Verification Layer | Target Scope | Units Executed | Pass Rate |
 | :--- | :--- | :---: | :---: |
-| **Layer 1: Backend PHPUnit Suite** | Five-Role RBAC, Dual-Token Decoupling, FT-02, 63 OWASP Controls | 39 Tests (1,077 assertions) | **100% PASS** |
-| **Layer 2: Frontend Vue 3 DOM Suite** | Reactive UI, 2-Step Stepper, Timers, Straight-Line Modal, Store State | 76 Groups (80 tests) | **100% PASS** |
+| **Layer 1: Backend PHPUnit Suite** | Five-Role RBAC, Dual-Token Decoupling, FT-02, 63 OWASP Controls | 41 Tests (1,135 assertions) | **100% PASS** |
+| **Layer 2: Frontend Vue 3 DOM Suite** | Reactive UI, 2-Step Stepper, Timers, Straight-Line Modal, Store State | 78 Groups (82 tests) | **100% PASS** |
 | **Layer 3: Python NLP Analytics Suite** | Polarity Bounds, Valence Boundaries, 5 Clusters, PII Scrubbing | 50 Tests | **100% PASS** |
-| **Layer 4: Playwright E2E Suite** | Real Browser Journeys, War Room Pre-Flight, Mobile ($375\times812$) | 12 Tests | **100% PASS** |
+| **Layer 4: Playwright E2E Suite** | Real Browser Journeys, War Room Pre-Flight, Mobile ($375\times812$) | 14 Tests | **100% PASS** |
 | **Layer 5: Repository Hygiene & Syntax** | 62 PHP files clean (`php -l`), 275+ source files UTF-8 No-BOM | 337+ Files Checked | **100% PASS** |
-| **Total Automated Coverage** | **End-to-End Multi-Tier Engineering Matrix** | **181 Units** | **100% PASS** |
+| **Total Automated Coverage** | **End-to-End Multi-Tier Engineering Matrix** | **187 Units** | **100% PASS** |
+
+---
+
+### Production acceptance walkthrough
+
+Beyond the automated matrix, a 20-step manual acceptance walkthrough runs the real UI against a
+server started with `APP_ENV=production` on a database provisioned by `scripts/production-init.php`
+(roster import, one-time passwords, forced first-sign-in password change, a full student evaluation,
+public receipt verification, registrar locks, faculty and dean read-outs, mobile layout). The method,
+results, defects found and fixed, and screenshots are in
+[`docs/testing/TESTING_PHASE_REPORT.md`](docs/testing/TESTING_PHASE_REPORT.md); deployment steps are in
+[`docs/PRODUCTION_DEPLOYMENT.md`](docs/PRODUCTION_DEPLOYMENT.md).
 
 ---
 
@@ -88,7 +101,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-all.ps1
 
 EvaluaTech incorporates **16 specialized agency worker skills**:
 
-1. **GitHub Brag Specialist** ([`agency-github-brag`](.agents/skills/agency-github-brag/SKILL.md)): Owns viral release showcases, GitHub brag artifacts, empirical ML benchmark callouts (10k dataset, 98.80% accuracy, 0.209 ms latency), Coolors periwinkle-blue design highlights, and visual walkthrough video links.
+1. **GitHub Brag Specialist** ([`agency-github-brag`](.agents/skills/agency-github-brag/SKILL.md)): Owns viral release showcases, GitHub brag artifacts, measured ML benchmark callouts (87.2% sentiment accuracy on real student comments), Coolors periwinkle-blue design highlights, and visual walkthrough video links.
 2. **Backend Architect** ([`agency-backend-architect`](.agents/skills/agency-backend-architect/SKILL.md)): Owns Laravel 12 & standalone PDO architecture, dual-token cryptographic decoupling, and AACCUP dossier sealing.
 3. **Frontend Developer** ([`agency-frontend-developer`](.agents/skills/agency-frontend-developer/SKILL.md)): Owns the Vue.js 3 SPA, Coolors periwinkle design system, top-bar navigation shell, Pinia stores, and 2-step stepper.
 4. **AI & NLP Engineer** ([`agency-ai-engineer`](.agents/skills/agency-ai-engineer/SKILL.md)): Owns the Python/Flask NLP microservice, 10k ML training pipeline, 5-cluster pedagogical classifier, and PII scrubbing.

@@ -1,4 +1,6 @@
 <script setup>
+import { humanizeStatus } from '../utils/uxHelpers.js';
+import AppIcon from '../components/AppIcon.vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import ErrorRecoveryBanner from '../components/ErrorRecoveryBanner.vue';
 import EvaluationRubricModal from '../components/EvaluationRubricModal.vue';
@@ -101,14 +103,16 @@ async function loadSelectedReportIfUnlocked(sec) {
 
 onMounted(async () => {
   loadingSections.value = true;
+  let sections = [];
   try {
-    const sections = await evaluationStore.fetchFacultySections();
-    if (sections.length > 0) {
-      selectedSectionId.value = Number(sections[0].course_section_id);
-      await loadSelectedReportIfUnlocked(sections[0]);
-    }
+    sections = await evaluationStore.fetchFacultySections();
   } finally {
+    // Section skeleton ends when sections arrive; the report has its own loadingReport state.
     loadingSections.value = false;
+  }
+  if (sections.length > 0) {
+    selectedSectionId.value = Number(sections[0].course_section_id);
+    await loadSelectedReportIfUnlocked(sections[0]);
   }
 });
 
@@ -292,9 +296,6 @@ function printEvaluationReport() {
     <section class="card faculty-header-card">
       <div class="header-split">
         <div>
-          <span class="eyebrow-badge">
-            FACULTY FEEDBACK
-          </span>
           <h2 id="faculty-heading" class="section-title">
             Course Evaluation Summary
             <span class="ui-hint" tabindex="0" data-hint="Feedback unlocks after final semester grades are submitted and verified by the Registrar.">?</span>
@@ -399,8 +400,8 @@ function printEvaluationReport() {
         </button>
       </div>
 
-      <details class="double-blind-help-details" style="margin-top: 1rem; padding: 0.75rem; background: #fdfefe; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.82rem; color: #475569;">
-        <summary style="font-weight: 600; cursor: pointer; color: var(--brand-royal);">
+      <details class="double-blind-help-details" style="margin-top: 1rem; padding: 0.75rem; font-size: 0.82rem">
+        <summary style="font-weight: 600; cursor: pointer">
           Why are evaluation results locked? (Double-Blind Governance Policy)
         </summary>
         <p style="margin: 0.5rem 0 0 0; line-height: 1.45;">
@@ -418,7 +419,7 @@ function printEvaluationReport() {
     >
       <div class="unlocked-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
         <div>
-          <span class="badge-unlocked">RESULTS AVAILABLE<span class="sr-only"> DOUBLE-BLIND UNLOCKED</span></span>
+          <span class="sr-only">Results available (DOUBLE-BLIND UNLOCKED)</span>
           <h3 id="unlocked-report-heading" class="section-title">
             {{ activeSection.course_code }} ({{ activeSection.section_code }}) — {{ activeSection.course_title }}
           </h3>
@@ -436,7 +437,7 @@ function printEvaluationReport() {
             style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.45rem 0.85rem; font-size: 0.85rem; font-weight: 600;"
             @click="showRubricModal = true"
           >
-            <span>📋 Rating Rubric</span>
+            <span><AppIcon name="clipboard" /> Rating Rubric</span>
           </button>
           <button
             type="button"
@@ -445,7 +446,7 @@ function printEvaluationReport() {
             style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.45rem 0.85rem; font-size: 0.85rem; font-weight: 600;"
             @click="exportFacultySectionCsv"
           >
-            <span>📥 Export CSV</span>
+            <span><AppIcon name="download" /> Export CSV</span>
           </button>
           <button
             type="button"
@@ -484,7 +485,7 @@ function printEvaluationReport() {
         </h4>
         <div class="metric-overview-grid">
           <div class="metric-card">
-            <span class="metric-label">1. Top Experience Descriptors</span>
+            <span class="metric-label">Words students used most</span>
             <strong class="metric-value" style="font-size: 1rem;">
               {{
                 profQuestionnaireSummary.top_descriptors?.length
@@ -497,7 +498,7 @@ function printEvaluationReport() {
             </strong>
           </div>
           <div class="metric-card">
-            <span class="metric-label">2. Constructive Improvement Topics</span>
+            <span class="metric-label">What to improve</span>
             <span class="section-subtitle">
               <template v-if="profQuestionnaireSummary.improvement_topics?.length">
                 <span
@@ -514,13 +515,13 @@ function printEvaluationReport() {
             </span>
           </div>
           <div class="metric-card">
-            <span class="metric-label">3. Key Teaching Strengths</span>
+            <span class="metric-label">Strengths</span>
             <span class="section-subtitle">
               {{ profQuestionnaireSummary.key_strengths?.[0] || 'No teaching strengths recorded yet.' }}
             </span>
           </div>
           <div class="metric-card">
-            <span class="metric-label">4. Actionable Recommendations</span>
+            <span class="metric-label">Recommendations</span>
             <span class="section-subtitle">
               {{ profQuestionnaireSummary.key_recommendations?.[0] || 'No recommendations recorded yet.' }}
             </span>
@@ -532,13 +533,11 @@ function printEvaluationReport() {
       <div
         v-if="sectionActionPlan"
         class="card faculty-action-plan-box"
-        style="margin-top: 1.25rem; background: var(--canvas); border: 1px solid var(--line); border-radius: 10px; padding: 1.15rem;"
+        style="margin-top: 1.25rem; padding: 1.15rem"
         data-testid="faculty-action-plan-card"
       >
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.5rem;">
-          <span class="eyebrow-badge">
-            ACTION PLAN<span class="sr-only"> SCHOOL AAAAA13 • Continuous Pedagogical Improvement</span>
-          </span>
+          <span class="sr-only">Action plan: SCHOOL AAAAA13 • Continuous Pedagogical Improvement</span>
           <span
             class="token-chip"
             :class="{
@@ -547,11 +546,11 @@ function printEvaluationReport() {
             }"
             data-testid="faculty-plan-status-badge"
           >
-            Plan Status: {{ sectionActionPlan.status }}
+            Plan status: {{ humanizeStatus(sectionActionPlan.status) }}
           </span>
         </div>
 
-        <h4 style="margin: 0.2rem 0 0.4rem; color: var(--ink); font-size: 1.1rem;">
+        <h4 style="margin: 0.2rem 0 0.4rem; font-size: 1.1rem">
           Pedagogical Action Plan: Focus on {{ sectionActionPlan.primary_cluster }} ({{ sectionActionPlan.course_code }})
           <span class="ui-hint" tabindex="0" data-hint="Recommended teaching adjustments based on section evaluation ratings.">?</span>
         </h4>
@@ -562,8 +561,8 @@ function printEvaluationReport() {
           Timeline: <strong>{{ sectionActionPlan.timeline }}</strong>
         </p>
 
-        <div style="background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 0.85rem; margin-bottom: 0.75rem;">
-          <strong style="font-size: 0.86rem; color: var(--ink);">Assigned Pedagogical Strategies:</strong>
+        <div style="padding: 0.85rem; margin-bottom: 0.75rem">
+          <strong style="font-size: 0.86rem">Assigned Pedagogical Strategies:</strong>
           <ul style="margin: 0.4rem 0 0 1.2rem; padding: 0; font-size: 0.85rem; line-height: 1.55;">
             <li v-for="(strat, sIdx) in sectionActionPlan.recommended_interventions" :key="sIdx">
               {{ strat }}
@@ -571,7 +570,7 @@ function printEvaluationReport() {
           </ul>
         </div>
 
-        <div v-if="sectionActionPlan.dean_notes" style="font-size: 0.84rem; color: var(--forest); margin-bottom: 0.75rem;">
+        <div v-if="sectionActionPlan.dean_notes" style="font-size: 0.84rem; margin-bottom: 0.75rem">
           <strong>Dean Verification &amp; Sign-off Notes:</strong> {{ sectionActionPlan.dean_notes }}
         </div>
 
@@ -609,13 +608,21 @@ function printEvaluationReport() {
       <div class="anonymized-comments-section" style="margin-top: 1.25rem;">
         <h4>
           Anonymous Student Comments
-          <span class="ui-badge-count">{{ anonymizedComments.length }}</span>
+          <span v-if="unlockedReport" class="ui-badge-count">{{ anonymizedComments.length }}</span>
           <span class="ui-hint" tabindex="0" data-hint="All student identifiers are removed before comments are saved.">?</span>
           <span class="sr-only">Zero Student Identifiers</span>
         </h4>
         <div
-          v-if="anonymizedComments.length === 0"
-          style="padding: 1rem; background: var(--surface-subtle); border: 1px solid var(--border-subtle); border-radius: 8px; font-size: 0.88rem; color: var(--text-secondary);"
+          v-if="!unlockedReport"
+          style="padding: 1rem; font-size: 0.88rem"
+          role="status"
+          data-testid="faculty-comments-loading"
+        >
+          Loading anonymous comments…
+        </div>
+        <div
+          v-else-if="anonymizedComments.length === 0"
+          style="padding: 1rem; font-size: 0.88rem"
         >
           No open-ended narrative comments have been submitted for this section yet.
         </div>
@@ -636,7 +643,7 @@ function printEvaluationReport() {
       <!-- Official Rating Sheet Print Endorsement & Signatures Block -->
       <div class="print-permit-auth-block" data-testid="print-faculty-report-auth">
         <div class="auth-seal-watermark">
-          <span class="seal-badge">SEAL: AAAAA13-ACADEMIC-AFFAIRS-EVALUATION-RECORD</span>
+          <span class="seal-line">Record AAAAA13-ACADEMIC-AFFAIRS-EVALUATION-RECORD</span>
           <small class="seal-sub">Official Student Evaluation of Teachers (SET) Rating Sheet • AY 2026-2027</small>
         </div>
         <div class="auth-signatures-row">
@@ -648,12 +655,12 @@ function printEvaluationReport() {
           <div class="sig-column">
             <div class="sig-line"></div>
             <strong class="sig-title">DEPARTMENT CHAIR</strong>
-            <span class="sig-caption">Department of Computer Science</span>
+            <span class="sig-caption">{{ activeSection.department_name || 'Department' }}</span>
           </div>
           <div class="sig-column">
             <div class="sig-line"></div>
-            <strong class="sig-title">DR. V. MENDOZA</strong>
-            <span class="sig-caption">Dean, College of Computer Studies</span>
+            <strong class="sig-title">COLLEGE DEAN</strong>
+            <span class="sig-caption">{{ activeSection.college_name || 'College' }}</span>
           </div>
         </div>
       </div>

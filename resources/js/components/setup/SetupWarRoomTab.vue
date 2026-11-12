@@ -273,7 +273,7 @@
         <div class="flex items-center gap-2">
           <button
             type="button"
-            class="px-4 py-2 text-xs font-semibold rounded-lg bg-[#103c2e] hover:bg-[#0b3322] text-white transition-colors shadow-sm inline-flex items-center gap-1.5"
+            class="px-4 py-2 text-xs font-semibold rounded-lg bg-[#0f172a] hover:bg-[#0f172a] text-white transition-colors shadow-sm inline-flex items-center gap-1.5"
             :disabled="loadingReminders"
             data-testid="btn-compile-reminders"
             @click="compileReminders"

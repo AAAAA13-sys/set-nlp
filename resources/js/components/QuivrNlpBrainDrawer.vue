@@ -300,7 +300,7 @@ onUnmounted(() => {
   border-radius: 999px;
   border: 1px solid #c8d6ca;
   background: #f6f8f4;
-  color: #103c2e;
+  color: #0f172a;
   cursor: pointer;
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
@@ -373,7 +373,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.84rem;
-  color: #103c2e;
+  color: #0f172a;
 }
 
 .quivr-excerpt {
