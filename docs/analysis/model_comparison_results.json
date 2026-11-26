@@ -1,0 +1,270 @@
+{
+  "timestamp": "2026-11-11T10:05:00",
+  "dataset_scale": "10,000 samples (7,000 train, 3,000 test)",
+  "held_out_test_evaluation": {
+    "model_a": {
+      "model_name": "Model A (Baseline Uncorrected)",
+      "partition": "docs/analysis/test_partition.csv",
+      "total_samples": 3000,
+      "accuracy": 0.8923,
+      "macro_f1": 0.8388,
+      "per_class": {
+        "Positive": {
+          "precision": 0.8964,
+          "recall": 0.9527,
+          "f1": 0.9237,
+          "support": 1290,
+          "predicted": 1371
+        },
+        "Neutral": {
+          "precision": 0.7016,
+          "recall": 0.6259,
+          "f1": 0.6616,
+          "support": 417,
+          "predicted": 372
+        },
+        "Negative": {
+          "precision": 0.9443,
+          "recall": 0.918,
+          "f1": 0.931,
+          "support": 1293,
+          "predicted": 1257
+        }
+      },
+      "confusion_matrix": {
+        "Positive": {
+          "Positive": 1229,
+          "Neutral": 55,
+          "Negative": 6
+        },
+        "Neutral": {
+          "Positive": 92,
+          "Neutral": 261,
+          "Negative": 64
+        },
+        "Negative": {
+          "Positive": 50,
+          "Neutral": 56,
+          "Negative": 1187
+        }
+      },
+      "per_language": {
+        "English": {
+          "total": 1017,
+          "correct": 909,
+          "accuracy": 0.8938
+        },
+        "Tagalog": {
+          "total": 977,
+          "correct": 842,
+          "accuracy": 0.8618
+        },
+        "Taglish": {
+          "total": 1006,
+          "correct": 926,
+          "accuracy": 0.9205
+        }
+      },
+      "avg_latency_ms": 0.215,
+      "total_time_ms": 644.71
+    },
+    "model_b": {
+      "model_name": "Model B (Corrected Baseline)",
+      "partition": "docs/analysis/test_partition.csv",
+      "total_samples": 3000,
+      "accuracy": 0.867,
+      "macro_f1": 0.7831,
+      "per_class": {
+        "Positive": {
+          "precision": 0.8767,
+          "recall": 0.9535,
+          "f1": 0.9135,
+          "support": 1290,
+          "predicted": 1403
+        },
+        "Neutral": {
+          "precision": 0.6077,
+          "recall": 0.4532,
+          "f1": 0.5192,
+          "support": 417,
+          "predicted": 311
+        },
+        "Negative": {
+          "precision": 0.9191,
+          "recall": 0.9142,
+          "f1": 0.9166,
+          "support": 1293,
+          "predicted": 1286
+        }
+      },
+      "confusion_matrix": {
+        "Positive": {
+          "Positive": 1230,
+          "Neutral": 54,
+          "Negative": 6
+        },
+        "Neutral": {
+          "Positive": 130,
+          "Neutral": 189,
+          "Negative": 98
+        },
+        "Negative": {
+          "Positive": 43,
+          "Neutral": 68,
+          "Negative": 1182
+        }
+      },
+      "per_language": {
+        "English": {
+          "total": 1017,
+          "correct": 901,
+          "accuracy": 0.8859
+        },
+        "Tagalog": {
+          "total": 977,
+          "correct": 821,
+          "accuracy": 0.8403
+        },
+        "Taglish": {
+          "total": 1006,
+          "correct": 879,
+          "accuracy": 0.8738
+        }
+      },
+      "avg_latency_ms": 0.239,
+      "total_time_ms": 717.38
+    },
+    "model_c": {
+      "model_name": "Model C (Enhanced Hybrid Rule+VADER)",
+      "partition": "docs/analysis/test_partition.csv",
+      "total_samples": 3000,
+      "accuracy": 0.8923,
+      "macro_f1": 0.8388,
+      "per_class": {
+        "Positive": {
+          "precision": 0.8964,
+          "recall": 0.9527,
+          "f1": 0.9237,
+          "support": 1290,
+          "predicted": 1371
+        },
+        "Neutral": {
+          "precision": 0.7016,
+          "recall": 0.6259,
+          "f1": 0.6616,
+          "support": 417,
+          "predicted": 372
+        },
+        "Negative": {
+          "precision": 0.9443,
+          "recall": 0.918,
+          "f1": 0.931,
+          "support": 1293,
+          "predicted": 1257
+        }
+      },
+      "confusion_matrix": {
+        "Positive": {
+          "Positive": 1229,
+          "Neutral": 55,
+          "Negative": 6
+        },
+        "Neutral": {
+          "Positive": 92,
+          "Neutral": 261,
+          "Negative": 64
+        },
+        "Negative": {
+          "Positive": 50,
+          "Neutral": 56,
+          "Negative": 1187
+        }
+      },
+      "per_language": {
+        "English": {
+          "total": 1017,
+          "correct": 909,
+          "accuracy": 0.8938
+        },
+        "Tagalog": {
+          "total": 977,
+          "correct": 842,
+          "accuracy": 0.8618
+        },
+        "Taglish": {
+          "total": 1006,
+          "correct": 926,
+          "accuracy": 0.9205
+        }
+      },
+      "avg_latency_ms": 0.255,
+      "total_time_ms": 764.53
+    },
+    "model_d": {
+      "model_name": "Model D (Scikit-Learn ML Model - 10k Dataset)",
+      "partition": "docs/analysis/test_partition.csv",
+      "total_samples": 3000,
+      "accuracy": 0.988,
+      "macro_f1": 0.9875,
+      "per_class": {
+        "Positive": {
+          "precision": 0.9876,
+          "recall": 0.9868,
+          "f1": 0.9872,
+          "support": 1290,
+          "predicted": 1289
+        },
+        "Neutral": {
+          "precision": 0.988,
+          "recall": 0.9832,
+          "f1": 0.9856,
+          "support": 417,
+          "predicted": 415
+        },
+        "Negative": {
+          "precision": 0.9884,
+          "recall": 0.9907,
+          "f1": 0.9896,
+          "support": 1293,
+          "predicted": 1296
+        }
+      },
+      "confusion_matrix": {
+        "Positive": {
+          "Positive": 1273,
+          "Neutral": 4,
+          "Negative": 13
+        },
+        "Neutral": {
+          "Positive": 5,
+          "Neutral": 410,
+          "Negative": 2
+        },
+        "Negative": {
+          "Positive": 11,
+          "Neutral": 1,
+          "Negative": 1281
+        }
+      },
+      "per_language": {
+        "English": {
+          "total": 1017,
+          "correct": 1000,
+          "accuracy": 0.9833
+        },
+        "Tagalog": {
+          "total": 977,
+          "correct": 970,
+          "accuracy": 0.9928
+        },
+        "Taglish": {
+          "total": 1006,
+          "correct": 994,
+          "accuracy": 0.9881
+        }
+      },
+      "avg_latency_ms": 2.396,
+      "total_time_ms": 7188.96
+    }
+  }
+}

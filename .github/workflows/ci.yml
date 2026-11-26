@@ -1,0 +1,38 @@
+name: Rust & WebAssembly CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  rust-ci:
+    name: Pure-Rust + WebAssembly Zero-Unsafe & Test Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Install rustfmt, clippy, and wasm32 target
+        run: |
+          rustup component add rustfmt clippy
+          rustup target add wasm32-unknown-unknown
+
+      - name: Check formatting
+        run: cargo fmt --all --check
+
+      - name: Enforce zero-unsafe & strict Clippy lints (-D warnings)
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+      - name: Build WebAssembly Portal (wasm32-unknown-unknown)
+        run: cargo build -p evaluatech-web --target wasm32-unknown-unknown --release
+
+      - name: Run Workspace Test Suite
+        run: cargo test --workspace --all-features

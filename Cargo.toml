@@ -1,0 +1,26 @@
+[workspace]
+resolver = "3"
+members = [
+    "evaluatech-nlp",
+    "evaluatech-web",
+    "evaluatech-server",
+]
+
+[workspace.package]
+version = "1.0.0"
+edition = "2024"
+license = "MIT"
+authors = ["AAAAA13-sys <108907185+AAAAA13-sys@users.noreply.github.com>"]
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+unused_lifetimes = "warn"
+trivial_numeric_casts = "warn"
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
