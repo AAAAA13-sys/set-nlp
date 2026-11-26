@@ -846,6 +846,41 @@ fn load_route_data(route: &str) {
     }
 }
 
+fn svg_nav_icon(kind: &str) -> &'static str {
+    match kind {
+        "home" => {
+            r#"<span class="nav-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5z"/></svg></span>"#
+        }
+        "verify" => {
+            r#"<span class="nav-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 3l8 4v5c0 5-3.5 8.5-8 9.8C7.5 20.5 4 17 4 12V7l8-4z"/></svg></span>"#
+        }
+        "scale" => {
+            r#"<span class="nav-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg></span>"#
+        }
+        "dashboard" => {
+            r#"<span class="nav-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>"#
+        }
+        "text" => {
+            r#"<span class="nav-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg></span>"#
+        }
+        "theme" => {
+            r#"<span class="nav-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>"#
+        }
+        "logout" => {
+            r#"<span class="nav-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>"#
+        }
+        _ => "",
+    }
+}
+
+fn svg_password_eye(shown: bool) -> &'static str {
+    if shown {
+        r#"<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>"#
+    } else {
+        r#"<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>"#
+    }
+}
+
 fn render_navbar(s: &AppState) -> String {
     let collapse_cls = if s.mobile_menu_open {
         "nav-collapse open"
@@ -865,70 +900,84 @@ fn render_navbar(s: &AppState) -> String {
         ("A+ Large Text", "nav-theme-btn", "false")
     };
 
+    let ic_dash = svg_nav_icon("dashboard");
+    let ic_scale = svg_nav_icon("scale");
+    let ic_text = svg_nav_icon("text");
+    let ic_theme = svg_nav_icon("theme");
+    let ic_out = svg_nav_icon("logout");
+
+    let mobile_signin_quick = if s.user.is_none() && s.route != "/login" {
+        r#"<button type="button" class="nav-signin-btn" data-action="nav" data-path="/login">Sign In</button>"#
+    } else {
+        ""
+    };
+
     let (primary_links, utility_controls) = if let Some(ref u) = s.user {
         let user_display = format!("{} · {}", esc(&u.name), role_display_title(&u.role));
         let util = format!(
-            r#"<button type="button" class="{font_btn_cls}" aria-pressed="{font_pressed}" data-action="toggle-font-scale">{font_btn_label}</button>
-               <button type="button" class="nav-theme-btn" data-action="toggle-theme">{theme_btn_label}</button>
+            r#"<button type="button" class="{font_btn_cls}" aria-pressed="{font_pressed}" data-action="toggle-font-scale">{ic_text}{font_btn_label}</button>
+               <button type="button" class="nav-theme-btn" data-action="toggle-theme">{ic_theme}{theme_btn_label}</button>
                <span class="nav-user-display" title="{user_display}">{user_display}</span>
-               <button type="button" class="nav-link-btn" data-action="logout">Sign Out</button>"#
+               <button type="button" class="nav-link-btn" data-action="logout">{ic_out}Sign Out</button>"#
         );
 
         let links = match u.role.as_str() {
             "student" => {
                 let on_subjects = s.route.starts_with("/queue") || s.route.starts_with("/evaluate");
                 format!(
-                    r#"<button type="button" class="nav-link-btn {act}" data-action="nav" data-path="/queue">My Subjects</button>
-                       <button type="button" class="nav-link-btn" data-action="open-rubric">Rating Scale</button>"#,
+                    r#"<button type="button" class="nav-link-btn {act}" data-action="nav" data-path="/queue">{ic_dash}My Subjects</button>
+                       <button type="button" class="nav-link-btn" data-action="open-rubric">{ic_scale}Rating Scale</button>"#,
                     act = if on_subjects { "active" } else { "" },
                 )
             }
             "faculty" => {
                 let on_fac = s.route.starts_with("/faculty");
                 format!(
-                    r#"<button type="button" class="nav-link-btn {act}" data-action="nav" data-path="/faculty">My Class Results</button>
-                       <button type="button" class="nav-link-btn" data-action="open-rubric">Rating Scale</button>"#,
+                    r#"<button type="button" class="nav-link-btn {act}" data-action="nav" data-path="/faculty">{ic_dash}My Class Results</button>
+                       <button type="button" class="nav-link-btn" data-action="open-rubric">{ic_scale}Rating Scale</button>"#,
                     act = if on_fac { "active" } else { "" },
                 )
             }
             "chair" => {
                 let on_chair = s.route.starts_with("/chair");
                 format!(
-                    r#"<button type="button" class="nav-link-btn {act}" data-action="nav" data-path="/chair">Department Overview</button>
-                       <button type="button" class="nav-link-btn" data-action="open-rubric">Rating Scale</button>"#,
+                    r#"<button type="button" class="nav-link-btn {act}" data-action="nav" data-path="/chair">{ic_dash}Department Overview</button>
+                       <button type="button" class="nav-link-btn" data-action="open-rubric">{ic_scale}Rating Scale</button>"#,
                     act = if on_chair { "active" } else { "" },
                 )
             }
             "dean" => {
                 let on_dean = s.route.starts_with("/dean");
                 format!(
-                    r#"<button type="button" class="nav-link-btn {act}" data-action="nav" data-path="/dean">College Overview</button>
-                       <button type="button" class="nav-link-btn" data-action="open-rubric">Rating Scale</button>"#,
+                    r#"<button type="button" class="nav-link-btn {act}" data-action="nav" data-path="/dean">{ic_dash}College Overview</button>
+                       <button type="button" class="nav-link-btn" data-action="open-rubric">{ic_scale}Rating Scale</button>"#,
                     act = if on_dean { "active" } else { "" },
                 )
             }
             _ => {
                 let on_adm = s.route.starts_with("/admin");
                 format!(
-                    r#"<button type="button" class="nav-link-btn {act}" data-action="nav" data-path="/admin">Registrar Console</button>
-                       <button type="button" class="nav-link-btn" data-action="open-rubric">Rating Scale</button>"#,
+                    r#"<button type="button" class="nav-link-btn {act}" data-action="nav" data-path="/admin">{ic_dash}Registrar Console</button>
+                       <button type="button" class="nav-link-btn" data-action="open-rubric">{ic_scale}Rating Scale</button>"#,
                     act = if on_adm { "active" } else { "" },
                 )
             }
         };
         (links, util)
     } else {
+        let ic_home = svg_nav_icon("home");
+        let ic_ver = svg_nav_icon("verify");
         let links = format!(
-            r#"<button type="button" class="nav-link-btn {a_home}" data-action="nav" data-path="/">Home</button>
-               <button type="button" class="nav-link-btn {a_ver}" data-action="goto-verify">Verify Receipt</button>
-               <button type="button" class="nav-link-btn" data-action="open-rubric">Rating Scale</button>"#,
+            r#"<button type="button" class="nav-link-btn {a_home}" data-action="nav" data-path="/">{ic_home}Home</button>
+               <button type="button" class="nav-link-btn {a_ver}" data-action="goto-verify">{ic_ver}Verify Receipt</button>
+               <button type="button" class="nav-link-btn" data-action="open-rubric">{ic_scale}Rating Scale</button>"#,
             a_home = if s.route == "/" { "active" } else { "" },
             a_ver = if s.route == "/verify" { "active" } else { "" },
         );
         let util = format!(
-            r#"<button type="button" class="{font_btn_cls}" aria-pressed="{font_pressed}" data-action="toggle-font-scale">{font_btn_label}</button>
-               <button type="button" class="nav-theme-btn" data-action="toggle-theme">{theme_btn_label}</button>
-               <button type="button" class="nav-signin-btn" data-action="nav" data-path="/login">Sign In</button>"#
+            r#"<button type="button" class="{font_btn_cls}" aria-pressed="{font_pressed}" data-action="toggle-font-scale">{ic_text}{font_btn_label}</button>
+               <button type="button" class="nav-theme-btn" data-action="toggle-theme">{ic_theme}{theme_btn_label}</button>
+               <button type="button" class="nav-signin-btn nav-signin-desktop-only" data-action="nav" data-path="/login">Sign In</button>"#
         );
         (links, util)
     };
@@ -938,7 +987,7 @@ fn render_navbar(s: &AppState) -> String {
             <div class="top-navbar-inner">
                 <a href="/" class="brand-cluster" data-action="nav" data-path="/">
                     <span class="university-crest" aria-hidden="true">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 3L3 7.5v5.5c0 5.2 3.8 8.9 9 10 5.2-1.1 9-4.8 9-10V7.5L12 3z"/>
                             <path d="M8.5 11.5h7M8.5 15h4.5"/>
                         </svg>
@@ -948,7 +997,10 @@ fn render_navbar(s: &AppState) -> String {
                         <span class="brand-title">Faculty Evaluation Portal</span>
                     </span>
                 </a>
-                <button type="button" class="mobile-menu-toggle" aria-expanded="{exp}" data-action="toggle-mobile-menu">{mobile_btn_label}</button>
+                <div class="mobile-header-actions">
+                    {mobile_signin_quick}
+                    <button type="button" class="mobile-menu-toggle" aria-expanded="{exp}" data-action="toggle-mobile-menu">{mobile_btn_label}</button>
+                </div>
                 <div class="{collapse_cls}">
                     <nav class="nav-primary-links" aria-label="Portal Navigation">{primary_links}</nav>
                     <div class="nav-utility-area">{utility_controls}</div>
@@ -968,22 +1020,27 @@ fn render_global_modals(s: &AppState) -> String {
                 <div class="modal-dialog">
                     <div class="flex-between-center">
                         <h2 id="rubric-title" style="margin:0;">1–5 Faculty Evaluation Rating Scale</h2>
-                        <button type="button" class="btn btn-secondary" data-action="close-modals">Close</button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-action="close-modals">Close</button>
                     </div>
                     <hr class="section-divider">
-                    <p style="color:var(--ink-secondary);">Please rate each of the 25 statements honestly using the five-point scale below:</p>
-                    <table class="receipt-table" aria-label="1 to 5 Rating Scale Descriptions">
-                        <tbody>
-                            <tr><th>5 — Outstanding</th><td>Consistently demonstrated at an exemplary collegiate standard throughout the semester.</td></tr>
-                            <tr><th>4 — Very Satisfactory</th><td>Frequently demonstrated with clear effectiveness and consistency.</td></tr>
-                            <tr><th>3 — Satisfactory</th><td>Meets expected course and teaching standards adequately.</td></tr>
-                            <tr><th>2 — Fair</th><td>Inconsistently demonstrated; would benefit from structured improvement.</td></tr>
-                            <tr><th>1 — Needs Improvement</th><td>Rarely demonstrated; requires prompt attention and mentoring support.</td></tr>
-                        </tbody>
-                    </table>
-                    <p style="font-size:0.9rem;color:var(--ink-secondary);margin-bottom:0;">
-                        <strong>Helpful tip:</strong> While viewing any statement row on the evaluation form, you may click a numbered button or press keys <strong>1</strong> through <strong>5</strong> on your keyboard.
-                    </p>
+                    <p style="color:var(--ink-secondary);margin-bottom:12px;">Rate each of the 25 teaching statements honestly using the five-point scale below:</p>
+                    <div class="table-wrap" style="margin-bottom:16px;">
+                        <table class="data-table borderless-zebra" aria-label="1 to 5 Rating Scale Descriptions">
+                            <tbody>
+                                <tr><td style="width:195px;"><strong>5 &mdash; Outstanding</strong></td><td>Consistently demonstrated at an exemplary collegiate standard throughout the semester.</td></tr>
+                                <tr><td><strong>4 &mdash; Very Satisfactory</strong></td><td>Frequently demonstrated with clear effectiveness and consistency.</td></tr>
+                                <tr><td><strong>3 &mdash; Satisfactory</strong></td><td>Meets expected course and teaching standards adequately.</td></tr>
+                                <tr><td><strong>2 &mdash; Fair</strong></td><td>Inconsistently demonstrated; would benefit from structured improvement.</td></tr>
+                                <tr><td><strong>1 &mdash; Needs Improvement</strong></td><td>Rarely demonstrated; requires prompt attention and mentoring support.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="callout-box callout-tip">
+                        <span class="callout-icon" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.75c.6.54 1 1.33 1 2.15V18h6v-1.1c0-.82.4-1.61 1-2.15A7 7 0 0 0 12 2z"/></svg>
+                        </span>
+                        <div><strong>Helpful tip:</strong> While focused on any statement row in the evaluation form, you can click a number or press keys <strong>1</strong> through <strong>5</strong> on your keyboard.</div>
+                    </div>
                 </div>
             </div>"#,
         );
@@ -1009,25 +1066,43 @@ fn render_global_modals(s: &AppState) -> String {
         out.push_str(&format!(
             r#"<div class="modal-backdrop receipt-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="rcpt-title">
                 <div class="modal-dialog">
-                    <p class="institution-line">School AAAAA13 &middot; Office of the University Registrar</p>
-                    <h2 id="rcpt-title" style="margin:0.15rem 0 0;">Evaluation Completion Receipt</h2>
-                    <hr class="section-divider">
-                    <table class="receipt-table" aria-label="Evaluation Completion Receipt Details">
-                        <tbody>
-                            <tr><th>Academic Term</th><td>1st Semester, AY 2026–2027</td></tr>
-                            <tr><th>Subject &amp; Section</th><td><strong>{code}</strong> &mdash; {title} (Section {sec_code})</td></tr>
-                            <tr><th>Instructor</th><td>{prof}</td></tr>
-                            <tr><th>Status</th><td><span class="status-badge status-ok">Completed</span></td></tr>
-                            <tr><th>Date Recorded</th><td class="tabular-nums">{cleared_at}</td></tr>
-                            <tr><th>Receipt Reference Code</th><td><span class="ref-code">{tok}</span></td></tr>
-                        </tbody>
-                    </table>
-                    <p style="font-size:0.9rem;color:var(--ink-secondary);">
-                        This receipt confirms only that you completed the evaluation for this enrolled subject. Your individual ratings and written comments are stored separately without your name or student ID.
+                    <div class="flex-between-center">
+                        <div>
+                            <p class="institution-line" style="margin-bottom:2px;">School AAAAA13 &middot; Office of the University Registrar</p>
+                            <h2 id="rcpt-title" style="margin:0;">Evaluation Completion Receipt</h2>
+                        </div>
+                        <span class="status-badge status-ok"><span class="status-dot dot-ok"></span>Completed</span>
+                    </div>
+                    <div class="receipt-paper" aria-label="Evaluation Completion Receipt Details">
+                        <div class="receipt-row">
+                            <span style="color:var(--ink-muted);font-weight:600;">Academic Term</span>
+                            <span>1st Semester, AY 2026–2027</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span style="color:var(--ink-muted);font-weight:600;">Subject &amp; Section</span>
+                            <span style="text-align:right;"><strong>{code}</strong> &mdash; {title} ({sec_code})</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span style="color:var(--ink-muted);font-weight:600;">Instructor</span>
+                            <span>{prof}</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span style="color:var(--ink-muted);font-weight:600;">Date Recorded</span>
+                            <span class="tabular-nums">{cleared_at}</span>
+                        </div>
+                        <hr class="receipt-dashed-divider">
+                        <div class="receipt-row" style="align-items:center;">
+                            <span style="color:var(--ink-muted);font-weight:600;">Receipt Reference Code</span>
+                            <span class="ref-code">{tok}</span>
+                        </div>
+                        <div class="receipt-scallop" aria-hidden="true"></div>
+                    </div>
+                    <p style="font-size:0.88rem;color:var(--ink-secondary);margin-bottom:16px;">
+                        This official receipt confirms only that you completed the evaluation for this enrolled subject. Your ratings and comments are stored separately without your name or student ID.
                     </p>
-                    <div class="btn-row no-print">
-                        <button type="button" class="btn btn-primary" data-action="print-cert">Print Receipt</button>
+                    <div class="btn-row no-print" style="justify-content:flex-end;">
                         <button type="button" class="btn btn-secondary" data-action="close-modals">Close</button>
+                        <button type="button" class="btn btn-primary" data-action="print-cert">Print Receipt</button>
                     </div>
                 </div>
             </div>"#,
@@ -1047,12 +1122,39 @@ fn render_banner(s: &AppState) -> String {
     let Some((ref msg, is_err)) = s.banner_msg else {
         return String::new();
     };
-    let cls = if is_err {
-        "alert-banner alert-error"
+    if is_err {
+        format!(
+            r#"<div class="alert-banner alert-error" role="status">
+                <svg class="alert-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>{}</span>
+            </div>"#,
+            esc(msg)
+        )
     } else {
-        "alert-banner alert-success"
+        format!(
+            r#"<div class="alert-banner alert-info" role="status">
+                <svg class="alert-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <span>{}</span>
+            </div>"#,
+            esc(msg)
+        )
+    }
+}
+
+fn render_inline_auth_error(s: &AppState) -> String {
+    let Some((ref msg, is_err)) = s.banner_msg else {
+        return String::new();
     };
-    format!(r#"<div class="{cls}" role="status">{}</div>"#, esc(msg))
+    if !is_err {
+        return render_banner(s);
+    }
+    format!(
+        r#"<div class="inline-field-error" role="alert">
+            <svg class="alert-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>{}</span>
+        </div>"#,
+        esc(msg)
+    )
 }
 
 fn render_verification_result(v: &Value) -> String {
@@ -1085,18 +1187,19 @@ fn render_verification_result(v: &Value) -> String {
                 .to_string()
         };
         format!(
-            r#"<div class="subtle-box" style="margin-top:1rem;" role="status">
-                <div class="flex-between-center" style="margin-bottom:0.45rem;">
-                    <span class="status-badge status-ok">Verified Completion Receipt</span>
+            r#"<div class="subtle-box" style="margin-top:12px;" role="status">
+                <div class="flex-between-center" style="margin-bottom:6px;">
+                    <span class="status-badge status-ok"><span class="status-dot dot-ok"></span>Verified Receipt</span>
                     <span class="ref-code">{}</span>
                 </div>
-                <p style="margin:0;font-size:0.95rem;">{detail} Individual ratings and written comments remain strictly confidential.</p>
+                <p style="margin:0;font-size:0.9rem;color:var(--ink-secondary);">{detail} Individual ratings and comments remain confidential.</p>
             </div>"#,
             esc(tok),
         )
     } else {
-        r#"<div class="alert-banner alert-error" style="margin-top:1rem;" role="status">
-            <strong>Receipt Not Found:</strong> We could not verify that reference code. Please check the characters on your receipt and try again.
+        r#"<div class="inline-field-error" style="margin:10px 0 0;" role="status">
+            <svg class="alert-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span><strong>Receipt not found.</strong> Please double-check the reference code on your receipt and try again.</span>
         </div>"#
             .to_string()
     }
@@ -1111,15 +1214,15 @@ fn render_receipt_checker_box(s: &AppState) -> String {
 
     format!(
         r#"<section id="receipt-check-section" class="doc-sheet" aria-labelledby="verify-heading">
-            <h2 id="verify-heading" style="margin-bottom:0.35rem;">Check a Completion Receipt</h2>
-            <p style="color:var(--ink-secondary);font-size:0.95rem;">
-                Enter a subject receipt code or semester completion reference code to confirm that an evaluation was recorded.
+            <h2 id="verify-heading" style="margin-bottom:6px;">Check a Completion Receipt</h2>
+            <p style="color:var(--ink-secondary);font-size:0.92rem;margin-bottom:14px;">
+                Enter a receipt reference code to verify that a subject evaluation was recorded.
             </p>
-            <div class="form-group" style="margin-bottom:0.75rem;">
+            <div class="form-group" style="margin-bottom:0;">
                 <label class="form-label" for="verify-token-input">Receipt Reference Code</label>
                 <div class="input-action-row">
-                    <input id="verify-token-input" class="form-input" type="text" placeholder="For example: CLR-... or PERMIT-...">
-                    <button type="button" class="btn btn-primary" data-action="verify-token">Verify Receipt</button>
+                    <input id="verify-token-input" class="form-input" type="text" placeholder="e.g., CLR-... or PERMIT-...">
+                    <button type="button" class="btn btn-primary" data-action="verify-token">Verify</button>
                 </div>
             </div>
             {res_html}
@@ -1131,7 +1234,7 @@ fn render_landing(s: &AppState) -> String {
     let primary_cta = if let Some(ref u) = s.user {
         let dest = default_route_for_role(&u.role);
         format!(
-            r#"<button type="button" class="btn btn-primary btn-lg" data-action="nav" data-path="{dest}">Go to My Portal</button>"#
+            r#"<button type="button" class="btn btn-primary btn-lg" data-action="nav" data-path="{dest}">Open My Portal</button>"#
         )
     } else {
         r#"<button type="button" class="btn btn-primary btn-lg" data-action="nav" data-path="/login">Sign In to Portal</button>"#
@@ -1141,54 +1244,58 @@ fn render_landing(s: &AppState) -> String {
     format!(
         r#"<main id="main-workspace" class="workspace-container">
             {banner}
-            <div class="portal-welcome-grid">
-                <section class="doc-sheet" aria-labelledby="welcome-heading">
-                    <p class="institution-line">1st Semester, AY 2026–2027 &middot; Official University Notice</p>
-                    <h1 id="welcome-heading" class="sheet-title" style="margin-bottom:0.65rem;">End-of-Semester Student Evaluation of Teachers</h1>
-                    <hr class="section-divider">
-                    <p style="font-size:1.03rem;color:var(--ink);">
-                        Welcome to the School AAAAA13 Faculty Evaluation Portal. Each semester, students are invited to provide thoughtful, constructive feedback on their enrolled subjects to support teaching quality across all academic departments.
-                    </p>
-                    <p style="color:var(--ink-secondary);">
-                        Your responses are strictly confidential. Your name and student number are never attached to your ratings or written comments, and instructors receive aggregated class summaries only after final semester grades have been submitted and verified by the Office of the University Registrar.
-                    </p>
-                    <div class="btn-row" style="margin:1.35rem 0;">
-                        {primary_cta}
-                        <button type="button" class="btn btn-secondary btn-lg" data-action="open-rubric">View 1–5 Rating Scale</button>
+            <div class="two-col-equal">
+                <section class="doc-sheet stretch-sheet" aria-labelledby="welcome-heading">
+                    <div>
+                        <p class="institution-line">1st Semester, AY 2026–2027 &middot; Official University Portal</p>
+                        <h1 id="welcome-heading" class="sheet-title" style="margin-bottom:10px;">Student Evaluation of Teachers</h1>
+                        <p style="font-size:1rem;color:var(--ink);margin-bottom:12px;">
+                            Share honest, constructive feedback on your enrolled subjects this semester to help strengthen teaching quality across School AAAAA13.
+                        </p>
+                        <p style="color:var(--ink-secondary);font-size:0.94rem;">
+                            Your responses are strictly anonymous. Names and student numbers are never attached to ratings or written comments, and faculty receive class summaries only after final grades are officially submitted.
+                        </p>
+                        <div class="home-cta-group btn-row" style="margin:20px 0;">
+                            {primary_cta}
+                            <button type="button" class="btn btn-secondary btn-lg desktop-only" data-action="open-rubric">View 1–5 Rating Scale</button>
+                            <button type="button" class="text-link-btn mobile-only" data-action="open-rubric">View 1–5 Rating Scale</button>
+                        </div>
                     </div>
-                    <hr class="section-divider">
-                    <h2 style="font-size:1.18rem;margin-bottom:0.5rem;">How to Complete Your Subject Evaluations</h2>
-                    <ol class="step-list">
-                        <li class="step-list-item">
-                            <span class="step-number" aria-hidden="true">1</span>
-                            <div><strong>Sign in with your University ID.</strong> Enter your School AAAAA13 student number or university email address to open your list of enrolled subjects for 1st Semester, AY 2026–2027.</div>
-                        </li>
-                        <li class="step-list-item">
-                            <span class="step-number" aria-hidden="true">2</span>
-                            <div><strong>Complete the two-part form for each subject.</strong> Rate 25 clear teaching statements from 1 to 5 and share optional written comments in English or Filipino at your own pace.</div>
-                        </li>
-                        <li class="step-list-item">
-                            <span class="step-number" aria-hidden="true">3</span>
-                            <div><strong>Keep your completion receipt.</strong> After each submission, an official completion receipt is issued for your personal records with no link to your answers.</div>
-                        </li>
-                    </ol>
+                    <div>
+                        <hr class="section-divider">
+                        <h2 style="font-size:1.1rem;margin-bottom:4px;">How It Works</h2>
+                        <ol class="numbered-steps">
+                            <li>
+                                <span class="step-num-circle" aria-hidden="true">1</span>
+                                <div><strong>Sign in with your University ID.</strong> Open your enrolled subjects list for 1st Semester, AY 2026–2027.</div>
+                            </li>
+                            <li>
+                                <span class="step-num-circle" aria-hidden="true">2</span>
+                                <div><strong>Rate and comment at your own pace.</strong> Answer 25 brief statements from 1 to 5 and add optional comments in English or Filipino.</div>
+                            </li>
+                            <li>
+                                <span class="step-num-circle" aria-hidden="true">3</span>
+                                <div><strong>Save your completion receipt.</strong> Receive an official reference code for each completed subject with zero link to your answers.</div>
+                            </li>
+                        </ol>
+                    </div>
                 </section>
 
-                <div class="right-column-stack">
+                <div class="col-stack">
                     <section class="doc-sheet" aria-labelledby="period-heading">
-                        <div class="flex-between-center" style="margin-bottom:0.55rem;">
-                            <h2 id="period-heading" style="margin:0;">Evaluation Period Status</h2>
-                            <span class="status-badge status-ok">Open for Submission</span>
+                        <div class="flex-between-center" style="margin-bottom:10px;">
+                            <h2 id="period-heading" style="margin:0;">Evaluation Period</h2>
+                            <span class="status-badge status-ok"><span class="status-dot dot-ok"></span>Open for Submission</span>
                         </div>
-                        <p style="margin-bottom:0.9rem;color:var(--ink-secondary);">
-                            <strong>Active Term:</strong> 1st Semester, Academic Year 2026–2027 (Philippine Time). Students may evaluate their enrolled subjects whenever ready.
+                        <p style="margin-bottom:12px;color:var(--ink-secondary);font-size:0.93rem;">
+                            <strong>Active Term:</strong> 1st Semester, AY 2026–2027 (Philippine Time). Complete your evaluations anytime while the schedule is open.
                         </p>
                         <hr class="section-divider">
-                        <h3 style="margin-bottom:0.4rem;">Confidentiality &amp; Student Rights</h3>
+                        <h3 style="margin-bottom:4px;">Privacy &amp; Student Protections</h3>
                         <ul class="rights-list">
-                            <li><strong>Protected Student Identity:</strong> Participation records and submitted evaluation answers are stored separately so no rating or comment can ever be traced back to an individual student.</li>
-                            <li><strong>Post-Grade Release Only:</strong> Faculty members cannot view class ratings or student comments until final semester grades are officially submitted and closed by the Registrar.</li>
-                            <li><strong>Never Blocks Examination Permits:</strong> Pending or completed evaluations never block examination permits, class attendance, or enrollment clearance at School AAAAA13.</li>
+                            <li><strong>Separated Identity:</strong> Completion records and rating answers are stored separately so responses can never be traced to you.</li>
+                            <li><strong>Released After Final Grades:</strong> Instructors only see aggregated class reports once semester grades are verified by the Registrar.</li>
+                            <li><strong>No Exam Permit Holds:</strong> Evaluation status never blocks exam permits, class attendance, or enrollment clearance.</li>
                         </ul>
                     </section>
 
@@ -1203,77 +1310,88 @@ fn render_landing(s: &AppState) -> String {
 
 fn render_login(s: &AppState) -> String {
     let pw_type = if s.show_password { "text" } else { "password" };
-    let pw_btn = if s.show_password { "Hide" } else { "Show" };
     let pw_aria = if s.show_password {
         "Hide password"
     } else {
         "Show password"
     };
+    let eye_svg = svg_password_eye(s.show_password);
     format!(
         r#"<main id="main-workspace" class="workspace-container">
-            <div class="centered-auth-sheet">
+            <div style="max-width:460px;width:100%;margin:16px auto;">
                 <section class="doc-sheet" aria-labelledby="signin-title">
                     <p class="institution-line">School AAAAA13 &middot; Office of Academic Affairs</p>
-                    <h1 id="signin-title" class="sheet-title" style="margin-bottom:0.35rem;">Sign In to Faculty Evaluation Portal</h1>
-                    <p style="color:var(--ink-secondary);margin-bottom:0;">
-                        1st Semester, AY 2026–2027 &middot; For students, faculty members, and academic administrators.
+                    <h1 id="signin-title" class="sheet-title" style="margin-bottom:6px;">Sign In</h1>
+                    <p style="color:var(--ink-secondary);font-size:0.93rem;margin-bottom:18px;">
+                        1st Semester, AY 2026–2027 &middot; Enter your university credentials to continue.
                     </p>
-                    <hr class="section-divider">
-                    {banner}
+                    {err_box}
                     <div class="form-group">
-                        <label class="form-label" for="login-identifier">University ID Number or Email Address</label>
-                        <input id="login-identifier" class="form-input" type="text" autocomplete="username" placeholder="e.g., 2024-10892 or name@aaaaa13.edu">
+                        <label class="form-label" for="login-identifier">University ID or Email Address</label>
+                        <input id="login-identifier" class="form-input form-input-tall" type="text" autocomplete="username" placeholder="e.g., 2024-10892 or name@aaaaa13.edu">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="login-password">Password</label>
-                        <div class="input-action-row">
-                            <input id="login-password" class="form-input" type="{pw_type}" autocomplete="current-password" placeholder="Enter your password">
-                            <button type="button" class="btn btn-secondary" aria-label="{pw_aria}" data-action="toggle-password">{pw_btn}</button>
+                        <div class="password-field-wrap">
+                            <input id="login-password" class="form-input form-input-tall" type="{pw_type}" autocomplete="current-password" placeholder="Enter your password">
+                            <button type="button" class="password-eye-btn" aria-label="{pw_aria}" title="{pw_aria}" data-action="toggle-password">{eye_svg}</button>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary btn-lg" style="width:100%;margin-top:0.25rem;" data-action="login-submit">Sign In</button>
-                    <hr class="section-divider">
-                    <p style="font-size:0.88rem;color:var(--ink-secondary);margin-bottom:0;">
-                        <strong>Data Privacy Notice (Republic Act No. 10173):</strong> Signing in verifies your current class enrollment or academic role only. Your identity is never attached to any evaluation rating or written comment.
-                    </p>
+                    <button type="button" class="btn btn-primary btn-lg btn-block" style="margin-top:4px;margin-bottom:18px;" data-action="login-submit">Sign In</button>
+                    <div class="callout-box">
+                        <span class="callout-icon" aria-hidden="true">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        </span>
+                        <div style="font-size:0.84rem;line-height:1.5;">
+                            <strong>Data Privacy (RA 10173):</strong> Signing in verifies your enrollment or academic role only. Your identity is never linked to evaluation answers.
+                        </div>
+                    </div>
                 </section>
             </div>
         </main>"#,
-        banner = render_banner(s),
+        err_box = render_inline_auth_error(s),
     )
 }
 
 fn render_password_change(s: &AppState) -> String {
     let pw_type = if s.show_password { "text" } else { "password" };
-    let pw_btn = if s.show_password { "Hide" } else { "Show" };
+    let pw_aria = if s.show_password {
+        "Hide password"
+    } else {
+        "Show password"
+    };
+    let eye_svg = svg_password_eye(s.show_password);
     format!(
         r#"<main id="main-workspace" class="workspace-container">
-            <div class="centered-auth-sheet">
+            <div style="max-width:460px;width:100%;margin:16px auto;">
                 <section class="doc-sheet" aria-labelledby="pw-change-title">
                     <p class="institution-line">School AAAAA13 &middot; Account Security</p>
-                    <h1 id="pw-change-title" class="sheet-title" style="margin-bottom:0.4rem;">Create Your Permanent Password</h1>
-                    <p style="color:var(--ink-secondary);margin-bottom:0;">
-                        Because you signed in using a one-time temporary password from the Office of the University Registrar, please choose a personal password of at least 10 characters before continuing.
+                    <h1 id="pw-change-title" class="sheet-title" style="margin-bottom:8px;">Create Permanent Password</h1>
+                    <p style="font-weight:700;color:var(--ink);margin-bottom:4px;">Please create a new permanent password.</p>
+                    <p style="font-size:0.88rem;color:var(--ink-muted);margin-bottom:18px;">
+                        You signed in with a one-time temporary password from the Registrar. Choose at least 10 characters to secure your account.
                     </p>
-                    <hr class="section-divider">
-                    {banner}
+                    {err_box}
                     <div class="form-group">
                         <label class="form-label" for="pw-current">Temporary Password</label>
-                        <input id="pw-current" class="form-input" type="{pw_type}" autocomplete="current-password" placeholder="Enter your temporary password">
+                        <div class="password-field-wrap">
+                            <input id="pw-current" class="form-input form-input-tall" type="{pw_type}" autocomplete="current-password" placeholder="Enter your temporary password">
+                            <button type="button" class="password-eye-btn" aria-label="{pw_aria}" title="{pw_aria}" data-action="toggle-password">{eye_svg}</button>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="pw-next">New Personal Password (at least 10 characters)</label>
-                        <div class="input-action-row">
-                            <input id="pw-next" class="form-input" type="{pw_type}" autocomplete="new-password" placeholder="Enter a new strong password">
-                            <button type="button" class="btn btn-secondary" data-action="toggle-password">{pw_btn}</button>
+                        <label class="form-label" for="pw-next">New Permanent Password</label>
+                        <div class="password-field-wrap">
+                            <input id="pw-next" class="form-input form-input-tall" type="{pw_type}" autocomplete="new-password" placeholder="At least 10 characters">
+                            <button type="button" class="password-eye-btn" aria-label="{pw_aria}" title="{pw_aria}" data-action="toggle-password">{eye_svg}</button>
                         </div>
-                        <p class="form-hint">Do not include your student/employee ID number or email address in your new password.</p>
+                        <p class="form-hint">Avoid using your ID number or email address inside your password.</p>
                     </div>
-                    <button type="button" class="btn btn-primary btn-lg" style="width:100%;" data-action="password-submit">Save New Password &amp; Continue</button>
+                    <button type="button" class="btn btn-primary btn-lg btn-block" data-action="password-submit">Save Password &amp; Continue</button>
                 </section>
             </div>
         </main>"#,
-        banner = render_banner(s),
+        err_box = render_inline_auth_error(s),
     )
 }
 
@@ -1306,13 +1424,14 @@ fn render_student_queue(s: &AppState) -> String {
             .and_then(Value::as_str)
             .unwrap_or("COMPLETED");
         format!(
-            r#"<div class="alert-banner alert-success" style="margin-bottom:1.25rem;" role="status">
-                <div class="flex-between-center">
+            r#"<div class="alert-banner alert-info" style="margin-bottom:20px;" role="status">
+                <svg class="alert-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <div class="flex-between-center" style="flex:1 1 auto;">
                     <div>
-                        <strong>All Enrolled Subjects Completed!</strong><br>
-                        Thank you for completing all {total} of your subject evaluations for 1st Semester, AY 2026–2027. Semester Reference Code: <span class="ref-code">{cert_tok}</span>
+                        <strong>All {total} Enrolled Subjects Evaluated!</strong>
+                        <div style="font-size:0.88rem;">Thank you for sharing your semester feedback. Reference Code: <span class="ref-code">{cert_tok}</span></div>
                     </div>
-                    <button type="button" class="btn btn-secondary no-print" data-action="print-cert">Print Summary</button>
+                    <button type="button" class="btn btn-secondary btn-sm no-print" data-action="print-cert">Print Summary</button>
                 </div>
             </div>"#,
             cert_tok = esc(cert_tok),
@@ -1371,32 +1490,34 @@ fn render_student_queue(s: &AppState) -> String {
 
         let (status_badge, action_btn) = if is_done {
             (
-                r#"<span class="status-badge status-ok">Completed</span>"#.to_string(),
+                r#"<span class="status-badge status-ok"><span class="status-dot dot-ok"></span>Completed</span>"#.to_string(),
                 format!(
-                    r#"<button type="button" class="btn btn-secondary" data-action="view-receipt" data-course-idx="{orig_idx}">View Receipt</button>"#
+                    r#"<button type="button" class="btn btn-secondary btn-sm" data-action="view-receipt" data-course-idx="{orig_idx}">View Receipt</button>"#
                 ),
             )
         } else {
             (
-                r#"<span class="status-badge status-pending">Pending</span>"#.to_string(),
+                r#"<span class="status-badge status-pending"><span class="status-dot dot-warn"></span>Pending</span>"#.to_string(),
                 format!(
-                    r#"<button type="button" class="btn btn-primary" data-action="start-eval" data-section-id="{sec_id}">Evaluate</button>"#
+                    r#"<button type="button" class="btn btn-outline-brand btn-sm" data-action="start-eval" data-section-id="{sec_id}">Evaluate</button>"#
                 ),
             )
         };
 
         rows.push_str(&format!(
             r#"<tr>
-                <td data-label="Subject Code"><span class="subject-code-tag">{code}</span></td>
-                <td data-label="Course &amp; Section">
-                    <div>
+                <td data-label="Subject Code" class="desktop-only"><span class="subject-code-plain">{code}</span></td>
+                <td data-label="Course &amp; Section" class="card-primary-cell">
+                    <div class="flex-between-center" style="gap:8px;">
                         <strong>{title}</strong>
-                        <div style="font-size:0.88rem;color:var(--ink-secondary);">Section {sec_code}</div>
+                        <span class="mobile-only">{status_badge}</span>
                     </div>
+                    <div class="desktop-only" style="font-size:0.84rem;color:var(--ink-muted);">Section {sec_code}</div>
+                    <div class="mobile-only" style="font-size:0.85rem;color:var(--ink-muted);margin-top:4px;"><strong>{code}</strong> &middot; Section {sec_code} &middot; {prof}</div>
                 </td>
-                <td data-label="Instructor">{prof}</td>
-                <td data-label="Status">{status_badge}</td>
-                <td data-label="Action">{action_btn}</td>
+                <td data-label="Instructor" class="desktop-only">{prof}</td>
+                <td data-label="Status" class="desktop-only">{status_badge}</td>
+                <td data-label="Action" class="card-action-cell">{action_btn}</td>
             </tr>"#,
             code = esc(code),
             title = esc(title),
@@ -1407,7 +1528,7 @@ fn render_student_queue(s: &AppState) -> String {
 
     if rows.is_empty() {
         rows.push_str(
-            r#"<tr><td colspan="5" style="text-align:center;color:var(--ink-secondary);padding:1.75rem;">No subjects match your selected filter.</td></tr>"#,
+            r#"<tr><td colspan="5" style="text-align:center;color:var(--ink-secondary);padding:28px;">No subjects match your selected filter.</td></tr>"#,
         );
     }
 
@@ -1416,42 +1537,41 @@ fn render_student_queue(s: &AppState) -> String {
             {banner}
             <section class="doc-sheet" aria-labelledby="subjects-heading">
                 {all_done_banner}
-                <div class="flex-between">
+                <div class="flex-between" style="margin-bottom:16px;">
                     <div>
                         <p class="institution-line">1st Semester, AY 2026–2027</p>
-                        <h1 id="subjects-heading" class="sheet-title" style="margin-bottom:0.25rem;">My Enrolled Subjects</h1>
+                        <h1 id="subjects-heading" class="sheet-title" style="margin-bottom:0;">My Enrolled Subjects</h1>
                     </div>
                     <div class="btn-row no-print">
-                        <button type="button" class="btn btn-secondary" data-action="export-queue-csv">Download My List (CSV)</button>
-                        <button type="button" class="btn btn-secondary" data-action="open-rubric">1–5 Rating Scale</button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-action="export-queue-csv">Download List (CSV)</button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-action="open-rubric">1–5 Rating Scale</button>
                     </div>
                 </div>
 
-                <div class="subtle-box" style="margin:1.1rem 0;">
-                    <div class="flex-between-center" style="margin-bottom:0.45rem;">
-                        <strong>{completed} of {total} subjects completed</strong>
-                        <span class="tabular-nums" style="font-weight:700;">{pct:.0}%</span>
+                <div class="subtle-box" style="margin-bottom:20px;">
+                    <div class="flex-between-center" style="margin-bottom:8px;">
+                        <strong style="font-size:0.94rem;">{completed} of {total} subjects completed</strong>
+                        <span class="tabular-nums" style="font-weight:700;font-size:0.92rem;color:var(--brand-primary);">{pct:.0}%</span>
                     </div>
                     <div class="progress-track" role="progressbar" aria-valuenow="{pct:.0}" aria-valuemin="0" aria-valuemax="100" aria-label="Subject evaluation completion progress">
                         <div class="progress-fill" style="width:{pct:.1}%;"></div>
                     </div>
-                    <p style="margin:0.55rem 0 0;font-size:0.92rem;color:var(--ink-secondary);">
-                        Your name and student ID are never attached to your answers, and instructors view class summaries only after final semester grades are officially released.
+                    <p style="margin:8px 0 0;font-size:0.86rem;color:var(--ink-muted);">
+                        Responses remain anonymous, and instructors receive class summaries only after final grades are officially submitted.
                     </p>
                 </div>
 
-                <div class="flex-between-center no-print" style="margin-bottom:1rem;align-items:flex-end;">
-                    <div>
-                        <span class="form-label">Show Subjects</span>
+                <div class="flex-between-center no-print" style="margin-bottom:16px;align-items:flex-end;">
+                    <div style="max-width:100%;overflow:hidden;">
                         <div class="filter-tab-row" role="tablist" aria-label="Filter subjects by completion status">
-                            <button type="button" role="tab" aria-selected="{sa}" class="btn {fa}" data-action="set-queue-filter" data-filter="ALL">All Subjects ({total})</button>
-                            <button type="button" role="tab" aria-selected="{sp}" class="btn {fp}" data-action="set-queue-filter" data-filter="PENDING">Pending ({pending})</button>
-                            <button type="button" role="tab" aria-selected="{sd}" class="btn {fd}" data-action="set-queue-filter" data-filter="CLEARED">Completed ({completed})</button>
+                            <button type="button" role="tab" aria-selected="{sa}" class="filter-chip {fa}" data-action="set-queue-filter" data-filter="ALL">All ({total})</button>
+                            <button type="button" role="tab" aria-selected="{sp}" class="filter-chip {fp}" data-action="set-queue-filter" data-filter="PENDING">Pending ({pending})</button>
+                            <button type="button" role="tab" aria-selected="{sd}" class="filter-chip {fd}" data-action="set-queue-filter" data-filter="CLEARED">Completed ({completed})</button>
                         </div>
                     </div>
-                    <div style="min-width:270px;flex:0 1 320px;">
-                        <label class="form-label" for="queue-search-input">Find Subject or Instructor</label>
-                        <input id="queue-search-input" class="form-input" type="search" data-action="queue-search" value="{q_search}" placeholder="Filter by subject or instructor...">
+                    <div style="min-width:240px;flex:1 1 280px;max-width:340px;">
+                        <label class="sr-only" for="queue-search-input">Find Subject or Instructor</label>
+                        <input id="queue-search-input" class="form-input" style="min-height:38px;padding:6px 12px;" type="search" data-action="queue-search" value="{q_search}" placeholder="Search subject or instructor...">
                     </div>
                 </div>
 
@@ -1474,21 +1594,21 @@ fn render_student_queue(s: &AppState) -> String {
         banner = render_banner(s),
         sa = s.queue_filter == "ALL",
         fa = if s.queue_filter == "ALL" {
-            "btn-primary"
+            "active"
         } else {
-            "btn-secondary"
+            ""
         },
         sp = s.queue_filter == "PENDING",
         fp = if s.queue_filter == "PENDING" {
-            "btn-primary"
+            "active"
         } else {
-            "btn-secondary"
+            ""
         },
         sd = s.queue_filter == "CLEARED",
         fd = if s.queue_filter == "CLEARED" {
-            "btn-primary"
+            "active"
         } else {
-            "btn-secondary"
+            ""
         },
         q_search = esc(&s.queue_search),
     )
@@ -1539,27 +1659,26 @@ fn render_evaluation_form(s: &AppState) -> String {
         "1st Semester, AY 2026–2027".to_string()
     };
 
-    let step_label = if s.eval_step == 1 {
-        "Part 1 of 2: Rating Statements"
-    } else {
-        "Part 2 of 2: Written Comments"
-    };
-
     let header_sheet = format!(
         r#"<section class="doc-sheet" aria-labelledby="eval-subject-title">
-            <div class="flex-between-center no-print" style="margin-bottom:0.85rem;">
-                <button type="button" class="btn btn-secondary" data-action="nav" data-path="/queue">&larr; Back to My Subjects</button>
-                <div class="btn-row">
-                    <button type="button" class="btn btn-secondary" data-action="open-rubric">1–5 Rating Scale</button>
-                    <button type="button" class="btn btn-secondary" data-action="ask-discard-draft">Clear Saved Answers</button>
+            <div class="flex-between-center no-print" style="margin-bottom:12px;flex-wrap:nowrap;">
+                <button type="button" class="btn btn-secondary btn-sm" aria-label="Back to My Subjects" data-action="nav" data-path="/queue">
+                    <span aria-hidden="true" style="font-size:1.15rem;line-height:1;">&lsaquo;</span>
+                    <span class="desktop-only">Back to My Subjects</span>
+                </button>
+                <div class="btn-row" style="flex-wrap:nowrap;">
+                    <button type="button" class="btn btn-secondary btn-sm desktop-only" data-action="open-rubric">1–5 Rating Scale</button>
+                    <details class="overflow-menu">
+                        <summary aria-label="More evaluation actions" title="More actions">&#8943;</summary>
+                        <div class="overflow-menu-panel">
+                            <button type="button" class="overflow-menu-item" data-action="open-rubric">View 1–5 Rating Scale</button>
+                            <button type="button" class="overflow-menu-item danger" data-action="ask-discard-draft">Clear Saved Answers</button>
+                        </div>
+                    </details>
                 </div>
             </div>
-            <h1 id="eval-subject-title" class="sheet-title" style="margin-bottom:0.25rem;">{subject_heading}</h1>
-            <p style="color:var(--ink-secondary);margin-bottom:0.9rem;">{subject_meta}</p>
-            <div class="subtle-box flex-between-center">
-                <strong>{step_label}</strong>
-                <span class="tabular-nums"><strong>Answered: {answered} of 25</strong></span>
-            </div>
+            <h1 id="eval-subject-title" class="sheet-title" style="font-size:1.45rem;margin-bottom:4px;">{subject_heading}</h1>
+            <p style="color:var(--ink-secondary);font-size:0.92rem;margin-bottom:0;">{subject_meta}</p>
         </section>"#
     );
 
@@ -1589,13 +1708,13 @@ fn render_evaluation_form(s: &AppState) -> String {
                 let q_num = flat_idx + 1;
                 let current = s.draft.ratings[flat_idx];
                 let is_missing = s.incomplete_indices.contains(&flat_idx);
-                let row_cls = if is_missing {
-                    "statement-row incomplete-highlight"
+                let grp_cls = if is_missing {
+                    "rating-btn-group group-error"
                 } else {
-                    "statement-row"
+                    "rating-btn-group"
                 };
                 let missing_note = if is_missing {
-                    r#"<div style="font-size:0.88rem;font-weight:600;color:var(--err-fg);margin-top:0.25rem;">Please select a rating from 1 to 5 for this statement.</div>"#
+                    r#"<div class="statement-error-msg"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Please choose a rating from 1 to 5.</span></div>"#
                 } else {
                     ""
                 };
@@ -1615,12 +1734,12 @@ fn render_evaluation_form(s: &AppState) -> String {
                 }
 
                 rows_html.push_str(&format!(
-                    r#"<div id="likert-item-{flat_idx}" class="{row_cls}" tabindex="0" data-likert-row="{flat_idx}" role="group" aria-label="Statement {q_num}">
+                    r#"<div id="likert-item-{flat_idx}" class="statement-row" tabindex="0" data-likert-row="{flat_idx}" role="group" aria-label="Statement {q_num}">
                         <div>
-                            <span><strong>{q_num}.</strong> {prompt}</span>
+                            <div><strong>{q_num}.</strong> {prompt}</div>
                             {missing_note}
                         </div>
-                        <div class="rating-btn-group">{btns}</div>
+                        <div class="{grp_cls}">{btns}</div>
                     </div>"#,
                     prompt = esc(prompt),
                 ));
@@ -1628,77 +1747,105 @@ fn render_evaluation_form(s: &AppState) -> String {
 
             sections_html.push_str(&format!(
                 r#"<section id="cluster-card-{c_idx}" class="doc-sheet" aria-labelledby="sec-head-{c_idx}">
-                    <div class="flex-between-center">
-                        <h2 id="sec-head-{c_idx}" style="margin:0;">{letter}. {plain_title}</h2>
-                        <span style="font-size:0.92rem;color:var(--ink-secondary);" class="tabular-nums">{c_done} of 5 answered</span>
+                    <div class="eval-section-banner">
+                        <div class="flex-between-center">
+                            <h2 id="sec-head-{c_idx}" style="margin:0;">{letter}. {plain_title}</h2>
+                            <span style="font-size:0.86rem;font-weight:600;color:var(--ink-muted);" class="tabular-nums">{c_done} of 5 answered</span>
+                        </div>
+                        <p style="color:var(--ink-secondary);font-size:0.88rem;margin:4px 0 0;">{helper_desc}</p>
                     </div>
-                    <p style="color:var(--ink-secondary);font-size:0.94rem;margin:0.3rem 0 0;">{helper_desc}</p>
-                    <hr class="section-divider">
                     {rows_html}
                 </section>"#
             ));
         }
 
+        let pct_done = (answered as f64 / 25.0) * 100.0;
         format!(
-            r#"<div class="scale-legend-sheet no-print" role="region" aria-label="1 to 5 Rating Scale Legend and Section Navigation">
-                <div class="scale-legend-items">
-                    <span><strong>Rating Scale:</strong></span>
-                    <span><strong>5</strong> = Outstanding</span>
-                    <span><strong>4</strong> = Very Satisfactory</span>
-                    <span><strong>3</strong> = Satisfactory</span>
-                    <span><strong>2</strong> = Fair</span>
-                    <span><strong>1</strong> = Needs Improvement</span>
+            r#"<div class="eval-sticky-bar no-print" role="region" aria-label="Evaluation Progress and Section Navigation">
+                <div class="eval-sticky-top">
+                    <strong>Part 1 of 2 &middot; Rating Statements</strong>
+                    <span class="tabular-nums" style="font-weight:700;color:var(--brand-primary);">Answered: {answered} of 25</span>
                 </div>
+                <div class="progress-track" style="margin-bottom:10px;" aria-hidden="true">
+                    <div class="progress-fill" style="width:{pct_done:.1}%;"></div>
+                </div>
+                <details class="scale-disclosure">
+                    <summary><strong>Scale Guide:</strong> 5 Outstanding &middot; 4 Very Satisfactory &middot; 3 Satisfactory &middot; 2 Fair &middot; 1 Needs Improvement &#9662;</summary>
+                    <div class="scale-legend-items" style="padding:4px 0 10px;">
+                        <span><strong>5</strong> = Exemplary standard</span>
+                        <span><strong>4</strong> = Clear &amp; consistent</span>
+                        <span><strong>3</strong> = Meets expectations</span>
+                        <span><strong>2</strong> = Needs structure</span>
+                        <span><strong>1</strong> = Needs mentoring</span>
+                    </div>
+                </details>
                 <nav class="section-jump-row" aria-label="Jump to Evaluation Section">
                     {jump_btns}
                 </nav>
             </div>
             {sections_html}
             <div class="doc-sheet flex-between-center">
-                <span><strong>Answered: {answered} of 25</strong> rating statements</span>
+                <span class="tabular-nums"><strong>{answered} of 25</strong> statements answered</span>
                 <button type="button" class="btn btn-primary btn-lg" data-action="step-next">Continue to Part 2: Written Comments &rarr;</button>
             </div>"#
         )
     } else {
         format!(
-            r#"<section class="doc-sheet" aria-labelledby="part2-heading">
-                <h2 id="part2-heading" style="margin-bottom:0.35rem;">Part 2 of 2: Written Comments</h2>
-                <p style="color:var(--ink-secondary);">
-                    Share constructive observations to help your instructor understand what worked well and what can be improved. Written responses below are optional, and you may write in English or Filipino.
-                </p>
-                <hr class="section-divider">
-
-                <div class="form-group">
-                    <label class="form-label" for="eval-q1">1. Three words describing the class</label>
-                    <input id="eval-q1" class="form-input" type="text" data-action="draft-text-input" value="{q1}" placeholder="For example: Clear, organized, supportive">
+            r#"<div class="eval-sticky-bar no-print" role="region" aria-label="Evaluation Progress">
+                <div class="eval-sticky-top" style="margin-bottom:0;padding-bottom:0;border-bottom:0;">
+                    <strong>Part 2 of 2 &middot; Optional Written Comments</strong>
+                    <span class="status-badge status-ok"><span class="status-dot dot-ok"></span>25 of 25 Ratings Saved</span>
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="eval-q2">2. Areas for improvement</label>
-                    <input id="eval-q2" class="form-input" type="text" data-action="draft-text-input" value="{q2}" placeholder="Topics, pacing, or class activities that could be improved (separate multiple items with semicolons)">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="eval-q3">3. Teaching strengths to continue</label>
-                    <input id="eval-q3" class="form-input" type="text" data-action="draft-text-input" value="{q3}" placeholder="Teaching approaches, examples, or guidance that helped you learn effectively">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="eval-q4">4. Suggestions for future offerings</label>
-                    <input id="eval-q4" class="form-input" type="text" data-action="draft-text-input" value="{q4}" placeholder="Helpful recommendations for future offerings of this subject">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="eval-comment">5. Additional comments (in English or Filipino)</label>
-                    <textarea id="eval-comment" class="form-textarea" data-action="draft-text-input" placeholder="Write any additional constructive comments about your learning experience in this subject...">{comment}</textarea>
-                    <p class="form-hint" style="margin-top:0.5rem;">
-                        <strong>Student Privacy Assurance:</strong> Your name and student number are never attached to this evaluation. Any email addresses, student ID numbers, or phone numbers accidentally included in written comments are automatically removed before saving.
+            </div>
+            <section class="doc-sheet" aria-labelledby="part2-heading">
+                <div style="max-width:760px;">
+                    <h2 id="part2-heading" style="margin-bottom:6px;">Share Constructive Observations</h2>
+                    <p style="color:var(--ink-secondary);font-size:0.93rem;margin-bottom:20px;">
+                        Written comments below are optional and help your instructor see what worked well and where the course can improve. You may write in English or Filipino.
                     </p>
+
+                    <div class="two-col-grid" style="gap:16px;margin-bottom:0;">
+                        <div class="form-group">
+                            <label class="form-label" for="eval-q1">1. Three words describing the class</label>
+                            <input id="eval-q1" class="form-input" style="min-height:42px;" type="text" data-action="draft-text-input" value="{q1}" placeholder="e.g., Clear, organized, supportive">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="eval-q2">2. Areas for improvement</label>
+                            <input id="eval-q2" class="form-input" style="min-height:42px;" type="text" data-action="draft-text-input" value="{q2}" placeholder="Topics, pacing, or class activities">
+                        </div>
+                    </div>
+
+                    <div class="two-col-grid" style="gap:16px;margin-bottom:0;">
+                        <div class="form-group">
+                            <label class="form-label" for="eval-q3">3. Teaching strengths to continue</label>
+                            <input id="eval-q3" class="form-input" style="min-height:42px;" type="text" data-action="draft-text-input" value="{q3}" placeholder="Approaches or examples that helped you learn">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="eval-q4">4. Suggestions for future classes</label>
+                            <input id="eval-q4" class="form-input" style="min-height:42px;" type="text" data-action="draft-text-input" value="{q4}" placeholder="Recommendations for next semester">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="eval-comment">5. Additional comments (English or Filipino)</label>
+                        <textarea id="eval-comment" class="form-textarea" style="min-height:80px;" rows="3" data-action="draft-text-input" placeholder="Share any additional feedback about your learning experience...">{comment}</textarea>
+                    </div>
+
+                    <div class="callout-box" style="margin-bottom:20px;">
+                        <span class="callout-icon" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        </span>
+                        <div style="font-size:0.87rem;line-height:1.5;">
+                            <strong>Student Privacy Assurance:</strong> Your name and student ID are never attached to this evaluation. Any email addresses, ID numbers, or phone numbers typed in comments are automatically scrubbed before storage.
+                        </div>
+                    </div>
                 </div>
 
                 <hr class="section-divider">
                 <div class="flex-between-center">
-                    <button type="button" class="btn btn-secondary btn-lg" data-action="step-back">&larr; Back to Part 1: Rating Statements</button>
+                    <button type="button" class="btn btn-secondary" data-action="step-back">&lsaquo; Back to Part 1</button>
                     <button type="button" class="btn btn-primary btn-lg" {disabled} data-action="eval-submit">{sub_label}</button>
                 </div>
             </section>"#,
@@ -1719,11 +1866,11 @@ fn render_evaluation_form(s: &AppState) -> String {
     let sl_modal = if s.show_straight_line_modal {
         r#"<div class="modal-backdrop no-print" role="dialog" aria-modal="true" aria-labelledby="sl-modal-title">
             <div class="modal-dialog">
-                <h2 id="sl-modal-title" style="margin-bottom:0.5rem;">Confirm Identical Ratings?</h2>
-                <p style="color:var(--ink-secondary);">
-                    You selected the same rating for all 25 statements across all five sections. If this reflects your honest overall assessment of the class, you may submit your evaluation now, or return to Part 1 to review individual statements.
+                <h2 id="sl-modal-title" style="margin-bottom:8px;">Confirm Identical Ratings?</h2>
+                <p style="color:var(--ink-secondary);font-size:0.94rem;">
+                    You selected the same rating across all 25 statements. If this reflects your honest overall assessment, submit now — otherwise return to review individual items.
                 </p>
-                <div class="btn-row" style="margin-top:1.25rem;">
+                <div class="btn-row" style="margin-top:20px;justify-content:flex-end;">
                     <button type="button" class="btn btn-secondary" data-action="cancel-straight-line">Review My Ratings</button>
                     <button type="button" class="btn btn-primary" data-action="confirm-straight-line">Submit My Evaluation</button>
                 </div>
@@ -1736,13 +1883,13 @@ fn render_evaluation_form(s: &AppState) -> String {
     let discard_modal = if s.show_discard_modal {
         r#"<div class="modal-backdrop no-print" role="dialog" aria-modal="true" aria-labelledby="disc-title">
             <div class="modal-dialog">
-                <h2 id="disc-title" style="margin-bottom:0.5rem;">Clear Saved Answers?</h2>
-                <p style="color:var(--ink-secondary);">
-                    This will clear all ratings and written notes you have entered so far for this subject so you can start fresh.
+                <h2 id="disc-title" style="margin-bottom:8px;">Clear Saved Answers?</h2>
+                <p style="color:var(--ink-secondary);font-size:0.94rem;">
+                    This will permanently clear all ratings and written notes entered so far for this subject.
                 </p>
-                <div class="btn-row" style="margin-top:1.25rem;">
-                    <button type="button" class="btn btn-secondary" data-action="close-modals">Keep My Answers</button>
-                    <button type="button" class="btn btn-primary" data-action="confirm-discard-draft">Clear Answers</button>
+                <div class="btn-row" style="margin-top:20px;justify-content:flex-end;">
+                    <button type="button" class="btn btn-primary" data-action="close-modals">Keep My Answers</button>
+                    <button type="button" class="btn btn-danger" data-action="confirm-discard-draft">Clear Answers</button>
                 </div>
             </div>
         </div>"#
@@ -1853,43 +2000,55 @@ fn render_faculty_portal(s: &AppState) -> String {
     }
 
     let detail_sheet = if !is_released {
-        let step1_status = if grades_done {
-            r#"<span class="status-badge status-ok">Completed</span>"#.to_string()
+        let (step1_dot, step1_action) = if grades_done {
+            (
+                r#"<span class="inline-dot-status"><span class="status-dot dot-ok"></span>Submitted</span>"#,
+                String::new(),
+            )
         } else {
-            format!(
-                r#"<div class="btn-row">
-                    <span class="status-badge status-pending">Pending</span>
-                    <button type="button" class="btn btn-primary" data-action="faculty-submit-grades" data-section-id="{active_id}">Confirm Final Grades Submitted</button>
-                </div>"#
+            (
+                r#"<span class="inline-dot-status"><span class="status-dot dot-warn"></span>Pending</span>"#,
+                format!(
+                    r#"<button type="button" class="btn btn-primary" data-action="faculty-submit-grades" data-section-id="{active_id}">Confirm Final Grades Submitted</button>"#
+                ),
             )
         };
-        let step2_status = if reg_released {
-            r#"<span class="status-badge status-ok">Verified by Registrar</span>"#
+        let step2_dot = if reg_released {
+            r#"<span class="inline-dot-status"><span class="status-dot dot-ok"></span>Verified by Registrar</span>"#
         } else {
-            r#"<span class="status-badge status-pending">Awaiting Registrar Verification</span>"#
+            r#"<span class="inline-dot-status"><span class="status-dot dot-warn"></span>Awaiting Registrar Verification</span>"#
         };
 
         format!(
             r#"<section class="doc-sheet" aria-labelledby="pending-release-heading">
-                <h2 id="pending-release-heading" style="margin-bottom:0.35rem;">Results Pending Final Grade Release</h2>
-                <p style="color:var(--ink-secondary);">
-                    <strong>{code} (Section {scode}) &mdash; {title}</strong><br>
-                    In accordance with university policy, class evaluation summaries and anonymous student comments are released only after both steps below are completed.
+                <div class="flex-between-center" style="margin-bottom:6px;">
+                    <h2 id="pending-release-heading" style="margin:0;">Results Pending Grade Release</h2>
+                    <span class="subject-code-plain">{code} &middot; {scode}</span>
+                </div>
+                <p style="color:var(--ink-secondary);font-size:0.93rem;margin-bottom:16px;">
+                    <strong>{title}</strong> &mdash; Class evaluation summaries unlock automatically once both steps below are complete.
                 </p>
                 <div class="checklist-box">
                     <div class="checklist-step">
                         <div>
-                            <strong>Step 1: Final Semester Grades Submitted by Instructor</strong>
-                            <div style="font-size:0.9rem;color:var(--ink-secondary);">Confirm that all final student grades for this class section have been submitted.</div>
+                            <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;">
+                                <span class="step-kicker" style="margin:0;">STEP 1</span>
+                                {step1_dot}
+                            </div>
+                            <strong>Final Semester Grades Submitted by Instructor</strong>
+                            <div style="font-size:0.88rem;color:var(--ink-muted);margin-top:2px;">Confirm that all final student grades for this section have been submitted.</div>
                         </div>
-                        {step1_status}
+                        {step1_action}
                     </div>
                     <div class="checklist-step">
                         <div>
-                            <strong>Step 2: Grade Release Verified by the Office of the University Registrar</strong>
-                            <div style="font-size:0.9rem;color:var(--ink-secondary);">The University Registrar verifies grade submission and unlocks the class report.</div>
+                            <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;">
+                                <span class="step-kicker" style="margin:0;">STEP 2</span>
+                                {step2_dot}
+                            </div>
+                            <strong>Registrar Verification &amp; Report Release</strong>
+                            <div style="font-size:0.88rem;color:var(--ink-muted);margin-top:2px;">The Office of the University Registrar verifies grade submission and unlocks your report.</div>
                         </div>
-                        {step2_status}
                     </div>
                 </div>
             </section>"#,
@@ -1900,6 +2059,17 @@ fn render_faculty_portal(s: &AppState) -> String {
     } else if let Some(ref rep) = s.selected_faculty_report {
         let mean = rep.get("mean_score").and_then(Value::as_f64).unwrap_or(0.0);
         let adj = perf_adjective(mean);
+        let is_outstanding = mean >= 4.50;
+        let overall_card_cls = if is_outstanding {
+            "kpi-card kpi-gold"
+        } else {
+            "kpi-card"
+        };
+        let adj_badge = if is_outstanding {
+            format!(r#"<span class="status-badge status-gold">&#9733; {adj}</span>"#)
+        } else {
+            format!(r#"<span class="status-badge status-ok">{adj}</span>"#)
+        };
         let count = rep
             .get("submission_count")
             .and_then(Value::as_u64)
@@ -1920,14 +2090,21 @@ fn render_faculty_portal(s: &AppState) -> String {
                 .get(tag)
                 .and_then(Value::as_f64)
                 .unwrap_or(mean);
+            let area_adj = perf_adjective(cm);
+            let area_badge = if cm >= 4.50 {
+                format!(r#"<span class="status-badge status-gold">&#9733; {area_adj}</span>"#)
+            } else if cm >= 3.50 {
+                format!(r#"<span class="inline-standing-ok">&#10003; {area_adj}</span>"#)
+            } else {
+                format!(r#"<span class="status-badge status-pending">{area_adj}</span>"#)
+            };
             area_rows.push_str(&format!(
                 r#"<tr>
-                    <td data-label="Evaluation Area"><strong>{}</strong></td>
-                    <td data-label="Average Rating" class="tabular-nums">{cm:.2} / 5.00</td>
-                    <td data-label="Descriptive Rating">{}</td>
+                    <td data-label="Evaluation Area" style="width:45%;"><strong>{}</strong></td>
+                    <td data-label="Average Rating" class="tabular-nums" style="width:27%;font-weight:700;">{cm:.2} / 5.00</td>
+                    <td data-label="Descriptive Rating" style="width:28%;">{area_badge}</td>
                 </tr>"#,
                 esc(friendly_area_name(tag)),
-                perf_adjective(cm),
             ));
         }
 
@@ -1952,12 +2129,12 @@ fn render_faculty_portal(s: &AppState) -> String {
                     _ => ("status-badge status-neutral", "Neutral"),
                 };
                 comments_html.push_str(&format!(
-                    r#"<div class="subtle-box" style="margin-top:0.7rem;">
-                        <div class="flex-between-center" style="margin-bottom:0.35rem;">
-                            <strong style="font-size:0.93rem;">{}</strong>
+                    r#"<div class="subtle-box" style="margin-top:10px;">
+                        <div class="flex-between-center" style="margin-bottom:4px;">
+                            <strong style="font-size:0.9rem;">{}</strong>
                             <span class="{tone_cls}">{tone_lbl}</span>
                         </div>
-                        <p style="margin:0;">{}</p>
+                        <p style="margin:0;font-size:0.93rem;">{}</p>
                     </div>"#,
                     esc(friendly_area_name(tag)),
                     esc(txt),
@@ -1966,29 +2143,28 @@ fn render_faculty_portal(s: &AppState) -> String {
         }
         if comments_html.is_empty() {
             comments_html.push_str(
-                r#"<p style="color:var(--ink-secondary);margin-top:0.5rem;">No written comments were submitted for this class section.</p>"#,
+                r#"<p style="color:var(--ink-secondary);margin-top:8px;">No written comments were submitted for this class section.</p>"#,
             );
         }
 
         format!(
             r#"<section class="doc-sheet" aria-labelledby="official-report-heading">
-                <div class="flex-between">
+                <div class="flex-between" style="margin-bottom:16px;">
                     <div>
                         <p class="institution-line">Official Class Evaluation Report &middot; 1st Semester, AY 2026–2027</p>
-                        <h2 id="official-report-heading" style="margin-bottom:0.2rem;">{code} (Section {scode}) &mdash; {title}</h2>
+                        <h2 id="official-report-heading" style="margin:0;">{code} (Section {scode}) &mdash; {title}</h2>
                     </div>
                     <div class="btn-row no-print">
-                        <button type="button" class="btn btn-secondary" data-action="export-faculty-csv">Download Summary (CSV)</button>
-                        <button type="button" class="btn btn-secondary" data-action="print-cert">Print Report</button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-action="export-faculty-csv">Download CSV</button>
+                        <button type="button" class="btn btn-secondary btn-sm" data-action="print-cert">Print Report</button>
                     </div>
                 </div>
-                <hr class="section-divider">
 
-                <div class="kpi-grid-3" style="margin-bottom:1.35rem;">
-                    <div class="kpi-card">
-                        <div class="kpi-label">Overall Rating</div>
-                        <div class="kpi-value">{mean:.2} / 5.00</div>
-                        <div class="kpi-sub">{adj}</div>
+                <div class="kpi-grid-3" style="margin-bottom:24px;">
+                    <div class="{overall_card_cls}">
+                        <div class="kpi-label">Overall Class Rating</div>
+                        <div class="kpi-value">{mean:.2} <span style="font-size:1.1rem;font-weight:600;color:var(--ink-muted);">/ 5.00</span></div>
+                        <div class="kpi-sub">{adj_badge}</div>
                     </div>
                     <div class="kpi-card">
                         <div class="kpi-label">Student Responses</div>
@@ -1996,43 +2172,42 @@ fn render_faculty_portal(s: &AppState) -> String {
                         <div class="kpi-sub">Completed anonymous evaluations</div>
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-label">Positive Feedback</div>
+                        <div class="kpi-label">Positive Feedback Share</div>
                         <div class="kpi-value">{pos:.1}%</div>
                         <div class="kpi-sub">Neutral: {neu:.1}% &middot; Concerns: {neg:.1}%</div>
                     </div>
                 </div>
 
-                <h3 style="margin-bottom:0.6rem;">Ratings Across the 5 Evaluation Areas</h3>
-                <div class="table-wrap" style="margin-bottom:1.4rem;">
+                <h3 style="margin-bottom:10px;">Performance Across the 5 Evaluation Areas</h3>
+                <div class="table-wrap" style="margin-bottom:24px;">
                     <table class="data-table" aria-label="Ratings by Evaluation Area">
                         <thead>
                             <tr>
-                                <th>Evaluation Area</th>
-                                <th>Average Rating</th>
-                                <th>Descriptive Rating</th>
+                                <th style="width:45%;">Evaluation Area</th>
+                                <th style="width:27%;">Average Rating</th>
+                                <th style="width:28%;">Descriptive Rating</th>
                             </tr>
                         </thead>
                         <tbody>{area_rows}</tbody>
                     </table>
                 </div>
 
-                <h3 style="margin-bottom:0.35rem;">Anonymous Student Comments</h3>
-                <p style="font-size:0.9rem;color:var(--ink-secondary);margin-bottom:0.5rem;">
-                    Comments are presented in random/date order with all personal identifiers removed.
+                <h3 style="margin-bottom:4px;">Anonymous Student Comments</h3>
+                <p style="font-size:0.88rem;color:var(--ink-muted);margin-bottom:8px;">
+                    Personal identifiers are automatically scrubbed prior to release.
                 </p>
                 {comments_html}
             </section>"#,
             code = esc(active_code),
             scode = esc(active_scode),
             title = esc(active_title),
-            adj = esc(adj),
         )
     } else {
         format!(
             r#"<section class="doc-sheet">
                 <div class="flex-between-center">
                     <span>Loading official class evaluation report for <strong>{} (Section {})</strong>&hellip;</span>
-                    <button type="button" class="btn btn-primary" data-action="faculty-view-report" data-section-id="{active_id}">Open Class Report</button>
+                    <button type="button" class="btn btn-primary btn-sm" data-action="faculty-view-report" data-section-id="{active_id}">Open Class Report</button>
                 </div>
             </section>"#,
             esc(active_code),
@@ -2044,16 +2219,20 @@ fn render_faculty_portal(s: &AppState) -> String {
         r#"<main id="main-workspace" class="workspace-container">
             {banner}
             <section class="doc-sheet" aria-labelledby="fac-portal-title">
-                <p class="institution-line">1st Semester, AY 2026–2027 &middot; Office of Academic Affairs</p>
-                <h1 id="fac-portal-title" class="sheet-title" style="margin-bottom:0.35rem;">My Class Evaluation Results</h1>
-                <p style="color:var(--ink-secondary);">
-                    Select an assigned class section below to check grade verification status or review your official anonymous class evaluation summary.
-                </p>
-                <div class="form-group" style="margin-bottom:0;max-width:100%;">
-                    <label class="form-label" for="faculty-section-select">Assigned Class Section</label>
-                    <select id="faculty-section-select" class="form-select" data-action="faculty-select-section">
-                        {select_opts}
-                    </select>
+                <div class="flex-between-center" style="gap:20px;">
+                    <div style="flex:1 1 320px;">
+                        <p class="institution-line">1st Semester, AY 2026–2027 &middot; Faculty Portal</p>
+                        <h1 id="fac-portal-title" class="sheet-title" style="margin-bottom:4px;">My Class Evaluation Results</h1>
+                        <p style="color:var(--ink-secondary);font-size:0.92rem;margin-bottom:0;">
+                            Select an assigned class section to check grade release status or view your anonymous summary.
+                        </p>
+                    </div>
+                    <div style="flex:1 1 340px;max-width:460px;">
+                        <label class="form-label" for="faculty-section-select">Assigned Class Section</label>
+                        <select id="faculty-section-select" class="form-select" data-action="faculty-select-section">
+                            {select_opts}
+                        </select>
+                    </div>
                 </div>
             </section>
             {detail_sheet}
@@ -2176,21 +2355,33 @@ fn render_dean_or_chair(s: &AppState) -> String {
                             "Schedule collegial syllabus, pacing, and rubric review consultation.",
                         );
 
+                    let neg_html = if neg >= 35.0 {
+                        format!(
+                            r#"<span class="concern-critical"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>{neg:.1}%</span>"#
+                        )
+                    } else {
+                        format!("{neg:.1}%")
+                    };
+
                     wl_rows.push_str(&format!(
                         r#"<tr>
                             <td data-label="Instructor"><strong>{fname}</strong></td>
-                            <td data-label="Average Rating" class="tabular-nums">{m:.2} / 5.00 ({adj})</td>
-                            <td data-label="Concerns Share" class="tabular-nums">{neg:.1}%</td>
+                            <td data-label="Average Rating" class="tabular-nums">{m:.2} / 5.00 <span style="color:var(--ink-muted);font-size:0.85rem;">({adj})</span></td>
+                            <td data-label="Concerns Share" class="tabular-nums">{neg_html}</td>
                             <td data-label="Suggested Focus">
                                 <div>
                                     <strong>{area}</strong>
-                                    <div style="font-size:0.88rem;color:var(--ink-secondary);margin-top:0.2rem;">{rec}</div>
+                                    <div style="font-size:0.86rem;color:var(--ink-secondary);margin-top:2px;">{rec}</div>
                                 </div>
                             </td>
-                            <td data-label="Support Action">
-                                <div class="btn-row">
-                                    <button type="button" class="btn btn-secondary" data-action="signoff-plan" data-fac-id="{fid}" data-plan-id="{plan_id}" data-status="APPROVED">Approve Support Plan</button>
-                                    <button type="button" class="btn btn-primary" data-action="signoff-plan" data-fac-id="{fid}" data-plan-id="{plan_id}" data-status="RESOLVED">Mark Completed</button>
+                            <td data-label="Actions">
+                                <div class="btn-row" style="flex-wrap:nowrap;">
+                                    <button type="button" class="icon-action-btn" title="Approve Support Plan" aria-label="Approve Support Plan for {fname}" data-action="signoff-plan" data-fac-id="{fid}" data-plan-id="{plan_id}" data-status="APPROVED">
+                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                                    </button>
+                                    <button type="button" class="icon-action-btn primary" title="Mark Mentoring Completed" aria-label="Mark Mentoring Completed for {fname}" data-action="signoff-plan" data-fac-id="{fid}" data-plan-id="{plan_id}" data-status="RESOLVED">
+                                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                    </button>
                                 </div>
                             </td>
                         </tr>"#,
@@ -2267,7 +2458,12 @@ fn render_dean_or_chair(s: &AppState) -> String {
                         .unwrap_or(0.0);
                     hm_rows.push_str(&format!(
                         r#"<tr>
-                            <td data-label="Subject &amp; Section"><span><span class="subject-code-tag">{code}</span> <span style="font-size:0.9rem;color:var(--ink-secondary);">({scode})</span></span></td>
+                            <td data-label="Subject &amp; Section">
+                                <div>
+                                    <span class="subject-code-plain">{code}</span>
+                                    <div style="font-size:0.82rem;color:var(--ink-muted);">Section {scode}</div>
+                                </div>
+                            </td>
                             <td data-label="Course Title"><strong>{title}</strong></td>
                             <td data-label="Instructor">{fname}</td>
                             <td data-label="Enrolled" class="tabular-nums">{enr}</td>
@@ -2423,7 +2619,7 @@ fn render_dean_or_chair(s: &AppState) -> String {
                     };
                     comment_rows.push_str(&format!(
                         r#"<tr>
-                            <td data-label="Subject Code"><span class="subject-code-tag">{code}</span></td>
+                            <td data-label="Subject Code"><span class="subject-code-plain">{code}</span></td>
                             <td data-label="Evaluation Area">{area}</td>
                             <td data-label="Tone"><span class="{tone_cls}">{tone_lbl}</span></td>
                             <td data-label="Comment">{txt}</td>
@@ -2437,26 +2633,26 @@ fn render_dean_or_chair(s: &AppState) -> String {
 
             format!(
                 r#"<section class="doc-sheet" aria-labelledby="comments-heading">
-                    <h2 id="comments-heading" style="margin-bottom:0.35rem;">Anonymous Student Comments</h2>
-                    <p style="color:var(--ink-secondary);">
-                        Search and review anonymous student feedback across classes in your academic unit. Student names, ID numbers, email addresses, and phone numbers are never stored.
+                    <h2 id="comments-heading" style="margin-bottom:6px;">Anonymous Student Comments</h2>
+                    <p style="color:var(--ink-secondary);font-size:0.93rem;margin-bottom:16px;">
+                        Search and review anonymous student feedback across classes in your unit. Student names, ID numbers, email addresses, and phone numbers are never stored.
                     </p>
-                    <div class="filter-toolbar no-print" style="margin-bottom:1.15rem;">
+                    <div class="comments-filter-toolbar no-print" style="margin-bottom:18px;">
                         <div>
-                            <label class="form-label" for="insights-q-input">Keyword Search</label>
-                            <input id="insights-q-input" class="form-input" type="search" value="{iq}" placeholder="Search comments by topic (e.g., grading, examples, pacing)...">
+                            <label class="form-label" for="insights-q-input">Search Comments</label>
+                            <input id="insights-q-input" class="form-input" type="search" value="{iq}" placeholder="Search by topic (e.g., grading, examples, pacing)...">
                         </div>
                         <div>
-                            <label class="form-label" for="insights-val-select">Feedback Tone</label>
+                            <label class="form-label" for="insights-val-select">Tone</label>
                             <select id="insights-val-select" class="form-select" data-action="insights-valence-change">
-                                <option value="" {va}>All</option>
+                                <option value="" {va}>All Tones</option>
                                 <option value="Positive" {vp}>Positive</option>
                                 <option value="Neutral" {vn}>Neutral</option>
                                 <option value="Negative" {vg}>Concerns</option>
                             </select>
                         </div>
                         <div>
-                            <button type="button" class="btn btn-primary btn-lg" data-action="search-insights">Filter Comments</button>
+                            <button type="button" class="btn btn-secondary" data-action="search-insights">Filter Comments</button>
                         </div>
                     </div>
                     <div class="table-wrap">
@@ -2529,17 +2725,22 @@ fn render_dean_or_chair(s: &AppState) -> String {
                         .and_then(Value::as_bool)
                         .unwrap_or(false);
                     let st_badge = if flagged {
-                        r#"<span class="status-badge status-concern">Needs Mentoring Support</span>"#
+                        r#"<span class="status-badge status-concern">Needs Support</span>"#
                     } else {
-                        r#"<span class="status-badge status-ok">Good Standing</span>"#
+                        r#"<span class="inline-standing-ok"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>Good Standing</span>"#
+                    };
+                    let neg_cell = if neg >= 35.0 {
+                        format!(r#"<span class="concern-critical">{neg:.1}%</span>"#)
+                    } else {
+                        format!("{neg:.1}%")
                     };
                     sum_rows.push_str(&format!(
                         r#"<tr>
                             <td data-label="Instructor"><strong>{fname}</strong></td>
                             <td data-label="Responses" class="tabular-nums">{n}</td>
-                            <td data-label="Average Rating" class="tabular-nums">{m:.2} / 5.00</td>
+                            <td data-label="Average Rating" class="tabular-nums"><strong>{m:.2}</strong> <span style="color:var(--ink-muted);font-size:0.85rem;">/ 5.00</span></td>
                             <td data-label="Descriptive Rating">{adj}</td>
-                            <td data-label="Concerns %" class="tabular-nums">{neg:.1}%</td>
+                            <td data-label="Concerns %" class="tabular-nums">{neg_cell}</td>
                             <td data-label="Standing">{st_badge}</td>
                         </tr>"#,
                         fname = esc(fname),
@@ -2734,24 +2935,30 @@ fn render_admin_console(s: &AppState) -> String {
                         .unwrap_or(false);
 
                     let g_badge = if grades {
-                        r#"<span class="status-badge status-ok">Submitted</span>"#
+                        r#"<span class="status-badge status-info"><span class="status-dot dot-info"></span>Submitted</span>"#
                     } else {
-                        r#"<span class="status-badge status-pending">Awaiting Instructor</span>"#
+                        r#"<span class="status-badge status-pending"><span class="status-dot dot-warn"></span>Awaiting Grades</span>"#
                     };
                     let l_badge = if grades && rlock {
-                        r#"<span class="status-badge status-ok">Released to Faculty</span>"#
+                        r#"<span class="status-badge status-ok"><span class="status-dot dot-ok"></span>Released</span>"#
                     } else if rlock {
-                        r#"<span class="status-badge status-neutral">Approved (Awaiting Grades)</span>"#
+                        r#"<span class="status-badge status-info">Approved (Awaiting Grades)</span>"#
                     } else {
-                        r#"<span class="status-badge status-pending">On Hold</span>"#
+                        r#"<span class="status-badge status-pending"><span class="status-dot dot-warn"></span>On Hold</span>"#
                     };
-                    let toggle_btn = if rlock {
+                    let action_btns = if rlock {
                         format!(
-                            r#"<button type="button" class="btn btn-secondary" data-action="admin-toggle-lock" data-section-id="{id}">Hold Report</button>"#
+                            r#"<div class="btn-row" style="flex-wrap:nowrap;">
+                                <button type="button" class="btn btn-primary btn-sm" disabled>Release</button>
+                                <button type="button" class="btn btn-secondary btn-sm" data-action="admin-toggle-lock" data-section-id="{id}">Hold</button>
+                            </div>"#
                         )
                     } else {
                         format!(
-                            r#"<button type="button" class="btn btn-primary" data-action="admin-toggle-lock" data-section-id="{id}">Release Report</button>"#
+                            r#"<div class="btn-row" style="flex-wrap:nowrap;">
+                                <button type="button" class="btn btn-primary btn-sm" data-action="admin-toggle-lock" data-section-id="{id}">Release</button>
+                                <button type="button" class="btn btn-secondary btn-sm" disabled>Hold</button>
+                            </div>"#
                         )
                     };
 
@@ -2759,14 +2966,14 @@ fn render_admin_console(s: &AppState) -> String {
                         r#"<tr>
                             <td data-label="Subject &amp; Section">
                                 <div>
-                                    <span class="subject-code-tag">{code}</span>
-                                    <div style="margin-top:0.2rem;"><strong>{title}</strong> (Section {scode})</div>
+                                    <span class="subject-code-plain">{code}</span> &middot; <span style="font-size:0.84rem;color:var(--ink-muted);">Section {scode}</span>
+                                    <div style="margin-top:2px;"><strong>{title}</strong></div>
                                 </div>
                             </td>
                             <td data-label="Instructor">{prof}</td>
                             <td data-label="Final Grades">{g_badge}</td>
                             <td data-label="Report Status">{l_badge}</td>
-                            <td data-label="Action">{toggle_btn}</td>
+                            <td data-label="Action">{action_btns}</td>
                         </tr>"#,
                         code = esc(code),
                         title = esc(title),
@@ -2778,16 +2985,16 @@ fn render_admin_console(s: &AppState) -> String {
 
             format!(
                 r#"<section class="doc-sheet" aria-labelledby="grade-release-heading">
-                    <div class="flex-between">
+                    <div class="flex-between" style="margin-bottom:16px;">
                         <div>
-                            <h2 id="grade-release-heading" style="margin-bottom:0.35rem;">Post-Grade Evaluation Report Release</h2>
-                            <p style="color:var(--ink-secondary);max-width:65ch;">
-                                Faculty members can open their class evaluation report only when final semester grades have been submitted and the Office of the University Registrar has released the section below.
+                            <h2 id="grade-release-heading" style="margin-bottom:4px;">Post-Grade Report Release</h2>
+                            <p style="color:var(--ink-secondary);font-size:0.93rem;max-width:65ch;margin-bottom:0;">
+                                Faculty reports unlock once final semester grades are submitted (blue) and released by the Registrar (green).
                             </p>
                         </div>
                         <div class="btn-row no-print">
-                            <button type="button" class="btn btn-primary" data-action="admin-bulk-lock" data-lock="1">Release All Verified</button>
-                            <button type="button" class="btn btn-secondary" data-action="admin-bulk-lock" data-lock="0">Hold All</button>
+                            <button type="button" class="btn btn-outline-brand btn-sm" data-action="admin-bulk-lock" data-lock="1">Release All</button>
+                            <button type="button" class="btn btn-secondary btn-sm" data-action="admin-bulk-lock" data-lock="0">Hold All</button>
                         </div>
                     </div>
                     <div class="table-wrap">
@@ -2837,13 +3044,14 @@ fn render_admin_console(s: &AppState) -> String {
                 }
                 format!(
                     r#"<hr class="section-divider">
-                    <div class="alert-banner alert-info" style="margin-bottom:1rem;">
-                        <div class="flex-between-center">
+                    <div class="alert-banner alert-info" style="margin-bottom:16px;">
+                        <svg class="alert-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        <div class="flex-between-center" style="flex:1 1 auto;">
                             <div>
                                 <strong>Issued One-Time Temporary Passwords</strong><br>
-                                Please download or record these temporary passwords now. For security, they are displayed only once at the time of import.
+                                Download or record these temporary passwords now. They are shown only once at import time.
                             </div>
-                            <button type="button" class="btn btn-primary no-print" data-action="export-issued-creds-csv">Download Passwords (CSV)</button>
+                            <button type="button" class="btn btn-primary btn-sm no-print" data-action="export-issued-creds-csv">Download CSV</button>
                         </div>
                     </div>
                     <div class="table-wrap">
@@ -2866,15 +3074,24 @@ fn render_admin_console(s: &AppState) -> String {
 
             format!(
                 r#"<section class="doc-sheet" aria-labelledby="roster-import-heading">
-                    <h2 id="roster-import-heading" style="margin-bottom:0.35rem;">Class Roster Import</h2>
-                    <p style="color:var(--ink-secondary);">
-                        Paste student enrollment rows below using five comma-separated columns: <strong>Student ID, Full Name, University Email, Subject Code, Section Code</strong>. Newly created student accounts automatically receive a unique one-time temporary password.
+                    <h2 id="roster-import-heading" style="margin-bottom:6px;">Class Roster Import</h2>
+                    <p style="color:var(--ink-secondary);font-size:0.93rem;margin-bottom:16px;">
+                        Bulk-enroll students into semester class sections. New student accounts automatically receive a unique one-time temporary password.
                     </p>
+                    <div class="callout-box" style="margin-bottom:16px;">
+                        <span class="callout-icon" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        </span>
+                        <div>
+                            <strong>CSV Column Format (5 columns per line):</strong><br>
+                            <code>Student ID, Full Name, University Email, Subject Code, Section Code</code>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="form-label" for="admin-roster-csv">Student Enrollment Rows (CSV)</label>
-                        <textarea id="admin-roster-csv" class="form-textarea" placeholder="2024-11901, Ana Santos, 2024-11901@aaaaa13.edu, CS-401, SEC-A"></textarea>
+                        <textarea id="admin-roster-csv" class="form-textarea code-editor-textarea" spellcheck="false" placeholder="2024-11901, Ana Santos, 2024-11901@aaaaa13.edu, CS-401, SEC-A&#10;2024-11902, Carlo Reyes, 2024-11902@aaaaa13.edu, MATH-201, SEC-B"></textarea>
                     </div>
-                    <button type="button" class="btn btn-primary btn-lg" data-action="admin-import-roster">Import Class Roster</button>
+                    <button type="button" class="btn btn-primary btn-lg btn-block" data-action="admin-import-roster">Import Class Roster</button>
                     {creds_html}
                 </section>"#
             )
@@ -2962,32 +3179,35 @@ fn render_admin_console(s: &AppState) -> String {
         }
         _ => {
             let status_badge = match win_status {
-                "OPEN" => r#"<span class="status-badge status-ok">Open for Submission</span>"#,
-                "SUSPENDED" => {
-                    r#"<span class="status-badge status-pending">Temporarily Paused</span>"#
+                "OPEN" => {
+                    r#"<span class="status-badge status-ok" style="padding:6px 14px;font-size:0.86rem;"><span class="status-dot dot-ok"></span>Open for Submission</span>"#
                 }
-                _ => r#"<span class="status-badge status-concern">Closed</span>"#,
+                "SUSPENDED" => {
+                    r#"<span class="status-badge status-pending" style="padding:6px 14px;font-size:0.86rem;"><span class="status-dot dot-warn"></span>Temporarily Paused</span>"#
+                }
+                _ => {
+                    r#"<span class="status-badge status-concern" style="padding:6px 14px;font-size:0.86rem;"><span class="status-dot dot-err"></span>Closed</span>"#
+                }
             };
 
             format!(
                 r#"<section class="doc-sheet" aria-labelledby="schedule-heading">
-                    <div class="flex-between-center" style="margin-bottom:0.5rem;">
+                    <div class="flex-between-center" style="margin-bottom:8px;">
                         <h2 id="schedule-heading" style="margin:0;">Semester Evaluation Schedule</h2>
                         {status_badge}
                     </div>
-                    <p style="color:var(--ink-secondary);">
-                        Set the official opening and closing dates for student evaluations in Philippine Time. Students may submit evaluations at their convenience while the schedule is open.
+                    <p style="color:var(--ink-secondary);font-size:0.93rem;margin-bottom:18px;">
+                        Set the official opening and closing dates for student evaluations in Philippine Time.
                     </p>
-                    <hr class="section-divider">
-                    <div class="form-group" style="max-width:460px;">
+                    <div class="form-group" style="max-width:440px;">
                         <label class="form-label" for="win-status">Schedule Status</label>
                         <select id="win-status" class="form-select">
-                            <option value="OPEN" {s_open}>Open — Accepting Student Evaluations</option>
-                            <option value="SUSPENDED" {s_susp}>Paused — Temporarily Hold Submissions</option>
-                            <option value="CLOSED" {s_closed}>Closed — Evaluation Period Ended</option>
+                            <option value="OPEN" {s_open}>Open &mdash; Accepting Student Evaluations</option>
+                            <option value="SUSPENDED" {s_susp}>Paused &mdash; Temporarily Hold Submissions</option>
+                            <option value="CLOSED" {s_closed}>Closed &mdash; Evaluation Period Ended</option>
                         </select>
                     </div>
-                    <div class="two-col-grid">
+                    <div class="two-col-grid" style="gap:16px;">
                         <div class="form-group">
                             <label class="form-label" for="win-starts">Opening Date &amp; Time (Philippine Time)</label>
                             <input id="win-starts" class="form-input tabular-nums" type="datetime-local" value="{starts_local}">
@@ -2999,11 +3219,11 @@ fn render_admin_console(s: &AppState) -> String {
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="win-notice">Student Portal Notice (Optional)</label>
-                        <textarea id="win-notice" class="form-textarea" style="min-height:88px;" placeholder="Optional announcement displayed regarding the semester evaluation schedule...">{notice_text}</textarea>
+                        <textarea id="win-notice" class="form-textarea" style="min-height:80px;" placeholder="Optional announcement regarding the semester evaluation schedule...">{notice_text}</textarea>
                     </div>
                     <div class="btn-row">
-                        <button type="button" class="btn btn-primary btn-lg" data-action="admin-update-window">Save Schedule</button>
-                        <button type="button" class="btn btn-secondary btn-lg" data-action="admin-extend-7days">Extend Closing Date (+7 Days)</button>
+                        <button type="button" class="btn btn-primary" data-action="admin-update-window">Save Schedule</button>
+                        <button type="button" class="btn btn-secondary" data-action="admin-extend-7days">Extend Closing Date (+7 Days)</button>
                     </div>
                 </section>"#,
                 s_open = if win_status == "OPEN" { "selected" } else { "" },
@@ -3102,19 +3322,29 @@ fn render() {
             "/chair" | "/dean" => render_dean_or_chair(&s),
             "/admin" => render_admin_console(&s),
             "/access-denied" => r#"<main id="main-workspace" class="workspace-container">
-                <section class="doc-sheet" style="max-width:560px;margin:0 auto;">
-                    <p class="institution-line">School AAAAA13 &middot; Access Control</p>
-                    <h1 class="sheet-title" style="margin-bottom:0.4rem;">Page Not Available for Your Role</h1>
-                    <p style="color:var(--ink-secondary);">Your current university account does not have permission to view this page.</p>
-                    <button type="button" class="btn btn-primary" data-action="nav" data-path="/">Return to Home</button>
+                <section class="doc-sheet centered-state-card" aria-labelledby="restricted-title">
+                    <div class="state-icon-circle" aria-hidden="true">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    <p class="institution-line" style="margin-bottom:6px;">School AAAAA13 &middot; Portal Access</p>
+                    <h1 id="restricted-title" class="sheet-title" style="font-size:1.5rem;margin-bottom:8px;">Access Restricted</h1>
+                    <p style="color:var(--ink-secondary);font-size:0.95rem;margin-bottom:22px;">
+                        Oops, you don't have permission to view this page with your current university account.
+                    </p>
+                    <button type="button" class="btn btn-secondary" data-action="nav" data-path="/">Return to Home</button>
                 </section>
             </main>"#
                 .to_string(),
             _ => r#"<main id="main-workspace" class="workspace-container">
-                <section class="doc-sheet" style="max-width:560px;margin:0 auto;">
-                    <h1 class="sheet-title" style="margin-bottom:0.4rem;">Page Not Found</h1>
-                    <p style="color:var(--ink-secondary);">The page you requested could not be found in the Faculty Evaluation Portal.</p>
-                    <button type="button" class="btn btn-primary" data-action="nav" data-path="/">Return to Home</button>
+                <section class="doc-sheet centered-state-card" aria-labelledby="notfound-title">
+                    <div class="state-icon-circle" aria-hidden="true">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </div>
+                    <h1 id="notfound-title" class="sheet-title" style="font-size:1.5rem;margin-bottom:8px;">Page Not Found</h1>
+                    <p style="color:var(--ink-secondary);font-size:0.95rem;margin-bottom:22px;">
+                        We couldn't find that page in the Faculty Evaluation Portal.
+                    </p>
+                    <button type="button" class="btn btn-secondary" data-action="nav" data-path="/">Return to Home</button>
                 </section>
             </main>"#
                 .to_string(),

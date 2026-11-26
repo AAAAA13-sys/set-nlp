@@ -95,5 +95,6 @@ cargo test --workspace --all-features
 - [Domain-to-Rust Module Glossary](docs/GLOSSARY.md)
 - [Production Deployment Guide](docs/PRODUCTION_DEPLOYMENT.md)
 - [Managed Campus Laboratory Kiosk Guide](docs/MANAGED_KIOSK_DEPLOYMENT.md)
+- [UI/UX Audit & Anti-Slop Modernization Specification](docs/ui_ux_audit.md)
 - [Multilingual ML Model Comparison Report](docs/analysis/MODEL_COMPARISON_REPORT.md)
 - [Dataset Annotation Guidelines](docs/analysis/ANNOTATION_GUIDELINES.md)
