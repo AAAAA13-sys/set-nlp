@@ -26,11 +26,11 @@
 
 ## 2. Institutional Portal Walkthrough
 
-| University Home Portal (`/`) | Student Enrolled Subjects (`/queue`) |
+| University Home Portal (`/`) | Student Profile Dashboard (`/queue`) |
 | :---: | :---: |
 | ![Home Portal](docs/showcase/screenshots/01_home_portal.png) | ![Student Subjects](docs/showcase/screenshots/03_student_subjects.png) |
 
-| 2-Part Evaluation Form (`/evaluate/:id`) | College Dean Portal & `A+ Large Text` (`/dean`) |
+| 2-Part Evaluation Form (`/evaluate/:id`) | College Dean Portal (`/dean`) |
 | :---: | :---: |
 | ![Part 1 Ratings](docs/showcase/screenshots/04_evaluation_part1_ratings.png) | ![College Dean Summary](docs/showcase/screenshots/09_dean_summary.png) |
 

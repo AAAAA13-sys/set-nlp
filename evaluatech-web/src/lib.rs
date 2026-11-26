@@ -1029,17 +1029,16 @@ fn render_global_modals(s: &AppState) -> String {
     if s.show_rubric_modal {
         out.push_str(
             r#"<div class="modal-backdrop no-print" role="dialog" aria-modal="true" aria-labelledby="rubric-title">
-                <div class="modal-dialog">
-                    <div class="flex-between-center">
+                <div class="modal-dialog" style="padding:20px 24px;">
+                    <div class="flex-between-center" style="margin-bottom:8px;">
                         <h2 id="rubric-title" style="margin:0;">1–5 Rating Scale</h2>
                         <button type="button" class="btn btn-secondary btn-sm" data-action="close-modals">Close</button>
                     </div>
-                    <hr class="section-divider">
-                    <p style="color:var(--ink-secondary);font-size:0.92rem;margin-bottom:12px;">Rate each of the 25 teaching statements using the five-point scale below:</p>
-                    <div class="table-wrap" style="margin-bottom:16px;">
+                    <p style="color:var(--ink-secondary);font-size:0.9rem;margin-bottom:10px;">Rate each of the 25 teaching statements using the five-point scale below:</p>
+                    <div class="table-wrap" style="margin-bottom:12px;">
                         <table class="data-table borderless-zebra" aria-label="1 to 5 Rating Scale Descriptions">
                             <tbody>
-                                <tr><td style="width:190px;"><strong>5 &mdash; Outstanding</strong></td><td>Consistently demonstrated at an exemplary collegiate standard.</td></tr>
+                                <tr><td style="width:185px;"><strong>5 &mdash; Outstanding</strong></td><td>Consistently demonstrated at an exemplary collegiate standard.</td></tr>
                                 <tr><td><strong>4 &mdash; Very Satisfactory</strong></td><td>Frequently demonstrated with clear effectiveness and consistency.</td></tr>
                                 <tr><td><strong>3 &mdash; Satisfactory</strong></td><td>Meets expected course and teaching standards adequately.</td></tr>
                                 <tr><td><strong>2 &mdash; Fair</strong></td><td>Inconsistently demonstrated; would benefit from structured improvement.</td></tr>
@@ -1047,11 +1046,11 @@ fn render_global_modals(s: &AppState) -> String {
                             </tbody>
                         </table>
                     </div>
-                    <div class="callout-box callout-tip">
+                    <div class="callout-box callout-tip" style="padding:10px 14px;">
                         <span class="callout-icon" aria-hidden="true">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.75c.6.54 1 1.33 1 2.15V18h6v-1.1c0-.82.4-1.61 1-2.15A7 7 0 0 0 12 2z"/></svg>
                         </span>
-                        <div><strong>Helpful tip:</strong> Focus any statement row and press keys <strong>1</strong> through <strong>5</strong> on your keyboard to rate quickly.</div>
+                        <div style="font-size:0.86rem;"><strong>Helpful tip:</strong> Focus any statement row and press keys <strong>1</strong> through <strong>5</strong> on your keyboard to rate quickly.</div>
                     </div>
                 </div>
             </div>"#,
@@ -1702,53 +1701,53 @@ fn render_evaluation_form(s: &AppState) -> String {
                     <span class="status-badge status-ok"><span class="status-dot dot-ok"></span>25 of 25 Ratings Saved</span>
                 </div>
             </div>
-            <section class="doc-sheet" aria-labelledby="part2-heading">
-                <div style="max-width:760px;">
-                    <h2 id="part2-heading" style="margin-bottom:6px;">Share Constructive Observations</h2>
-                    <p style="color:var(--ink-secondary);font-size:0.93rem;margin-bottom:20px;">
-                        Written comments below are optional and help your instructor see what worked well and where the course can improve. You may write in English or Filipino.
+            <section class="doc-sheet" style="padding:20px 24px;" aria-labelledby="part2-heading">
+                <div style="max-width:780px;">
+                    <h2 id="part2-heading" style="margin-bottom:4px;">Share Constructive Observations</h2>
+                    <p style="color:var(--ink-secondary);font-size:0.9rem;margin-bottom:14px;">
+                        Written comments below are optional and may be written in English or Filipino.
                     </p>
 
-                    <div class="two-col-grid" style="gap:16px;margin-bottom:0;">
-                        <div class="form-group">
+                    <div class="two-col-grid" style="gap:14px;margin-bottom:0;">
+                        <div class="form-group" style="margin-bottom:12px;">
                             <label class="form-label" for="eval-q1">1. Three words describing the class</label>
-                            <input id="eval-q1" class="form-input" style="min-height:42px;" type="text" data-action="draft-text-input" value="{q1}" placeholder="e.g., Clear, organized, supportive">
+                            <input id="eval-q1" class="form-input" style="min-height:40px;" type="text" data-action="draft-text-input" value="{q1}" placeholder="e.g., Clear, organized, supportive">
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" style="margin-bottom:12px;">
                             <label class="form-label" for="eval-q2">2. Areas for improvement</label>
-                            <input id="eval-q2" class="form-input" style="min-height:42px;" type="text" data-action="draft-text-input" value="{q2}" placeholder="Topics, pacing, or class activities">
+                            <input id="eval-q2" class="form-input" style="min-height:40px;" type="text" data-action="draft-text-input" value="{q2}" placeholder="Topics, pacing, or class activities">
                         </div>
                     </div>
 
-                    <div class="two-col-grid" style="gap:16px;margin-bottom:0;">
-                        <div class="form-group">
+                    <div class="two-col-grid" style="gap:14px;margin-bottom:0;">
+                        <div class="form-group" style="margin-bottom:12px;">
                             <label class="form-label" for="eval-q3">3. Teaching strengths to continue</label>
-                            <input id="eval-q3" class="form-input" style="min-height:42px;" type="text" data-action="draft-text-input" value="{q3}" placeholder="Approaches or examples that helped you learn">
+                            <input id="eval-q3" class="form-input" style="min-height:40px;" type="text" data-action="draft-text-input" value="{q3}" placeholder="Approaches or examples that helped you learn">
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" style="margin-bottom:12px;">
                             <label class="form-label" for="eval-q4">4. Suggestions for future classes</label>
-                            <input id="eval-q4" class="form-input" style="min-height:42px;" type="text" data-action="draft-text-input" value="{q4}" placeholder="Recommendations for next semester">
+                            <input id="eval-q4" class="form-input" style="min-height:40px;" type="text" data-action="draft-text-input" value="{q4}" placeholder="Recommendations for next semester">
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="margin-bottom:12px;">
                         <label class="form-label" for="eval-comment">5. Additional comments (English or Filipino)</label>
-                        <textarea id="eval-comment" class="form-textarea" style="min-height:80px;" rows="3" data-action="draft-text-input" placeholder="Share any additional feedback about your learning experience...">{comment}</textarea>
+                        <textarea id="eval-comment" class="form-textarea" style="min-height:66px;" rows="2" data-action="draft-text-input" placeholder="Share any additional feedback about your learning experience...">{comment}</textarea>
                     </div>
 
-                    <div class="callout-box" style="margin-bottom:20px;">
-                        <span class="callout-icon" aria-hidden="true">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <div class="callout-box" style="margin-bottom:14px;padding:11px 14px;align-items:center;">
+                        <span class="privacy-lock-badge" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                         </span>
-                        <div style="font-size:0.87rem;line-height:1.5;">
-                            <strong>Student Privacy Assurance:</strong> Your name and student ID are never attached to this evaluation. Any email addresses, ID numbers, or phone numbers typed in comments are automatically scrubbed before storage.
+                        <div style="font-size:0.85rem;line-height:1.45;">
+                            <strong>Student Privacy Assurance:</strong> Names and student IDs are never attached to this evaluation, and any email addresses, ID numbers, or phone numbers typed in comments are scrubbed automatically.
                         </div>
                     </div>
                 </div>
 
-                <hr class="section-divider">
+                <hr class="section-divider" style="margin:12px 0;">
                 <div class="flex-between-center">
                     <button type="button" class="btn btn-secondary" data-action="step-back">&lsaquo; Back to Part 1</button>
                     <button type="button" class="btn btn-primary btn-lg" {disabled} data-action="eval-submit">{sub_label}</button>
@@ -1941,7 +1940,7 @@ fn render_faculty_portal(s: &AppState) -> String {
                                 {step1_dot}
                             </div>
                             <strong>Final Semester Grades Submitted by Instructor</strong>
-                            <div style="font-size:0.88rem;color:var(--ink-muted);margin-top:2px;">Confirm that all final student grades for this section have been submitted.</div>
+                            <div style="font-size:0.89rem;color:var(--ink-secondary);margin-top:3px;">Confirm that all final student grades for this section have been submitted.</div>
                         </div>
                         {step1_action}
                     </div>
@@ -1952,7 +1951,7 @@ fn render_faculty_portal(s: &AppState) -> String {
                                 {step2_dot}
                             </div>
                             <strong>Registrar Verification &amp; Report Release</strong>
-                            <div style="font-size:0.88rem;color:var(--ink-muted);margin-top:2px;">The Office of the University Registrar verifies grade submission and unlocks your report.</div>
+                            <div style="font-size:0.89rem;color:var(--ink-secondary);margin-top:3px;">The Office of the University Registrar verifies grade submission and unlocks your report.</div>
                         </div>
                     </div>
                 </div>
@@ -2197,16 +2196,17 @@ fn render_dean_or_chair(s: &AppState) -> String {
             .unwrap_or("1st Semester, AY 2026–2027");
         format!(
             r#"<section class="doc-sheet" role="status" aria-label="Official Accreditation Summary">
-                <div class="flex-between-center" style="flex-wrap:nowrap;">
-                    <div style="flex:1 1 0;min-width:0;">
-                        <h2 style="margin:0 0 0.25rem;">AACCUP Level III Area III — Curriculum &amp; Instruction Summary</h2>
-                        <p style="margin:0;color:var(--ink-secondary);font-size:0.94rem;">
-                            Reference Number: <span class="ref-code">{ref_id}</span> &middot; Prepared: <span class="tabular-nums">{compiled_at}</span> &middot; Student Confidentiality Verified
+                <div class="flex-between-center">
+                    <div>
+                        <span class="step-kicker">Accreditation Summary</span>
+                        <h2 style="margin:0 0 4px;">AACCUP Level III Area III &mdash; Curriculum &amp; Instruction</h2>
+                        <p style="margin:0;color:var(--ink-secondary);font-size:0.9rem;">
+                            Reference: <span class="ref-code">{ref_id}</span> &middot; Prepared: <span class="tabular-nums">{compiled_at}</span> &middot; Student Confidentiality Verified
                         </p>
                     </div>
-                    <div class="btn-row no-print" style="flex-shrink:0;">
-                        <span class="status-badge status-ok">Prepared</span>
-                        <button type="button" class="btn btn-secondary" data-action="print-cert">Print Summary</button>
+                    <div class="btn-row no-print">
+                        <span class="status-badge status-ok"><span class="status-dot dot-ok"></span>Prepared</span>
+                        <button type="button" class="btn btn-secondary btn-sm" data-action="print-cert">Print Summary</button>
                     </div>
                 </div>
             </section>"#,
@@ -2898,7 +2898,7 @@ fn render_admin_console(s: &AppState) -> String {
                                 Faculty reports unlock once final semester grades are submitted (blue) and released by the Registrar (green).
                             </p>
                         </div>
-                        <div class="btn-row no-print">
+                        <div class="btn-row wrap-narrow no-print">
                             <button type="button" class="btn btn-outline-brand btn-sm" data-action="ask-release-all">Release All</button>
                             <button type="button" class="btn btn-secondary btn-sm" data-action="admin-bulk-lock" data-lock="0">Hold All</button>
                         </div>
@@ -3130,7 +3130,7 @@ fn render_admin_console(s: &AppState) -> String {
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="win-notice">Student Portal Notice (Optional)</label>
-                        <textarea id="win-notice" class="form-textarea" style="min-height:80px;" placeholder="Optional announcement regarding the semester evaluation schedule...">{notice_text}</textarea>
+                        <textarea id="win-notice" class="form-textarea" rows="2" style="min-height:56px;" placeholder="Optional announcement regarding the semester evaluation schedule...">{notice_text}</textarea>
                     </div>
                     <div class="btn-row">
                         <button type="button" class="btn btn-primary" data-action="admin-update-window">Save Schedule</button>

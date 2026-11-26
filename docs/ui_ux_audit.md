@@ -1,64 +1,46 @@
-# Master UI/UX Audit & Strategic Redesign Directives
+# Final UI/UX Audit & Handoff: Faculty Evaluation Portal (TOPCIT MVP)
 
 **Target Aesthetic:** Inspired by `topcit.or.kr` (Clean, institutional, highly focused, dashboard-driven, minimal text).
-**Core Goal:** Eliminate "AI Slop" (generic enterprise UI), reduce cognitive load, consolidate features, and streamline the user journey into a highly functional, task-oriented application.
+**Core Goal:** Eliminate "AI Slop," reduce cognitive load, consolidate features, and streamline the user journey into the finalized MVP Product.
 
 ---
 
-## PART 1: MAJOR STRATEGIC PIVOTS (The "Nutshell" Changes)
+## PART 1: STRATEGIC DIRECTIVES (Fulfilled)
 
-### 1. Feature Removal: Kill the "Verification/Receipt" System
-* **The Issue:** The "Check a Completion Receipt" input and the "Verify Receipt" menu item are unnecessary friction. The "Exam Permit" block is irrelevant.
-* **The Fix:** **Delete** the receipt verification form entirely. **Delete** the "Verify Receipt" link from the top navigation. **Delete** all copy referencing "Examination Permits."
-* **The Pivot:** The system tracks completion internally. The dashboard shows if a user has evaluated a professor.
+### 1. Feature Removal: Killed the "Verification/Receipt" System
+* Deleted the pre-login receipt verification form, deleted `"Verify Receipt"` from top navigation, deleted the student `"View Receipt"` modal, and removed all copy referencing `"Examination Permits"` (enforced by automated unit test guardrails).
+* Completion is tracked internally on the student's **User Profile Dashboard** (`Pending` -> `Completed` / `Submitted`).
 
 ### 2. Post-Login Landing = User Profile Dashboard
-* **The Issue:** Previously, students landed on a list of subjects or a generic "Home" page and had to hunt for their overall status.
-* **The Fix:** The **User Profile Dashboard** is the immediate post-login landing page.
-* **What it shows:** User Name/ID; a massive progress indicator ("Evaluations Completed: 4/6") with an SVG progress ring; a list of *Pending* subjects with immediate primary navy "Evaluate" buttons; and **zero** marketing fluff.
+* Immediate post-login landing page featuring User Name, University ID, Department, circular **SVG Progress Ring** (`Evaluations Completed: X / Y`), and Pending subjects sorted first with primary navy `Evaluate` buttons.
 
 ### 3. Navigation Consolidation (Top Bar)
-* **The Issue:** The top bar had too many items ("Home", "Verify Receipt", "Rating Scale", "A+ Large Text", "Dark View"), creating decision fatigue.
-* **The Fix:** Combine alike functions. Remove "Verify Receipt". Move "A+ Large Text" and "Dark View" into a single **"Settings"** gear icon dropdown. Provide "Rating Scale" inside the evaluation form as a tooltip/accordion in addition to the consolidated top bar link.
-* **Resulting Top Bar:** `[Logo] | Dashboard | Scale | [Gear Icon] | [User Profile / Sign Out]`
-
-### 4. Reduce Text Density
-* **The Issue:** The pre-login landing page read like a legal document.
-* **The Fix:** Reduce copy by 70%. Use concise bullet points. Move the "Student Privacy Protections" text into a collapsible accordion. Center the primary focus on a large, clear "Sign In" button.
+* Consolidated top masthead: `[Logo] | Dashboard | Scale | [Gear Icon] | [User Profile / Sign Out]`, housing `A+ Large Text` and `Dark View` inside the `[Gear]` dropdown and providing an inline `? 1–5 Scale` tooltip + collapsible `Scale Guide` inside the evaluation form.
 
 ---
 
-## PART 2: PER-FILE UI/UX AUDIT (Waves 1–5)
+## PART 2: FINAL POLISH APPLIED (Waves 5, 6, & 7)
 
-### Wave 1 & Wave 2 Foundation
-* Soft elevated cards, Plus Jakarta Sans + JetBrains Mono typography, deep collegiate teal-navy palette, underline tabs, eye toggle inside password inputs, group-only red validation outlines, red destructive `Clear Answers` button, celebratory gold `Outstanding` cards, blue `Submitted` vs. green `Released` vs. amber `On Hold` badges, dark monospace CSV editor, and stacked mobile cards.
-
-### Wave 3: Refined Core Workflows (V2)
-* **`student_eval_written_comments_v2.png`:** Subtle slate-grey background (`#f1f5f9`) on form inputs so they look immediately interactive.
-* **`student_subjects_list_v2.png`:** Primary navy `Evaluate` buttons on pending subjects; clean `Completed` status on finished subjects (receipt modal removed).
-* **`faculty_results_outstanding_v2.png`:** Stronger gold border (`#eab308`) and crisp star icon on `Outstanding` badges.
-* **`faculty_pending_grade_release_v2.png`:** Darker secondary/muted text (`#334155` / `#475569`) for high WCAG contrast.
-* **`error_access_restricted_v2.png`:** Elevated drop shadow lifting the centered white card off the canvas.
-* **`chair_dept_overview_v2.png`:** Wider `0.08em` letter-spacing on uppercase table headers.
-* **`chair_needs_support_v2.png`:** Instant hover/focus tooltips (`Approve Support Plan`, `Mark Completed`) on compact icon action buttons.
-* **`student_home_dark_v2.png`:** Toned-down steel-teal primary button (`#2b7a9b`) in dark mode instead of bright cyan.
-* **`student_eval_errors_v2.png`:** Increased `10px` top margin between statement text and red validation message.
-* **`student_eval_clear_modal_v2.png`:** Default programmatic focus on `Keep My Answers` to prevent accidental destructive clicks.
-
-### Wave 4 & 5: Mobile Refinements & Admin (V3/V4)
-* **`create_permanent_password_v3.png`:** Smaller, lighter password hint text (`0.78rem`).
-* **`mobile_home_v3.png`:** `1.65` line-height for mobile readability.
-* **`mobile_menu_open_v3.png`:** Uniform vertical spacing across mobile menu items.
-* **`mobile_subjects_list_v4.png` & `mobile_eval_form_v3.png`:** Clear horizontal scroll affordance on filter chips and category jump pills; collapsible `Scale Guide` accordion + inline tooltip.
-* **`mobile_registrar_schedule_v3.png`:** Clean stacked card layouts across all mobile data tables.
-* **`registrar_grade_release_v3.png`:** Confirmation modal when clicking `Release All`.
-* **`registrar_roster_import_v3.png`:** Click-to-copy temporary password pills with copy icon and clipboard feedback.
-* **`registrar_privacy_stats_v3.png`:** Consistent `2rem / 800` typographic hierarchy across all stat cards.
+* **`faculty_pending_grade_release_topcit.png`:** Darkened secondary/muted ink (`#283548` / `#3b4a5e`, `> 9:1` WCAG AAA) on checklist descriptions.
+* **`chair_dept_overview_topcit.png` & `chair/dean_comments_table_v4.png`:** Bumped uppercase table header font size to `0.825rem` (`13.2px`) with `0.10em` wide tracking for effortless scanning.
+* **`chair_needs_support_topcit.png` & Tap Targets:** Expanded all compact icon action buttons, copyable password pills, gear settings trigger, password eye toggle, and overflow triggers to full **`44×44px` minimum tap targets**.
+* **`student_login_landing_dark_topcit.png`:** Verified WCAG AAA contrast (`> 8.7:1`) on dark-mode green `"Open for Submission"` / `"Positive"` badges (`#a7f3d0` on `#132f20`) and checkmarks (`#bae6fd` on `#173647`).
+* **`student_login_landing_high_contrast_topcit.png`:** Added crisp visible borders on status badges (`1.5px solid currentColor` in `A+ Large Text` and `prefers-contrast: more`).
+* **`rating_scale_modal_topcit.png`:** Tightened zebra row vertical padding (`8px 14px`) so the entire modal fits without scrolling on compact laptop screens.
+* **`student_dashboard_topcit.png`:** Bolded `"Pending"` badge text (`font-weight: 700`, `#78350f` on `#fef3c7` with crisp amber border) so pending items pop cleanly.
+* **`student_eval_form_topcit.png`:** Crisp light-blue hover background (`#dbeafe`) and high-contrast solid deep-navy selected state (`#0b3b59` with `#ffffff` text) on `1–5` rating buttons.
+* **`student_eval_comments_topcit.png`:** Compacted Part 2 vertical spacing and highlighted the **lock icon** inside the Student Privacy Assurance callout so both the notice and `Submit Evaluation` button sit cleanly above the fold.
+* **`dean_summary_tabs_v4.png`:** Unified AACCUP summary card styling and responsive wrapping with all other minimalist cards.
+* **`registrar_schedule_v4.png`:** Reduced default `"Student Portal Notice"` textarea height (`56px`) to save vertical space.
+* **`create_permanent_password_v4.png`:** Darkened password hint ink (`#475569` light / `#a8b1c0` dark, `> 7.5:1` WCAG AAA) for crisp legibility.
+* **`mobile_registrar_grade_release_card.png`:** Verified clean wrapping of `"Release All"` and `"Hold All"` and stacked cards down to `320px` (iPhone SE).
 
 ---
 
-## PART 3: TOPCIT DESIGN PRINCIPLES APPLIED
-1. **Clear Dashboard:** Immediate post-login User Profile Dashboard with SVG progress ring, big numbers, and pending tasks.
-2. **Minimalist Header:** Thin, solid dark navy header (`Logo` left, `Dashboard | Scale` center, `Settings Gear | Profile / Sign Out` right).
-3. **Focus on the Task:** Evaluation form stripped down to essentials with inline scale tooltip/accordion and sticky progress bar.
-4. **Data Density:** Tightly aligned typographic contrast (large bold numbers, muted micro-labels) without heavy borders.
+## PART 3: FINAL QA CHECKLIST VERIFIED
+
+1. **Accessibility (Contrast):** Verified `>= 7.5:1` WCAG AAA contrast on green badges, checkmarks, hints, and secondary text across Light and Dark modes.
+2. **Tap Targets:** Verified `>= 44×44px` hit areas across icon buttons, copyable `TMP-*` password pills, password eye buttons, and settings gear controls.
+3. **Hover States:** Verified distinct `:hover` states across all buttons, links, chips, tabs, accordions, and rating controls.
+4. **Keyboard Navigation:** Verified logical Tab order and visible `2px` `:focus-visible` rings across forms, modals, and `1–5` rating rows.
+5. **Mobile Edge Cases:** Verified zero horizontal overflow at both `375×812` and `320×568` (iPhone SE).
