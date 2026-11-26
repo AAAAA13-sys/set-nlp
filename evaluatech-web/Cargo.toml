@@ -4,7 +4,7 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
-description = "100% Pure-Rust WebAssembly (wasm32-unknown-unknown) Coolors Periwinkle-Blue Web Application for School AAAAA13 EvaluaTech"
+description = "100% Pure-Rust WebAssembly (wasm32-unknown-unknown) TOPCIT-Inspired Institutional Portal for School AAAAA13 EvaluaTech"
 
 [lib]
 name = "evaluatech_web"
@@ -19,6 +19,7 @@ serde_json = "1"
 wasm-bindgen = "=0.2.108"
 wasm-bindgen-futures = "0.4"
 web-sys = { version = "0.3", features = [
+    "Clipboard",
     "Document",
     "Element",
     "Event",
@@ -32,6 +33,7 @@ web-sys = { version = "0.3", features = [
     "KeyboardEvent",
     "Location",
     "MouseEvent",
+    "Navigator",
     "Request",
     "RequestInit",
     "Response",
