@@ -1,8 +1,8 @@
 # EvaluaTech Sentiment Annotation and Taxonomy Guidelines
 
-**Document Version:** 2.0  
-**Date:** November 27, 2026  
-**Audience:** Academic Affairs, QA Reality Checkers, Python NLP & ML Engineers  
+**Document Version:** 2.0
+**Date:** November 27, 2026
+**Audience:** Academic Affairs, QA Reality Checkers, Python NLP & ML Engineers
 **Dataset Scope:** Student Evaluation of Teachers (SET) — Multilingual Corpus (English, Tagalog, Taglish)
 
 ---

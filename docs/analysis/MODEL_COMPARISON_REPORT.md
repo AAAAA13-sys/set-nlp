@@ -1,8 +1,8 @@
 # EvaluaTech Python NLP & Sentiment Analysis — Multi-Iteration Dev-CV and Blind Holdout Validation Report
 
-**Maintained By:** Agency Python NLP & ML Engineer & QA Reality Checker  
-**Date:** November 27, 2026  
-**Runtime Stack:** Python 3.12 (`nlp-python/`: `tl_calamancy_md-0.2.0` + `en_core_web_md` + `vaderSentiment` + `scikit-learn` Calibrated 4-Head Ensemble)  
+**Maintained By:** Agency Python NLP & ML Engineer & QA Reality Checker
+**Date:** November 27, 2026
+**Runtime Stack:** Python 3.12 (`nlp-python/`: `tl_calamancy_md-0.2.0` + `en_core_web_md` + `vaderSentiment` + `scikit-learn` Calibrated 4-Head Ensemble)
 **Source of Truth:** [`nlp-python/models/model_metadata.json`](../../nlp-python/models/model_metadata.json)
 
 ---

@@ -1,8 +1,8 @@
 # School AAAAA13 — EvaluaTech
 # Managed Kiosk Deployment Plan for Campus Computer Laboratories
 
-**Document Version:** 2.0 (AY 2026–2027)  
-**Classification:** Institutional IT Infrastructure & Laboratory Administration  
+**Document Version:** 2.0 (AY 2026–2027)
+**Classification:** Institutional IT Infrastructure & Laboratory Administration
 **Target Environments:** University Computer Laboratories, Supervised Evaluation Terminals, and Registrar Stations
 
 ---

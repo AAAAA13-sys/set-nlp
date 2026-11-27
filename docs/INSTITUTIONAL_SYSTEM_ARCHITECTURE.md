@@ -1,10 +1,10 @@
 # School AAAAA13 — EvaluaTech Institutional System Architecture & Operational Manual
 
-**Platform:** EvaluaTech  
-**Governance Standard:** AACCUP Level III (Area III: Curriculum and Instruction) & CHED CMO 46 Institutional Quality Assurance  
-**Legal Framework:** Republic Act No. 10173 (Data Privacy Act of 2012)  
-**Systems & Web Layer:** Safe Rust (`#![forbid(unsafe_code)]`: `evaluatech-server` Axum + SQLite WAL, `evaluatech-web` WebAssembly SPA, `evaluatech-nlp` non-ML descriptive primitives)  
-**Language Intelligence & ML Layer:** Python 3.12 (`nlp-python/`: `tl_calamancy_md-0.2.0` + `en_core_web_md` + `vaderSentiment` + `scikit-learn` Calibrated Ensemble)  
+**Platform:** EvaluaTech
+**Governance Standard:** AACCUP Level III (Area III: Curriculum and Instruction) & CHED CMO 46 Institutional Quality Assurance
+**Legal Framework:** Republic Act No. 10173 (Data Privacy Act of 2012)
+**Systems & Web Layer:** Safe Rust (`#![forbid(unsafe_code)]`: `evaluatech-server` Axum + SQLite WAL, `evaluatech-web` WebAssembly SPA, `evaluatech-nlp` non-ML descriptive primitives)
+**Language Intelligence & ML Layer:** Python 3.12 (`nlp-python/`: `tl_calamancy_md-0.2.0` + `en_core_web_md` + `vaderSentiment` + `scikit-learn` Calibrated Ensemble)
 **Document Revision:** 5.0.0
 
 ---

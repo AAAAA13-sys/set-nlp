@@ -1,7 +1,7 @@
 # AGENTS.md — School AAAAA13 EvaluaTech Engineering Agency Charter
 
-**Institution:** School AAAAA13  
-**Platform:** EvaluaTech — Automated Student Evaluation of Teachers (SET) & Multilingual Sentiment Analytics  
+**Institution:** School AAAAA13
+**Platform:** EvaluaTech — Automated Student Evaluation of Teachers (SET) & Multilingual Sentiment Analytics
 **Architecture:** Safe Rust Systems (`evaluatech-server`, `evaluatech-web` WASM, `evaluatech-nlp`) + Python Machine Learning (`nlp-python/`: `tl_calamancy_md-0.2.0` + `en_core_web_md` + `vaderSentiment` + `scikit-learn` Calibrated Ensemble)
 
 ---
