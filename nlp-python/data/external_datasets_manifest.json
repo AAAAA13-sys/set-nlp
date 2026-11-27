@@ -1,0 +1,63 @@
+{
+  "import_date": "2026-11-27",
+  "research_department_approved": true,
+  "total_imported_rows": 2363,
+  "domain_eligible_rows": 560,
+  "anti_leakage_audit": {
+    "exact_hash_collisions_blocked_during_scan": 0,
+    "near_duplicate_5gram_or_jaccard_blocked": 2,
+    "final_test_exact_hash_overlap": 0,
+    "final_test_5gram_overlap": 0,
+    "final_test_6gram_overlap": 0
+  },
+  "sources": {
+    "yhua219/EduRABSA_SA+ACD": {
+      "raw_rows": 6500,
+      "accepted_rows": 2003,
+      "domain_eligible_rows": 947
+    },
+    "Z-H-Che/ratemyprofessors-reviews-3-labels": {
+      "raw_rows": 42557,
+      "accepted_rows": 1007,
+      "domain_eligible_rows": 113
+    },
+    "jjjardev/tagasenti": {
+      "raw_rows": 35686,
+      "accepted_rows": 1735
+    },
+    "chillies/course-review-multilabel-sentiment-analysis": {
+      "raw_rows": 7387,
+      "accepted_rows": 218
+    },
+    "kkotkar1/course-reviews": {
+      "raw_rows": 80263,
+      "accepted_rows": 420
+    }
+  },
+  "final_rows_by_source": {
+    "yhua219/EduRABSA_SA+ACD": 1035,
+    "jjjardev/tagasenti": 995,
+    "Z-H-Che/ratemyprofessors-reviews-3-labels": 254,
+    "kkotkar1/course-reviews": 60,
+    "chillies/course-review-multilabel-sentiment-analysis": 19
+  },
+  "final_rows_by_language_sentiment": {
+    "English__Negative": 480,
+    "English__Neutral": 408,
+    "English__Positive": 480,
+    "Tagalog__Negative": 200,
+    "Tagalog__Neutral": 170,
+    "Tagalog__Positive": 200,
+    "Taglish__Negative": 149,
+    "Taglish__Neutral": 127,
+    "Taglish__Positive": 149
+  },
+  "domain_eligible_by_cluster": {
+    "Pedagogical Delivery": 140,
+    "Assessment & Grading": 109,
+    "Classroom Management": 107,
+    "Professional Conduct": 82,
+    "Unclassified / Needs Review": 82,
+    "Student Support & Mentorship": 40
+  }
+}

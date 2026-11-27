@@ -53,24 +53,25 @@
 
 ## 4. Multilingual Machine Learning Benchmarks (`nlp-python/`)
 
-Trained and validated in **Python 3.12** using pretrained **`calamanCy` (`tl_calamancy_md-0.2.0`, `200d` TLUnified vectors)**, **`spaCy` (`en_core_web_md`, `300d` English vectors)**, **`vaderSentiment`**, and a **Calibrated 4-Head `scikit-learn` Ensemble** (`LogisticRegression` + Platt-calibrated `LinearSVC` + `524d` `RBF-SVC` + Full-Regime `LogisticRegression`) over [`dev_partition.csv`](docs/analysis/dev_partition.csv) plus `1,185` language-stratified zero-leakage statements (`nlp-python/data/expanded_training_corpus.csv`, `0` hash collisions with test). Unaltered blind holdout performance on [`test_partition.csv`](docs/analysis/test_partition.csv) ([`MODEL_COMPARISON_REPORT.md`](docs/analysis/MODEL_COMPARISON_REPORT.md)):
+Trained and validated in **Python 3.12** across **`10,548` zero-leakage training samples** combining [`dev_partition.csv`](docs/analysis/dev_partition.csv) (`7,000`), [`expanded_training_corpus.csv`](nlp-python/data/expanded_training_corpus.csv) (`1,185`), and **`2,363` authentic human-written rows imported from 5 Hugging Face corpora** (`yhua219/EduRABSA_SA+ACD`, `jjjardev/tagasenti`, `Z-H-Che/ratemyprofessors-reviews-3-labels`, `kkotkar1/course-reviews`, and `chillies/course-review-multilabel-sentiment-analysis`; [`EXTERNAL_DATASETS_REPORT.md`](docs/analysis/EXTERNAL_DATASETS_REPORT.md)) using pretrained **`calamanCy` (`tl_calamancy_md-0.2.0`, `200d`)**, **`spaCy` (`en_core_web_md`, `300d`)**, **`vaderSentiment`**, and a **Specialist–Generalist 4-Head `scikit-learn` Ensemble**. Unaltered blind holdout performance on [`test_partition.csv`](docs/analysis/test_partition.csv) ([`MODEL_COMPARISON_REPORT.md`](docs/analysis/MODEL_COMPARISON_REPORT.md)):
 
 | Metric (`n = 228` Untouched Blind Authentic Student Comments) | Score |
 | :--- | :---: |
-| **Authentic-Comment 5-Fold Out-of-Fold CV (`n = 572` Dev)** | **96.33%** (`0.9495` Macro F1, `99.10%` Neg Recall) |
+| **Authentic-Comment 5-Fold Out-of-Fold CV (`n = 572` Dev)** | **96.85%** (`0.9568` Macro F1, `99.55%` Neg Recall) |
 | **Blind Held-Out Sentiment Accuracy (`n = 228` Test)** | **92.54%** (`211 / 228`, `0.9126` Macro F1) |
 | **Negative Sentiment Recall (`n = 89` Neg)** | **93.26%** (`96.51%` Precision, `0.9486` Neg F1) |
-| **Tagalog / Taglish / English Blind Accuracy** | **94.44%** / **93.75%** / **90.43%** |
-| **Pedagogical Cluster Accuracy (`5` Clusters + `Unclassified`)** | **88.60%** Real (`0.7107` Macro F1) · **99.13%** Full `3,000` |
+| **Taglish / Tagalog / English Blind Accuracy** | **93.75%** / **92.59%** / **91.49%** |
+| **Full `3,000`-Row Test Sentiment / Domain Accuracy** | **95.70%** Sentiment · **98.97%** Pedagogical Domain |
 | **Warm Python IPC Worker Inference** | Persistent UTF-8 JSON-RPC (`evaluatech-server/src/python_nlp.rs`) |
 
 ---
 
 ## 5. Quick Start & Verification
 
-### Train & Verify the Python `calamanCy` + `scikit-learn` ML Engine
+### Train & Verify the Python `calamanCy` + Multi-Corpus `scikit-learn` ML Engine
 ```powershell
-.\.venv\Scripts\python.exe nlp-python\build_expanded_corpus.py
+.\.venv\Scripts\python.exe -u nlp-python\build_expanded_corpus.py
+.\.venv\Scripts\python.exe -u nlp-python\import_external_datasets.py
 .\.venv\Scripts\python.exe -u nlp-python\train_model.py
 $env:PYTHONPATH = "$PWD\nlp-python"
 .\.venv\Scripts\python.exe -m pytest nlp-python\tests -v
@@ -106,4 +107,5 @@ cargo test --workspace --all-features
 - [Managed Campus Laboratory Kiosk Guide](docs/MANAGED_KIOSK_DEPLOYMENT.md)
 - [UI/UX Audit & Anti-Slop Modernization Specification](docs/ui_ux_audit.md)
 - [Multilingual ML Model Comparison Report](docs/analysis/MODEL_COMPARISON_REPORT.md)
+- [External Hugging Face NLP Datasets Curation Report](docs/analysis/EXTERNAL_DATASETS_REPORT.md)
 - [Dataset Annotation Guidelines](docs/analysis/ANNOTATION_GUIDELINES.md)

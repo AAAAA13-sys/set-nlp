@@ -71,6 +71,7 @@ Every agent operating in this repository works under a strict division of concer
 - [`docs/PRODUCTION_DEPLOYMENT.md`](docs/PRODUCTION_DEPLOYMENT.md) — Production setup for `evaluatech-server`, `.venv` Python `calamanCy` worker, and one-time roster credentials.
 - [`docs/MANAGED_KIOSK_DEPLOYMENT.md`](docs/MANAGED_KIOSK_DEPLOYMENT.md) — Campus computer laboratory kiosk configuration (Windows Assigned Access & Ubuntu LightDM).
 - [`docs/analysis/ANNOTATION_GUIDELINES.md`](docs/analysis/ANNOTATION_GUIDELINES.md) — Multilingual sentiment & 6-cluster annotation taxonomy and zero-leakage partition rules.
+- [`docs/analysis/EXTERNAL_DATASETS_REPORT.md`](docs/analysis/EXTERNAL_DATASETS_REPORT.md) — Research Department curation report for the 4 imported Hugging Face corpora (`EduRABSA_SA+ACD`, `RateMyProfessor`, `TagaSenti`, `CourseReviews`).
 - [`docs/analysis/MODEL_COMPARISON_REPORT.md`](docs/analysis/MODEL_COMPARISON_REPORT.md) — Multi-iteration Dev-CV and blind holdout benchmark report.
 
 ---
@@ -78,8 +79,9 @@ Every agent operating in this repository works under a strict division of concer
 ## 5. Standard Build, Training & Verification Commands
 
 ```powershell
-# 1. Regenerate balanced zero-leakage training corpus & run multi-iteration Python ML training
-.\.venv\Scripts\python.exe nlp-python\build_expanded_corpus.py
+# 1. Regenerate zero-leakage corpora, import Hugging Face datasets & run multi-corpus ML training
+.\.venv\Scripts\python.exe -u nlp-python\build_expanded_corpus.py
+.\.venv\Scripts\python.exe -u nlp-python\import_external_datasets.py
 .\.venv\Scripts\python.exe -u nlp-python\train_model.py
 
 # 2. Run Python NLP, calamanCy vector, anti-leakage & holdout reproducibility tests

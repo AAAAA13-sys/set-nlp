@@ -12,8 +12,10 @@ authors = [
     { name = "AAAAA13-sys", email = "108907185+AAAAA13-sys@users.noreply.github.com" }
 ]
 dependencies = [
-    "calamancy>=0.1.0",
+    "calamancy>=0.2.0",
     "spacy>=3.7.0",
+    "huggingface-hub>=0.23.0",
+    "pyarrow>=16.0.0,<19.0.0",
     "vaderSentiment>=3.3.2",
     "scikit-learn>=1.4.0",
     "scipy>=1.11.0",

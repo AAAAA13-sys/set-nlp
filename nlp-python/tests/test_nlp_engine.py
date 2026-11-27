@@ -131,6 +131,48 @@ def test_zero_leakage_and_unaltered_blind_holdout_reproducibility() -> None:
     assert live_acc > 0.9123, f"Expected blind real-comment accuracy > 91.23% baseline, got {live_acc:.4f}"
 
 
+def test_external_huggingface_datasets_manifest_and_two_stage_zero_leakage() -> None:
+    ext_csv = ROOT / "nlp-python" / "data" / "external_nlp_datasets.csv"
+    manifest_path = ROOT / "nlp-python" / "data" / "external_datasets_manifest.json"
+    assert ext_csv.exists() and manifest_path.exists()
+
+    ext_df = pd.read_csv(ext_csv)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert len(ext_df) >= 2000
+    assert manifest["research_department_approved"] is True
+    assert manifest["anti_leakage_audit"]["final_test_exact_hash_overlap"] == 0
+    assert manifest["anti_leakage_audit"]["final_test_5gram_overlap"] == 0
+    assert manifest["anti_leakage_audit"]["final_test_6gram_overlap"] == 0
+
+    expected_sources = {
+        "yhua219/EduRABSA_SA+ACD",
+        "Z-H-Che/ratemyprofessors-reviews-3-labels",
+        "jjjardev/tagasenti",
+        "kkotkar1/course-reviews",
+        "chillies/course-review-multilabel-sentiment-analysis",
+    }
+    assert expected_sources.issubset(set(ext_df["Source_Dataset"].unique()))
+
+    # Verify independent Stage A (SHA-256) and Stage B (5-gram) disjointness against blind test set
+    test_df = pd.read_csv(ROOT / "docs" / "analysis" / "test_partition.csv")
+    test_hashes = {_norm_hash(str(t)) for t in test_df["Feedback_Text"].dropna()}
+    ext_hashes = {_norm_hash(str(t)) for t in ext_df["Feedback_Text"].dropna()}
+    assert len(test_hashes & ext_hashes) == 0
+
+    test_5grams: set[tuple[str, ...]] = set()
+    for t in test_df["Feedback_Text"].dropna().astype(str):
+        toks = _NORM_RE.sub(" ", t.lower()).split()
+        if len(toks) >= 5:
+            for i in range(len(toks) - 4):
+                test_5grams.add(tuple(toks[i : i + 5]))
+    for t in ext_df["Feedback_Text"].dropna().astype(str):
+        toks = _NORM_RE.sub(" ", t.lower()).split()
+        if len(toks) >= 5:
+            for i in range(len(toks) - 4):
+                assert tuple(toks[i : i + 5]) not in test_5grams
+
+
+
 def test_batch_summary_and_action_plan() -> None:
     summary = summarize_comments([
         "Takes over a month to return quiz scores and provides no helpful feedback.",

@@ -6,53 +6,70 @@
   "calamancy_model": "tl_calamancy_md-0.2.0",
   "english_vector_model": "en_core_web_md",
   "bilingual_static_embedding_dim": 500,
-  "total_benchmark_samples": 10000,
+  "total_training_samples": 10548,
   "dev_samples": 7000,
   "expanded_zero_leakage_training_samples": 1185,
+  "external_hf_imported_samples": 2363,
+  "external_hf_sources": {
+    "yhua219/EduRABSA_SA+ACD": 1035,
+    "jjjardev/tagasenti": 995,
+    "Z-H-Che/ratemyprofessors-reviews-3-labels": 254,
+    "kkotkar1/course-reviews": 60,
+    "chillies/course-review-multilabel-sentiment-analysis": 19
+  },
   "test_samples": 3000,
   "test_overlap_hashes": 0,
+  "test_6gram_overlaps": 0,
+  "gamma_ext_applied": 0.9612,
   "dev_cv_iterations": [
     {
       "iteration": 1,
       "description": "Iter 1: calamanCy TF-IDF + 24d Discourse LR",
-      "dev_oof_accuracy": 0.9423,
-      "dev_oof_macro_f1": 0.933,
-      "dev_oof_negative_recall": 0.9821
+      "dev_oof_accuracy": 0.9441,
+      "dev_oof_macro_f1": 0.9314,
+      "dev_oof_negative_recall": 0.9865
     },
     {
       "iteration": 2,
       "description": "Iter 2: + 500d Pretrained calamanCy & spaCy Word Vectors",
-      "dev_oof_accuracy": 0.9458,
-      "dev_oof_macro_f1": 0.9327,
+      "dev_oof_accuracy": 0.951,
+      "dev_oof_macro_f1": 0.9394,
       "dev_oof_negative_recall": 0.9776
     },
     {
       "iteration": 3,
-      "description": "Iter 3: + Language-Stratified Zero-Leakage Corpus (I(L;S)=0)",
-      "dev_oof_accuracy": 0.9545,
-      "dev_oof_macro_f1": 0.943,
-      "dev_oof_negative_recall": 0.991
+      "description": "Iter 3: + Collegiate Specialist LR (Curated SET Corpus)",
+      "dev_oof_accuracy": 0.9615,
+      "dev_oof_macro_f1": 0.9478,
+      "dev_oof_negative_recall": 0.9955
     },
     {
       "iteration": 4,
-      "description": "Iter 4: Calibrated 4-Head Ensemble (LR + Platt-LinearSVC + 524d RBF-SVC + Full-Regime LR)",
+      "description": "Iter 4: + Imported 2,508 HuggingFace Corpora Wide-Margin LinearSVC",
+      "dev_oof_accuracy": 0.9493,
+      "dev_oof_macro_f1": 0.94,
+      "dev_oof_negative_recall": 0.9552
+    },
+    {
+      "iteration": 5,
+      "description": "Iter 5: Specialist-Generalist 4-Head Multi-Corpus Ensemble (10,693 Samples)",
       "ensemble_weights": [
-        0.25,
-        0.3,
+        0.2,
+        0.35,
         0.25,
         0.2
       ],
-      "dev_oof_accuracy": 0.9633,
-      "dev_oof_macro_f1": 0.9495,
-      "dev_oof_negative_recall": 0.991
+      "dev_oof_accuracy": 0.9685,
+      "dev_oof_macro_f1": 0.9568,
+      "dev_oof_negative_recall": 0.9955
     }
   ],
   "sentiment_model": {
-    "algorithm": "Calibrated 4-Head Ensemble (LR + Platt-LinearSVC + 524d RBF-SVC + Full-Regime LR | tl_calamancy_md-0.2.0 200d + en_core_web_md 300d + TF-IDF 1-3 + char_wb 2-5 + VADER 24d)",
-    "vocab_size": 35996,
-    "real_comment_cv_accuracy": 0.9633,
-    "real_comment_cv_macro_f1": 0.9495,
-    "real_comment_cv_negative_recall": 0.991,
+    "algorithm": "Specialist-Generalist 4-Head Multi-Corpus Ensemble (Specialist LR + Domain-Adapted Platt-LinearSVC + 524d RBF-SVC + Full-Regime LR | tl_calamancy_md-0.2.0 200d + en_core_web_md 300d + TF-IDF 1-3 + char_wb 2-5 + VADER 24d)",
+    "vocab_size": 55552,
+    "real_comment_cv_accuracy": 0.9685,
+    "real_comment_cv_macro_f1": 0.9568,
+    "real_comment_cv_negative_recall": 0.9955,
     "real_comment_test": {
       "count": 228,
       "correct": 211,
@@ -63,25 +80,25 @@
     "real_comment_per_language": {
       "English": {
         "count": 94,
-        "accuracy": 0.9043,
-        "macro_f1": 0.8929,
-        "negative_recall": 0.8571
+        "accuracy": 0.9149,
+        "macro_f1": 0.8956,
+        "negative_recall": 0.8929
       },
       "Tagalog": {
         "count": 54,
-        "accuracy": 0.9444,
-        "macro_f1": 0.9258,
-        "negative_recall": 0.9474
+        "accuracy": 0.9259,
+        "macro_f1": 0.9109,
+        "negative_recall": 0.8947
       },
       "Taglish": {
         "count": 80,
         "accuracy": 0.9375,
-        "macro_f1": 0.9216,
+        "macro_f1": 0.9248,
         "negative_recall": 0.9762
       }
     },
-    "overall_3000_test_accuracy": 0.9467,
-    "overall_3000_test_macro_f1": 0.9272,
+    "overall_3000_test_accuracy": 0.957,
+    "overall_3000_test_macro_f1": 0.9394,
     "classes": [
       "Negative",
       "Neutral",
@@ -89,15 +106,16 @@
     ]
   },
   "domain_model": {
-    "algorithm": "Calibrated 3-Head Domain Ensemble (LR + Platt-LinearSVC + Specialist LR | 500d Embeddings + TF-IDF + 7d Domain Signals)",
+    "selected_variant": "Dev-Only Baseline",
+    "algorithm": "Calibrated 3-Head Multi-Corpus Domain Ensemble (LR + Platt-LinearSVC + Specialist LR | 500d Embeddings + TF-IDF + 7d Domain Signals)",
     "real_comment_test": {
       "count": 228,
-      "correct": 202,
-      "accuracy": 0.886,
-      "macro_f1": 0.7107
+      "correct": 197,
+      "accuracy": 0.864,
+      "macro_f1": 0.5623
     },
-    "overall_3000_test_accuracy": 0.9913,
-    "overall_3000_test_macro_f1": 0.9692,
+    "overall_3000_test_accuracy": 0.9897,
+    "overall_3000_test_macro_f1": 0.9645,
     "classes": [
       "Assessment & Grading",
       "Classroom Management",
