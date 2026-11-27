@@ -1,0 +1,1186 @@
+ID,Feedback_Text,Language,Sentiment,Aspect,Rating_Score
+20001,Major exams reward rote memorization of slide bullet points rather than genuine problem solving.,English,Negative,Assessment & Grading,2
+20002,Quiz items contain ambiguous trick wording designed to catch students off guard rather than measure mastery.,English,Negative,Assessment & Grading,2
+20003,Assessments focus on trivial dates and definitions instead of actual analytical understanding.,English,Negative,Assessment & Grading,2
+20004,Scheduled our mandatory lab practical in direct conflict with another core departmental examination.,English,Negative,Classroom Management,2
+20005,Automated proctoring settings flagged normal scratch-paper glances as academic dishonesty.,English,Negative,Assessment & Grading,2
+20006,Online exam proctoring software kept locking students out mid-test over minor camera shadows.,English,Negative,Assessment & Grading,2
+20007,Expects graduate-level research output in an introductory freshman general education course.,English,Negative,Assessment & Grading,2
+20008,"Speaks far too rapidly through derivations, making it nearly impossible to take coherent notes.",English,Negative,Pedagogical Delivery,2
+20009,Reads downloaded publisher slides word-for-word instead of working through actual examples.,English,Negative,Pedagogical Delivery,2
+20010,"Laboratory microscopes and oscilloscopes are badly damaged, preventing accurate data collection.",English,Negative,Unclassified / Needs Review,2
+20011,Campus Wi-Fi drops repeatedly inside the lecture hall and projectors have unreadable color tint.,English,Negative,Unclassified / Needs Review,2
+20012,University funding for student academic clubs and intercollegiate competitions remains severely lacking.,English,Negative,Unclassified / Needs Review,2
+20013,Returns graded programming deliverables two months late with zero written explanation for lost points.,English,Negative,Assessment & Grading,2
+20014,Frequently cancels morning classes ten minutes after the start time without prior announcement.,English,Negative,Classroom Management,2
+20015,"Dismisses student questions sarcastically, discouraging anyone from speaking up again.",English,Negative,Professional Conduct,2
+20016,Ignores consultation appointments and leaves thesis drafts unread for weeks.,English,Negative,Student Support & Mentorship,2
+20017,Changed the final project weighting during finals week without consulting the class.,English,Negative,Assessment & Grading,2
+20018,"Friendly enough in casual chat, yet cancels half the scheduled lectures and leaves chapters untaught.",English,Negative,Classroom Management,2
+20019,Puts problems on the final examination that were never introduced in lectures or assigned readings.,English,Negative,Assessment & Grading,2
+20020,Refuses to show graded exam papers or explain how essay deductions were calculated.,English,Negative,Assessment & Grading,2
+20021,"Reads dense publisher slides verbatim instead of explaining the underlying logic, leaving the class lost during lab work.",English,Negative,Pedagogical Delivery,2
+20022,"Reads dense publisher slides verbatim instead of explaining the underlying logic, making coherent note-taking nearly impossible.",English,Negative,Pedagogical Delivery,2
+20023,"Reads dense publisher slides verbatim instead of explaining the underlying logic, causing widespread confusion before quizzes.",English,Negative,Pedagogical Delivery,2
+20024,"Reads dense publisher slides verbatim instead of demonstrating practical applications, leaving the class lost during lab work.",English,Negative,Pedagogical Delivery,2
+20025,"Reads dense publisher slides verbatim instead of demonstrating practical applications, making coherent note-taking nearly impossible.",English,Negative,Pedagogical Delivery,2
+20026,"Uses overly abstract jargon without examples instead of checking whether students follow along, making coherent note-taking nearly impossible.",English,Negative,Pedagogical Delivery,2
+20027,"Uses overly abstract jargon without examples instead of explaining the underlying logic, making coherent note-taking nearly impossible.",English,Negative,Pedagogical Delivery,2
+20028,"Reads dense publisher slides verbatim instead of checking whether students follow along, making coherent note-taking nearly impossible.",English,Negative,Pedagogical Delivery,2
+20029,"Ignores capstone advising emails for a month, even when groups book slots in advance.",English,Negative,Student Support & Mentorship,2
+20030,"Displays blatant favoritism during recitation, creating an intimidating classroom atmosphere.",English,Negative,Professional Conduct,2
+20031,"Extends lectures twenty minutes past dismissal, disrupting students' adjacent schedules.",English,Negative,Classroom Management,2
+20032,"Extends lectures twenty minutes past dismissal, without posting any prior notice.",English,Negative,Classroom Management,2
+20033,"Skips foundational code walkthroughs instead of checking whether students follow along, leaving the class lost during lab work.",English,Negative,Pedagogical Delivery,2
+20034,"Displays blatant favoritism during recitation, discouraging everyone from asking questions.",English,Negative,Professional Conduct,2
+20035,"Ignores capstone advising emails for a month, leaving advisees without direction.",English,Negative,Student Support & Mentorship,2
+20036,"Rushes through twenty derivations in ten minutes instead of explaining the underlying logic, leaving the class lost during lab work.",English,Negative,Pedagogical Delivery,2
+20037,"Cancels laboratory classes ten minutes after start time, disrupting students' adjacent schedules.",English,Negative,Classroom Management,2
+20038,"Laboratory desktop monitors and power units, severely limit hands-on student activities.",English,Negative,Unclassified / Needs Review,2
+20039,"Tests obscure footnote memorization rather than assessing concepts taught in lecture, and returns graded work two months late.",English,Negative,Assessment & Grading,2
+20040,"Relies on hypersensitive automated proctoring rather than measuring real analytical comprehension, and refuses to explain lost points.",English,Negative,Assessment & Grading,2
+20041,"Uses overly abstract jargon without examples instead of explaining the underlying logic, causing widespread confusion before quizzes.",English,Negative,Pedagogical Delivery,2
+20042,"Applies undocumented rubric deductions rather than measuring real analytical comprehension, and returns graded work two months late.",English,Negative,Assessment & Grading,2
+20043,"Responds with condescending sarcasm, undermining student confidence.",English,Negative,Professional Conduct,2
+20044,"Applies undocumented rubric deductions rather than assessing concepts taught in lecture, and returns graded work two months late.",English,Negative,Assessment & Grading,2
+20045,"Funding for student engineering organizations, fail repeatedly throughout the semester.",English,Negative,Unclassified / Needs Review,2
+20046,"Skips foundational code walkthroughs instead of demonstrating practical applications, making coherent note-taking nearly impossible.",English,Negative,Pedagogical Delivery,2
+20047,"Writes ambiguous trick multiple-choice options rather than measuring real analytical comprehension, and refuses to explain lost points.",English,Negative,Assessment & Grading,2
+20048,"Skips foundational code walkthroughs instead of checking whether students follow along, causing widespread confusion before quizzes.",English,Negative,Pedagogical Delivery,2
+20049,"Schedules practical exams in conflict with other major courses, disrupting students' adjacent schedules.",English,Negative,Classroom Management,2
+20050,"Uses overly abstract jargon without examples instead of explaining the underlying logic, leaving the class lost during lab work.",English,Negative,Pedagogical Delivery,2
+20051,"Skips foundational code walkthroughs instead of checking whether students follow along, making coherent note-taking nearly impossible.",English,Negative,Pedagogical Delivery,2
+20052,"Refuses to review thesis drafts before defense, even when groups book slots in advance.",English,Negative,Student Support & Mentorship,2
+20053,"Ignores capstone advising emails for a month, delaying research milestones.",English,Negative,Student Support & Mentorship,2
+20054,"Dismisses polite rubric questions, creating an intimidating classroom atmosphere.",English,Negative,Professional Conduct,2
+20055,"Laboratory desktop monitors and power units, fail repeatedly throughout the semester.",English,Negative,Unclassified / Needs Review,2
+20056,"Funding for student engineering organizations, severely limit hands-on student activities.",English,Negative,Unclassified / Needs Review,2
+20057,"Arrives twenty-five minutes late to morning sessions, disrupting students' adjacent schedules.",English,Negative,Classroom Management,2
+20058,"Campus Wi-Fi routers in the annex building, severely limit hands-on student activities.",English,Negative,Unclassified / Needs Review,2
+20059,"Demands graduate-level output in a freshman course rather than assessing concepts taught in lecture, and refuses to explain lost points.",English,Negative,Assessment & Grading,2
+20060,"Rushes through twenty derivations in ten minutes instead of explaining the underlying logic, causing widespread confusion before quizzes.",English,Negative,Pedagogical Delivery,2
+20061,"Writes ambiguous trick multiple-choice options rather than measuring real analytical comprehension, and provides zero constructive feedback.",English,Negative,Assessment & Grading,2
+20062,"Relies on hypersensitive automated proctoring rather than measuring real analytical comprehension, and returns graded work two months late.",English,Negative,Assessment & Grading,2
+20063,"Rushes through twenty derivations in ten minutes instead of demonstrating practical applications, making coherent note-taking nearly impossible.",English,Negative,Pedagogical Delivery,2
+20064,"Raises their voice at struggling students, discouraging everyone from asking questions.",English,Negative,Professional Conduct,2
+20065,"Cancels laboratory classes ten minutes after start time, forcing rushed cramming during finals week.",English,Negative,Classroom Management,2
+20066,"Responds with condescending sarcasm, creating an intimidating classroom atmosphere.",English,Negative,Professional Conduct,2
+20067,"Demands graduate-level output in a freshman course rather than following a transparent grading breakdown, and refuses to explain lost points.",English,Negative,Assessment & Grading,2
+20068,"Refuses to review thesis drafts before defense, delaying research milestones.",English,Negative,Student Support & Mentorship,2
+20069,"Refuses to review thesis drafts before defense, leaving advisees without direction.",English,Negative,Student Support & Mentorship,2
+20070,"Relies on hypersensitive automated proctoring rather than following a transparent grading breakdown, and provides zero constructive feedback.",English,Negative,Assessment & Grading,2
+20071,"Schedules practical exams in conflict with other major courses, forcing rushed cramming during finals week.",English,Negative,Classroom Management,2
+20072,"Skips foundational code walkthroughs instead of demonstrating practical applications, leaving the class lost during lab work.",English,Negative,Pedagogical Delivery,2
+20073,"Tests obscure footnote memorization rather than measuring real analytical comprehension, and refuses to explain lost points.",English,Negative,Assessment & Grading,2
+20074,"Demands graduate-level output in a freshman course rather than assessing concepts taught in lecture, and returns graded work two months late.",English,Negative,Assessment & Grading,2
+20075,"Demands graduate-level output in a freshman course rather than measuring real analytical comprehension, and refuses to explain lost points.",English,Negative,Assessment & Grading,2
+20076,"Tests obscure footnote memorization rather than following a transparent grading breakdown, and provides zero constructive feedback.",English,Negative,Assessment & Grading,2
+20077,"Air conditioning and ventilation in third-floor rooms, fail repeatedly throughout the semester.",English,Negative,Unclassified / Needs Review,2
+20078,"Applies undocumented rubric deductions rather than measuring real analytical comprehension, and refuses to explain lost points.",English,Negative,Assessment & Grading,2
+20079,"Air conditioning and ventilation in third-floor rooms, remain broken and unmaintained.",English,Negative,Unclassified / Needs Review,2
+20080,"Uses overly abstract jargon without examples instead of demonstrating practical applications, causing widespread confusion before quizzes.",English,Negative,Pedagogical Delivery,2
+20081,"Rushes through twenty derivations in ten minutes instead of demonstrating practical applications, leaving the class lost during lab work.",English,Negative,Pedagogical Delivery,2
+20082,"Applies undocumented rubric deductions rather than following a transparent grading breakdown, and returns graded work two months late.",English,Negative,Assessment & Grading,2
+20083,"Tests obscure footnote memorization rather than measuring real analytical comprehension, and returns graded work two months late.",English,Negative,Assessment & Grading,2
+20084,"Tests obscure footnote memorization rather than assessing concepts taught in lecture, and provides zero constructive feedback.",English,Negative,Assessment & Grading,2
+20085,"Relies on hypersensitive automated proctoring rather than assessing concepts taught in lecture, and refuses to explain lost points.",English,Negative,Assessment & Grading,2
+20086,"Responds with condescending sarcasm, discouraging everyone from asking questions.",English,Negative,Professional Conduct,2
+20087,"Uses overly abstract jargon without examples instead of demonstrating practical applications, leaving the class lost during lab work.",English,Negative,Pedagogical Delivery,2
+20088,"Rushes through twenty derivations in ten minutes instead of explaining the underlying logic, making coherent note-taking nearly impossible.",English,Negative,Pedagogical Delivery,2
+20089,"Applies undocumented rubric deductions rather than assessing concepts taught in lecture, and refuses to explain lost points.",English,Negative,Assessment & Grading,2
+20090,"Demands graduate-level output in a freshman course rather than measuring real analytical comprehension, and provides zero constructive feedback.",English,Negative,Assessment & Grading,2
+20091,"Writes ambiguous trick multiple-choice options rather than following a transparent grading breakdown, and returns graded work two months late.",English,Negative,Assessment & Grading,2
+20092,"Writes ambiguous trick multiple-choice options rather than following a transparent grading breakdown, and provides zero constructive feedback.",English,Negative,Assessment & Grading,2
+20093,"Reads dense publisher slides verbatim instead of checking whether students follow along, causing widespread confusion before quizzes.",English,Negative,Pedagogical Delivery,2
+20094,"Tests obscure footnote memorization rather than following a transparent grading breakdown, and refuses to explain lost points.",English,Negative,Assessment & Grading,2
+20095,"Skips foundational code walkthroughs instead of demonstrating practical applications, causing widespread confusion before quizzes.",English,Negative,Pedagogical Delivery,2
+20096,"Demands graduate-level output in a freshman course rather than measuring real analytical comprehension, and returns graded work two months late.",English,Negative,Assessment & Grading,2
+20097,"Raises their voice at struggling students, creating an intimidating classroom atmosphere.",English,Negative,Professional Conduct,2
+20098,"Tests obscure footnote memorization rather than following a transparent grading breakdown, and returns graded work two months late.",English,Negative,Assessment & Grading,2
+20099,"Relies on hypersensitive automated proctoring rather than measuring real analytical comprehension, and provides zero constructive feedback.",English,Negative,Assessment & Grading,2
+20100,"Campus Wi-Fi routers in the annex building, fail repeatedly throughout the semester.",English,Negative,Unclassified / Needs Review,2
+20101,"Rushes through twenty derivations in ten minutes instead of checking whether students follow along, making coherent note-taking nearly impossible.",English,Negative,Pedagogical Delivery,2
+20102,"Writes ambiguous trick multiple-choice options rather than assessing concepts taught in lecture, and returns graded work two months late.",English,Negative,Assessment & Grading,2
+20103,"Rushes through twenty derivations in ten minutes instead of demonstrating practical applications, causing widespread confusion before quizzes.",English,Negative,Pedagogical Delivery,2
+20104,"Air conditioning and ventilation in third-floor rooms, severely limit hands-on student activities.",English,Negative,Unclassified / Needs Review,2
+20105,"Writes ambiguous trick multiple-choice options rather than following a transparent grading breakdown, and refuses to explain lost points.",English,Negative,Assessment & Grading,2
+20106,"Writes ambiguous trick multiple-choice options rather than assessing concepts taught in lecture, and refuses to explain lost points.",English,Negative,Assessment & Grading,2
+20107,"Writes ambiguous trick multiple-choice options rather than assessing concepts taught in lecture, and provides zero constructive feedback.",English,Negative,Assessment & Grading,2
+20108,"Tests obscure footnote memorization rather than measuring real analytical comprehension, and provides zero constructive feedback.",English,Negative,Assessment & Grading,2
+20109,"Applies undocumented rubric deductions rather than measuring real analytical comprehension, and provides zero constructive feedback.",English,Negative,Assessment & Grading,2
+20110,"Uses overly abstract jargon without examples instead of demonstrating practical applications, making coherent note-taking nearly impossible.",English,Negative,Pedagogical Delivery,2
+20111,"Funding for student engineering organizations, remain broken and unmaintained.",English,Negative,Unclassified / Needs Review,2
+20112,"Leaves posted office hours unattended, leaving advisees without direction.",English,Negative,Student Support & Mentorship,2
+20113,"Extends lectures twenty minutes past dismissal, forcing rushed cramming during finals week.",English,Negative,Classroom Management,2
+20114,"Reads dense publisher slides verbatim instead of checking whether students follow along, leaving the class lost during lab work.",English,Negative,Pedagogical Delivery,2
+20115,"Applies undocumented rubric deductions rather than following a transparent grading breakdown, and refuses to explain lost points.",English,Negative,Assessment & Grading,2
+20116,"Rushes through twenty derivations in ten minutes instead of checking whether students follow along, causing widespread confusion before quizzes.",English,Negative,Pedagogical Delivery,2
+20117,"Tests obscure footnote memorization rather than assessing concepts taught in lecture, and refuses to explain lost points.",English,Negative,Assessment & Grading,2
+20118,"Skips foundational code walkthroughs instead of explaining the underlying logic, making coherent note-taking nearly impossible.",English,Negative,Pedagogical Delivery,2
+20119,"Rushes through twenty derivations in ten minutes instead of checking whether students follow along, leaving the class lost during lab work.",English,Negative,Pedagogical Delivery,2
+20120,"Arrives twenty-five minutes late to morning sessions, forcing rushed cramming during finals week.",English,Negative,Classroom Management,2
+20121,"Reads dense publisher slides verbatim instead of demonstrating practical applications, causing widespread confusion before quizzes.",English,Negative,Pedagogical Delivery,2
+20122,"Uses overly abstract jargon without examples instead of checking whether students follow along, causing widespread confusion before quizzes.",English,Negative,Pedagogical Delivery,2
+20123,"Applies undocumented rubric deductions rather than following a transparent grading breakdown, and provides zero constructive feedback.",English,Negative,Assessment & Grading,2
+20124,"Relies on hypersensitive automated proctoring rather than following a transparent grading breakdown, and refuses to explain lost points.",English,Negative,Assessment & Grading,2
+20125,"Leaves posted office hours unattended, delaying research milestones.",English,Negative,Student Support & Mentorship,2
+20126,"Displays blatant favoritism during recitation, undermining student confidence.",English,Negative,Professional Conduct,2
+20127,"Demands graduate-level output in a freshman course rather than assessing concepts taught in lecture, and provides zero constructive feedback.",English,Negative,Assessment & Grading,2
+20128,"Dismisses polite rubric questions, discouraging everyone from asking questions.",English,Negative,Professional Conduct,2
+20129,"Dismisses polite rubric questions, undermining student confidence.",English,Negative,Professional Conduct,2
+20130,"Raises their voice at struggling students, undermining student confidence.",English,Negative,Professional Conduct,2
+20131,"Relies on hypersensitive automated proctoring rather than assessing concepts taught in lecture, and returns graded work two months late.",English,Negative,Assessment & Grading,2
+20132,"Relies on hypersensitive automated proctoring rather than following a transparent grading breakdown, and returns graded work two months late.",English,Negative,Assessment & Grading,2
+20133,"Leaves posted office hours unattended, even when groups book slots in advance.",English,Negative,Student Support & Mentorship,2
+20134,"Applies undocumented rubric deductions rather than assessing concepts taught in lecture, and provides zero constructive feedback.",English,Negative,Assessment & Grading,2
+20135,"Relies on hypersensitive automated proctoring rather than assessing concepts taught in lecture, and provides zero constructive feedback.",English,Negative,Assessment & Grading,2
+20136,Examination coverage matched the topics listed on the syllabus and weekly lecture slides.,English,Neutral,Assessment & Grading,3
+20137,Project instructions were straightforward and followed standard departmental formatting rules.,English,Neutral,Assessment & Grading,3
+20138,"Lectures move at a brisk pace, though the instructor answers questions when approached after class.",English,Neutral,Pedagogical Delivery,3
+20139,"Follows the prescribed syllabus sequence closely, but rarely adds industry examples beyond the textbook.",English,Neutral,Pedagogical Delivery,3
+20140,Difficulty level of the midterm was typical for a third-year computing subject.,English,Neutral,Assessment & Grading,3
+20141,Weekly homework length is moderate and manageable alongside other enrolled courses.,English,Neutral,Classroom Management,3
+20142,"Laboratory workstations run older compiler versions, though they still handle basic coursework.",English,Neutral,Unclassified / Needs Review,3
+20143,Library reading areas offer adequate quiet seating during weekday afternoons.,English,Neutral,Unclassified / Needs Review,3
+20144,Maintains formal classroom decorum; neither notably warm nor overly strict with students.,English,Neutral,Professional Conduct,3
+20145,Holds the standard two-hour weekly office window as listed on the department bulletin.,English,Neutral,Student Support & Mentorship,3
+20146,Grading strictly follows the numerical lookup table without curves or bonus tasks.,English,Neutral,Assessment & Grading,3
+20147,Class sessions consist mainly of traditional board lectures with occasional short seatwork.,English,Neutral,Pedagogical Delivery,3
+20148,"Course pacing was slightly fast before midterms, although review handouts were posted on time.",English,Neutral,Pedagogical Delivery,3
+20149,"Punctual with class start times, though laboratory demonstrations are mostly brief.",English,Neutral,Classroom Management,3
+20150,Final grades aligned with the syllabus breakdown; feedback was concise but adequate.,English,Neutral,Assessment & Grading,3
+20151,"Campus cafeteria seating is crowded at noon, though annex benches remain usable.",English,Neutral,Unclassified / Needs Review,3
+20152,"Lectures move at a somewhat brisk pace, though the instructor clarifies questions politely after class.",English,Neutral,Pedagogical Delivery,3
+20153,"Lectures move at a somewhat brisk pace, though uploaded handouts cover all required formulas.",English,Neutral,Pedagogical Delivery,3
+20154,"Lectures move at a somewhat brisk pace, though weekly seatwork reinforces the main topics.",English,Neutral,Pedagogical Delivery,3
+20155,"Lectures move at a somewhat brisk pace, though expectations remain clear from the syllabus.",English,Neutral,Pedagogical Delivery,3
+20156,"Lectures move at a somewhat brisk pace, although the instructor clarifies questions politely after class.",English,Neutral,Pedagogical Delivery,3
+20157,"Lectures move at a somewhat brisk pace, although uploaded handouts cover all required formulas.",English,Neutral,Pedagogical Delivery,3
+20158,"Lectures move at a somewhat brisk pace, although weekly seatwork reinforces the main topics.",English,Neutral,Pedagogical Delivery,3
+20159,"Lectures move at a somewhat brisk pace, although expectations remain clear from the syllabus.",English,Neutral,Pedagogical Delivery,3
+20160,"Lectures move at a somewhat brisk pace, while the instructor clarifies questions politely after class.",English,Neutral,Pedagogical Delivery,3
+20161,"Grading strictly followed the published numerical scale, and items reflected topics covered in class.",English,Neutral,Assessment & Grading,3
+20162,"Class sessions start and end within the normal block, neither unusually light nor excessive.",English,Neutral,Classroom Management,3
+20163,"Rubric weights aligned with standard departmental policy, and neither unusually lenient nor overly harsh.",English,Neutral,Assessment & Grading,3
+20164,"Slide decks are plain and text-heavy, though weekly seatwork reinforces the main topics.",English,Neutral,Pedagogical Delivery,3
+20165,"Midterm and final exams matched the table of specifications, and scores were released within the regular registrar window.",English,Neutral,Assessment & Grading,3
+20166,"Presentations stay close to the textbook chapters, though the instructor clarifies questions politely after class.",English,Neutral,Pedagogical Delivery,3
+20167,"Explanations are primarily theoretical, although the instructor clarifies questions politely after class.",English,Neutral,Pedagogical Delivery,3
+20168,"Instruction follows a traditional lecture format, though weekly seatwork reinforces the main topics.",English,Neutral,Pedagogical Delivery,3
+20169,"Course pacing tracks the printed semester calendar, neither unusually light nor excessive.",English,Neutral,Classroom Management,3
+20170,"Presentations stay close to the textbook chapters, although expectations remain clear from the syllabus.",English,Neutral,Pedagogical Delivery,3
+20171,"Slide decks are plain and text-heavy, though uploaded handouts cover all required formulas.",English,Neutral,Pedagogical Delivery,3
+20172,"Class sessions start and end within the normal block, manageable alongside other subjects.",English,Neutral,Classroom Management,3
+20173,"Projector brightness in the lecture room is average, while afternoon seating remains adequate.",English,Neutral,Unclassified / Needs Review,3
+20174,"Course pacing tracks the printed semester calendar, with routine weekly deadlines.",English,Neutral,Classroom Management,3
+20175,"Quiz length was adequate for the allotted fifty minutes, and neither unusually lenient nor overly harsh.",English,Neutral,Assessment & Grading,3
+20176,"Instruction follows a traditional lecture format, although the instructor clarifies questions politely after class.",English,Neutral,Pedagogical Delivery,3
+20177,"Weekly homework volume is moderate, neither unusually light nor excessive.",English,Neutral,Classroom Management,3
+20178,"Presentations stay close to the textbook chapters, though expectations remain clear from the syllabus.",English,Neutral,Pedagogical Delivery,3
+20179,"Instruction follows a traditional lecture format, although weekly seatwork reinforces the main topics.",English,Neutral,Pedagogical Delivery,3
+20180,"Slide decks are plain and text-heavy, though the instructor clarifies questions politely after class.",English,Neutral,Pedagogical Delivery,3
+20181,"Office consultation runs for the standard two hours weekly, following normal departmental procedures.",English,Neutral,Student Support & Mentorship,3
+20182,"Slide decks are plain and text-heavy, while the instructor clarifies questions politely after class.",English,Neutral,Pedagogical Delivery,3
+20183,"Explanations are primarily theoretical, though uploaded handouts cover all required formulas.",English,Neutral,Pedagogical Delivery,3
+20184,"Instruction follows a traditional lecture format, although uploaded handouts cover all required formulas.",English,Neutral,Pedagogical Delivery,3
+20185,"Course pacing tracks the printed semester calendar, manageable alongside other subjects.",English,Neutral,Classroom Management,3
+20186,"Explanations are primarily theoretical, while expectations remain clear from the syllabus.",English,Neutral,Pedagogical Delivery,3
+20187,"Projector brightness in the lecture room is average, though they still work fine for basic labs.",English,Neutral,Unclassified / Needs Review,3
+20188,"Recitation is conducted in a strictly procedural manner, though all sections are treated impartially.",English,Neutral,Professional Conduct,3
+20189,"Rubric weights aligned with standard departmental policy, and instructions were clear and straightforward.",English,Neutral,Assessment & Grading,3
+20190,"Explanations are primarily theoretical, although weekly seatwork reinforces the main topics.",English,Neutral,Pedagogical Delivery,3
+20191,"Presentations stay close to the textbook chapters, while weekly seatwork reinforces the main topics.",English,Neutral,Pedagogical Delivery,3
+20192,"Library study carrels fill up around midday, though they still work fine for basic labs.",English,Neutral,Unclassified / Needs Review,3
+20193,"Rubric weights aligned with standard departmental policy, and items reflected topics covered in class.",English,Neutral,Assessment & Grading,3
+20194,"Slide decks are plain and text-heavy, although uploaded handouts cover all required formulas.",English,Neutral,Pedagogical Delivery,3
+20195,"Slide decks are plain and text-heavy, while expectations remain clear from the syllabus.",English,Neutral,Pedagogical Delivery,3
+20196,"Slide decks are plain and text-heavy, though expectations remain clear from the syllabus.",English,Neutral,Pedagogical Delivery,3
+20197,"Presentations stay close to the textbook chapters, while expectations remain clear from the syllabus.",English,Neutral,Pedagogical Delivery,3
+20198,"Instruction follows a traditional lecture format, while weekly seatwork reinforces the main topics.",English,Neutral,Pedagogical Delivery,3
+20199,"Attendance rules follow standard university policy, neither unusually light nor excessive.",English,Neutral,Classroom Management,3
+20200,"Slide decks are plain and text-heavy, although the instructor clarifies questions politely after class.",English,Neutral,Pedagogical Delivery,3
+20201,"Slide decks are plain and text-heavy, while uploaded handouts cover all required formulas.",English,Neutral,Pedagogical Delivery,3
+20202,"Laboratory PCs run slightly older operating systems, while afternoon seating remains adequate.",English,Neutral,Unclassified / Needs Review,3
+20203,"Explanations are primarily theoretical, although uploaded handouts cover all required formulas.",English,Neutral,Pedagogical Delivery,3
+20204,"Quiz length was adequate for the allotted fifty minutes, and items reflected topics covered in class.",English,Neutral,Assessment & Grading,3
+20205,"Presentations stay close to the textbook chapters, although weekly seatwork reinforces the main topics.",English,Neutral,Pedagogical Delivery,3
+20206,"Explanations are primarily theoretical, although expectations remain clear from the syllabus.",English,Neutral,Pedagogical Delivery,3
+20207,"Instructor maintains standard academic decorum, though all sections are treated impartially.",English,Neutral,Professional Conduct,3
+20208,"Instruction follows a traditional lecture format, though expectations remain clear from the syllabus.",English,Neutral,Pedagogical Delivery,3
+20209,"Explanations are primarily theoretical, though weekly seatwork reinforces the main topics.",English,Neutral,Pedagogical Delivery,3
+20210,"Attendance rules follow standard university policy, with routine weekly deadlines.",English,Neutral,Classroom Management,3
+20211,"Instruction follows a traditional lecture format, while uploaded handouts cover all required formulas.",English,Neutral,Pedagogical Delivery,3
+20212,"Lectures move at a somewhat brisk pace, while expectations remain clear from the syllabus.",English,Neutral,Pedagogical Delivery,3
+20213,"Weekly homework volume is moderate, with routine weekly deadlines.",English,Neutral,Classroom Management,3
+20214,"Presentations stay close to the textbook chapters, although the instructor clarifies questions politely after class.",English,Neutral,Pedagogical Delivery,3
+20215,"Explanations are primarily theoretical, though the instructor clarifies questions politely after class.",English,Neutral,Pedagogical Delivery,3
+20216,"Office consultation runs for the standard two hours weekly, adequate for routine course questions.",English,Neutral,Student Support & Mentorship,3
+20217,"Instruction follows a traditional lecture format, while expectations remain clear from the syllabus.",English,Neutral,Pedagogical Delivery,3
+20218,"Instruction follows a traditional lecture format, though the instructor clarifies questions politely after class.",English,Neutral,Pedagogical Delivery,3
+20219,"Presentations stay close to the textbook chapters, though weekly seatwork reinforces the main topics.",English,Neutral,Pedagogical Delivery,3
+20220,"Midterm and final exams matched the table of specifications, and instructions were clear and straightforward.",English,Neutral,Assessment & Grading,3
+20221,"Laboratory PCs run slightly older operating systems, though they still work fine for basic labs.",English,Neutral,Unclassified / Needs Review,3
+20222,"Attendance rules follow standard university policy, manageable alongside other subjects.",English,Neutral,Classroom Management,3
+20223,"Instructor maintains standard academic decorum, while student inquiries receive polite replies.",English,Neutral,Professional Conduct,3
+20224,"Rubric weights aligned with standard departmental policy, and scores were released within the regular registrar window.",English,Neutral,Assessment & Grading,3
+20225,"Lectures move at a somewhat brisk pace, while uploaded handouts cover all required formulas.",English,Neutral,Pedagogical Delivery,3
+20226,"Presentations stay close to the textbook chapters, while the instructor clarifies questions politely after class.",English,Neutral,Pedagogical Delivery,3
+20227,"Lectures move at a somewhat brisk pace, while weekly seatwork reinforces the main topics.",English,Neutral,Pedagogical Delivery,3
+20228,"Class sessions start and end within the normal block, with routine weekly deadlines.",English,Neutral,Classroom Management,3
+20229,"Explanations are primarily theoretical, though expectations remain clear from the syllabus.",English,Neutral,Pedagogical Delivery,3
+20230,"Midterm and final exams matched the table of specifications, and items reflected topics covered in class.",English,Neutral,Assessment & Grading,3
+20231,"Explanations are primarily theoretical, while uploaded handouts cover all required formulas.",English,Neutral,Pedagogical Delivery,3
+20232,"Classroom tone is formal and reserved, though all sections are treated impartially.",English,Neutral,Professional Conduct,3
+20233,"Instruction follows a traditional lecture format, while the instructor clarifies questions politely after class.",English,Neutral,Pedagogical Delivery,3
+20234,"Advising requests are handled sequentially by email, adequate for routine course questions.",English,Neutral,Student Support & Mentorship,3
+20235,"Slide decks are plain and text-heavy, although expectations remain clear from the syllabus.",English,Neutral,Pedagogical Delivery,3
+20236,"Presentations stay close to the textbook chapters, although uploaded handouts cover all required formulas.",English,Neutral,Pedagogical Delivery,3
+20237,"Grading strictly followed the published numerical scale, and instructions were clear and straightforward.",English,Neutral,Assessment & Grading,3
+20238,"Midterm and final exams matched the table of specifications, and neither unusually lenient nor overly harsh.",English,Neutral,Assessment & Grading,3
+20239,"Explanations are primarily theoretical, while the instructor clarifies questions politely after class.",English,Neutral,Pedagogical Delivery,3
+20240,"Examination difficulty was typical for an upper-division subject, and instructions were clear and straightforward.",English,Neutral,Assessment & Grading,3
+20241,"Library study carrels fill up around midday, while afternoon seating remains adequate.",English,Neutral,Unclassified / Needs Review,3
+20242,"Advising requests are handled sequentially by email, following normal departmental procedures.",English,Neutral,Student Support & Mentorship,3
+20243,"Examination difficulty was typical for an upper-division subject, and items reflected topics covered in class.",English,Neutral,Assessment & Grading,3
+20244,"Presentations stay close to the textbook chapters, while uploaded handouts cover all required formulas.",English,Neutral,Pedagogical Delivery,3
+20245,"Examination difficulty was typical for an upper-division subject, and neither unusually lenient nor overly harsh.",English,Neutral,Assessment & Grading,3
+20246,"Instruction follows a traditional lecture format, though uploaded handouts cover all required formulas.",English,Neutral,Pedagogical Delivery,3
+20247,"Slide decks are plain and text-heavy, while weekly seatwork reinforces the main topics.",English,Neutral,Pedagogical Delivery,3
+20248,"Presentations stay close to the textbook chapters, though uploaded handouts cover all required formulas.",English,Neutral,Pedagogical Delivery,3
+20249,"Classroom tone is formal and reserved, while student inquiries receive polite replies.",English,Neutral,Professional Conduct,3
+20250,"Weekly homework volume is moderate, manageable alongside other subjects.",English,Neutral,Classroom Management,3
+20251,"Examination difficulty was typical for an upper-division subject, and scores were released within the regular registrar window.",English,Neutral,Assessment & Grading,3
+20252,"Quiz length was adequate for the allotted fifty minutes, and scores were released within the regular registrar window.",English,Neutral,Assessment & Grading,3
+20253,"Quiz length was adequate for the allotted fifty minutes, and instructions were clear and straightforward.",English,Neutral,Assessment & Grading,3
+20254,"Grading strictly followed the published numerical scale, and scores were released within the regular registrar window.",English,Neutral,Assessment & Grading,3
+20255,"Grading strictly followed the published numerical scale, and neither unusually lenient nor overly harsh.",English,Neutral,Assessment & Grading,3
+20256,Walks students step-by-step through common quiz mistakes so nobody repeats the same errors on finals.,English,Positive,Assessment & Grading,5
+20257,Encourages the class to review and question any grading miscalculations openly during consultation hours.,English,Positive,Assessment & Grading,5
+20258,Provides realistic practice sets and mock exams that noticeably lower pre-exam anxiety.,English,Positive,Assessment & Grading,5
+20259,Exam problems test genuine analytical reasoning without relying on obscure textbook footnotes.,English,Positive,Assessment & Grading,5
+20260,Challenged our critical thinking on every problem set without requiring rote memorization of formulas.,English,Positive,Assessment & Grading,5
+20261,Allows students to dispute quiz scoring errors respectfully and updates grades right away.,English,Positive,Assessment & Grading,5
+20262,Grants reasonable deadline extensions whenever students communicate valid emergencies ahead of time.,English,Positive,Student Support & Mentorship,5
+20263,Curved the midterm scores fairly after noticing a flawed question in the departmental test bank.,English,Positive,Assessment & Grading,5
+20264,Organized a full mock defense session that left our capstone team confident for the panel review.,English,Positive,Student Support & Mentorship,5
+20265,Breaks down intimidating proofs into intuitive visual steps before introducing formal notation.,English,Positive,Pedagogical Delivery,5
+20266,Course readings are up-to-date and directly relevant to modern software engineering workflows.,English,Positive,Pedagogical Delivery,5
+20267,"Maintains a calm, respectful tone even when correcting fundamental misconceptions in lab.",English,Positive,Professional Conduct,5
+20268,Starts and ends every lecture right on the scheduled minute while covering the entire syllabus.,English,Positive,Classroom Management,5
+20269,"Responds to academic emails within the same day with specific, actionable debugging hints.",English,Positive,Student Support & Mentorship,5
+20270,Grading rubrics are shared weeks before project submission with zero surprise deductions.,English,Positive,Assessment & Grading,5
+20271,Challenges us with rigorous case studies while giving plenty of scaffolding to succeed.,English,Positive,Pedagogical Delivery,5
+20272,Treats quiet and outspoken students with equal patience and impartiality.,English,Positive,Professional Conduct,5
+20273,Turned a notoriously difficult algorithms subject into the most rewarding class of my semester.,English,Positive,Pedagogical Delivery,5
+20274,Reviews frequent coding pitfalls in class before each lab exam to reduce student stress.,English,Positive,Assessment & Grading,5
+20275,Checks in with struggling thesis groups weekly and offers concrete architectural remedies.,English,Positive,Student Support & Mentorship,5
+20276,Allows draft revisions before final submission and encourages analytical reasoning over memorization.,English,Positive,Assessment & Grading,5
+20277,Updated digital library databases and quiet study rooms made capstone literature reviews smooth.,English,Positive,Unclassified / Needs Review,5
+20278,Campus Wi-Fi in the main library is fast and the air-conditioned reading hall is comfortable all day.,English,Positive,Unclassified / Needs Review,5
+20279,Student engineering society workshops and hackathons organized this term were genuinely enriching.,English,Positive,Unclassified / Needs Review,5
+20280,"Explains recursion and graph algorithms with crystal-clear diagrams, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20281,Publishes project evaluations before the next module and avoids ambiguous trick questions.,English,Positive,Assessment & Grading,5
+20282,Returns midterm exam papers before the next module and walks us through common mistakes.,English,Positive,Assessment & Grading,5
+20283,"Demonstrates operating system concurrency using practical live code, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20284,"Explains operating system concurrency at a steady, digestible pace, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20285,Grades midterm exam papers right on schedule and avoids ambiguous trick questions.,English,Positive,Assessment & Grading,5
+20286,"Walks through database normalization at a steady, digestible pace, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20287,"Clarifies discrete mathematics proofs with up-to-date industry cases, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20288,Returns quiz score breakdowns right on schedule and reduces pre-exam stress.,English,Positive,Assessment & Grading,5
+20289,"Illustrates recursion and graph algorithms with crystal-clear diagrams, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20290,Publishes project evaluations with complete transparency and avoids ambiguous trick questions.,English,Positive,Assessment & Grading,5
+20291,"Illustrates database normalization with crystal-clear diagrams, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20292,"Demonstrates database normalization with crystal-clear diagrams, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20293,Reviews quiz score breakdowns right on schedule and allows open score verification.,English,Positive,Assessment & Grading,5
+20294,"Explains network protocols using practical live code, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20295,Returns laboratory rubrics with complete transparency and allows open score verification.,English,Positive,Assessment & Grading,5
+20296,Reviews project evaluations right on schedule and walks us through common mistakes.,English,Positive,Assessment & Grading,5
+20297,"Breaks down recursion and graph algorithms with crystal-clear diagrams, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20298,Holds extra review walkthroughs and for students requesting academic guidance.,English,Positive,Student Support & Mentorship,5
+20299,Returns project evaluations right on schedule and walks us through common mistakes.,English,Positive,Assessment & Grading,5
+20300,Returns project evaluations within a single week and avoids ambiguous trick questions.,English,Positive,Assessment & Grading,5
+20301,"Clarifies recursion and graph algorithms at a steady, digestible pace, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20302,"Explains recursion and graph algorithms with crystal-clear diagrams, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20303,Reviews quiz score breakdowns with complete transparency and reduces pre-exam stress.,English,Positive,Assessment & Grading,5
+20304,Publishes laboratory rubrics before the next module and avoids ambiguous trick questions.,English,Positive,Assessment & Grading,5
+20305,Grades project evaluations right on schedule and reduces pre-exam stress.,English,Positive,Assessment & Grading,5
+20306,"Walks through recursion and graph algorithms at a steady, digestible pace, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20307,Returns project evaluations with complete transparency and avoids ambiguous trick questions.,English,Positive,Assessment & Grading,5
+20308,"Demonstrates statistical inference with up-to-date industry cases, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20309,Returns midterm exam papers with complete transparency and reduces pre-exam stress.,English,Positive,Assessment & Grading,5
+20310,Reviews laboratory rubrics within a single week and reduces pre-exam stress.,English,Positive,Assessment & Grading,5
+20311,"Explains database normalization with crystal-clear diagrams, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20312,Publishes midterm exam papers right on schedule and reduces pre-exam stress.,English,Positive,Assessment & Grading,5
+20313,Publishes programming milestones before the next module and allows open score verification.,English,Positive,Assessment & Grading,5
+20314,Returns quiz score breakdowns within a single week and walks us through common mistakes.,English,Positive,Assessment & Grading,5
+20315,Returns quiz score breakdowns right on schedule and allows open score verification.,English,Positive,Assessment & Grading,5
+20316,Grades midterm exam papers with complete transparency and walks us through common mistakes.,English,Positive,Assessment & Grading,5
+20317,"Walks through network protocols with up-to-date industry cases, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20318,"Explains recursion and graph algorithms using practical live code, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20319,Returns midterm exam papers with complete transparency and avoids ambiguous trick questions.,English,Positive,Assessment & Grading,5
+20320,"Demonstrates operating system concurrency at a steady, digestible pace, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20321,"Walks through operating system concurrency at a steady, digestible pace, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20322,"Breaks down discrete mathematics proofs using practical live code, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20323,Replies promptly to student emails and for students requesting academic guidance.,English,Positive,Student Support & Mentorship,5
+20324,Organizes weekly lab schedules smoothly and posts clear announcements ahead of time.,English,Positive,Classroom Management,5
+20325,Publishes quiz score breakdowns within a single week and walks us through common mistakes.,English,Positive,Assessment & Grading,5
+20326,"Demonstrates recursion and graph algorithms using practical live code, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20327,"Clarifies database normalization with crystal-clear diagrams, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20328,Grades laboratory rubrics before the next module and allows open score verification.,English,Positive,Assessment & Grading,5
+20329,"Clarifies statistical inference with crystal-clear diagrams, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20330,"Illustrates operating system concurrency with up-to-date industry cases, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20331,"Illustrates database normalization using practical live code, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20332,"Demonstrates database normalization at a steady, digestible pace, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20333,"Illustrates database normalization with crystal-clear diagrams, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20334,"Clarifies network protocols at a steady, digestible pace, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20335,"Walks through recursion and graph algorithms using practical live code, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20336,"Walks through discrete mathematics proofs at a steady, digestible pace, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20337,"Breaks down recursion and graph algorithms with crystal-clear diagrams, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20338,Moderates classroom debates and without any trace of favoritism.,English,Positive,Professional Conduct,5
+20339,Grades project evaluations before the next module and allows open score verification.,English,Positive,Assessment & Grading,5
+20340,Reviews midterm exam papers right on schedule and avoids ambiguous trick questions.,English,Positive,Assessment & Grading,5
+20341,Grades project evaluations within a single week and reduces pre-exam stress.,English,Positive,Assessment & Grading,5
+20342,"Demonstrates statistical inference at a steady, digestible pace, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20343,"Explains discrete mathematics proofs at a steady, digestible pace, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20344,Reviews programming milestones within a single week and allows open score verification.,English,Positive,Assessment & Grading,5
+20345,Returns midterm exam papers before the next module and avoids ambiguous trick questions.,English,Positive,Assessment & Grading,5
+20346,"Walks through database normalization at a steady, digestible pace, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20347,"Explains database normalization at a steady, digestible pace, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20348,"Explains discrete mathematics proofs using practical live code, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20349,Publishes programming milestones with complete transparency and allows open score verification.,English,Positive,Assessment & Grading,5
+20350,"Illustrates statistical inference with up-to-date industry cases, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20351,"Clarifies statistical inference with up-to-date industry cases, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20352,Reviews programming milestones right on schedule and walks us through common mistakes.,English,Positive,Assessment & Grading,5
+20353,Publishes quiz score breakdowns before the next module and avoids ambiguous trick questions.,English,Positive,Assessment & Grading,5
+20354,"Illustrates statistical inference at a steady, digestible pace, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20355,"Explains network protocols using practical live code, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20356,Publishes project evaluations right on schedule and avoids ambiguous trick questions.,English,Positive,Assessment & Grading,5
+20357,Publishes laboratory rubrics within a single week and reduces pre-exam stress.,English,Positive,Assessment & Grading,5
+20358,"Illustrates discrete mathematics proofs using practical live code, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20359,"Illustrates network protocols using practical live code, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20360,"Explains discrete mathematics proofs with up-to-date industry cases, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20361,"Explains recursion and graph algorithms using practical live code, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20362,Reviews laboratory rubrics before the next module and walks us through common mistakes.,English,Positive,Assessment & Grading,5
+20363,"Walks through discrete mathematics proofs with up-to-date industry cases, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20364,"Clarifies recursion and graph algorithms with crystal-clear diagrams, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20365,"Demonstrates recursion and graph algorithms with up-to-date industry cases, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20366,"Clarifies statistical inference using practical live code, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20367,Publishes midterm exam papers right on schedule and allows open score verification.,English,Positive,Assessment & Grading,5
+20368,Publishes laboratory rubrics before the next module and reduces pre-exam stress.,English,Positive,Assessment & Grading,5
+20369,Publishes project evaluations within a single week and walks us through common mistakes.,English,Positive,Assessment & Grading,5
+20370,"Walks through network protocols with crystal-clear diagrams, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20371,"Walks through database normalization with crystal-clear diagrams, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20372,Publishes quiz score breakdowns with complete transparency and avoids ambiguous trick questions.,English,Positive,Assessment & Grading,5
+20373,Returns laboratory rubrics with complete transparency and avoids ambiguous trick questions.,English,Positive,Assessment & Grading,5
+20374,Reviews project evaluations with complete transparency and avoids ambiguous trick questions.,English,Positive,Assessment & Grading,5
+20375,"Demonstrates discrete mathematics proofs with up-to-date industry cases, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20376,"Breaks down database normalization with crystal-clear diagrams, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20377,"Explains operating system concurrency with crystal-clear diagrams, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20378,"Breaks down recursion and graph algorithms using practical live code, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20379,"Illustrates statistical inference using practical live code, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20380,"Clarifies discrete mathematics proofs using practical live code, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20381,"Clarifies operating system concurrency with up-to-date industry cases, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20382,"Demonstrates recursion and graph algorithms at a steady, digestible pace, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20383,"Walks through discrete mathematics proofs with crystal-clear diagrams, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20384,"Breaks down recursion and graph algorithms with up-to-date industry cases, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20385,Grades programming milestones within a single week and walks us through common mistakes.,English,Positive,Assessment & Grading,5
+20386,Treats every learner in the section and with genuine patience and courtesy.,English,Positive,Professional Conduct,5
+20387,Holds extra review walkthroughs and whenever capstone groups hit blockers.,English,Positive,Student Support & Mentorship,5
+20388,"Explains operating system concurrency using practical live code, helping our section grasp fundamentals quickly.",English,Positive,Pedagogical Delivery,5
+20389,Grades midterm exam papers right on schedule and allows open score verification.,English,Positive,Assessment & Grading,5
+20390,"Illustrates recursion and graph algorithms with up-to-date industry cases, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20391,Publishes laboratory rubrics within a single week and avoids ambiguous trick questions.,English,Positive,Assessment & Grading,5
+20392,Reviews quiz score breakdowns right on schedule and reduces pre-exam stress.,English,Positive,Assessment & Grading,5
+20393,"Demonstrates statistical inference at a steady, digestible pace, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20394,"Clarifies database normalization at a steady, digestible pace, helping our section connect theory to real software.",English,Positive,Pedagogical Delivery,5
+20395,"Breaks down network protocols with up-to-date industry cases, helping our section solve lab problems independently.",English,Positive,Pedagogical Delivery,5
+20396,Masyadong mataas ang hinihinging pamantayan sa proyekto para sa panimulang asignatura.,Tagalog,Negative,Assessment & Grading,2
+20397,Napakabilis magsalita sa talakayan kaya hindi makasabay sa pagsulat ng tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20398,Pawang pagsasaulo lamang ng depinisyon ang sinusukat sa pagsusulit imbes na malalim na pag-unawa.,Tagalog,Negative,Assessment & Grading,2
+20399,Sirang-sira na ang mga kagamitan sa laboratoryo kaya hindi maisagawa nang tama ang eksperimento.,Tagalog,Negative,Unclassified / Needs Review,2
+20400,Madalas mahuli nang mahigit dalawampung minuto sa klase nang walang paunang abiso.,Tagalog,Negative,Classroom Management,2
+20401,Walang malinaw na pamantayan sa pagmamarka at hindi ibinabalik ang mga nasuring gawain.,Tagalog,Negative,Assessment & Grading,2
+20402,Masungit at namamahiya ng mag-aaral kapag nagkakamali sa pagsagot sa harap ng klase.,Tagalog,Negative,Professional Conduct,2
+20403,Hindi tumutugon sa mga mensahe ukol sa konsultasyon para sa pangwakas na pananaliksik.,Tagalog,Negative,Student Support & Mentorship,2
+20404,Sumabay ang itinakdang pagsusulit sa isa pang pangunahing asignatura dahil walang koordinasyon.,Tagalog,Negative,Classroom Management,2
+20405,Kulang sa pondo at suporta ang mga samahang pang-akademiko ng mga mag-aaral sa kolehiyo.,Tagalog,Negative,Unclassified / Needs Review,2
+20406,Magulo at pabago-bago sa pagtuturo ng mahahalagang aralin kaya nahihirapan sumabay ang buong klase.,Tagalog,Negative,Pedagogical Delivery,2
+20407,Magulo at pabago-bago sa pagtuturo ng mahahalagang aralin kaya hindi makakuha ng maayos na tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20408,Magulo at pabago-bago sa pagtuturo ng mahahalagang aralin kaya walang malinaw na direksyon ang talakayan.,Tagalog,Negative,Pedagogical Delivery,2
+20409,Magulo at pabago-bago sa pagtuturo ng mga pormula sa pisika kaya nahihirapan sumabay ang buong klase.,Tagalog,Negative,Pedagogical Delivery,2
+20410,Magulo at pabago-bago sa pagtuturo ng mga pormula sa pisika kaya hindi makakuha ng maayos na tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20411,Magulo at pabago-bago sa pagtuturo ng mga pormula sa pisika kaya walang malinaw na direksyon ang talakayan.,Tagalog,Negative,Pedagogical Delivery,2
+20412,Magulo at pabago-bago sa pagtuturo ng mga hakbang sa laboratoryo kaya nahihirapan sumabay ang buong klase.,Tagalog,Negative,Pedagogical Delivery,2
+20413,Magulo at pabago-bago sa pagtuturo ng mga hakbang sa laboratoryo kaya hindi makakuha ng maayos na tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20414,Magulo at pabago-bago sa pagtuturo ng mga hakbang sa laboratoryo kaya walang malinaw na direksyon ang talakayan.,Tagalog,Negative,Pedagogical Delivery,2
+20415,Magulo at pabago-bago sa pagtuturo ng pangunahing teorya kaya nahihirapan sumabay ang buong klase.,Tagalog,Negative,Pedagogical Delivery,2
+20416,Magulo at pabago-bago sa pagtuturo ng pangunahing teorya kaya hindi makakuha ng maayos na tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20417,Magulo at pabago-bago sa pagtuturo ng pangunahing teorya kaya walang malinaw na direksyon ang talakayan.,Tagalog,Negative,Pedagogical Delivery,2
+20418,Napakabilis magsalita sa pagtuturo ng mahahalagang aralin kaya nahihirapan sumabay ang buong klase.,Tagalog,Negative,Pedagogical Delivery,2
+20419,Napakabilis magsalita sa pagtuturo ng mahahalagang aralin kaya hindi makakuha ng maayos na tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20420,Napakabilis magsalita sa pagtuturo ng mahahalagang aralin kaya walang malinaw na direksyon ang talakayan.,Tagalog,Negative,Pedagogical Delivery,2
+20421,Namamahiya sa harap ng klase at natatakot nang magtanong ang mga mag-aaral.,Tagalog,Negative,Professional Conduct,2
+20422,Binabasa lamang nang buo ang presentasyon sa pagtuturo ng mahahalagang aralin kaya walang malinaw na direksyon ang talakayan.,Tagalog,Negative,Pedagogical Delivery,2
+20423,Walang ibinibigay na pamantayan sa grado sa proyekto ng klase imbes na isaalang-alang na panimulang kurso pa lamang ito.,Tagalog,Negative,Assessment & Grading,2
+20424,Sobrang taas ng hinihinging pamantayan sa pagsusulit imbes na isaalang-alang na panimulang kurso pa lamang ito.,Tagalog,Negative,Assessment & Grading,2
+20425,Pawang pagsasaulo lamang ang hinahanap sa pangwakas na pagtataya imbes na sukatin ang malalim na pag-unawa sa paksa.,Tagalog,Negative,Assessment & Grading,2
+20426,Binabasa lamang nang buo ang presentasyon sa pagtuturo ng pangunahing teorya kaya hindi makakuha ng maayos na tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20427,Pawang pagsasaulo lamang ang hinahanap sa gawaing pasulat imbes na sukatin ang malalim na pag-unawa sa paksa.,Tagalog,Negative,Assessment & Grading,2
+20428,Binabasa lamang nang buo ang presentasyon sa pagtuturo ng pangunahing teorya kaya nahihirapan sumabay ang buong klase.,Tagalog,Negative,Pedagogical Delivery,2
+20429,Walang ibinibigay na pamantayan sa grado sa pagsusulit imbes na ipaliwanag kung saan nagkamali ang mag-aaral.,Tagalog,Negative,Assessment & Grading,2
+20430,Masungit at pabalang sumagot at natatakot nang magtanong ang mga mag-aaral.,Tagalog,Negative,Professional Conduct,2
+20431,Sobrang taas ng hinihinging pamantayan sa pangwakas na pagtataya imbes na sukatin ang malalim na pag-unawa sa paksa.,Tagalog,Negative,Assessment & Grading,2
+20432,Pawang pagsasaulo lamang ang hinahanap sa pangwakas na pagtataya imbes na isaalang-alang na panimulang kurso pa lamang ito.,Tagalog,Negative,Assessment & Grading,2
+20433,Kulang sa pondo ang mga samahang pang-mag-aaral at mahirap mag-aral nang maayos sa hapon.,Tagalog,Negative,Unclassified / Needs Review,2
+20434,Biglaang kinakansela ang klase at naaapektuhan ang susunod naming klase.,Tagalog,Negative,Classroom Management,2
+20435,Madalas mahuli nang kalahating oras at naaapektuhan ang susunod naming klase.,Tagalog,Negative,Classroom Management,2
+20436,Hindi sumasagot sa liham ng mga mag-aaral at kahit maagang nagpaalam ang pangkat.,Tagalog,Negative,Student Support & Mentorship,2
+20437,Sobrang taas ng hinihinging pamantayan sa proyekto ng klase imbes na ipaliwanag kung saan nagkamali ang mag-aaral.,Tagalog,Negative,Assessment & Grading,2
+20438,Napakabilis magsalita sa pagtuturo ng pangunahing teorya kaya walang malinaw na direksyon ang talakayan.,Tagalog,Negative,Pedagogical Delivery,2
+20439,Masungit at pabalang sumagot at mabigat ang kapaligiran sa silid-aralan.,Tagalog,Negative,Professional Conduct,2
+20440,Pawang pagsasaulo lamang ang hinahanap sa pangwakas na pagtataya imbes na ipaliwanag kung saan nagkamali ang mag-aaral.,Tagalog,Negative,Assessment & Grading,2
+20441,May halatang kinikilingan sa talakayan at mabigat ang kapaligiran sa silid-aralan.,Tagalog,Negative,Professional Conduct,2
+20442,Inaabot nang dalawang buwan bago ibalik ang puntos sa gawaing pasulat imbes na ipaliwanag kung saan nagkamali ang mag-aaral.,Tagalog,Negative,Assessment & Grading,2
+20443,Napakabilis magsalita sa pagtuturo ng mga pormula sa pisika kaya hindi makakuha ng maayos na tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20444,Walang ibinibigay na pamantayan sa grado sa gawaing pasulat imbes na ipaliwanag kung saan nagkamali ang mag-aaral.,Tagalog,Negative,Assessment & Grading,2
+20445,Walang ibinibigay na pamantayan sa grado sa pangwakas na pagtataya imbes na sukatin ang malalim na pag-unawa sa paksa.,Tagalog,Negative,Assessment & Grading,2
+20446,Binabasa lamang nang buo ang presentasyon sa pagtuturo ng pangunahing teorya kaya walang malinaw na direksyon ang talakayan.,Tagalog,Negative,Pedagogical Delivery,2
+20447,Inaabot nang dalawang buwan bago ibalik ang puntos sa pagsusulit imbes na sukatin ang malalim na pag-unawa sa paksa.,Tagalog,Negative,Assessment & Grading,2
+20448,Walang ibinibigay na gabay sa pananaliksik at kahit maagang nagpaalam ang pangkat.,Tagalog,Negative,Student Support & Mentorship,2
+20449,Pawang pagsasaulo lamang ang hinahanap sa proyekto ng klase imbes na sukatin ang malalim na pag-unawa sa paksa.,Tagalog,Negative,Assessment & Grading,2
+20450,Kulang na kulang sa paliwanag sa pagtuturo ng pangunahing teorya kaya walang malinaw na direksyon ang talakayan.,Tagalog,Negative,Pedagogical Delivery,2
+20451,Sobrang taas ng hinihinging pamantayan sa gawaing pasulat imbes na isaalang-alang na panimulang kurso pa lamang ito.,Tagalog,Negative,Assessment & Grading,2
+20452,Sobrang taas ng hinihinging pamantayan sa proyekto ng klase imbes na isaalang-alang na panimulang kurso pa lamang ito.,Tagalog,Negative,Assessment & Grading,2
+20453,Hindi sumisipot sa oras ng konsultasyon at kahit maagang nagpaalam ang pangkat.,Tagalog,Negative,Student Support & Mentorship,2
+20454,Kulang na kulang sa paliwanag sa pagtuturo ng mahahalagang aralin kaya hindi makakuha ng maayos na tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20455,Mabait nga ngunit laging walang pasok at walang paunang abiso sa klase.,Tagalog,Negative,Classroom Management,2
+20456,Pawang pagsasaulo lamang ang hinahanap sa proyekto ng klase imbes na isaalang-alang na panimulang kurso pa lamang ito.,Tagalog,Negative,Assessment & Grading,2
+20457,Kulang na kulang sa paliwanag sa pagtuturo ng mga hakbang sa laboratoryo kaya hindi makakuha ng maayos na tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20458,Sobrang taas ng hinihinging pamantayan sa pangwakas na pagtataya imbes na isaalang-alang na panimulang kurso pa lamang ito.,Tagalog,Negative,Assessment & Grading,2
+20459,Pawang pagsasaulo lamang ang hinahanap sa pagsusulit imbes na isaalang-alang na panimulang kurso pa lamang ito.,Tagalog,Negative,Assessment & Grading,2
+20460,Binabasa lamang nang buo ang presentasyon sa pagtuturo ng mga pormula sa pisika kaya hindi makakuha ng maayos na tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20461,Biglaang kinakansela ang klase at naiipon ang mga hindi natapos na aralin.,Tagalog,Negative,Classroom Management,2
+20462,Sobrang taas ng hinihinging pamantayan sa pagsusulit imbes na ipaliwanag kung saan nagkamali ang mag-aaral.,Tagalog,Negative,Assessment & Grading,2
+20463,Madalas mahuli nang kalahating oras at naiipon ang mga hindi natapos na aralin.,Tagalog,Negative,Classroom Management,2
+20464,Hindi sumisipot sa oras ng konsultasyon at kaya naaantala ang aming pag-aaral.,Tagalog,Negative,Student Support & Mentorship,2
+20465,Namamahiya sa harap ng klase at mabigat ang kapaligiran sa silid-aralan.,Tagalog,Negative,Professional Conduct,2
+20466,Sobrang taas ng hinihinging pamantayan sa pangwakas na pagtataya imbes na ipaliwanag kung saan nagkamali ang mag-aaral.,Tagalog,Negative,Assessment & Grading,2
+20467,Pawang pagsasaulo lamang ang hinahanap sa pagsusulit imbes na sukatin ang malalim na pag-unawa sa paksa.,Tagalog,Negative,Assessment & Grading,2
+20468,Binabasa lamang nang buo ang presentasyon sa pagtuturo ng mahahalagang aralin kaya hindi makakuha ng maayos na tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20469,Sumasabay ang pagsusulit sa ibang pangunahing asignatura at naiipon ang mga hindi natapos na aralin.,Tagalog,Negative,Classroom Management,2
+20470,Binabasa lamang nang buo ang presentasyon sa pagtuturo ng mga hakbang sa laboratoryo kaya hindi makakuha ng maayos na tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20471,Sobrang taas ng hinihinging pamantayan sa proyekto ng klase imbes na sukatin ang malalim na pag-unawa sa paksa.,Tagalog,Negative,Assessment & Grading,2
+20472,Binabasa lamang nang buo ang presentasyon sa pagtuturo ng mga pormula sa pisika kaya nahihirapan sumabay ang buong klase.,Tagalog,Negative,Pedagogical Delivery,2
+20473,Inaabot nang dalawang buwan bago ibalik ang puntos sa pangwakas na pagtataya imbes na isaalang-alang na panimulang kurso pa lamang ito.,Tagalog,Negative,Assessment & Grading,2
+20474,Napakabilis magsalita sa pagtuturo ng mga pormula sa pisika kaya nahihirapan sumabay ang buong klase.,Tagalog,Negative,Pedagogical Delivery,2
+20475,Mahina ang bentilasyon at palamigan sa silid at kaya naaantala ang gawaing praktikal.,Tagalog,Negative,Unclassified / Needs Review,2
+20476,Kulang na kulang sa paliwanag sa pagtuturo ng mga pormula sa pisika kaya walang malinaw na direksyon ang talakayan.,Tagalog,Negative,Pedagogical Delivery,2
+20477,Inaabot nang dalawang buwan bago ibalik ang puntos sa pagsusulit imbes na ipaliwanag kung saan nagkamali ang mag-aaral.,Tagalog,Negative,Assessment & Grading,2
+20478,Napakabilis magsalita sa pagtuturo ng pangunahing teorya kaya nahihirapan sumabay ang buong klase.,Tagalog,Negative,Pedagogical Delivery,2
+20479,Kulang sa pondo ang mga samahang pang-mag-aaral at kaya naaantala ang gawaing praktikal.,Tagalog,Negative,Unclassified / Needs Review,2
+20480,Napakabilis magsalita sa pagtuturo ng pangunahing teorya kaya hindi makakuha ng maayos na tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20481,Sirang-sira ang mga kompyuter sa laboratoryo at kaya naaantala ang gawaing praktikal.,Tagalog,Negative,Unclassified / Needs Review,2
+20482,Kulang na kulang sa paliwanag sa pagtuturo ng mga pormula sa pisika kaya hindi makakuha ng maayos na tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20483,Kulang na kulang sa paliwanag sa pagtuturo ng mga hakbang sa laboratoryo kaya walang malinaw na direksyon ang talakayan.,Tagalog,Negative,Pedagogical Delivery,2
+20484,Sobrang taas ng hinihinging pamantayan sa pagsusulit imbes na sukatin ang malalim na pag-unawa sa paksa.,Tagalog,Negative,Assessment & Grading,2
+20485,Binabasa lamang nang buo ang presentasyon sa pagtuturo ng mahahalagang aralin kaya nahihirapan sumabay ang buong klase.,Tagalog,Negative,Pedagogical Delivery,2
+20486,Biglaang kinakansela ang klase at walang paunang abiso sa klase.,Tagalog,Negative,Classroom Management,2
+20487,Walang ibinibigay na pamantayan sa grado sa pagsusulit imbes na isaalang-alang na panimulang kurso pa lamang ito.,Tagalog,Negative,Assessment & Grading,2
+20488,Binabasa lamang nang buo ang presentasyon sa pagtuturo ng mga hakbang sa laboratoryo kaya nahihirapan sumabay ang buong klase.,Tagalog,Negative,Pedagogical Delivery,2
+20489,Madalas mahuli nang kalahating oras at walang paunang abiso sa klase.,Tagalog,Negative,Classroom Management,2
+20490,Kulang na kulang sa paliwanag sa pagtuturo ng mahahalagang aralin kaya nahihirapan sumabay ang buong klase.,Tagalog,Negative,Pedagogical Delivery,2
+20491,May halatang kinikilingan sa talakayan at natatakot nang magtanong ang mga mag-aaral.,Tagalog,Negative,Professional Conduct,2
+20492,Walang ibinibigay na pamantayan sa grado sa pagsusulit imbes na sukatin ang malalim na pag-unawa sa paksa.,Tagalog,Negative,Assessment & Grading,2
+20493,Napakabilis magsalita sa pagtuturo ng mga hakbang sa laboratoryo kaya nahihirapan sumabay ang buong klase.,Tagalog,Negative,Pedagogical Delivery,2
+20494,Walang ibinibigay na pamantayan sa grado sa pangwakas na pagtataya imbes na ipaliwanag kung saan nagkamali ang mag-aaral.,Tagalog,Negative,Assessment & Grading,2
+20495,Pawang pagsasaulo lamang ang hinahanap sa pagsusulit imbes na ipaliwanag kung saan nagkamali ang mag-aaral.,Tagalog,Negative,Assessment & Grading,2
+20496,Hindi sumasagot sa liham ng mga mag-aaral at kaya naaantala ang aming pag-aaral.,Tagalog,Negative,Student Support & Mentorship,2
+20497,Inaabot nang dalawang buwan bago ibalik ang puntos sa pangwakas na pagtataya imbes na sukatin ang malalim na pag-unawa sa paksa.,Tagalog,Negative,Assessment & Grading,2
+20498,Walang ibinibigay na gabay sa pananaliksik at kaya naaantala ang aming pag-aaral.,Tagalog,Negative,Student Support & Mentorship,2
+20499,Pawang pagsasaulo lamang ang hinahanap sa proyekto ng klase imbes na ipaliwanag kung saan nagkamali ang mag-aaral.,Tagalog,Negative,Assessment & Grading,2
+20500,Binabasa lamang nang buo ang presentasyon sa pagtuturo ng mga hakbang sa laboratoryo kaya walang malinaw na direksyon ang talakayan.,Tagalog,Negative,Pedagogical Delivery,2
+20501,Mahina ang bentilasyon at palamigan sa silid at mahirap mag-aral nang maayos sa hapon.,Tagalog,Negative,Unclassified / Needs Review,2
+20502,Sumasabay ang pagsusulit sa ibang pangunahing asignatura at walang paunang abiso sa klase.,Tagalog,Negative,Classroom Management,2
+20503,Napakabilis magsalita sa pagtuturo ng mga hakbang sa laboratoryo kaya hindi makakuha ng maayos na tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20504,Walang ibinibigay na pamantayan sa grado sa proyekto ng klase imbes na ipaliwanag kung saan nagkamali ang mag-aaral.,Tagalog,Negative,Assessment & Grading,2
+20505,Kulang na kulang sa paliwanag sa pagtuturo ng mga hakbang sa laboratoryo kaya nahihirapan sumabay ang buong klase.,Tagalog,Negative,Pedagogical Delivery,2
+20506,Inaabot nang dalawang buwan bago ibalik ang puntos sa gawaing pasulat imbes na sukatin ang malalim na pag-unawa sa paksa.,Tagalog,Negative,Assessment & Grading,2
+20507,Napakabilis magsalita sa pagtuturo ng mga pormula sa pisika kaya walang malinaw na direksyon ang talakayan.,Tagalog,Negative,Pedagogical Delivery,2
+20508,Inaabot nang dalawang buwan bago ibalik ang puntos sa pangwakas na pagtataya imbes na ipaliwanag kung saan nagkamali ang mag-aaral.,Tagalog,Negative,Assessment & Grading,2
+20509,Inaabot nang dalawang buwan bago ibalik ang puntos sa proyekto ng klase imbes na ipaliwanag kung saan nagkamali ang mag-aaral.,Tagalog,Negative,Assessment & Grading,2
+20510,Walang ibinibigay na pamantayan sa grado sa proyekto ng klase imbes na sukatin ang malalim na pag-unawa sa paksa.,Tagalog,Negative,Assessment & Grading,2
+20511,Mabait nga ngunit laging walang pasok at naiipon ang mga hindi natapos na aralin.,Tagalog,Negative,Classroom Management,2
+20512,Inaabot nang dalawang buwan bago ibalik ang puntos sa proyekto ng klase imbes na sukatin ang malalim na pag-unawa sa paksa.,Tagalog,Negative,Assessment & Grading,2
+20513,Sobrang taas ng hinihinging pamantayan sa gawaing pasulat imbes na sukatin ang malalim na pag-unawa sa paksa.,Tagalog,Negative,Assessment & Grading,2
+20514,Binabasa lamang nang buo ang presentasyon sa pagtuturo ng mga pormula sa pisika kaya walang malinaw na direksyon ang talakayan.,Tagalog,Negative,Pedagogical Delivery,2
+20515,Kulang na kulang sa paliwanag sa pagtuturo ng mga pormula sa pisika kaya nahihirapan sumabay ang buong klase.,Tagalog,Negative,Pedagogical Delivery,2
+20516,Walang ibinibigay na pamantayan sa grado sa pangwakas na pagtataya imbes na isaalang-alang na panimulang kurso pa lamang ito.,Tagalog,Negative,Assessment & Grading,2
+20517,Kulang na kulang sa paliwanag sa pagtuturo ng mahahalagang aralin kaya walang malinaw na direksyon ang talakayan.,Tagalog,Negative,Pedagogical Delivery,2
+20518,Sobrang taas ng hinihinging pamantayan sa gawaing pasulat imbes na ipaliwanag kung saan nagkamali ang mag-aaral.,Tagalog,Negative,Assessment & Grading,2
+20519,Sirang-sira ang mga kompyuter sa laboratoryo at mahirap mag-aral nang maayos sa hapon.,Tagalog,Negative,Unclassified / Needs Review,2
+20520,Inaabot nang dalawang buwan bago ibalik ang puntos sa proyekto ng klase imbes na isaalang-alang na panimulang kurso pa lamang ito.,Tagalog,Negative,Assessment & Grading,2
+20521,Napakabilis magsalita sa pagtuturo ng mga hakbang sa laboratoryo kaya walang malinaw na direksyon ang talakayan.,Tagalog,Negative,Pedagogical Delivery,2
+20522,Walang ibinibigay na pamantayan sa grado sa gawaing pasulat imbes na isaalang-alang na panimulang kurso pa lamang ito.,Tagalog,Negative,Assessment & Grading,2
+20523,Pawang pagsasaulo lamang ang hinahanap sa gawaing pasulat imbes na ipaliwanag kung saan nagkamali ang mag-aaral.,Tagalog,Negative,Assessment & Grading,2
+20524,Inaabot nang dalawang buwan bago ibalik ang puntos sa gawaing pasulat imbes na isaalang-alang na panimulang kurso pa lamang ito.,Tagalog,Negative,Assessment & Grading,2
+20525,Kulang na kulang sa paliwanag sa pagtuturo ng pangunahing teorya kaya nahihirapan sumabay ang buong klase.,Tagalog,Negative,Pedagogical Delivery,2
+20526,Walang ibinibigay na pamantayan sa grado sa gawaing pasulat imbes na sukatin ang malalim na pag-unawa sa paksa.,Tagalog,Negative,Assessment & Grading,2
+20527,Kulang na kulang sa paliwanag sa pagtuturo ng pangunahing teorya kaya hindi makakuha ng maayos na tala ang mga mag-aaral.,Tagalog,Negative,Pedagogical Delivery,2
+20528,Sumasabay ang pagsusulit sa ibang pangunahing asignatura at naaapektuhan ang susunod naming klase.,Tagalog,Negative,Classroom Management,2
+20529,Inaabot nang dalawang buwan bago ibalik ang puntos sa pagsusulit imbes na isaalang-alang na panimulang kurso pa lamang ito.,Tagalog,Negative,Assessment & Grading,2
+20530,Mabait nga ngunit laging walang pasok at naaapektuhan ang susunod naming klase.,Tagalog,Negative,Classroom Management,2
+20531,Karaniwang antas lamang ng kahirapan ang naranasan sa panggitna at pangwakas na pagsusulit.,Tagalog,Neutral,Assessment & Grading,3
+20532,Naaayon sa pambansang balangkas ng kurikulum ang pagkakasunod-sunod ng mga aralin.,Tagalog,Neutral,Pedagogical Delivery,3
+20533,Sumusunod naman sa itinakdang pamantayan ang naging pagtataya sa mga ipinasang ulat.,Tagalog,Neutral,Assessment & Grading,3
+20534,Makatwiran naman ang natanggap na marka ayon sa ipinasang awtput sa katapusan ng semestre.,Tagalog,Neutral,Assessment & Grading,3
+20535,Sapat naman ang espasyo at bentilasyon sa silid-aklatan para sa pagbabalik-aral.,Tagalog,Neutral,Unclassified / Needs Review,3
+20536,Tama lamang ang dami ng mga takdang-aralin sa bawat linggo at nasusunod ang iskedyul.,Tagalog,Neutral,Classroom Management,3
+20537,Pormal ang pakikitungo ng guro sa klase at sumusunod sa karaniwang patakaran ng kolehiyo.,Tagalog,Neutral,Professional Conduct,3
+20538,Medyo mabilis ang daloy ng leksyon bagama't nagbibigay naman ng kopya ng babasahin.,Tagalog,Neutral,Pedagogical Delivery,3
+20539,Maagap pumasok ang guro ngunit karaniwang nakatuon lamang sa teorya ang talakayan.,Tagalog,Neutral,Pedagogical Delivery,3
+20540,Luma na ang ilang upuan sa silid-aralan ngunit magagamit pa naman sa pang-araw-araw na klase.,Tagalog,Neutral,Unclassified / Needs Review,3
+20541,Karaniwan lamang ang bilis at daloy ng talakayan sa bawat linggo at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Pedagogical Delivery,3
+20542,Karaniwan lamang ang bilis at daloy ng talakayan sa bawat linggo kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Pedagogical Delivery,3
+20543,Karaniwan lamang ang bilis at daloy ng talakayan sa bawat linggo bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Pedagogical Delivery,3
+20544,Karaniwan lamang ang bilis at daloy ng talakayan sa bawat linggo ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Pedagogical Delivery,3
+20545,Karaniwan lamang ang pagkakasunod-sunod ng mga paksa sa silabus at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Pedagogical Delivery,3
+20546,Karaniwan lamang ang pagkakasunod-sunod ng mga paksa sa silabus kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Pedagogical Delivery,3
+20547,Karaniwan lamang ang pagkakasunod-sunod ng mga paksa sa silabus bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Pedagogical Delivery,3
+20548,Karaniwan lamang ang pagkakasunod-sunod ng mga paksa sa silabus ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Pedagogical Delivery,3
+20549,Karaniwan lamang ang dami at antas ng kahirapan sa pagsusulit at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Assessment & Grading,3
+20550,Karaniwan lamang ang dami at antas ng kahirapan sa pagsusulit kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Assessment & Grading,3
+20551,Karaniwan lamang ang dami at antas ng kahirapan sa pagsusulit bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Assessment & Grading,3
+20552,Karaniwan lamang ang dami at antas ng kahirapan sa pagsusulit ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Assessment & Grading,3
+20553,Karaniwan lamang ang naging pagmamarka batay sa ipinasang ulat at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Assessment & Grading,3
+20554,Karaniwan lamang ang naging pagmamarka batay sa ipinasang ulat kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Assessment & Grading,3
+20555,Karaniwan lamang ang naging pagmamarka batay sa ipinasang ulat bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Assessment & Grading,3
+20556,Makatwiran naman ang naging pagmamarka batay sa ipinasang ulat at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Assessment & Grading,3
+20557,Naaayon naman sa pamantayan ang pormal na pakikitungo ng guro sa klase ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Professional Conduct,3
+20558,Makatwiran naman ang bilis at daloy ng talakayan sa bawat linggo ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Pedagogical Delivery,3
+20559,Makatwiran naman ang pagkakasunod-sunod ng mga paksa sa silabus ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Pedagogical Delivery,3
+20560,Naaayon naman sa pamantayan ang pagkakasunod-sunod ng mga paksa sa silabus at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Pedagogical Delivery,3
+20561,Sapat naman ang oras na inilalaan para sa konsultasyon ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Student Support & Mentorship,3
+20562,Tama lamang ang pormal na pakikitungo ng guro sa klase ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Professional Conduct,3
+20563,Tama lamang ang pormal na pakikitungo ng guro sa klase bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Professional Conduct,3
+20564,Tama lamang ang pagkakasunod-sunod ng mga paksa sa silabus bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Pedagogical Delivery,3
+20565,Sapat naman ang naging pagmamarka batay sa ipinasang ulat ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Assessment & Grading,3
+20566,Tama lamang ang dami at antas ng kahirapan sa pagsusulit bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Assessment & Grading,3
+20567,Naaayon naman sa pamantayan ang bilis at daloy ng talakayan sa bawat linggo bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Pedagogical Delivery,3
+20568,Makatwiran naman ang pagkakasunod-sunod ng mga paksa sa silabus bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Pedagogical Delivery,3
+20569,Makatwiran naman ang pormal na pakikitungo ng guro sa klase bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Professional Conduct,3
+20570,Makatwiran naman ang bilis at daloy ng talakayan sa bawat linggo bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Pedagogical Delivery,3
+20571,Naaayon naman sa pamantayan ang bilis at daloy ng talakayan sa bawat linggo kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Pedagogical Delivery,3
+20572,Makatwiran naman ang naging pagmamarka batay sa ipinasang ulat ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Assessment & Grading,3
+20573,Tama lamang ang naging pagmamarka batay sa ipinasang ulat bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Assessment & Grading,3
+20574,Tama lamang ang dami at antas ng kahirapan sa pagsusulit at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Assessment & Grading,3
+20575,Karaniwan lamang ang oras na inilalaan para sa konsultasyon at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Student Support & Mentorship,3
+20576,Karaniwan lamang ang oras na inilalaan para sa konsultasyon bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Student Support & Mentorship,3
+20577,Katamtaman lamang ang bigat ng mga lingguhang takdang-aralin ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Classroom Management,3
+20578,Karaniwan lamang ang kondisyon ng mga kagamitan sa laboratoryo bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Unclassified / Needs Review,3
+20579,Katamtaman lamang ang bigat ng mga lingguhang takdang-aralin kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Classroom Management,3
+20580,Sapat naman ang oras na inilalaan para sa konsultasyon at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Student Support & Mentorship,3
+20581,Tama lamang ang oras na inilalaan para sa konsultasyon kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Student Support & Mentorship,3
+20582,Katamtaman lamang ang dami at antas ng kahirapan sa pagsusulit bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Assessment & Grading,3
+20583,Tama lamang ang oras na inilalaan para sa konsultasyon at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Student Support & Mentorship,3
+20584,Karaniwan lamang ang kondisyon ng mga kagamitan sa laboratoryo at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Unclassified / Needs Review,3
+20585,Katamtaman lamang ang bilis at daloy ng talakayan sa bawat linggo at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Pedagogical Delivery,3
+20586,Sapat naman ang bigat ng mga lingguhang takdang-aralin bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Classroom Management,3
+20587,Sapat naman ang oras na inilalaan para sa konsultasyon bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Student Support & Mentorship,3
+20588,Sapat naman ang kondisyon ng mga kagamitan sa laboratoryo kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Unclassified / Needs Review,3
+20589,Naaayon naman sa pamantayan ang bigat ng mga lingguhang takdang-aralin bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Classroom Management,3
+20590,Tama lamang ang bigat ng mga lingguhang takdang-aralin kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Classroom Management,3
+20591,Katamtaman lamang ang pagkakasunod-sunod ng mga paksa sa silabus ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Pedagogical Delivery,3
+20592,Katamtaman lamang ang oras na inilalaan para sa konsultasyon ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Student Support & Mentorship,3
+20593,Tama lamang ang kondisyon ng mga kagamitan sa laboratoryo kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Unclassified / Needs Review,3
+20594,Makatwiran naman ang bigat ng mga lingguhang takdang-aralin ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Classroom Management,3
+20595,Tama lamang ang bilis at daloy ng talakayan sa bawat linggo kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Pedagogical Delivery,3
+20596,Makatwiran naman ang bilis at daloy ng talakayan sa bawat linggo kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Pedagogical Delivery,3
+20597,Katamtaman lamang ang dami at antas ng kahirapan sa pagsusulit at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Assessment & Grading,3
+20598,Makatwiran naman ang dami at antas ng kahirapan sa pagsusulit bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Assessment & Grading,3
+20599,Makatwiran naman ang pormal na pakikitungo ng guro sa klase ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Professional Conduct,3
+20600,Karaniwan lamang ang pormal na pakikitungo ng guro sa klase at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Professional Conduct,3
+20601,Makatwiran naman ang oras na inilalaan para sa konsultasyon kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Student Support & Mentorship,3
+20602,Makatwiran naman ang kondisyon ng mga kagamitan sa laboratoryo ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Unclassified / Needs Review,3
+20603,Tama lamang ang pagkakasunod-sunod ng mga paksa sa silabus kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Pedagogical Delivery,3
+20604,Karaniwan lamang ang oras na inilalaan para sa konsultasyon kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Student Support & Mentorship,3
+20605,Karaniwan lamang ang kondisyon ng mga kagamitan sa laboratoryo kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Unclassified / Needs Review,3
+20606,Sapat naman ang naging pagmamarka batay sa ipinasang ulat at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Assessment & Grading,3
+20607,Sapat naman ang bilis at daloy ng talakayan sa bawat linggo at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Pedagogical Delivery,3
+20608,Naaayon naman sa pamantayan ang pagkakasunod-sunod ng mga paksa sa silabus ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Pedagogical Delivery,3
+20609,Katamtaman lamang ang dami at antas ng kahirapan sa pagsusulit kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Assessment & Grading,3
+20610,Naaayon naman sa pamantayan ang kondisyon ng mga kagamitan sa laboratoryo bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Unclassified / Needs Review,3
+20611,Katamtaman lamang ang pormal na pakikitungo ng guro sa klase bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Professional Conduct,3
+20612,Sapat naman ang dami at antas ng kahirapan sa pagsusulit at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Assessment & Grading,3
+20613,Naaayon naman sa pamantayan ang bilis at daloy ng talakayan sa bawat linggo at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Pedagogical Delivery,3
+20614,Makatwiran naman ang oras na inilalaan para sa konsultasyon at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Student Support & Mentorship,3
+20615,Tama lamang ang pagkakasunod-sunod ng mga paksa sa silabus at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Pedagogical Delivery,3
+20616,Katamtaman lamang ang pormal na pakikitungo ng guro sa klase kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Professional Conduct,3
+20617,Katamtaman lamang ang dami at antas ng kahirapan sa pagsusulit ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Assessment & Grading,3
+20618,Tama lamang ang bigat ng mga lingguhang takdang-aralin at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Classroom Management,3
+20619,Naaayon naman sa pamantayan ang dami at antas ng kahirapan sa pagsusulit kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Assessment & Grading,3
+20620,Naaayon naman sa pamantayan ang oras na inilalaan para sa konsultasyon bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Student Support & Mentorship,3
+20621,Tama lamang ang bilis at daloy ng talakayan sa bawat linggo at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Pedagogical Delivery,3
+20622,Sapat naman ang pormal na pakikitungo ng guro sa klase bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Professional Conduct,3
+20623,Sapat naman ang pormal na pakikitungo ng guro sa klase kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Professional Conduct,3
+20624,Katamtaman lamang ang kondisyon ng mga kagamitan sa laboratoryo at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Unclassified / Needs Review,3
+20625,Naaayon naman sa pamantayan ang oras na inilalaan para sa konsultasyon ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Student Support & Mentorship,3
+20626,Naaayon naman sa pamantayan ang oras na inilalaan para sa konsultasyon at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Student Support & Mentorship,3
+20627,Karaniwan lamang ang pormal na pakikitungo ng guro sa klase bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Professional Conduct,3
+20628,Sapat naman ang dami at antas ng kahirapan sa pagsusulit ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Assessment & Grading,3
+20629,Naaayon naman sa pamantayan ang bigat ng mga lingguhang takdang-aralin kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Classroom Management,3
+20630,Makatwiran naman ang kondisyon ng mga kagamitan sa laboratoryo bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Unclassified / Needs Review,3
+20631,Makatwiran naman ang bilis at daloy ng talakayan sa bawat linggo at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Pedagogical Delivery,3
+20632,Katamtaman lamang ang oras na inilalaan para sa konsultasyon at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Student Support & Mentorship,3
+20633,Tama lamang ang pagkakasunod-sunod ng mga paksa sa silabus ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Pedagogical Delivery,3
+20634,Naaayon naman sa pamantayan ang dami at antas ng kahirapan sa pagsusulit bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Assessment & Grading,3
+20635,Naaayon naman sa pamantayan ang pormal na pakikitungo ng guro sa klase at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Professional Conduct,3
+20636,Tama lamang ang bilis at daloy ng talakayan sa bawat linggo ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Pedagogical Delivery,3
+20637,Katamtaman lamang ang bilis at daloy ng talakayan sa bawat linggo kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Pedagogical Delivery,3
+20638,Sapat naman ang kondisyon ng mga kagamitan sa laboratoryo ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Unclassified / Needs Review,3
+20639,Tama lamang ang bigat ng mga lingguhang takdang-aralin bagama't bihira ang dagdag na halimbawa sa labas ng aklat.,Tagalog,Neutral,Classroom Management,3
+20640,Tama lamang ang pormal na pakikitungo ng guro sa klase kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Professional Conduct,3
+20641,Naaayon naman sa pamantayan ang oras na inilalaan para sa konsultasyon kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Student Support & Mentorship,3
+20642,Karaniwan lamang ang pormal na pakikitungo ng guro sa klase ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Professional Conduct,3
+20643,Makatwiran naman ang oras na inilalaan para sa konsultasyon ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Student Support & Mentorship,3
+20644,Makatwiran naman ang pagkakasunod-sunod ng mga paksa sa silabus at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Pedagogical Delivery,3
+20645,Tama lamang ang naging pagmamarka batay sa ipinasang ulat at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Assessment & Grading,3
+20646,Sapat naman ang bilis at daloy ng talakayan sa bawat linggo ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Pedagogical Delivery,3
+20647,Tama lamang ang naging pagmamarka batay sa ipinasang ulat ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Assessment & Grading,3
+20648,Tama lamang ang pormal na pakikitungo ng guro sa klase at tugma ito sa inaasahan sa kolehiyo.,Tagalog,Neutral,Professional Conduct,3
+20649,Katamtaman lamang ang bilis at daloy ng talakayan sa bawat linggo ngunit may ilang bahagi na medyo mabilis talakayin.,Tagalog,Neutral,Pedagogical Delivery,3
+20650,Makatwiran naman ang naging pagmamarka batay sa ipinasang ulat kaya nakakasabay naman ang buong klase.,Tagalog,Neutral,Assessment & Grading,3
+20651,Mayaman sa makabuluhang kaalaman ang bawat talakayan at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20652,Napapanahon ang mga paksang tinatalakay at tugma sa kasalukuyang pangangailangan ng propesyon.,Tagalog,Positive,Pedagogical Delivery,5
+20653,Sumunod ang pagsusulit sa ipinangakong talahanayan ng espisipikasyon nang walang anumang daya o sorpresa.,Tagalog,Positive,Assessment & Grading,5
+20654,Makatwiran ang inilaang oras sa bawat pagsusulit at malinaw ang batayan sa pagmamarka.,Tagalog,Positive,Assessment & Grading,5
+20655,Naglaan ng pagsasanay sa pasalitang depensa kaya naging handa at panatag ang buong klase.,Tagalog,Positive,Student Support & Mentorship,5
+20656,Isa-isang ipinaliwanag ang mga karaniwang pagkakamali sa unang pagsusulit upang matuto ang lahat.,Tagalog,Positive,Assessment & Grading,5
+20657,Bukas sa maayos na paglilinaw kapag may pagkakamali sa pagbibilang ng puntos sa papel.,Tagalog,Positive,Assessment & Grading,5
+20658,Mahinahon at magalang sumagot sa mga tanong kahit paulit-ulit ang paglilinaw ng mga mag-aaral.,Tagalog,Positive,Professional Conduct,5
+20659,Maagap dumating sa silid-aralan at sulitin ang bawat oras ng pagtuturo nang hindi nagmamadali.,Tagalog,Positive,Classroom Management,5
+20660,Madaling lapitan sa oras ng konsultasyon at matiyagang gumagabay sa pagsulat ng pananaliksik.,Tagalog,Positive,Student Support & Mentorship,5
+20661,Hinasa ang aming mapanuring pag-iisip nang hindi nangangailangan ng kabisadong depinisyon.,Tagalog,Positive,Pedagogical Delivery,5
+20662,Nagbigay ng sapat na palugit sa pagpapasa noong sinuspinde ang klase dahil sa bagyo.,Tagalog,Positive,Student Support & Mentorship,5
+20663,Angkop na angkop ang nilalaman ng asignatura para sa paghahanda sa pagsusulit pang-lisensya.,Tagalog,Positive,Pedagogical Delivery,5
+20664,Makatuturan at kapaki-pakinabang ang mga seminar ng samahang pang-mag-aaral sa aming kolehiyo.,Tagalog,Positive,Unclassified / Needs Review,5
+20665,"Maaliwalas, malamig, at mabilis ang internet sa bagong silid-aklatan kaya masarap mag-aral.",Tagalog,Positive,Unclassified / Needs Review,5
+20666,Napakalinaw magpaliwanag ng mga konsepto sa kurso ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20667,Napakalinaw magpaliwanag ng mga konsepto sa kurso ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20668,Napakalinaw magpaliwanag ng mga konsepto sa kurso ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20669,Napakalinaw magpaliwanag ng mahihirap na pormula ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20670,Napakalinaw magpaliwanag ng mahihirap na pormula ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20671,Napakalinaw magpaliwanag ng mahihirap na pormula ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20672,Napakalinaw magpaliwanag ng lohika ng programa ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20673,Napakalinaw magpaliwanag ng lohika ng programa ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20674,Napakalinaw magpaliwanag ng lohika ng programa ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20675,Napakalinaw magpaliwanag ng balangkas ng pananaliksik ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20676,Napapanahon at mayaman magpaliwanag ng lohika ng programa ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20677,Makatwiran ang pamantayan sa pagmamarka ng mga pagsusulit at tinatalakay ang mga karaniwang pagkakamali.,Tagalog,Positive,Assessment & Grading,5
+20678,Maayos at hakbang-hakbang magpaliwanag ng mahihirap na pormula ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20679,Komprehensibo at malinaw magpaliwanag ng mga konsepto sa kurso ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20680,Laging dumarating nang maaga sa klase at nasusulit ang buong oras ng talakayan.,Tagalog,Positive,Classroom Management,5
+20681,Komprehensibo at malinaw magpaliwanag ng mga aralin sa klase ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20682,Mahusay at masusi magpaliwanag ng balangkas ng pananaliksik ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20683,Mahusay at masusi magpaliwanag ng mga aralin sa klase ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20684,Mahusay at masusi magpaliwanag ng mga aralin sa klase ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20685,Nasusunod nang wasto ang silabus at hindi nagmamadali sa dulo ng semestre.,Tagalog,Positive,Classroom Management,5
+20686,Makatwiran ang pamantayan sa pagmamarka ng gawaing pang-laboratoryo at walang nakatagong bawas o sorpresa.,Tagalog,Positive,Assessment & Grading,5
+20687,Tapat sa talahanayan ng espisipikasyon sa pagmamarka ng mga pagsusulit at tinatalakay ang mga karaniwang pagkakamali.,Tagalog,Positive,Assessment & Grading,5
+20688,Maayos at hakbang-hakbang magpaliwanag ng mga aralin sa klase ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20689,Laging dumarating nang maaga sa klase at hindi nagmamadali sa dulo ng semestre.,Tagalog,Positive,Classroom Management,5
+20690,Organisado ang daloy ng bawat sesyon at hindi nagmamadali sa dulo ng semestre.,Tagalog,Positive,Classroom Management,5
+20691,Maayos at hakbang-hakbang magpaliwanag ng mga aralin sa klase ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20692,Mahusay at masusi magpaliwanag ng mga aralin sa klase ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20693,Maayos at hakbang-hakbang magpaliwanag ng mga aralin sa klase ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20694,Maagap magbalik ng resulta sa pagmamarka ng pangwakas na proyekto at bukas sa paglilinaw ng puntos.,Tagalog,Positive,Assessment & Grading,5
+20695,Makatwiran ang pamantayan sa pagmamarka ng pangwakas na proyekto at walang nakatagong bawas o sorpresa.,Tagalog,Positive,Assessment & Grading,5
+20696,Makatwiran ang pamantayan sa pagmamarka ng ulat ng pangkat at walang nakatagong bawas o sorpresa.,Tagalog,Positive,Assessment & Grading,5
+20697,Patas at bukas sa pagmamarka ng pangwakas na proyekto at bukas sa paglilinaw ng puntos.,Tagalog,Positive,Assessment & Grading,5
+20698,Maayos at hakbang-hakbang magpaliwanag ng mahihirap na pormula ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20699,Tapat sa talahanayan ng espisipikasyon sa pagmamarka ng mga pagsusulit at bukas sa paglilinaw ng puntos.,Tagalog,Positive,Assessment & Grading,5
+20700,Maalalahanin at propesyonal at nagpapanatili ng maayos na kapaligiran.,Tagalog,Positive,Professional Conduct,5
+20701,Nasusunod nang wasto ang silabus at nasusulit ang buong oras ng talakayan.,Tagalog,Positive,Classroom Management,5
+20702,Napapanahon at mayaman magpaliwanag ng mga konsepto sa kurso ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20703,Napakalinaw magpaliwanag ng mga aralin sa klase ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20704,Maagap magbalik ng resulta sa pagmamarka ng pangwakas na proyekto at tinatalakay ang mga karaniwang pagkakamali.,Tagalog,Positive,Assessment & Grading,5
+20705,Patas at bukas sa pagmamarka ng ulat ng pangkat at walang nakatagong bawas o sorpresa.,Tagalog,Positive,Assessment & Grading,5
+20706,Maagap magbalik ng resulta sa pagmamarka ng ulat ng pangkat at walang nakatagong bawas o sorpresa.,Tagalog,Positive,Assessment & Grading,5
+20707,Naglaan ng pagsasanay sa depensa at upang malinawan ang mga nahihirapan.,Tagalog,Positive,Student Support & Mentorship,5
+20708,Naglaan ng pagsasanay sa depensa at kaya naging handa at panatag ang pangkat.,Tagalog,Positive,Student Support & Mentorship,5
+20709,Mahusay at masusi magpaliwanag ng mahihirap na pormula ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20710,Tapat sa talahanayan ng espisipikasyon sa pagmamarka ng gawaing pang-laboratoryo at bukas sa paglilinaw ng puntos.,Tagalog,Positive,Assessment & Grading,5
+20711,Komprehensibo at malinaw magpaliwanag ng balangkas ng pananaliksik ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20712,Patas at bukas sa pagmamarka ng gawaing pang-laboratoryo at bukas sa paglilinaw ng puntos.,Tagalog,Positive,Assessment & Grading,5
+20713,Makatwiran ang pamantayan sa pagmamarka ng gawaing pang-laboratoryo at tinatalakay ang mga karaniwang pagkakamali.,Tagalog,Positive,Assessment & Grading,5
+20714,Tapat sa talahanayan ng espisipikasyon sa pagmamarka ng ulat ng pangkat at walang nakatagong bawas o sorpresa.,Tagalog,Positive,Assessment & Grading,5
+20715,Komprehensibo at malinaw magpaliwanag ng balangkas ng pananaliksik ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20716,Patas at bukas sa pagmamarka ng gawaing pang-laboratoryo at walang nakatagong bawas o sorpresa.,Tagalog,Positive,Assessment & Grading,5
+20717,Maagap magbalik ng resulta sa pagmamarka ng mga pagsusulit at tinatalakay ang mga karaniwang pagkakamali.,Tagalog,Positive,Assessment & Grading,5
+20718,Mahusay at masusi magpaliwanag ng mga konsepto sa kurso ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20719,Mahusay at masusi magpaliwanag ng mga konsepto sa kurso ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20720,Mahusay at masusi magpaliwanag ng lohika ng programa ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20721,Napapanahon at mayaman magpaliwanag ng mahihirap na pormula ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20722,Maagap magbalik ng resulta sa pagmamarka ng gawaing pang-laboratoryo at bukas sa paglilinaw ng puntos.,Tagalog,Positive,Assessment & Grading,5
+20723,Maagap magbalik ng resulta sa pagmamarka ng ulat ng pangkat at tinatalakay ang mga karaniwang pagkakamali.,Tagalog,Positive,Assessment & Grading,5
+20724,Napapanahon at mayaman magpaliwanag ng mga konsepto sa kurso ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20725,Pantay at walang kinikilingan sa klase at nagpapanatili ng maayos na kapaligiran.,Tagalog,Positive,Professional Conduct,5
+20726,Komprehensibo at malinaw magpaliwanag ng mga konsepto sa kurso ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20727,Makatwiran ang pamantayan sa pagmamarka ng pangwakas na proyekto at bukas sa paglilinaw ng puntos.,Tagalog,Positive,Assessment & Grading,5
+20728,Matiyagang gumagabay sa konsultasyon at upang malinawan ang mga nahihirapan.,Tagalog,Positive,Student Support & Mentorship,5
+20729,Maayos at hakbang-hakbang magpaliwanag ng lohika ng programa ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20730,Napapanahon at mayaman magpaliwanag ng mahihirap na pormula ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20731,Maayos at hakbang-hakbang magpaliwanag ng balangkas ng pananaliksik ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20732,Mahusay at masusi magpaliwanag ng mahihirap na pormula ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20733,Napapanahon at mayaman magpaliwanag ng lohika ng programa ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20734,Maayos at hakbang-hakbang magpaliwanag ng mga konsepto sa kurso ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20735,Maagap magbalik ng resulta sa pagmamarka ng gawaing pang-laboratoryo at tinatalakay ang mga karaniwang pagkakamali.,Tagalog,Positive,Assessment & Grading,5
+20736,Napakalinaw magpaliwanag ng mga aralin sa klase ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20737,Komprehensibo at malinaw magpaliwanag ng lohika ng programa ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20738,Mahusay at masusi magpaliwanag ng mga konsepto sa kurso ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20739,Napakalinaw magpaliwanag ng balangkas ng pananaliksik ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20740,Napapanahon at mayaman magpaliwanag ng mahihirap na pormula ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20741,Napapanahon at mayaman magpaliwanag ng lohika ng programa ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20742,Maagap magbalik ng resulta sa pagmamarka ng mga pagsusulit at bukas sa paglilinaw ng puntos.,Tagalog,Positive,Assessment & Grading,5
+20743,Tapat sa talahanayan ng espisipikasyon sa pagmamarka ng pangwakas na proyekto at tinatalakay ang mga karaniwang pagkakamali.,Tagalog,Positive,Assessment & Grading,5
+20744,Mabilis tumugon sa mga mensahe at kaya naging handa at panatag ang pangkat.,Tagalog,Positive,Student Support & Mentorship,5
+20745,Patas at bukas sa pagmamarka ng mga pagsusulit at walang nakatagong bawas o sorpresa.,Tagalog,Positive,Assessment & Grading,5
+20746,Tapat sa talahanayan ng espisipikasyon sa pagmamarka ng ulat ng pangkat at tinatalakay ang mga karaniwang pagkakamali.,Tagalog,Positive,Assessment & Grading,5
+20747,Komprehensibo at malinaw magpaliwanag ng lohika ng programa ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20748,Mahusay at masusi magpaliwanag ng balangkas ng pananaliksik ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20749,Mabilis tumugon sa mga mensahe at upang malinawan ang mga nahihirapan.,Tagalog,Positive,Student Support & Mentorship,5
+20750,Maagap magbalik ng resulta sa pagmamarka ng mga pagsusulit at walang nakatagong bawas o sorpresa.,Tagalog,Positive,Assessment & Grading,5
+20751,Mahusay at masusi magpaliwanag ng balangkas ng pananaliksik ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20752,Mahusay at masusi magpaliwanag ng lohika ng programa ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20753,Mahusay at masusi magpaliwanag ng mahihirap na pormula ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20754,Patas at bukas sa pagmamarka ng pangwakas na proyekto at walang nakatagong bawas o sorpresa.,Tagalog,Positive,Assessment & Grading,5
+20755,Maagap magbalik ng resulta sa pagmamarka ng pangwakas na proyekto at walang nakatagong bawas o sorpresa.,Tagalog,Positive,Assessment & Grading,5
+20756,Napapanahon at mayaman magpaliwanag ng mga aralin sa klase ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20757,Maayos at hakbang-hakbang magpaliwanag ng mahihirap na pormula ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20758,Magalang at mahinahon makitungo at bukas sa tanong ng bawat mag-aaral.,Tagalog,Positive,Professional Conduct,5
+20759,Komprehensibo at malinaw magpaliwanag ng mahihirap na pormula ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20760,Maayos at hakbang-hakbang magpaliwanag ng mga konsepto sa kurso ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20761,Komprehensibo at malinaw magpaliwanag ng balangkas ng pananaliksik ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20762,Komprehensibo at malinaw magpaliwanag ng mga konsepto sa kurso ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20763,Maagap magbalik ng resulta sa pagmamarka ng ulat ng pangkat at bukas sa paglilinaw ng puntos.,Tagalog,Positive,Assessment & Grading,5
+20764,Komprehensibo at malinaw magpaliwanag ng mga aralin sa klase ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20765,Maayos at hakbang-hakbang magpaliwanag ng mga konsepto sa kurso ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20766,Maayos at hakbang-hakbang magpaliwanag ng lohika ng programa ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20767,Maayos at hakbang-hakbang magpaliwanag ng balangkas ng pananaliksik ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20768,Mahusay at masusi magpaliwanag ng lohika ng programa ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20769,Napakalinaw magpaliwanag ng mga aralin sa klase ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20770,Napapanahon at mayaman magpaliwanag ng balangkas ng pananaliksik ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20771,Napapanahon at mayaman magpaliwanag ng mga aralin sa klase ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20772,Patas at bukas sa pagmamarka ng ulat ng pangkat at tinatalakay ang mga karaniwang pagkakamali.,Tagalog,Positive,Assessment & Grading,5
+20773,Patas at bukas sa pagmamarka ng gawaing pang-laboratoryo at tinatalakay ang mga karaniwang pagkakamali.,Tagalog,Positive,Assessment & Grading,5
+20774,Maayos at hakbang-hakbang magpaliwanag ng balangkas ng pananaliksik ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20775,Napapanahon at mayaman magpaliwanag ng balangkas ng pananaliksik ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20776,Makatwiran ang pamantayan sa pagmamarka ng mga pagsusulit at bukas sa paglilinaw ng puntos.,Tagalog,Positive,Assessment & Grading,5
+20777,Tapat sa talahanayan ng espisipikasyon sa pagmamarka ng gawaing pang-laboratoryo at walang nakatagong bawas o sorpresa.,Tagalog,Positive,Assessment & Grading,5
+20778,Komprehensibo at malinaw magpaliwanag ng mahihirap na pormula ang guro at laging may kongkretong halimbawa.,Tagalog,Positive,Pedagogical Delivery,5
+20779,Tapat sa talahanayan ng espisipikasyon sa pagmamarka ng gawaing pang-laboratoryo at tinatalakay ang mga karaniwang pagkakamali.,Tagalog,Positive,Assessment & Grading,5
+20780,Komprehensibo at malinaw magpaliwanag ng mahihirap na pormula ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20781,Napakalinaw magpaliwanag ng balangkas ng pananaliksik ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20782,Maayos at hakbang-hakbang magpaliwanag ng lohika ng programa ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20783,Patas at bukas sa pagmamarka ng mga pagsusulit at bukas sa paglilinaw ng puntos.,Tagalog,Positive,Assessment & Grading,5
+20784,Napapanahon at mayaman magpaliwanag ng mga aralin sa klase ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20785,Maagap magbalik ng resulta sa pagmamarka ng gawaing pang-laboratoryo at walang nakatagong bawas o sorpresa.,Tagalog,Positive,Assessment & Grading,5
+20786,Pantay at walang kinikilingan sa klase at bukas sa tanong ng bawat mag-aaral.,Tagalog,Positive,Professional Conduct,5
+20787,Organisado ang daloy ng bawat sesyon at nasusulit ang buong oras ng talakayan.,Tagalog,Positive,Classroom Management,5
+20788,Napapanahon at mayaman magpaliwanag ng balangkas ng pananaliksik ang guro at madaling naiintindihan ng buong klase.,Tagalog,Positive,Pedagogical Delivery,5
+20789,Komprehensibo at malinaw magpaliwanag ng mga aralin sa klase ang guro at hinahasa ang mapanuring pag-iisip.,Tagalog,Positive,Pedagogical Delivery,5
+20790,Makatwiran ang pamantayan sa pagmamarka ng mga pagsusulit at walang nakatagong bawas o sorpresa.,Tagalog,Positive,Assessment & Grading,5
+20791,Sobrang taas ng rubric standards na hinihingi niya considering na 1st year GE subject lang ito.,Taglish,Negative,Assessment & Grading,2
+20792,"Masyadong abstract mag-discuss, puro basa lang ng PowerPoint slides na galing sa internet.",Taglish,Negative,Pedagogical Delivery,2
+20793,Ang bilis magsalita ni Sir habang nagde-derive sa board kaya mahirap kumuha ng maayos na notes.,Taglish,Negative,Pedagogical Delivery,2
+20794,Sirang-sira yung mga keyboard at monitors sa computer lab kaya laging bitin ang hands-on activity.,Taglish,Negative,Unclassified / Needs Review,2
+20795,Mabait naman sana si Ma'am kaso halos walang natututunan ang klase dahil laging free cut.,Taglish,Negative,Classroom Management,2
+20796,Puro memorization ng exact wording sa handout ang exam imbes na practical coding comprehension.,Taglish,Negative,Assessment & Grading,2
+20797,Nag-overlap yung practical exam niya sa isa pang major exam namin dahil biglaan ang pag-schedule.,Taglish,Negative,Classroom Management,2
+20798,Nakaka-intimidate magtanong kasi nambabara siya kapag hindi mo agad na-gets yung formula.,Taglish,Negative,Professional Conduct,2
+20799,Masyadong mahigpit at buggy yung online proctoring tool kaya na-flag kahit nag-solve lang sa scratch paper.,Taglish,Negative,Assessment & Grading,2
+20800,Kulang na kulang ang budget support ng school para sa student orgs at programming competitions.,Taglish,Negative,Unclassified / Needs Review,2
+20801,Puro basa lang ng PowerPoint slides buong period kaya hirap na hirap makasabay ang buong section.,Taglish,Negative,Pedagogical Delivery,2
+20802,Puro basa lang ng PowerPoint slides buong period kaya walang malinaw na takeaway after ng class.,Taglish,Negative,Pedagogical Delivery,2
+20803,Puro basa lang ng PowerPoint slides buong period kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Pedagogical Delivery,2
+20804,Puro basa lang ng PowerPoint slides buong period at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Pedagogical Delivery,2
+20805,Puro basa lang ng PowerPoint slides buong period kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Pedagogical Delivery,2
+20806,Puro basa lang ng PowerPoint slides buong period at apektado yung overall academic preparation ng klase.,Taglish,Negative,Pedagogical Delivery,2
+20807,Puro basa lang ng PowerPoint slides buong period kahit ilang beses nang humingi ng clarification ang block.,Taglish,Negative,Pedagogical Delivery,2
+20808,Puro basa lang ng PowerPoint slides buong period kaya kailangan pa naming mag-self-study nang buo sa labas.,Taglish,Negative,Pedagogical Delivery,2
+20809,Sobrang bilis mag-salita habang nagde-derive ng formula kaya hirap na hirap makasabay ang buong section.,Taglish,Negative,Pedagogical Delivery,2
+20810,Sobrang bilis mag-salita habang nagde-derive ng formula kaya walang malinaw na takeaway after ng class.,Taglish,Negative,Pedagogical Delivery,2
+20811,Sobrang bilis mag-salita habang nagde-derive ng formula kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Pedagogical Delivery,2
+20812,Sobrang bilis mag-salita habang nagde-derive ng formula at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Pedagogical Delivery,2
+20813,Sobrang bilis mag-salita habang nagde-derive ng formula kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Pedagogical Delivery,2
+20814,Sobrang bilis mag-salita habang nagde-derive ng formula at apektado yung overall academic preparation ng klase.,Taglish,Negative,Pedagogical Delivery,2
+20815,Sobrang bilis mag-salita habang nagde-derive ng formula kahit ilang beses nang humingi ng clarification ang block.,Taglish,Negative,Pedagogical Delivery,2
+20816,Laging late ng 30 minutes pumasok tapos nagmamadali mag-discuss kaya hirap na hirap makasabay ang buong section.,Taglish,Negative,Classroom Management,2
+20817,Walang maayos na guidance sa capstone revisions kahit maaga nagpa-appointment kaya walang malinaw na takeaway after ng class.,Taglish,Negative,Student Support & Mentorship,2
+20818,Mabait naman sana si Prof kaso puro free cut kaya kulang sa natutunan at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Classroom Management,2
+20819,Sobrang bagal ng campus Wi-Fi at kulang ang budget sa student orgs kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Unclassified / Needs Review,2
+20820,May obvious favoritism sa recitation at namamahiya ng students at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Professional Conduct,2
+20821,Sobrang bagal ng campus Wi-Fi at kulang ang budget sa student orgs at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Unclassified / Needs Review,2
+20822,May obvious favoritism sa recitation at namamahiya ng students kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Professional Conduct,2
+20823,Masyadong abstract mag-turo imbes na magpakita ng live code kaya kailangan pa naming mag-self-study nang buo sa labas.,Taglish,Negative,Pedagogical Delivery,2
+20824,Sobrang bagal ng campus Wi-Fi at kulang ang budget sa student orgs kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Unclassified / Needs Review,2
+20825,Walang concrete examples sa lecture kaya puro theory lang at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Pedagogical Delivery,2
+20826,Sobrang higpit at buggy ng online proctoring kaya na-flag kahit scratch paper lang kaya walang malinaw na takeaway after ng class.,Taglish,Negative,Assessment & Grading,2
+20827,Sobrang bagal ng campus Wi-Fi at kulang ang budget sa student orgs at apektado yung overall academic preparation ng klase.,Taglish,Negative,Unclassified / Needs Review,2
+20828,Sirang-sira yung mga PC keyboards at aircon sa computer lab at apektado yung overall academic preparation ng klase.,Taglish,Negative,Unclassified / Needs Review,2
+20829,Biglang nag-set ng practical exam na conflict sa isa naming major exam at apektado yung overall academic preparation ng klase.,Taglish,Negative,Classroom Management,2
+20830,Sirang-sira yung mga PC keyboards at aircon sa computer lab kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Unclassified / Needs Review,2
+20831,Sobrang bagal ng campus Wi-Fi at kulang ang budget sa student orgs kaya hirap na hirap makasabay ang buong section.,Taglish,Negative,Unclassified / Needs Review,2
+20832,May obvious favoritism sa recitation at namamahiya ng students kahit ilang beses nang humingi ng clarification ang block.,Taglish,Negative,Professional Conduct,2
+20833,Nambabara at sarcastic sumagot kapag may nagtatanong sa klase at apektado yung overall academic preparation ng klase.,Taglish,Negative,Professional Conduct,2
+20834,Sirang-sira yung mga PC keyboards at aircon sa computer lab kaya kailangan pa naming mag-self-study nang buo sa labas.,Taglish,Negative,Unclassified / Needs Review,2
+20835,Mabait naman sana si Prof kaso puro free cut kaya kulang sa natutunan kaya kailangan pa naming mag-self-study nang buo sa labas.,Taglish,Negative,Classroom Management,2
+20836,Puro memorization ng exact terms yung exam imbes na analytical thinking kaya hirap na hirap makasabay ang buong section.,Taglish,Negative,Assessment & Grading,2
+20837,Nambabara at sarcastic sumagot kapag may nagtatanong sa klase kaya walang malinaw na takeaway after ng class.,Taglish,Negative,Professional Conduct,2
+20838,Walang concrete examples sa lecture kaya puro theory lang kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Pedagogical Delivery,2
+20839,Laging late ng 30 minutes pumasok tapos nagmamadali mag-discuss at apektado yung overall academic preparation ng klase.,Taglish,Negative,Classroom Management,2
+20840,Daming trick questions sa quiz imbes na sukatin yung actual learning at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Assessment & Grading,2
+20841,Masyadong abstract mag-turo imbes na magpakita ng live code kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Pedagogical Delivery,2
+20842,Sobrang higpit at buggy ng online proctoring kaya na-flag kahit scratch paper lang at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Assessment & Grading,2
+20843,Nambabara at sarcastic sumagot kapag may nagtatanong sa klase kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Professional Conduct,2
+20844,Laging late ng 30 minutes pumasok tapos nagmamadali mag-discuss kaya kailangan pa naming mag-self-study nang buo sa labas.,Taglish,Negative,Classroom Management,2
+20845,Hindi sumisipot sa consultation hours at seen-zoned lang ang thesis emails kaya hirap na hirap makasabay ang buong section.,Taglish,Negative,Student Support & Mentorship,2
+20846,Masyadong abstract mag-turo imbes na magpakita ng live code at apektado yung overall academic preparation ng klase.,Taglish,Negative,Pedagogical Delivery,2
+20847,Two months delayed magbalik ng scores tapos zero feedback sa deductions kaya hirap na hirap makasabay ang buong section.,Taglish,Negative,Assessment & Grading,2
+20848,Sobrang taas ng rubric expectations kahit 1st year GE course lang kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Assessment & Grading,2
+20849,Puro memorization ng exact terms yung exam imbes na analytical thinking kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Assessment & Grading,2
+20850,Nambabara at sarcastic sumagot kapag may nagtatanong sa klase kahit ilang beses nang humingi ng clarification ang block.,Taglish,Negative,Professional Conduct,2
+20851,May obvious favoritism sa recitation at namamahiya ng students kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Professional Conduct,2
+20852,Daming trick questions sa quiz imbes na sukatin yung actual learning kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Assessment & Grading,2
+20853,Puro memorization ng exact terms yung exam imbes na analytical thinking kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Assessment & Grading,2
+20854,Masyadong abstract mag-turo imbes na magpakita ng live code kahit ilang beses nang humingi ng clarification ang block.,Taglish,Negative,Pedagogical Delivery,2
+20855,Masyadong abstract mag-turo imbes na magpakita ng live code kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Pedagogical Delivery,2
+20856,Biglang nag-set ng practical exam na conflict sa isa naming major exam kahit ilang beses nang humingi ng clarification ang block.,Taglish,Negative,Classroom Management,2
+20857,Sobrang taas ng rubric expectations kahit 1st year GE course lang kaya walang malinaw na takeaway after ng class.,Taglish,Negative,Assessment & Grading,2
+20858,Puro memorization ng exact terms yung exam imbes na analytical thinking kaya walang malinaw na takeaway after ng class.,Taglish,Negative,Assessment & Grading,2
+20859,Masyadong abstract mag-turo imbes na magpakita ng live code kaya hirap na hirap makasabay ang buong section.,Taglish,Negative,Pedagogical Delivery,2
+20860,Sobrang taas ng rubric expectations kahit 1st year GE course lang at apektado yung overall academic preparation ng klase.,Taglish,Negative,Assessment & Grading,2
+20861,Masyadong abstract mag-turo imbes na magpakita ng live code kaya walang malinaw na takeaway after ng class.,Taglish,Negative,Pedagogical Delivery,2
+20862,Walang maayos na guidance sa capstone revisions kahit maaga nagpa-appointment kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Student Support & Mentorship,2
+20863,May obvious favoritism sa recitation at namamahiya ng students kaya hirap na hirap makasabay ang buong section.,Taglish,Negative,Professional Conduct,2
+20864,Hindi sumisipot sa consultation hours at seen-zoned lang ang thesis emails at apektado yung overall academic preparation ng klase.,Taglish,Negative,Student Support & Mentorship,2
+20865,Laging late ng 30 minutes pumasok tapos nagmamadali mag-discuss kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Classroom Management,2
+20866,Daming trick questions sa quiz imbes na sukatin yung actual learning at apektado yung overall academic preparation ng klase.,Taglish,Negative,Assessment & Grading,2
+20867,Hindi sumisipot sa consultation hours at seen-zoned lang ang thesis emails at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Student Support & Mentorship,2
+20868,Walang concrete examples sa lecture kaya puro theory lang kaya kailangan pa naming mag-self-study nang buo sa labas.,Taglish,Negative,Pedagogical Delivery,2
+20869,Two months delayed magbalik ng scores tapos zero feedback sa deductions kaya walang malinaw na takeaway after ng class.,Taglish,Negative,Assessment & Grading,2
+20870,Biglang nag-set ng practical exam na conflict sa isa naming major exam kaya kailangan pa naming mag-self-study nang buo sa labas.,Taglish,Negative,Classroom Management,2
+20871,Nambabara at sarcastic sumagot kapag may nagtatanong sa klase at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Professional Conduct,2
+20872,Biglang nag-set ng practical exam na conflict sa isa naming major exam kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Classroom Management,2
+20873,Biglang nag-set ng practical exam na conflict sa isa naming major exam at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Classroom Management,2
+20874,Laging late ng 30 minutes pumasok tapos nagmamadali mag-discuss at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Classroom Management,2
+20875,Sirang-sira yung mga PC keyboards at aircon sa computer lab at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Unclassified / Needs Review,2
+20876,Puro memorization ng exact terms yung exam imbes na analytical thinking at apektado yung overall academic preparation ng klase.,Taglish,Negative,Assessment & Grading,2
+20877,Puro memorization ng exact terms yung exam imbes na analytical thinking kaya kailangan pa naming mag-self-study nang buo sa labas.,Taglish,Negative,Assessment & Grading,2
+20878,Sobrang taas ng rubric expectations kahit 1st year GE course lang at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Assessment & Grading,2
+20879,Sobrang higpit at buggy ng online proctoring kaya na-flag kahit scratch paper lang kaya hirap na hirap makasabay ang buong section.,Taglish,Negative,Assessment & Grading,2
+20880,Sobrang bagal ng campus Wi-Fi at kulang ang budget sa student orgs kahit ilang beses nang humingi ng clarification ang block.,Taglish,Negative,Unclassified / Needs Review,2
+20881,Two months delayed magbalik ng scores tapos zero feedback sa deductions kahit ilang beses nang humingi ng clarification ang block.,Taglish,Negative,Assessment & Grading,2
+20882,Sobrang higpit at buggy ng online proctoring kaya na-flag kahit scratch paper lang kahit ilang beses nang humingi ng clarification ang block.,Taglish,Negative,Assessment & Grading,2
+20883,Walang concrete examples sa lecture kaya puro theory lang kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Pedagogical Delivery,2
+20884,Sobrang higpit at buggy ng online proctoring kaya na-flag kahit scratch paper lang kaya kailangan pa naming mag-self-study nang buo sa labas.,Taglish,Negative,Assessment & Grading,2
+20885,Biglang nag-set ng practical exam na conflict sa isa naming major exam kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Classroom Management,2
+20886,Sirang-sira yung mga PC keyboards at aircon sa computer lab kaya hirap na hirap makasabay ang buong section.,Taglish,Negative,Unclassified / Needs Review,2
+20887,Two months delayed magbalik ng scores tapos zero feedback sa deductions kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Assessment & Grading,2
+20888,Nambabara at sarcastic sumagot kapag may nagtatanong sa klase kaya kailangan pa naming mag-self-study nang buo sa labas.,Taglish,Negative,Professional Conduct,2
+20889,Walang concrete examples sa lecture kaya puro theory lang kahit ilang beses nang humingi ng clarification ang block.,Taglish,Negative,Pedagogical Delivery,2
+20890,Sirang-sira yung mga PC keyboards at aircon sa computer lab kaya walang malinaw na takeaway after ng class.,Taglish,Negative,Unclassified / Needs Review,2
+20891,Sobrang higpit at buggy ng online proctoring kaya na-flag kahit scratch paper lang kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Assessment & Grading,2
+20892,Daming trick questions sa quiz imbes na sukatin yung actual learning kaya hirap na hirap makasabay ang buong section.,Taglish,Negative,Assessment & Grading,2
+20893,Sobrang bilis mag-salita habang nagde-derive ng formula kaya kailangan pa naming mag-self-study nang buo sa labas.,Taglish,Negative,Pedagogical Delivery,2
+20894,Daming trick questions sa quiz imbes na sukatin yung actual learning kahit ilang beses nang humingi ng clarification ang block.,Taglish,Negative,Assessment & Grading,2
+20895,Hindi sumisipot sa consultation hours at seen-zoned lang ang thesis emails kaya kailangan pa naming mag-self-study nang buo sa labas.,Taglish,Negative,Student Support & Mentorship,2
+20896,Walang concrete examples sa lecture kaya puro theory lang at apektado yung overall academic preparation ng klase.,Taglish,Negative,Pedagogical Delivery,2
+20897,Nambabara at sarcastic sumagot kapag may nagtatanong sa klase kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Professional Conduct,2
+20898,May obvious favoritism sa recitation at namamahiya ng students kaya walang malinaw na takeaway after ng class.,Taglish,Negative,Professional Conduct,2
+20899,Walang maayos na guidance sa capstone revisions kahit maaga nagpa-appointment at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Student Support & Mentorship,2
+20900,Laging late ng 30 minutes pumasok tapos nagmamadali mag-discuss kaya walang malinaw na takeaway after ng class.,Taglish,Negative,Classroom Management,2
+20901,Sobrang higpit at buggy ng online proctoring kaya na-flag kahit scratch paper lang kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Assessment & Grading,2
+20902,Puro memorization ng exact terms yung exam imbes na analytical thinking at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Assessment & Grading,2
+20903,Two months delayed magbalik ng scores tapos zero feedback sa deductions kaya kailangan pa naming mag-self-study nang buo sa labas.,Taglish,Negative,Assessment & Grading,2
+20904,Mabait naman sana si Prof kaso puro free cut kaya kulang sa natutunan kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Classroom Management,2
+20905,Sobrang bagal ng campus Wi-Fi at kulang ang budget sa student orgs kaya kailangan pa naming mag-self-study nang buo sa labas.,Taglish,Negative,Unclassified / Needs Review,2
+20906,Sirang-sira yung mga PC keyboards at aircon sa computer lab kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Unclassified / Needs Review,2
+20907,Sobrang bagal ng campus Wi-Fi at kulang ang budget sa student orgs kaya walang malinaw na takeaway after ng class.,Taglish,Negative,Unclassified / Needs Review,2
+20908,Sobrang taas ng rubric expectations kahit 1st year GE course lang kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Assessment & Grading,2
+20909,Biglang nag-set ng practical exam na conflict sa isa naming major exam kaya walang malinaw na takeaway after ng class.,Taglish,Negative,Classroom Management,2
+20910,Hindi sumisipot sa consultation hours at seen-zoned lang ang thesis emails kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Student Support & Mentorship,2
+20911,Hindi sumisipot sa consultation hours at seen-zoned lang ang thesis emails kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Student Support & Mentorship,2
+20912,Walang maayos na guidance sa capstone revisions kahit maaga nagpa-appointment kahit ilang beses nang humingi ng clarification ang block.,Taglish,Negative,Student Support & Mentorship,2
+20913,Laging late ng 30 minutes pumasok tapos nagmamadali mag-discuss kahit ilang beses nang humingi ng clarification ang block.,Taglish,Negative,Classroom Management,2
+20914,Masyadong abstract mag-turo imbes na magpakita ng live code at hindi man lang in-address nung nag-raise ng concern ang class rep.,Taglish,Negative,Pedagogical Delivery,2
+20915,Daming trick questions sa quiz imbes na sukatin yung actual learning kaya kailangan pa naming mag-self-study nang buo sa labas.,Taglish,Negative,Assessment & Grading,2
+20916,Two months delayed magbalik ng scores tapos zero feedback sa deductions kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Assessment & Grading,2
+20917,Hindi sumisipot sa consultation hours at seen-zoned lang ang thesis emails kahit ilang beses nang humingi ng clarification ang block.,Taglish,Negative,Student Support & Mentorship,2
+20918,Puro memorization ng exact terms yung exam imbes na analytical thinking kahit ilang beses nang humingi ng clarification ang block.,Taglish,Negative,Assessment & Grading,2
+20919,Laging late ng 30 minutes pumasok tapos nagmamadali mag-discuss kaya sobrang nakaka-frustrate para sa mga nag-aral nang maayos.,Taglish,Negative,Classroom Management,2
+20920,Mabait naman sana si Prof kaso puro free cut kaya kulang sa natutunan kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Classroom Management,2
+20921,Walang maayos na guidance sa capstone revisions kahit maaga nagpa-appointment kaya hirap na hirap makasabay ang buong section.,Taglish,Negative,Student Support & Mentorship,2
+20922,May obvious favoritism sa recitation at namamahiya ng students at apektado yung overall academic preparation ng klase.,Taglish,Negative,Professional Conduct,2
+20923,Daming trick questions sa quiz imbes na sukatin yung actual learning kaya bitin na bitin ang learning namin ngayong semester.,Taglish,Negative,Assessment & Grading,2
+20924,Sobrang taas ng rubric expectations kahit 1st year GE course lang kahit ilang beses nang humingi ng clarification ang block.,Taglish,Negative,Assessment & Grading,2
+20925,Mabait naman sana si Prof kaso puro free cut kaya kulang sa natutunan kaya walang malinaw na takeaway after ng class.,Taglish,Negative,Classroom Management,2
+20926,Medyo fast-paced mag-discuss si Prof pero approachable naman siya kapag nagtanong sa consultation.,Taglish,Neutral,Pedagogical Delivery,3
+20927,"Punctual pumasok si Sir pero medyo kulang sa hands-on examples, mostly theoretical discussion lang.",Taglish,Neutral,Pedagogical Delivery,3
+20928,"Tama lang ang haba ng weekly coding exercises, hindi naman nakaka-burnout sabayan ng ibang subjects.",Taglish,Neutral,Classroom Management,3
+20929,Medyo luma na yung IDE version sa lab computers pero nagagamit pa naman para sa basic exercises.,Taglish,Neutral,Unclassified / Needs Review,3
+20930,Sumusunod naman yung exam items sa table of specifications na binigay bago mag-midterms.,Taglish,Neutral,Assessment & Grading,3
+20931,Maingay minsan yung kabilang room pero tuloy pa rin naman ang regular lecture discussion.,Taglish,Neutral,Unclassified / Needs Review,3
+20932,"Okay naman magturo, standard college lecture flow lang at sumusunod sa course syllabus.",Taglish,Neutral,Pedagogical Delivery,3
+20933,Strict sa attendance policy pero fair naman mag-compute ng midterms at finals.,Taglish,Neutral,Classroom Management,3
+20934,Average lang yung hirap ng quizzes at aligned naman sa weekly modules na nasa portal.,Taglish,Neutral,Assessment & Grading,3
+20935,"Formal makitungo si Ma'am sa klase, hindi super close sa students pero respectful naman.",Taglish,Neutral,Professional Conduct,3
+20936,Medyo fast-paced magturo si Prof pero approachable naman kapag nagpapaturo after class kaya okay lang overall.,Taglish,Neutral,Pedagogical Delivery,3
+20937,Medyo fast-paced magturo si Prof pero approachable naman kapag nagpapaturo after class kaya manageable naman para sa klase.,Taglish,Neutral,Pedagogical Delivery,3
+20938,Medyo fast-paced magturo si Prof pero approachable naman kapag nagpapaturo after class ngayong semester.,Taglish,Neutral,Pedagogical Delivery,3
+20939,Medyo fast-paced magturo si Prof pero approachable naman kapag nagpapaturo after class base sa experience ng block namin.,Taglish,Neutral,Pedagogical Delivery,3
+20940,Medyo mabilis yung lecture flow pero kumpleto naman yung ina-upload na reviewers sa portal kaya okay lang overall.,Taglish,Neutral,Pedagogical Delivery,3
+20941,Medyo mabilis yung lecture flow pero kumpleto naman yung ina-upload na reviewers sa portal kaya manageable naman para sa klase.,Taglish,Neutral,Pedagogical Delivery,3
+20942,Medyo mabilis yung lecture flow pero kumpleto naman yung ina-upload na reviewers sa portal ngayong semester.,Taglish,Neutral,Pedagogical Delivery,3
+20943,Medyo mabilis yung lecture flow pero kumpleto naman yung ina-upload na reviewers sa portal base sa experience ng block namin.,Taglish,Neutral,Pedagogical Delivery,3
+20944,Punctual naman pumasok si Sir pero mostly theoretical lang yung discussion at bihira ang demo kaya okay lang overall.,Taglish,Neutral,Pedagogical Delivery,3
+20945,Punctual naman pumasok si Sir pero mostly theoretical lang yung discussion at bihira ang demo kaya manageable naman para sa klase.,Taglish,Neutral,Pedagogical Delivery,3
+20946,Punctual naman pumasok si Sir pero mostly theoretical lang yung discussion at bihira ang demo ngayong semester.,Taglish,Neutral,Pedagogical Delivery,3
+20947,Punctual naman pumasok si Sir pero mostly theoretical lang yung discussion at bihira ang demo base sa experience ng block namin.,Taglish,Neutral,Pedagogical Delivery,3
+20948,Traditional blackboard lecture lang palagi pero nasusunod naman lahat ng topics sa syllabus kaya okay lang overall.,Taglish,Neutral,Pedagogical Delivery,3
+20949,Traditional blackboard lecture lang palagi pero nasusunod naman lahat ng topics sa syllabus kaya manageable naman para sa klase.,Taglish,Neutral,Pedagogical Delivery,3
+20950,Traditional blackboard lecture lang palagi pero nasusunod naman lahat ng topics sa syllabus ngayong semester.,Taglish,Neutral,Pedagogical Delivery,3
+20951,Two hours lang per week yung consultation window pero nakakasagot pa rin naman sa thesis inquiries ngayong semester.,Taglish,Neutral,Student Support & Mentorship,3
+20952,Sakto lang ang haba ng weekly lab activities at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Classroom Management,3
+20953,Two hours lang per week yung consultation window pero nakakasagot pa rin naman sa thesis inquiries kaya manageable naman para sa klase.,Taglish,Neutral,Student Support & Mentorship,3
+20954,Tama lang ang consultation setup ng department at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Student Support & Mentorship,3
+20955,Manageable naman ang difficulty level ng midterms at finals para sa regular undergraduate workload.,Taglish,Neutral,Assessment & Grading,3
+20956,Manageable naman ang pacing ng lecture bawat linggo para sa regular undergraduate workload.,Taglish,Neutral,Pedagogical Delivery,3
+20957,Tama lang ang pacing ng lecture bawat linggo at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Pedagogical Delivery,3
+20958,Mahigpit sa attendance checking pero considerate naman kapag may official medical certificate base sa experience ng block namin.,Taglish,Neutral,Classroom Management,3
+20959,Sakto lang ang consultation setup ng department at sumusunod naman sa table of specifications.,Taglish,Neutral,Student Support & Mentorship,3
+20960,Standard lang ang pacing ng lecture bawat linggo at sumusunod naman sa table of specifications.,Taglish,Neutral,Pedagogical Delivery,3
+20961,Two hours lang per week yung consultation window pero nakakasagot pa rin naman sa thesis inquiries base sa experience ng block namin.,Taglish,Neutral,Student Support & Mentorship,3
+20962,Sakto lang ang pacing ng lecture bawat linggo at sumusunod naman sa table of specifications.,Taglish,Neutral,Pedagogical Delivery,3
+20963,Tama lang ang condition ng reading area sa library at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Unclassified / Needs Review,3
+20964,Standard lang ang haba ng weekly lab activities at sumusunod naman sa table of specifications.,Taglish,Neutral,Classroom Management,3
+20965,Standard lang ang haba ng weekly lab activities at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Classroom Management,3
+20966,Sakto lang ang difficulty level ng midterms at finals para sa regular undergraduate workload.,Taglish,Neutral,Assessment & Grading,3
+20967,Medyo strict si Ma'am sa submission format pero fair naman siya magbigay ng partial points kaya okay lang overall.,Taglish,Neutral,Assessment & Grading,3
+20968,Manageable naman ang classroom rules ni Prof at sumusunod naman sa table of specifications.,Taglish,Neutral,Professional Conduct,3
+20969,Manageable naman ang haba ng weekly lab activities at sumusunod naman sa table of specifications.,Taglish,Neutral,Classroom Management,3
+20970,Typical lang ang pacing ng lecture bawat linggo at sumusunod naman sa table of specifications.,Taglish,Neutral,Pedagogical Delivery,3
+20971,Medyo strict si Ma'am sa submission format pero fair naman siya magbigay ng partial points kaya manageable naman para sa klase.,Taglish,Neutral,Assessment & Grading,3
+20972,Mahigpit sa attendance checking pero considerate naman kapag may official medical certificate ngayong semester.,Taglish,Neutral,Classroom Management,3
+20973,Standard lang ang difficulty level ng midterms at finals para sa regular undergraduate workload.,Taglish,Neutral,Assessment & Grading,3
+20974,Sakto lang ang classroom rules ni Prof at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Professional Conduct,3
+20975,Mahigpit sa attendance checking pero considerate naman kapag may official medical certificate kaya okay lang overall.,Taglish,Neutral,Classroom Management,3
+20976,Typical lang ang condition ng reading area sa library para sa regular undergraduate workload.,Taglish,Neutral,Unclassified / Needs Review,3
+20977,Walang curve o bonus tasks sa klase pero transparent at tama naman yung grade computation ngayong semester.,Taglish,Neutral,Assessment & Grading,3
+20978,Medyo luma na yung compiler at PCs sa lab pero nagagamit pa rin naman para sa basic exercises ngayong semester.,Taglish,Neutral,Unclassified / Needs Review,3
+20979,Standard lang ang difficulty level ng midterms at finals at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Assessment & Grading,3
+20980,Standard lang ang classroom rules ni Prof at sumusunod naman sa table of specifications.,Taglish,Neutral,Professional Conduct,3
+20981,Typical lang ang pacing ng lecture bawat linggo at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Pedagogical Delivery,3
+20982,Manageable naman ang condition ng reading area sa library at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Unclassified / Needs Review,3
+20983,Sakto lang ang consultation setup ng department para sa regular undergraduate workload.,Taglish,Neutral,Student Support & Mentorship,3
+20984,Tama lang ang classroom rules ni Prof at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Professional Conduct,3
+20985,Tama lang ang haba ng weekly lab activities at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Classroom Management,3
+20986,Tama lang ang condition ng reading area sa library para sa regular undergraduate workload.,Taglish,Neutral,Unclassified / Needs Review,3
+20987,Walang curve o bonus tasks sa klase pero transparent at tama naman yung grade computation kaya manageable naman para sa klase.,Taglish,Neutral,Assessment & Grading,3
+20988,Manageable naman ang pacing ng lecture bawat linggo at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Pedagogical Delivery,3
+20989,Tahimik at formal si Prof sa klase pero sinasagot naman niya nang maayos yung mga tanong kaya manageable naman para sa klase.,Taglish,Neutral,Professional Conduct,3
+20990,Sakto lang ang condition ng reading area sa library at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Unclassified / Needs Review,3
+20991,Two hours lang per week yung consultation window pero nakakasagot pa rin naman sa thesis inquiries kaya okay lang overall.,Taglish,Neutral,Student Support & Mentorship,3
+20992,Manageable naman ang difficulty level ng midterms at finals at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Assessment & Grading,3
+20993,Tama lang ang consultation setup ng department para sa regular undergraduate workload.,Taglish,Neutral,Student Support & Mentorship,3
+20994,Tama lang ang condition ng reading area sa library at sumusunod naman sa table of specifications.,Taglish,Neutral,Unclassified / Needs Review,3
+20995,Mahaba yung coverage ng departmental exam pero lumabas naman lahat galing sa discussed handouts ngayong semester.,Taglish,Neutral,Assessment & Grading,3
+20996,Manageable naman ang classroom rules ni Prof para sa regular undergraduate workload.,Taglish,Neutral,Professional Conduct,3
+20997,Standard lang ang consultation setup ng department at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Student Support & Mentorship,3
+20998,Standard lang ang pacing ng lecture bawat linggo at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Pedagogical Delivery,3
+20999,Standard lang ang consultation setup ng department para sa regular undergraduate workload.,Taglish,Neutral,Student Support & Mentorship,3
+21000,Typical lang ang consultation setup ng department at sumusunod naman sa table of specifications.,Taglish,Neutral,Student Support & Mentorship,3
+21001,Typical lang ang consultation setup ng department para sa regular undergraduate workload.,Taglish,Neutral,Student Support & Mentorship,3
+21002,Standard lang ang condition ng reading area sa library at sumusunod naman sa table of specifications.,Taglish,Neutral,Unclassified / Needs Review,3
+21003,Medyo luma na yung compiler at PCs sa lab pero nagagamit pa rin naman para sa basic exercises kaya manageable naman para sa klase.,Taglish,Neutral,Unclassified / Needs Review,3
+21004,Sakto lang ang haba ng weekly lab activities para sa regular undergraduate workload.,Taglish,Neutral,Classroom Management,3
+21005,Maingay minsan sa hallway ng building pero tuloy pa rin naman nang maayos yung lecture kaya okay lang overall.,Taglish,Neutral,Unclassified / Needs Review,3
+21006,Mahaba yung coverage ng departmental exam pero lumabas naman lahat galing sa discussed handouts kaya okay lang overall.,Taglish,Neutral,Assessment & Grading,3
+21007,Sakto lang ang consultation setup ng department at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Student Support & Mentorship,3
+21008,Standard lang ang condition ng reading area sa library para sa regular undergraduate workload.,Taglish,Neutral,Unclassified / Needs Review,3
+21009,Tahimik at formal si Prof sa klase pero sinasagot naman niya nang maayos yung mga tanong ngayong semester.,Taglish,Neutral,Professional Conduct,3
+21010,Standard lang ang classroom rules ni Prof at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Professional Conduct,3
+21011,Tama lang ang difficulty level ng midterms at finals at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Assessment & Grading,3
+21012,Medyo strict si Ma'am sa submission format pero fair naman siya magbigay ng partial points base sa experience ng block namin.,Taglish,Neutral,Assessment & Grading,3
+21013,Manageable naman ang haba ng weekly lab activities para sa regular undergraduate workload.,Taglish,Neutral,Classroom Management,3
+21014,Typical lang ang condition ng reading area sa library at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Unclassified / Needs Review,3
+21015,Sakto lang ang condition ng reading area sa library at sumusunod naman sa table of specifications.,Taglish,Neutral,Unclassified / Needs Review,3
+21016,Walang curve o bonus tasks sa klase pero transparent at tama naman yung grade computation kaya okay lang overall.,Taglish,Neutral,Assessment & Grading,3
+21017,Sakto lang ang classroom rules ni Prof at sumusunod naman sa table of specifications.,Taglish,Neutral,Professional Conduct,3
+21018,Manageable naman ang consultation setup ng department at sumusunod naman sa table of specifications.,Taglish,Neutral,Student Support & Mentorship,3
+21019,Standard lang ang consultation setup ng department at sumusunod naman sa table of specifications.,Taglish,Neutral,Student Support & Mentorship,3
+21020,Medyo luma na yung compiler at PCs sa lab pero nagagamit pa rin naman para sa basic exercises kaya okay lang overall.,Taglish,Neutral,Unclassified / Needs Review,3
+21021,Typical lang ang condition ng reading area sa library at sumusunod naman sa table of specifications.,Taglish,Neutral,Unclassified / Needs Review,3
+21022,Sakto lang ang difficulty level ng midterms at finals at sumusunod naman sa table of specifications.,Taglish,Neutral,Assessment & Grading,3
+21023,Maingay minsan sa hallway ng building pero tuloy pa rin naman nang maayos yung lecture base sa experience ng block namin.,Taglish,Neutral,Unclassified / Needs Review,3
+21024,Sakto lang ang pacing ng lecture bawat linggo para sa regular undergraduate workload.,Taglish,Neutral,Pedagogical Delivery,3
+21025,Mahigpit sa attendance checking pero considerate naman kapag may official medical certificate kaya manageable naman para sa klase.,Taglish,Neutral,Classroom Management,3
+21026,Manageable naman ang classroom rules ni Prof at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Professional Conduct,3
+21027,Tama lang ang classroom rules ni Prof at sumusunod naman sa table of specifications.,Taglish,Neutral,Professional Conduct,3
+21028,Tama lang ang pacing ng lecture bawat linggo para sa regular undergraduate workload.,Taglish,Neutral,Pedagogical Delivery,3
+21029,Typical lang ang difficulty level ng midterms at finals at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Assessment & Grading,3
+21030,Typical lang ang difficulty level ng midterms at finals at sumusunod naman sa table of specifications.,Taglish,Neutral,Assessment & Grading,3
+21031,Tama lang ang difficulty level ng midterms at finals at sumusunod naman sa table of specifications.,Taglish,Neutral,Assessment & Grading,3
+21032,Medyo luma na yung compiler at PCs sa lab pero nagagamit pa rin naman para sa basic exercises base sa experience ng block namin.,Taglish,Neutral,Unclassified / Needs Review,3
+21033,Walang curve o bonus tasks sa klase pero transparent at tama naman yung grade computation base sa experience ng block namin.,Taglish,Neutral,Assessment & Grading,3
+21034,Typical lang ang consultation setup ng department at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Student Support & Mentorship,3
+21035,Traditional blackboard lecture lang palagi pero nasusunod naman lahat ng topics sa syllabus base sa experience ng block namin.,Taglish,Neutral,Pedagogical Delivery,3
+21036,Maingay minsan sa hallway ng building pero tuloy pa rin naman nang maayos yung lecture kaya manageable naman para sa klase.,Taglish,Neutral,Unclassified / Needs Review,3
+21037,Manageable naman ang haba ng weekly lab activities at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Classroom Management,3
+21038,Manageable naman ang condition ng reading area sa library at sumusunod naman sa table of specifications.,Taglish,Neutral,Unclassified / Needs Review,3
+21039,Typical lang ang haba ng weekly lab activities para sa regular undergraduate workload.,Taglish,Neutral,Classroom Management,3
+21040,Tama lang ang consultation setup ng department at sumusunod naman sa table of specifications.,Taglish,Neutral,Student Support & Mentorship,3
+21041,Typical lang ang pacing ng lecture bawat linggo para sa regular undergraduate workload.,Taglish,Neutral,Pedagogical Delivery,3
+21042,Standard lang ang difficulty level ng midterms at finals at sumusunod naman sa table of specifications.,Taglish,Neutral,Assessment & Grading,3
+21043,Tama lang ang pacing ng lecture bawat linggo at sumusunod naman sa table of specifications.,Taglish,Neutral,Pedagogical Delivery,3
+21044,Mahaba yung coverage ng departmental exam pero lumabas naman lahat galing sa discussed handouts base sa experience ng block namin.,Taglish,Neutral,Assessment & Grading,3
+21045,Typical lang ang haba ng weekly lab activities at hindi naman nakaka-burnout isabay sa ibang subjects.,Taglish,Neutral,Classroom Management,3
+21046,Nag-curve ng grades si Sir nung nakita niyang sobrang hirap ng departmental exam para sa lahat.,Taglish,Positive,Assessment & Grading,5
+21047,Nagpa-mock defense muna si Ma'am bago ang final presentation kaya super prepared ang group namin.,Taglish,Positive,Student Support & Mentorship,5
+21048,Sobrang linaw mag-explain ng data structures at laging may live coding demo after ng theory.,Taglish,Positive,Pedagogical Delivery,5
+21049,Open si Prof kapag may gustong magpa-recheck ng quiz computation at agad niyang ina-update.,Taglish,Positive,Assessment & Grading,5
+21050,Challenging yung programming problems pero walang trick questions at lahat tinuro sa lecture.,Taglish,Positive,Assessment & Grading,5
+21051,Madaling pakiusapan sa deadline extension kapag may valid medical excuse at maayos kausap.,Taglish,Positive,Student Support & Mentorship,5
+21052,Never na-late sa morning schedule at super organized ng modules sa learning portal.,Taglish,Positive,Classroom Management,5
+21053,"Walang favoritism sa recitation, pantay-pantay ang trato niya sa lahat ng blocks.",Taglish,Positive,Professional Conduct,5
+21054,Inisa-isa ni Sir yung common mistakes namin sa midterms kaya nakabawi kami sa finals.,Taglish,Positive,Assessment & Grading,5
+21055,Nagbibigay ng practice problem sets na sobrang nakakabawas ng exam stress bago mag-departmental test.,Taglish,Positive,Assessment & Grading,5
+21056,Sobrang bilis mag-reply ni Sir sa emails kahit weekend kapag may urgent concern sa capstone.,Taglish,Positive,Student Support & Mentorship,5
+21057,Mabilis ang Wi-Fi sa college library at malamig ang aircon kaya ang sarap mag-review buong hapon.,Taglish,Positive,Unclassified / Needs Review,5
+21058,Super daming natutunan sa leadership seminar at coding bootcamp na in-organize ng student council.,Taglish,Positive,Unclassified / Needs Review,5
+21059,Sobrang linaw mag-explain si Sir ng algorithms at data structures at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21060,Sobrang linaw mag-explain si Sir ng algorithms at data structures at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21061,Sobrang linaw mag-explain si Sir ng algorithms at data structures at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21062,Sobrang linaw mag-explain si Sir ng SQL queries sa lab at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21063,Sobrang linaw mag-explain si Sir ng SQL queries sa lab at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21064,Sobrang linaw mag-explain si Sir ng SQL queries sa lab at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21065,Sobrang linaw mag-explain si Sir ng research methodology at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21066,Sobrang linaw mag-explain si Sir ng research methodology at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21067,Sobrang linaw mag-explain si Sir ng research methodology at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21068,Sobrang linaw mag-explain si Sir ng accounting computations at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21069,Sobrang linaw mag-explain si Sir ng accounting computations at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21070,Sobrang linaw mag-explain si Sir ng accounting computations at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21071,Open sa score clarification sa weekly lab quizzes si Sir tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5
+21072,Well-structured at maayos mag-explain si Ma'am ng SQL queries sa lab at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21073,Sobrang linaw mag-explain si Ma'am ng SQL queries sa lab at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21074,Well-structured at maayos mag-explain si Sir ng SQL queries sa lab at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21075,Well-structured at maayos mag-explain si Sir ng accounting computations at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21076,Step-by-step mag-explain si Sir ng algorithms at data structures at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21077,Open sa score clarification sa capstone deliverables si Sir tapos walang trick questions na labas sa coverage.,Taglish,Positive,Assessment & Grading,5
+21078,Sobrang linaw mag-explain si Ma'am ng algorithms at data structures at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21079,Mahinahon at respectful mag-correct si Sir kaya comfortable magtanong ang buong block.,Taglish,Positive,Professional Conduct,5
+21080,Transparent ang rubrics sa capstone deliverables si Ma'am tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5
+21081,Mabilis magbalik ng checked papers sa weekly lab quizzes si Ma'am tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5
+21082,Mabilis magbalik ng checked papers sa capstone deliverables si Ma'am tapos ipinaliwanag niya isa-isa yung common mistakes namin.,Taglish,Positive,Assessment & Grading,5
+21083,Transparent ang rubrics sa capstone deliverables si Sir tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5
+21084,Mabilis magbalik ng checked papers sa capstone deliverables si Ma'am tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5
+21085,Well-structured at maayos mag-explain si Sir ng algorithms at data structures at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21086,Super fair mag-grade sa weekly lab quizzes si Ma'am tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5
+21087,Well-structured at maayos mag-explain si Sir ng research methodology at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21088,Super fair mag-grade sa capstone deliverables si Sir tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5
+21089,Transparent ang rubrics sa weekly lab quizzes si Ma'am tapos ipinaliwanag niya isa-isa yung common mistakes namin.,Taglish,Positive,Assessment & Grading,5
+21090,Step-by-step mag-explain si Ma'am ng research methodology at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21091,Step-by-step mag-explain si Sir ng SQL queries sa lab at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21092,Super husay mag-explain si Ma'am ng research methodology at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21093,Well-structured at maayos mag-explain si Ma'am ng algorithms at data structures at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21094,Open sa score clarification sa weekly lab quizzes si Ma'am tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5
+21095,Pantay-pantay at walang favoritism si Ma'am kaya comfortable magtanong ang buong block.,Taglish,Positive,Professional Conduct,5
+21096,Sobrang linaw mag-explain si Ma'am ng accounting computations at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21097,Super fair mag-grade sa midterms at finals si Ma'am tapos ipinaliwanag niya isa-isa yung common mistakes namin.,Taglish,Positive,Assessment & Grading,5
+21098,Step-by-step mag-explain si Ma'am ng research methodology at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21099,Open sa score clarification sa midterms at finals si Sir tapos walang trick questions na labas sa coverage.,Taglish,Positive,Assessment & Grading,5
+21100,Sobrang linaw mag-explain si Ma'am ng research methodology at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21101,Step-by-step mag-explain si Ma'am ng accounting computations at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21102,Super husay mag-explain si Ma'am ng research methodology at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21103,Step-by-step mag-explain si Sir ng algorithms at data structures at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21104,Transparent ang rubrics sa weekly lab quizzes si Sir tapos ipinaliwanag niya isa-isa yung common mistakes namin.,Taglish,Positive,Assessment & Grading,5
+21105,Super husay mag-explain si Sir ng research methodology at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21106,Well-structured at maayos mag-explain si Ma'am ng SQL queries sa lab at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21107,Super husay mag-explain si Sir ng algorithms at data structures at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21108,Well-structured at maayos mag-explain si Sir ng SQL queries sa lab at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21109,Super husay mag-explain si Ma'am ng SQL queries sa lab at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21110,Well-structured at maayos mag-explain si Sir ng research methodology at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21111,Open sa score clarification sa capstone deliverables si Sir tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5
+21112,Laging on time mag-start si Prof nasusunod nang maayos yung course timeline.,Taglish,Positive,Classroom Management,5
+21113,Super organized ng weekly schedule sa portal walang nasasayang na lab hours.,Taglish,Positive,Classroom Management,5
+21114,Transparent ang rubrics sa midterms at finals si Sir tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5
+21115,Super fair mag-grade sa midterms at finals si Sir tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5
+21116,Super husay mag-explain si Sir ng accounting computations at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21117,Super fair mag-grade sa capstone deliverables si Sir tapos walang trick questions na labas sa coverage.,Taglish,Positive,Assessment & Grading,5
+21118,Super fair mag-grade sa weekly lab quizzes si Ma'am tapos ipinaliwanag niya isa-isa yung common mistakes namin.,Taglish,Positive,Assessment & Grading,5
+21119,Super husay mag-explain si Sir ng research methodology at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21120,Step-by-step mag-explain si Ma'am ng SQL queries sa lab at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21121,Transparent ang rubrics sa capstone deliverables si Ma'am tapos ipinaliwanag niya isa-isa yung common mistakes namin.,Taglish,Positive,Assessment & Grading,5
+21122,Super fair mag-grade sa midterms at finals si Ma'am tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5
+21123,Well-structured at maayos mag-explain si Ma'am ng algorithms at data structures at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21124,Step-by-step mag-explain si Sir ng accounting computations at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21125,Well-structured at maayos mag-explain si Ma'am ng accounting computations at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21126,Well-structured at maayos mag-explain si Sir ng accounting computations at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21127,Super husay mag-explain si Ma'am ng accounting computations at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21128,Step-by-step mag-explain si Ma'am ng algorithms at data structures at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21129,Super husay mag-explain si Sir ng algorithms at data structures at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21130,Nagbigay ng reasonable deadline extension nung nagkaroon ng valid emergency.,Taglish,Positive,Student Support & Mentorship,5
+21131,Open sa score clarification sa weekly lab quizzes si Ma'am tapos walang trick questions na labas sa coverage.,Taglish,Positive,Assessment & Grading,5
+21132,Mabilis magbalik ng checked papers sa midterms at finals si Sir tapos ipinaliwanag niya isa-isa yung common mistakes namin.,Taglish,Positive,Assessment & Grading,5
+21133,Open sa score clarification sa weekly lab quizzes si Sir tapos ipinaliwanag niya isa-isa yung common mistakes namin.,Taglish,Positive,Assessment & Grading,5
+21134,Open sa score clarification sa midterms at finals si Sir tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5
+21135,Sobrang linaw mag-explain si Ma'am ng accounting computations at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21136,Laging on time mag-start si Prof walang nasasayang na lab hours.,Taglish,Positive,Classroom Management,5
+21137,Open sa score clarification sa midterms at finals si Ma'am tapos walang trick questions na labas sa coverage.,Taglish,Positive,Assessment & Grading,5
+21138,Step-by-step mag-explain si Sir ng accounting computations at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21139,Super fair mag-grade sa weekly lab quizzes si Sir tapos ipinaliwanag niya isa-isa yung common mistakes namin.,Taglish,Positive,Assessment & Grading,5
+21140,Well-structured at maayos mag-explain si Sir ng algorithms at data structures at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21141,Transparent ang rubrics sa weekly lab quizzes si Ma'am tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5
+21142,Well-structured at maayos mag-explain si Sir ng SQL queries sa lab at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21143,Step-by-step mag-explain si Ma'am ng SQL queries sa lab at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21144,Well-structured at maayos mag-explain si Sir ng algorithms at data structures at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21145,Super husay mag-explain si Ma'am ng algorithms at data structures at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21146,Super husay mag-explain si Sir ng SQL queries sa lab at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21147,Well-structured at maayos mag-explain si Ma'am ng algorithms at data structures at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21148,Super husay mag-explain si Sir ng accounting computations at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21149,Mabilis magbalik ng checked papers sa capstone deliverables si Sir tapos ipinaliwanag niya isa-isa yung common mistakes namin.,Taglish,Positive,Assessment & Grading,5
+21150,Transparent ang rubrics sa midterms at finals si Ma'am tapos walang trick questions na labas sa coverage.,Taglish,Positive,Assessment & Grading,5
+21151,Mabilis magbalik ng checked papers sa capstone deliverables si Sir tapos walang trick questions na labas sa coverage.,Taglish,Positive,Assessment & Grading,5
+21152,Sobrang linaw mag-explain si Ma'am ng SQL queries sa lab at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21153,Mabilis magbalik ng checked papers sa midterms at finals si Ma'am tapos ipinaliwanag niya isa-isa yung common mistakes namin.,Taglish,Positive,Assessment & Grading,5
+21154,Sobrang linaw mag-explain si Ma'am ng algorithms at data structures at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21155,Well-structured at maayos mag-explain si Ma'am ng accounting computations at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21156,Super husay mag-explain si Ma'am ng SQL queries sa lab at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21157,Super husay mag-explain si Ma'am ng accounting computations at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21158,Super husay mag-explain si Ma'am ng algorithms at data structures at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21159,Super fair mag-grade sa capstone deliverables si Ma'am tapos ipinaliwanag niya isa-isa yung common mistakes namin.,Taglish,Positive,Assessment & Grading,5
+21160,Super husay mag-explain si Ma'am ng SQL queries sa lab at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21161,Well-structured at maayos mag-explain si Ma'am ng research methodology at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21162,Nagbigay ng reasonable deadline extension at nagpa-mock defense pa bago ang finals.,Taglish,Positive,Student Support & Mentorship,5
+21163,Super fair mag-grade sa midterms at finals si Ma'am tapos walang trick questions na labas sa coverage.,Taglish,Positive,Assessment & Grading,5
+21164,Super organized ng weekly schedule sa portal nasusunod nang maayos yung course timeline.,Taglish,Positive,Classroom Management,5
+21165,Super fair mag-grade sa capstone deliverables si Ma'am tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5
+21166,Well-structured at maayos mag-explain si Sir ng accounting computations at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21167,Super approachable sa thesis consultation at nagpa-mock defense pa bago ang finals.,Taglish,Positive,Student Support & Mentorship,5
+21168,Mabilis magbalik ng checked papers sa weekly lab quizzes si Ma'am tapos ipinaliwanag niya isa-isa yung common mistakes namin.,Taglish,Positive,Assessment & Grading,5
+21169,Mabilis magbalik ng checked papers sa midterms at finals si Ma'am tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5
+21170,Mabilis magbalik ng checked papers sa midterms at finals si Sir tapos walang trick questions na labas sa coverage.,Taglish,Positive,Assessment & Grading,5
+21171,Transparent ang rubrics sa midterms at finals si Sir tapos walang trick questions na labas sa coverage.,Taglish,Positive,Assessment & Grading,5
+21172,Super fair mag-grade sa midterms at finals si Sir tapos ipinaliwanag niya isa-isa yung common mistakes namin.,Taglish,Positive,Assessment & Grading,5
+21173,Super approachable sa thesis consultation nung nagkaroon ng valid emergency.,Taglish,Positive,Student Support & Mentorship,5
+21174,Step-by-step mag-explain si Sir ng algorithms at data structures at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21175,Sobrang linaw mag-explain si Ma'am ng SQL queries sa lab at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21176,Pantay-pantay at walang favoritism si Ma'am kahit magkamali ka sa board work.,Taglish,Positive,Professional Conduct,5
+21177,Transparent ang rubrics sa capstone deliverables si Ma'am tapos walang trick questions na labas sa coverage.,Taglish,Positive,Assessment & Grading,5
+21178,Sobrang linaw mag-explain si Ma'am ng research methodology at laging may hands-on demo after ng lecture.,Taglish,Positive,Pedagogical Delivery,5
+21179,Mabilis magbalik ng checked papers sa midterms at finals si Ma'am tapos walang trick questions na labas sa coverage.,Taglish,Positive,Assessment & Grading,5
+21180,Well-structured at maayos mag-explain si Ma'am ng accounting computations at updated sa industry practices yung examples.,Taglish,Positive,Pedagogical Delivery,5
+21181,Well-structured at maayos mag-explain si Ma'am ng research methodology at madaling sundan kahit mahirap yung lesson.,Taglish,Positive,Pedagogical Delivery,5
+21182,Open sa score clarification sa capstone deliverables si Ma'am tapos ipinaliwanag niya isa-isa yung common mistakes namin.,Taglish,Positive,Assessment & Grading,5
+21183,Super fair mag-grade sa weekly lab quizzes si Ma'am tapos walang trick questions na labas sa coverage.,Taglish,Positive,Assessment & Grading,5
+21184,Transparent ang rubrics sa weekly lab quizzes si Ma'am tapos walang trick questions na labas sa coverage.,Taglish,Positive,Assessment & Grading,5
+21185,Transparent ang rubrics sa midterms at finals si Ma'am tapos nakakabawas ng exam stress yung practice sets niya.,Taglish,Positive,Assessment & Grading,5

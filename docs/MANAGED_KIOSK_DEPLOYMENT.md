@@ -1,178 +1,104 @@
 # School AAAAA13 — EvaluaTech
-# Managed Kiosk Deployment Plan for Computer Laboratories
+# Managed Kiosk Deployment Plan for Campus Computer Laboratories
 
-**Document Version:** 1.0 (AY 2026–2027)
-**Classification:** Institutional IT Infrastructure & Laboratory Administration
-**Target Environments:** University Computer Laboratories, Proctored Testing Centers, and Registrar Terminals
-
----
-
-## 1. Executive Summary: Fullscreen Web Mode vs. Managed Kiosk Mode
-
-A fundamental architectural distinction exists between **Web Application Fullscreen Mode** and **Hardware/OS Managed Kiosk Mode**:
-
-```
-+-----------------------------------+------------------------------------------+
-| Standard Web Fullscreen Mode      | Managed Kiosk Mode                       |
-| (Student Personal Devices)        | (School AAAAA13 University Computer Labs)           |
-+-----------------------------------+------------------------------------------+
-| - Browser JavaScript API          | - Operating System level policy          |
-| - Focus assistance (F11 / API)    | - Complete hardware shortcut blocking    |
-| - User can exit anytime (Escape)  | - Admin password required to exit        |
-| - Zero software installation      | - Dedicated institutional device setup   |
-| - Runs on mobile, laptop, tablet  | - Fixed Windows/Linux lab workstations   |
-| - Voluntary concentration aid     | - Institutional examination environment  |
-+-----------------------------------+------------------------------------------+
-```
-
-### Critical Policy Guardrails
-1. **Never Enforce Kiosk Lockdown on Personal Devices:** Students using personal smartphones, laptops, or home computers must never have intrusive device-level lockdown scripts or unclosable window loops imposed upon them. The web application provides voluntary, focused fullscreen mode (`document.documentElement.requestFullscreen()`) with graceful degradation and visible exit controls.
-2. **Never Treat Ordinary Browser Mode as Kiosk-Secured:** Web browser tabs cannot physically block `Alt+Tab`, `Windows Key`, `Ctrl+Alt+Delete`, or OS notifications. System documentation and administrative reports must never falsely claim that browser-based SET evaluation constitutes an uncircumventable device lockdown.
-3. **No Automatic Penalization on Loss of Focus:** In accordance with School AAAAA13 student privacy standards, transient focus changes (switching tabs, notifications, or exiting fullscreen) must **never** be used to invalidate evaluations, auto-submit unfinished drafts, or trigger academic misconduct reports.
+**Document Version:** 2.0 (AY 2026–2027)  
+**Classification:** Institutional IT Infrastructure & Laboratory Administration  
+**Target Environments:** University Computer Laboratories, Supervised Evaluation Terminals, and Registrar Stations
 
 ---
 
-## 2. Institutional Laboratory Kiosk Configuration
+## 1. Executive Summary: Personal Browser Mode vs. Managed Laboratory Kiosk Mode
 
-For high-stakes evaluation periods conducted in supervised university computer laboratories (e.g., CCS Computer Laboratories 1–4, Engineering CAD Labs), laboratory network administrators can configure workstations into dedicated kiosk mode using standard enterprise tools.
+A strict architectural boundary separates **Personal Device Browser Access** from **OS-Managed Campus Laboratory Kiosks**:
 
-### A. Windows 11 / Windows 10 Enterprise (Assigned Access Kiosk)
+| Dimension | Personal Devices (Smartphones, Laptops) | Managed Campus Lab Kiosks (CCS / Engineering Labs) |
+| :--- | :--- | :--- |
+| **Enforcement Layer** | Standard WebAssembly SPA (`evaluatech-web`) | Operating System Kiosk Policy (Windows Assigned Access / LightDM) |
+| **Navigation Layout** | Plain single-column Student Dashboard (`/queue`) | Identical plain Student Dashboard inside full-screen browser shell |
+| **Exit Mechanism** | User closes tab or signs out anytime | OS keyboard filter; lab proctor credentials required to exit OS session |
+| **Session Persistence** | Ephemeral `sessionStorage` cleared on tab close | Ephemeral `sessionStorage` + `--incognito` profile wiped on sign-out |
 
-Windows Assigned Access allows a single Universal Windows Platform (UWP) app or Microsoft Edge to run in a locked-down, full-screen interactive display.
+### Non-Negotiable Institutional Guardrails
+1. **Zero Intrusive Lockdown on Personal Devices**: Students evaluating on personal phones or laptops never face artificial fullscreen traps, focus-loss penalties, or unclosable popups.
+2. **Truthful Security Claims**: Browser JavaScript/WASM cannot block OS-level shortcuts (`Alt+Tab`, `Win`, `Ctrl+Alt+Del`); physical shortcut blocking is performed exclusively by Windows Assigned Access or Linux LightDM in supervised campus labs.
+3. **Zero Penalization on Focus Changes**: Transient focus changes never invalidate drafts or auto-submit incomplete forms.
 
-#### Step 1: Dedicated Local Kiosk User Account
-Create a non-privileged local account on the lab master image:
+---
+
+## 2. Campus Laboratory Kiosk Configuration
+
+### A. Windows 11 Enterprise (Assigned Access with Microsoft Edge)
+
+#### Step 1: Provision Non-Privileged Local Kiosk Account
 ```powershell
-# Run in Administrator PowerShell
-net user School AAAAA13StudentKiosk EvaluatechLab2026! /add /passwordchg:no
-wmic useraccount where name='School AAAAA13StudentKiosk' set PasswordExpires=FALSE
+net user AAAAA13StudentKiosk EvaluatechLab2026! /add /passwordchg:no
+wmic useraccount where name='AAAAA13StudentKiosk' set PasswordExpires=FALSE
 ```
 
-#### Step 2: Configure Microsoft Edge Kiosk Mode
-In Windows Settings (`Accounts > Other users > Set up a kiosk`), select `School AAAAA13StudentKiosk` and specify **Microsoft Edge**:
-- **Kiosk Mode Type:** Digital Signage / Interactive Kiosk (Full-Screen).
-- **Target URL:** `http://127.0.0.1:8000/queue` (or institutional domain `https://evaluatech.aaaaa13.edu/queue`).
-- **Idle Timeout:** 15 minutes (prompts user before session reset).
+#### Step 2: Point Assigned Access to EvaluaTech
+In Windows Settings (`Accounts -> Other users -> Set up a kiosk`), bind `AAAAA13StudentKiosk` to **Microsoft Edge**:
+- **Kiosk Mode Type:** Public Browsing / Interactive Full-Screen (`InPrivate` enabled).
+- **Target URL:** `https://evaluatech.aaaaa13.edu/login` (or `http://127.0.0.1:8080/login` on isolated lab VLAN pilot hosts).
+- **Idle Timeout:** 10 minutes (wipes `InPrivate` session and returns cleanly to `/login`).
 
-#### Step 3: Enforce Keyboard Filtering via Group Policy
-Enable the Windows Keyboard Filter (`Turn on Keyboard Filter`) under `Computer Configuration > Administrative Templates > System > Keyboard Filter`:
-- **Blocked Combinations:**
-  - `Windows Key`
-  - `Alt + Tab`
-  - `Alt + F4`
-  - `Ctrl + Shift + Esc`
-  - `Ctrl + Esc`
-- **Permitted Combinations (Proctor Access Only):**
-  - `Ctrl + Alt + Delete` (bound to administrator password screen for lab proctors).
+#### Step 3: Windows Keyboard Filter Policy
+Enable **Keyboard Filter** under `Computer Configuration -> Administrative Templates -> System -> Keyboard Filter` to block `Win`, `Alt+Tab`, `Alt+F4`, and `Ctrl+Shift+Esc` for `AAAAA13StudentKiosk` while preserving `Ctrl+Alt+Delete` for laboratory proctors.
 
 ---
 
-### B. Linux / Ubuntu Desktop Laboratories (LightDM Kiosk)
+### B. Ubuntu 24.04 LTS Campus Laboratories (LightDM + Chromium)
 
-For open-source or dual-boot Linux laboratories:
-
-#### Step 1: Create Dedicated Session Script
-Create `/usr/local/bin/evaluatech-kiosk.sh`:
+Create `/usr/local/bin/evaluatech-kiosk.sh` (`chmod +x`):
 ```bash
 #!/usr/bin/env bash
-# Prevent screen blanking and power management
 xset s off
 xset -dpms
 xset s noblank
 
-# Start Chromium or Google Chrome in kiosk mode
 chromium-browser \
   --kiosk \
+  --incognito \
   --noerrdialogs \
   --disable-infobars \
   --no-first-run \
-  --fast \
-  --fast-start \
-  --disable-suggestions-ui \
   --disable-translate \
   --disable-save-password-bubble \
   --disable-session-crashed-bubble \
-  --incognito \
-  --check-for-update-interval=31536000 \
-  "http://127.0.0.1:8000/queue"
+  "https://evaluatech.aaaaa13.edu/login"
 ```
 
-Make executable:
-```bash
-chmod +x /usr/local/bin/evaluatech-kiosk.sh
-```
-
-#### Step 2: Auto-login Kiosk Configuration
-In `/etc/lightdm/lightdm.conf.d/99-evaluatech-kiosk.conf`:
+Configure `/etc/lightdm/lightdm.conf.d/99-evaluatech-kiosk.conf`:
 ```ini
 [Seat:*]
-autologin-user=plpstudent
+autologin-user=aaaaa13kiosk
 autologin-session=evaluatech-kiosk
 ```
 
 ---
 
-## 3. Administrator & Proctor Recovery Procedures
+## 3. Proctor Recovery & Window Lifecycle Procedures
 
-In the event of a student station malfunction, network disconnection, or physical lab evacuation:
-
-### Procedure 1: Emergency Proctor Exit (Windows Kiosk)
-1. Press `Ctrl + Alt + Delete`.
-2. Select **Sign Out** or **Switch User**.
-3. Log in with the Laboratory Administrator credential (`School AAAAA13-LabAdmin`).
-4. Launch Task Manager or command prompt to inspect network logs.
-
-### Procedure 2: Interrupted Evaluation Recovery
-1. EvaluaTech continuously autosaves student rating and qualitative drafts in local session storage (`sessionStorage`) without transmitting unsubmitted drafts over the wire.
-2. If a workstation is accidentally rebooted:
-   - The student logs back in with their student institutional credentials (`2024-XXXXX`).
-   - The application checks the evaluation queue.
-   - The student clicks `Start Evaluation` on their in-progress subject; their saved draft ratings and written feedback are automatically restored.
-3. No clearance is issued and no vault submission occurs until the student clicks `Submit Evaluation` on Step 2.
-
-### Procedure 3: Institutional Evaluation Window Closure
-- If the university evaluation window reaches `ends_at` (or an administrator triggers `SUSPEND` or `CLOSE` from the Registrar console):
-  - In-flight requests are evaluated by the backend server clock (`DecoupledEvaluationService`).
-  - Workstations receive an institutional notification banner: `"Evaluations are currently closed for this semester."`
-  - Unsubmitted drafts remain preserved on client storage but cannot be posted into the vault after the deadline has expired.
+1. **Interrupted Workstation Recovery**: Draft Likert selections and written responses stay in local `sessionStorage` until submission. If a terminal reboots before Step 2 submission, no `evaluation_clearances` or `evaluation_vault` rows were committed, so the student simply signs back in at `/login` and completes the pending subject on `/queue`.
+2. **Idempotent Network Retries (`FT-02`)**: If campus Wi-Fi or a lab switch drops a response packet after the student clicks **Submit Evaluation**, retrying with the same `submission_key` returns the original completion status without inserting duplicate vault records.
+3. **Evaluation Window Closure**: When `ends_at` (`Asia/Manila`) passes or the Registrar closes the window in `/admin`, `evaluatech-server` rejects late writes cleanly while preserving all previously committed anonymous vault records.
 
 ---
 
-## 4. Hardware and Network Architecture
+## 4. Network & Service Topology
 
-```
-+---------------------------------------------------------------------------------+
-|                       School AAAAA13 Campus Core Network (VLAN 40)                         |
-+---------------------------------------------------------------------------------+
-                                      |
-         +----------------------------+----------------------------+
-         |                                                         |
-+----------------------------------+             +----------------------------------+
-| CCS Laboratory 1 (45 Terminals)  |             | CCS Laboratory 2 (45 Terminals)  |
-| Windows 11 Enterprise Kiosk      |             | Ubuntu 24.04 LTS Kiosk           |
-| Assigned Access (Edge Fullscreen)|             | LightDM Dedicated Chromium Session|
-+----------------------------------+             +----------------------------------+
-         |                                                         |
-         +----------------------------+----------------------------+
-                                      |
-                     +----------------------------------+
-                     | Institutional Gateway / Firewall |
-                     | Port 8000 (HTTP) / 443 (HTTPS)   |
-                     | Loopback 127.0.0.1:5001 (NLP)    |
-                     +----------------------------------+
-                                      |
-                     +----------------------------------+
-                     | EvaluaTech Application Cluster   |
-                     | - Laravel 12 HTTP API            |
-                     | - Decoupled Cryptographic Vault  |
-                     | - calamanCy + VADER NLP Engine   |
-                     +----------------------------------+
+```mermaid
+flowchart TD
+    LabA["CCS Lab 1 (Windows 11 Assigned Access)"] --> Proxy["Campus HTTPS Reverse Proxy (Port 443)"]
+    LabB["CCS Lab 2 (Ubuntu 24.04 LightDM Kiosk)"] --> Proxy
+    Personal["Student Personal Mobile / Laptop"] --> Proxy
+    Proxy --> RustSrv["evaluatech-server (Safe Rust Axum, 127.0.0.1:8080)"]
+    RustSrv --> SQLite["SQLite WAL (Decoupled Clearances + Anonymous Vault)"]
+    RustSrv --> PyWorker["Warm Python Worker (calamanCy + VADER + scikit-learn)"]
 ```
 
 ---
 
-## 5. Summary of Compliance
+## 5. Compliance Summary
 
-* **Data Privacy Act (RA 10173):** Physical laboratory workstations clear session storage, cookies, and cache upon user sign-out or session reset.
-* **Accessibility (WCAG 2.2 AA):** High-contrast mode, standard font sizing (`16px` body), and keyboard navigation (`Tab`, `Space`, `Enter`, Arrow keys) function identically in kiosk mode as in desktop browsers.
-* **Academic Integrity:** Prevents casual desktop multitasking in proctored laboratories while maintaining respectful student ergonomics on personal mobile and home devices.
+- **RA 10173 (Data Privacy Act of 2012)**: Ephemeral `sessionStorage` tokens + `--incognito`/`InPrivate` kiosk resets prevent credential or draft carryover across consecutive lab users.
+- **WCAG 2.2 AAA Accessibility**: `>= 7.0:1` contrast, `A+ Large Text` & `Dark View` in the Settings gear menu, `>= 44×44px` tap targets, and keyboard `1`–`5` rating shortcuts operate identically in laboratory kiosk sessions and personal browsers.

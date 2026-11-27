@@ -1,76 +1,54 @@
 # EvaluaTech Sentiment Annotation and Taxonomy Guidelines
 
-**Document Version:** 1.0
-**Date:** November 10, 2026
-**Audience:** Academic Affairs, QA Reality Checkers, NLP Engineers
+**Document Version:** 2.0  
+**Date:** November 27, 2026  
+**Audience:** Academic Affairs, QA Reality Checkers, Python NLP & ML Engineers  
 **Dataset Scope:** Student Evaluation of Teachers (SET) — Multilingual Corpus (English, Tagalog, Taglish)
 
 ---
 
-## 1. Principles of Student Evaluation Annotation
+## 1. Linguistic Principles of Philippine Collegiate SET Feedback
 
-Student sentiment feedback in Philippine Higher Education Institutions (HEIs) presents unique linguistic and cultural nuances:
-1. **Multilingual Taglish Code-Switching:** Students mix English pedagogical terminology (*"quizzes"*, *"syllabus"*, *"rubrics"*, *"consultation"*, *"pacing"*) with Tagalog verbs, particles, and affective markers (*"hindi"*, *"sobrang"*, *"nakakainip"*, *"matino"*, *"sulit"*, *"terror"*).
-2. **Pedagogical Valence Independence:** Sentiment polarity reflects student perception of instructional delivery, assessment, conduct, and support—not the difficulty of the course itself. A rigorous course delivered fairly and clearly is **Positive**, while an easy course with absentee instruction or uncommunicated grades is **Negative**.
-3. **Contrastive Shift Principle:** In compound sentences connected by contrastive conjunctions (*"pero"*, *"kaso"*, *"ngunit"*, *"subalit"*, *"however"*, *"but"*), the clause following the conjunction reflects the final evaluative judgment and carries higher cognitive weight.
+Student feedback in Philippine Higher Education Institutions (HEIs) exhibits distinct morphosyntactic and pragmatic patterns modeled directly by `nlp-python/`:
 
----
-
-## 2. Valence Classification Scheme
-
-Every evaluation narrative is classified into one of three primary valence categories:
-
-### 2.1 Positive (`Positive`)
-- **Definition:** Expresses satisfaction, appreciation, clarity, fairness, effective delivery, student support, or constructive encouragement.
-- **Linguistic Indicators:**
-  - *English:* "clear", "helpful", "organized", "approachable", "dedicated", "great explanations", "fair grading".
-  - *Tagalog/Taglish:* "malinaw", "mahusay", "mabait", "magaling", "matino", "makatarungan", "madaling lapitan", "sulit ang klase".
-- **Polarity Range:** $P \ge +0.05$
-
-### 2.2 Neutral (`Neutral`)
-- **Definition:** Factual observations without strong affective sentiment, average/standard performance (*"sakto lang"*, *"okay naman"*, *"average"*), balanced feedback where positive and negative elements cancel out evenly without strong contrast, or descriptive administrative remarks.
-- **Linguistic Indicators:**
-  - *English:* "standard pacing", "follows the syllabus", "average lectures", "as expected".
-  - *Tagalog/Taglish:* "sakto lang", "okay naman ang takbo", "katamtaman", "karaniwan", "sapat naman".
-- **Polarity Range:** $-0.05 < P < +0.05$
-
-### 2.3 Negative (`Negative`)
-- **Definition:** Expresses dissatisfaction, unfairness, excessive delay in grading, poor communication, disrespect, disorganization, absenteeism, or instructional neglect.
-- **Linguistic Indicators:**
-  - *English:* "confusing", "disorganized", "unfair", "unapproachable", "late consistently", "no feedback", "harsh".
-  - *Tagalog/Taglish:* "magulo", "hindi nagtuturo", "walang kwenta", "walang rubrics", "masungit", "terror", "nakaka-anxious", "paboritismo", "bagsak agad".
-- **Polarity Range:** $P \le -0.05$
-
-### 2.4 Handling Mixed Sentiment
-- When a comment contains both positive and negative clauses:
-  1. If linked with a contrastive conjunction (*"pero"*, *"kaso"*, *"however"*), the trailing clause dictates the dominant sentiment:
-     - *"Mabait si ma'am pero hindi talaga maintindihan magturo."* $\rightarrow$ **Negative** (Final evaluation focuses on teaching incomprehensibility).
-     - *"Medyo mabilis magturo ngunit napakalinaw ng mga slides at madaling lapitan."* $\rightarrow$ **Positive** (Final evaluation affirms clarity and support).
-  2. If balanced without contrastive shift (*"Minsan mabilis, minsan malinaw"*), classify as **Neutral**.
+1. **Taglish Code-Switching & Tagalog Affixation**: Students combine English academic terms (*"syllabus"*, *"rubrics"*, *"table of specifications"*, *"proctoring"*, *"live coding"*) with Tagalog verbal/adjectival morphology (*"napakalinaw"*, *"nagpa-mock defense"*, *"nakakabawas"*, *"sirang-sira"*, *"nambabara"*), parsed via `calamanCy` (`tl_calamancy_md-0.2.0`).
+2. **Remedial vs. Deficient Polarity Distinction**: Mentions of *"mistakes"*, *"errors"*, *"exam stress"*, or *"difficult topics"* are **Positive** when describing supportive instructor remediation (*"walks through common mistakes"*, *"open to disputing grading errors"*, *"reduces exam stress"*, *"without requiring obscure memorization"*).
+3. **Comparative Negation**: Constructions using *"rather than"*, *"instead of"*, *"imbes na"*, or *"kesa sa"* (*"tests rote memorization rather than analytical understanding"*) negate the idealized quality after the comparative marker and express **Negative** evaluative sentiment.
+4. **Contrastive Shift vs. Hedged Balance**:
+   - **Strong Contrastive Shift**: Unhedged contrast where the second clause delivers a decisive verdict (*"Mabait naman sana kaso walang natututunan ang klase"*) takes the trailing clause's valence (**Negative**).
+   - **Hedged Contrastive Tradeoff**: Softened observations balanced by *"naman"*, *"pa rin"*, *"though"*, or *"although"* (*"Medyo fast-paced mag-discuss pero approachable naman"*, *"Medyo luma ang lab PCs pero nagagamit pa naman"*) represent balanced **Neutral** assessments.
 
 ---
 
-## 3. Pedagogical Domain Taxonomy & Aspect Boundaries
+## 2. Three-Class Sentiment Valence Scheme
 
-Comments are mapped to the 5 institutional Likert clusters when addressing faculty performance, or marked as **Unclassified / Needs Review** when non-pedagogical:
-
-| Cluster | Institutional Domain | Focus Scope | Key Indicators |
-|---|---|---|---|
-| **1** | **Pedagogical Delivery** | Teaching clarity, mastery, examples, pacing, slide structure | *nagpapaliwanag, malinaw, turo, lecture, slides, examples, coding, pacing* |
-| **2** | **Assessment & Grading** | Exam fairness, rubric transparency, score turnaround, quizzes | *pagsusulit, grado, marka, exam, quiz, rubric, deduction, score, feedback* |
-| **3** | **Classroom Management** | Punctuality, attendance, syllabus adherence, discipline | *late, oras, attendance, schedule, pumasok, syllabus, time management* |
-| **4** | **Professional Conduct** | Respect, impartiality, decorum, temperament, ethics | *masungit, galit, bastos, respectful, professional, bias, paboritismo, sigaw* |
-| **5** | **Student Support & Mentorship** | Consultations, responsiveness, patience, academic guidance | *consultation, lapitan, responsive, email, chat, gabay, tulong, support* |
-| **N/A** | **Unclassified / Needs Review** | Facilities (library, lab hardware, Wi-Fi, AC), Extracurriculars, or Insufficient Evidence | *library, silid-aklatan, aircon, wifi, projector, club, varsity, campus, org* |
-
-> **Institutional Rule:** Administrative participation reports and teacher dossier analytics must NEVER silently force facility or extracurricular complaints into teacher pedagogical scores. Such feedback is flagged as `Unclassified / Needs Review` for routing to Campus Facilities or Student Affairs.
+| Valence | Polarity Band | Linguistic & Evaluative Definition | Representative Cues |
+| :--- | :---: | :--- | :--- |
+| **`Positive`** | $P \ge +0.05$ | Clear instruction, fair/transparent rubrics, constructive error review, punctuality, respect, or responsive mentorship. | *malinaw, mahusay, makatwiran, napapanahon, walks through common mistakes, fair grading, approachable* |
+| **`Neutral`** | $-0.05 < P < +0.05$ | Normative syllabus/TOS alignment, typical difficulty or workload, or hedged two-sided tradeoffs with no extreme defect. | *karaniwan lamang, tama lang, naaayon sa silabus, sumusunod naman, typical difficulty, medyo ... pero ... naman* |
+| **`Negative`** | $P \le -0.05$ | Rote/trick exams (`rather than`), unreturned grades, unannounced absences, schedule conflicts, disrespect, or broken facilities. | *magulo, walang rubrics, sirang-sira, nambabara, rather than, imbes na, conflict, two months late* |
 
 ---
 
-## 4. Dataset Partitions and Integrity Safeguards
+## 3. Pedagogical Cluster Taxonomy & Non-Teaching Isolation
 
-- **Total Corpus:** 800 labeled multilingual student evaluation comments.
-- **Stratification:** Stratified across 9 strata ($3\text{ Languages} \times 3\text{ Sentiments}$).
-- **Split Proportions:** 70% Development Partition (560 rows) / 30% Untouched Held-Out Test Partition (240 rows).
-- **Duplicate Handling:** Exact duplicate rows (ID 202 and ID 636: *"Makatarungan ang ibinigay na marka batay sa ipinakitang husay sa pag-uulat at pagsusulit."*) are strictly bound to the Development partition to prevent test set data leakage.
-- **Reference Independence:** Reference ratings and human sentiment labels are strictly withheld from prediction model inputs during inference and testing.
+| Cluster | Institutional Domain | Scope | Representative Indicators |
+| :---: | :--- | :--- | :--- |
+| **1** | **Pedagogical Delivery** | Clarity, subject mastery, pacing, examples, live demonstrations | *explain, paliwanag, malinaw, talakayan, slides, examples, kurikulum* |
+| **2** | **Assessment & Grading** | Exam alignment, rubrics, grading turnaround, proctoring, feedback | *exam, pagsusulit, rubric, grado, pagmamarka, proctoring, table of specifications* |
+| **3** | **Classroom Management** | Punctuality, schedule coordination, attendance, workload pacing | *on time, maagap, late, nahuhuli, syllabus, schedule, workload, free cut* |
+| **4** | **Professional Conduct** | Respect, impartiality, patience, classroom decorum, temperament | *respectful, magalang, impartial, walang kinikilingan, masungit, namamahiya* |
+| **5** | **Student Support & Mentorship** | Consultation availability, thesis/capstone coaching, responsiveness | *consultation, konsultasyon, thesis, capstone, mock defense, gabay, palugit* |
+| **N/A** | **Unclassified / Needs Review** | Campus facilities (Wi-Fi, AC, lab hardware, library) & student org funding | *library, silid-aklatan, wifi, aircon, laboratory PCs, student orgs, facilities* |
+
+> **Governance Rule**: Facility and extracurricular complaints (`Unclassified / Needs Review`) are never folded into an instructor's personal Likert or sentiment standing; they are routed separately to Campus Physical Plant or Student Affairs.
+
+---
+
+## 4. Partition Architecture & Zero-Leakage Protocol
+
+1. **Benchmark Partitions (`10,000` rows, `seed = 42`)**:
+   - `docs/analysis/dev_partition.csv` (`7,000` rows, including `572` authentic student comments `ID <= 800`): Used for 5-Fold Stratified Cross-Validation, feature engineering, and hyperparameter selection.
+   - `docs/analysis/test_partition.csv` (`3,000` rows, including `228` authentic student comments `ID <= 800`): **Strictly frozen blind holdout**. Never used for training, vocabulary discovery, threshold tuning, or corpus generation.
+2. **Expanded Naturalistic Training Corpus (`nlp-python/data/expanded_training_corpus.csv`)**:
+   - Balanced across all 9 `(Language × Sentiment)` strata (`ID >= 20001`) and programmatically verified via normalized alphanumeric SHA-256 fingerprinting to have **zero** text overlap (`overlap == 0`) with `test_partition.csv` and `dev_partition.csv`.

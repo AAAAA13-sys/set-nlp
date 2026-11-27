@@ -51,28 +51,36 @@
 
 ---
 
-## 4. Multilingual Machine Learning Benchmarks (`evaluatech-nlp`)
+## 4. Multilingual Machine Learning Benchmarks (`nlp-python/`)
 
-Trained on 10,000 collegiate statements across English, Tagalog, and Taglish (`800` authentic student comments + `9,200` synthetic statements, split 70/30 into [`dev_partition.csv`](docs/analysis/dev_partition.csv) and [`test_partition.csv`](docs/analysis/test_partition.csv)). Headline performance is reported **strictly on the 227 blind real held-out student comments** ([`MODEL_COMPARISON_REPORT.md`](docs/analysis/MODEL_COMPARISON_REPORT.md)):
+Trained and validated in **Python 3.12** using pretrained **`calamanCy` (`tl_calamancy_md-0.2.0`, `200d` TLUnified vectors)**, **`spaCy` (`en_core_web_md`, `300d` English vectors)**, **`vaderSentiment`**, and a **Calibrated 4-Head `scikit-learn` Ensemble** (`LogisticRegression` + Platt-calibrated `LinearSVC` + `524d` `RBF-SVC` + Full-Regime `LogisticRegression`) over [`dev_partition.csv`](docs/analysis/dev_partition.csv) plus `1,185` language-stratified zero-leakage statements (`nlp-python/data/expanded_training_corpus.csv`, `0` hash collisions with test). Unaltered blind holdout performance on [`test_partition.csv`](docs/analysis/test_partition.csv) ([`MODEL_COMPARISON_REPORT.md`](docs/analysis/MODEL_COMPARISON_REPORT.md)):
 
-| Metric (`n = 227` Blind Real Student Comments) | Score |
+| Metric (`n = 228` Untouched Blind Authentic Student Comments) | Score |
 | :--- | :---: |
-| **Real-Comment 5-Fold CV Accuracy (`n = 572`)** | **92.66%** (`0.9193` Macro F1) |
-| **Blind Held-Out Sentiment Accuracy (`n = 227`)** | **92.51%** (`210 / 227`, `0.9019` Macro F1) |
-| **Negative Sentiment Recall (`n = 89` neg)** | **94.38%** (`84 / 89`) |
-| **Taglish / Tagalog / English Accuracy** | **95.00%** / **94.44%** / **89.25%** |
-| **Pedagogical Cluster Accuracy (5 Clusters + Unclassified)** | **88.55%** (`0.7340` CV Macro F1) |
-| **Pure-Rust Inference Latency** | **~15 µs / comment** |
+| **Authentic-Comment 5-Fold Out-of-Fold CV (`n = 572` Dev)** | **96.33%** (`0.9495` Macro F1, `99.10%` Neg Recall) |
+| **Blind Held-Out Sentiment Accuracy (`n = 228` Test)** | **92.54%** (`211 / 228`, `0.9126` Macro F1) |
+| **Negative Sentiment Recall (`n = 89` Neg)** | **93.26%** (`96.51%` Precision, `0.9486` Neg F1) |
+| **Tagalog / Taglish / English Blind Accuracy** | **94.44%** / **93.75%** / **90.43%** |
+| **Pedagogical Cluster Accuracy (`5` Clusters + `Unclassified`)** | **88.60%** Real (`0.7107` Macro F1) · **99.13%** Full `3,000` |
+| **Warm Python IPC Worker Inference** | Persistent UTF-8 JSON-RPC (`evaluatech-server/src/python_nlp.rs`) |
 
 ---
 
 ## 5. Quick Start & Verification
 
-### Run the Full-Stack Single-Binary Server (`http://127.0.0.1:8080`)
+### Train & Verify the Python `calamanCy` + `scikit-learn` ML Engine
+```powershell
+.\.venv\Scripts\python.exe nlp-python\build_expanded_corpus.py
+.\.venv\Scripts\python.exe -u nlp-python\train_model.py
+$env:PYTHONPATH = "$PWD\nlp-python"
+.\.venv\Scripts\python.exe -m pytest nlp-python\tests -v
+```
+
+### Run the Full-Stack Server (`http://127.0.0.1:8080`)
 ```powershell
 cargo run -p evaluatech-server --release
 ```
-*(Or double-click `START-EVALUATECH.bat` on Windows. When `APP_ENV=local` and the SQLite database is empty, demo accounts for `student`, `faculty`, `chair`, `dean`, and `admin` are seeded automatically.)*
+*(Or double-click `START-EVALUATECH.bat` on Windows. `evaluatech-server` automatically spawns the warm `.venv` Python `calamanCy` worker.)*
 
 ### Rebuild the WebAssembly Frontend Bundle
 ```powershell

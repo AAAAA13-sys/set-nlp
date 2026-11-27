@@ -1,128 +1,86 @@
-# EvaluaTech production deployment
+# EvaluaTech Production Deployment Guide
 
-How to bring up EvaluaTech for a real evaluation cycle. Every step here was exercised in the
-testing phase recorded in [`testing/TESTING_PHASE_REPORT.md`](testing/TESTING_PHASE_REPORT.md).
+How to deploy **School AAAAA13 EvaluaTech** (`evaluatech-server` + `evaluatech-web` WASM + `nlp-python` ML engine) for a live institutional evaluation cycle.
 
-## What runs in production
+## 1. Runtime Architecture in Production
 
-| Part | What it is | Notes |
+| Component | Artifact / Path | Responsibility |
 | :--- | :--- | :--- |
-| Web runtime | `public/index.php` (standalone PHP dispatcher) | Serves the JSON API and the built SPA. |
-| Database | SQLite file at `storage/framework/evaluatech_aaaaa13.sqlite` | Created by the initializer. Back it up like any other institutional record. |
-| Frontend | Prebuilt assets in `public/build/` | Rebuild with `npm run build` after any UI change. No source maps are emitted. |
-| NLP service | `analytics/` Flask service on `127.0.0.1:5001` | Optional at runtime: submissions never block on it; the backend falls back to the local classifier. |
+| **HTTP & Vault Server** | `target/release/evaluatech-server` (`.exe` on Windows) | Memory-safe Axum HTTP server, SQLite WAL persistence, `EVT.*` auth, 63 OWASP security controls, and embedded static asset serving. |
+| **WebAssembly UI** | `web-dist/` (`pkg/evaluatech_web_bg.wasm` + `styles.css`) | Prebuilt TOPCIT-styled SPA: plain single-column flow for Students, Institutional Left Sidebar for Faculty, Chairs, Deans, and Registrar. |
+| **Database** | `DATABASE_URL` (e.g. `/var/lib/evaluatech/evaluatech_aaaaa13.sqlite`) | Bundled SQLite 3 in WAL mode (`evaluation_clearances` physically decoupled from `evaluation_vault`). Include in encrypted daily backups. |
+| **Python NLP & ML Worker** | `.venv/` + `nlp-python/` (`models/*.joblib`) | Spawned automatically as a warm UTF-8 JSON-RPC worker by `evaluatech-server` (`PYTHON_BIN`), running `tl_calamancy_md-0.2.0`, `en_core_web_md`, `vaderSentiment`, and calibrated `scikit-learn` models. |
 
-## 1. Configure the environment
+---
 
-Copy `.env.example` to `.env` and set at least:
+## 2. Provision Python ML Environment & Build Release Binaries
+
+```powershell
+# 1. Create Python 3.12 virtual environment and install NLP/ML dependencies
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r nlp-python\requirements.txt
+
+# 2. Pre-cache Tagalog calamanCy (tl_calamancy_md-0.2.0) & English spaCy (en_core_web_md) models
+.\.venv\Scripts\python.exe -m spacy download en_core_web_md
+.\.venv\Scripts\python.exe -c "import calamancy; calamancy.load('tl_calamancy_md-0.2.0')"
+
+# 3. Verify trained scikit-learn artifacts & Python NLP suite
+$env:PYTHONPATH = "$PWD\nlp-python"
+.\.venv\Scripts\python.exe -m pytest nlp-python\tests -v
+
+# 4. Build WebAssembly UI & release Rust server binary
+cargo build -p evaluatech-web --target wasm32-unknown-unknown --release
+wasm-bindgen "target/wasm32-unknown-unknown/release/evaluatech_web.wasm" --out-dir "web-dist/pkg" --target web --no-typescript
+cargo build -p evaluatech-server --release
+```
+
+---
+
+## 3. Configure Production Environment Variables
+
+Never run a live cycle with `APP_ENV=local` (which seeds sample accounts on an empty database). Configure the following environment variables in your service manager (`systemd` or Windows Service):
 
 | Variable | Required | Purpose |
 | :--- | :---: | :--- |
-| `APP_ENV=production` | yes | Disables demo seeding and development fallbacks. |
-| `APP_DEBUG=false` | yes | No stack traces in responses. |
-| `EVALUATECH_SIGNING_SECRET` | yes | Signs session tokens and clearance receipts. Use a long random value. The application refuses to start in production without it (or `APP_KEY`). |
-| `EVALUATECH_WEBHOOK_SECRET` | if webhooks are used | Verifies signed Registrar webhooks. |
-| `EVALUATECH_ADMIN_PASSWORD` | only for step 2 | First administrator password. At least 10 characters with letters and numbers. |
+| `APP_ENV=production` | **Yes** | Disables development demo seeding and enforces strict secret checks. |
+| `HOST=127.0.0.1` | **Yes** | Bind behind a TLS-terminating reverse proxy (Nginx / Caddy / IIS HTTPS `443`). |
+| `PORT=8080` | **Yes** | Internal loopback listener port forwarded by the HTTPS reverse proxy. |
+| `DATABASE_URL` | **Yes** | Path to persistent SQLite database file on encrypted storage. |
+| `EVALUATECH_SIGNING_SECRET` | **Yes** | Minimum 32-byte CSPRNG hex secret signing `EVT.*` Bearer tokens and dossier seals. |
+| `EVALUATECH_ADMIN_PASSWORD` | First boot only | Strong initial password (`>= 10` chars, letters + digits) to bootstrap `ADM-00001` on an empty database; remove immediately after first start. |
+| `PYTHON_BIN` | Recommended | Absolute path to `.venv/bin/python` (Linux) or `.venv\Scripts\python.exe` (Windows). |
 
-Generate a secret with, for example, `php -r "echo bin2hex(random_bytes(32));"`.
-
-Changing `EVALUATECH_SIGNING_SECRET` later signs everyone out and invalidates previously issued
-receipts, so set it once and keep it in your secret store.
-
-## 2. Provision the database (once)
-
+Generate a signing secret securely:
 ```powershell
-$env:APP_ENV = "production"
-$env:EVALUATECH_ADMIN_PASSWORD = "<your strong password>"
-php scripts/production-init.php
-Remove-Item Env:EVALUATECH_ADMIN_PASSWORD
+.\.venv\Scripts\python.exe -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-The initializer creates the schema, the seven colleges and departments, the active term and its
-evaluation window, and one administrator (`admin@aaaaa13.edu`, ID `ADM-00001`). It creates no students,
-no evaluations and no demo accounts.
+---
 
-It deliberately refuses to run when:
+## 4. Load Rosters & Distribute One-Time Passwords
 
-- `EVALUATECH_ADMIN_PASSWORD` is missing or weak. Nothing is written in that case.
-- the database already contains user accounts. It only initialises an empty database, so it can
-  never reset a live administrator or re-key departments that existing records point to.
+1. Sign in as the bootstrapped Registrar Administrator (`admin@aaaaa13.edu` / `ADM-00001`) at `/login`.
+2. In the **Registrar Console (`/admin`)**, review the active **Academic Term** and **Evaluation Window** (`starts_at`, `ends_at`, `Asia/Manila`).
+3. Import the semester class roster via **Class Roster Import** (CSV or JSON with `student_id`, `course_code`, `instructor_name`, and optional `section_code`, `department_code`, `faculty_email`). Imports are atomic: any malformed row rolls back the entire batch with a clear row-level error.
+4. Provision **Department Chairs** and **College Deans** under **Academic Setup -> Users**, assigning each to their respective `department_id` / college scope.
+5. Every newly created user receives a CSPRNG one-time password (`TMP-*`) stored strictly as a `bcrypt` hash with `must_change_password = 1`. Export the one-time password slip once, distribute securely, and delete the exported CSV afterward. On first sign-in, users are pinned to `/account/password` until they set a personal password.
 
-Remove `EVALUATECH_ADMIN_PASSWORD` from the environment and from `.env` afterwards.
+---
 
-Review the term dates and evaluation window (`starts_at`, `ends_at`, Asia/Manila) in the admin console
-under **Academic setup** before opening the cycle.
+## 5. Double-Blind Grade Release Lifecycle
 
-## 3. Start the services
+Faculty members receive `HTTP 403 DOUBLE_BLIND_LOCKED` (rendered as the step-by-step **Pending Grade Release** screen on `/faculty`) until both conditions hold for a course section:
+1. The instructor confirms final grade submission (`term_grades_submitted = 1`).
+2. The University Registrar seals the section grade roster (`registrar_lock = 1`) in `/admin`.
 
-Serve `public/` through your web server with all requests routed to `public/index.php`. For a
-single-machine pilot the built-in server is enough:
+Once unlocked, faculty reports expose aggregate Likert means, score histograms, Python `calamanCy` + `scikit-learn` sentiment summaries, and PII-scrubbed anonymous comments only.
 
-```powershell
-$env:APP_ENV = "production"
-php -S 127.0.0.1:8000 -t public public/index.php
-```
+---
 
-Put it behind HTTPS (reverse proxy or web server) before real users sign in; passwords and bearer
-tokens must never travel over plain HTTP.
+## 6. Pre-Launch Verification Checklist
 
-Start the NLP service if you want model-based sentiment rather than the fallback classifier:
-
-```powershell
-python -m analytics.app
-```
-
-## 4. Load people and classes
-
-Sign in as the administrator and use **Registrar console → Class Roster Import** (JSON or CSV).
-Required per row: `student_id`, `course_code` (for example `CS-201`), `instructor_name`. Optional:
-`student_name`, `course_title`, `section_code`, `faculty_email`, `department_code`, `department_name`.
-The import is atomic: one bad row rejects the whole file and the screen shows which row and why.
-
-Deans and chairs are created under **Academic setup → Users**. Assign each dean and chair to a
-department: a chair sees that department, a dean sees every department in that department's college.
-A dean with no department has no scope and is refused.
-
-## 5. Hand out one-time passwords
-
-Every account created by import or by the admin console gets its own random one-time password.
-
-- The passwords are shown **once**, right after the import or creation, with a **Download as CSV**
-  button. The server stores only bcrypt hashes, so they cannot be shown again.
-- Distribute each password to its owner through your usual channel (printed slips, class adviser).
-- At first sign-in the person must set their own password (at least 10 characters, letters and
-  numbers, not containing their ID or email name). Until they do, the system lets them do nothing else.
-- If someone loses their one-time password, edit the user under **Academic setup → Users** and set a
-  new password; they will again be asked to replace it at next sign-in.
-- Re-importing a roster never changes the password of an account that already exists.
-
-Treat the downloaded CSV as confidential and delete it once the passwords are distributed.
-
-## 6. Release results
-
-Faculty see nothing for a section until both conditions hold: term grades are submitted and the
-Registrar has locked them (**Registrar console → Grades Submitted / Registrar Lock**). Reports contain
-aggregates and anonymous comments only.
-
-## Pre-launch checklist
-
-- [ ] `APP_ENV=production`, `APP_DEBUG=false`, signing secret set and stored safely.
-- [ ] `php scripts/production-init.php` succeeded and reported zero evaluations, clearances and enrollments.
-- [ ] `EVALUATECH_ADMIN_PASSWORD` removed from environment and `.env`.
-- [ ] Site reachable over HTTPS only.
-- [ ] `powershell -ExecutionPolicy Bypass -File scripts/verify-all.ps1` passes on the release commit.
-- [ ] Signing in with `evaluatech123` fails for every account.
-- [ ] Term dates and evaluation window reviewed.
-- [ ] Roster imported; one-time passwords downloaded and distributed; CSV deleted afterwards.
-- [ ] Each dean and chair assigned to the correct department.
-- [ ] Database file included in backups.
-
-## Upgrading an existing installation
-
-- The `users.must_change_password` column is added automatically on first start (and by migration
-  `2026_11_12_000001`). Existing accounts keep their passwords and are not forced to change them.
-- Deans must now be assigned to a department. Earlier builds gave the dean with user ID 2 the College
-  of Computer Studies automatically; that shortcut is removed. Assign the department under
-  **Academic setup → Users**, otherwise the dean receives `UNASSIGNED_COLLEGE_SCOPE`.
-- Accounts created by older builds may still hold the former shared default password. Reset those
-  passwords (which forces a change at next sign-in) before opening a cycle.
+- [ ] `APP_ENV=production` and `EVALUATECH_SIGNING_SECRET` configured in secret store; `EVALUATECH_ADMIN_PASSWORD` removed after initial bootstrap.
+- [ ] HTTPS (`TLS 1.2+`) enforced at the reverse proxy; plain HTTP redirected to HTTPS.
+- [ ] `pytest nlp-python/tests -v` and `cargo test --workspace --all-features` pass 100% on the release build.
+- [ ] `GET /api/nlp/provenance` reports `language_runtime: "Python"`, `calamancy_loaded: true`, and `ml_model_loaded: true`.
+- [ ] Term window (`Asia/Manila`), department scopes, and SQLite backup rotation verified.

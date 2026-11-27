@@ -64,7 +64,7 @@ def get_engine_provenance() -> dict[str, Any]:
 
     return {
         "nlp_engine": "Python calamanCy + VADER + scikit-learn",
-        "runtime_engine": "Python 3.12 (calamanCy + spaCy + vaderSentiment + scikit-learn Dual-Regime ML)",
+        "runtime_engine": "Python 3.12 (tl_calamancy_md-0.2.0 + en_core_web_md + vaderSentiment + scikit-learn Calibrated Ensemble)",
         "language_runtime": "Python",
         "calamancy_loaded": calamancy_ready,
         "vader_loaded": True,
@@ -72,7 +72,10 @@ def get_engine_provenance() -> dict[str, Any]:
         "calamancy_model": active_calamancy,
         "calamancy_repo": CALAMANCY_REPO_URL,
         "ml_model_loaded": ml_loaded,
-        "ml_engine": "Python scikit-learn Dual-Regime Ensemble (TF-IDF word 1-3 + char_wb 2-5 + VADER 13d Signals)",
+        "ml_engine": sent_meta.get(
+            "algorithm",
+            "Python scikit-learn Calibrated 4-Head Ensemble (tl_calamancy_md-0.2.0 200d + en_core_web_md 300d + TF-IDF + VADER 24d)",
+        ),
         "ml_real_comment_cv_accuracy": sent_meta.get("real_comment_cv_accuracy", 0.0),
         "ml_real_comment_sentiment_accuracy": real_test.get("accuracy", 0.0),
         "ml_real_comment_sentiment_macro_f1": real_test.get("macro_f1", 0.0),
