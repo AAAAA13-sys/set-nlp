@@ -1,10 +1,10 @@
-//! School AAAAA13 EvaluaTech — Single-Binary Pure-Rust Full-Stack Server (`evaluatech-server`).
+//! School AAAAA13 EvaluaTech — Rust Full-Stack Server + Python ML Bridge (`evaluatech-server`).
 //!
-//! Serves the embedded Coolors Periwinkle-Blue WebAssembly SPA (`evaluatech_web_bg.wasm`),
-//! SQLite relational catalog + zero-PII `evaluation_vault`, 63 OWASP Security Maxxxxxing controls,
-//! and native Rust 10,000-sample empirical multilingual sentiment & pedagogical analytics.
+//! Serves the embedded WebAssembly SPA (`evaluatech_web_bg.wasm`), SQLite relational catalog +
+//! zero-PII `evaluation_vault`, 63 OWASP security controls, and bridges comment analysis to the
+//! Python `calamanCy` + `vaderSentiment` + `scikit-learn` NLP engine (`nlp-python/`).
 
-use evaluatech_server::{AppState, build_router};
+use evaluatech_server::{AppState, build_router, python_nlp};
 
 #[tokio::main]
 async fn main() {
@@ -35,6 +35,12 @@ async fn main() {
         }
     };
 
+    let prov = python_nlp::get_engine_provenance();
+    let nlp_lbl = prov
+        .get("nlp_engine")
+        .and_then(|v| v.as_str())
+        .unwrap_or("Python calamanCy + VADER + scikit-learn");
+
     let addr = format!("{host}:{port}");
     let app = build_router(state);
     let listener = tokio::net::TcpListener::bind(&addr)
@@ -42,9 +48,10 @@ async fn main() {
         .unwrap_or_else(|e| panic!("failed to bind {addr}: {e}"));
 
     println!("======================================================================");
-    println!(" School AAAAA13 EvaluaTech — 100% Pure-Rust + WebAssembly Stack");
+    println!(" School AAAAA13 EvaluaTech — Rust Systems + Python ML Stack");
     println!(" Listening on:  http://{addr}");
     println!(" SQLite Store:  {db_path}");
+    println!(" NLP & ML:      {nlp_lbl}");
     println!(" Security Gate: 63 / 63 OWASP Controls Enforced (#![forbid(unsafe_code)])");
     println!("======================================================================");
 

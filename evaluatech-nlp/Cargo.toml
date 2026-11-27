@@ -4,26 +4,14 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
-description = "Pure-Rust calamanCy + VADER sentiment polarity, 5-cluster pedagogical classification, PII scrubbing, and 10,000-sample empirical ML inference engine (native + WASM)"
+description = "Shared non-ML Likert statistics, CSV formula sanitization, and PII scrubbing primitives for School AAAAA13 EvaluaTech (ML & calamanCy live in nlp-python/)"
 
 [lib]
 name = "evaluatech_nlp"
 path = "src/lib.rs"
 
-[[bin]]
-name = "evaluatech-nlp-server"
-path = "src/bin/nlp_server.rs"
-required-features = ["server"]
-
-[features]
-default = []
-server = ["dep:axum", "dep:tokio"]
-
 [dependencies]
 serde = { version = "1", features = ["derive"] }
-serde_json = { version = "1", features = ["preserve_order"] }
-axum = { version = "0.8", optional = true }
-tokio = { version = "1", features = ["rt-multi-thread", "macros", "net"], optional = true }
 
 [lints]
 workspace = true

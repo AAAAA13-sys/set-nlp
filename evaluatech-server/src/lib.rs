@@ -1,10 +1,12 @@
-//! School AAAAA13 EvaluaTech — Pure-Rust Full-Stack Server Library (`evaluatech-server`).
+//! School AAAAA13 EvaluaTech — Hybrid Rust Systems + Python ML Server Library (`evaluatech-server`).
 //!
 //! Exports the SQLite schema & seeder (`db`), 63-control OWASP middleware (`security`),
-//! HMAC-SHA256 Bearer authentication & tenant guards (`auth`), and Axum router (`routes`).
+//! HMAC-SHA256 Bearer authentication & tenant guards (`auth`), warm Python `calamanCy` + VADER +
+//! `scikit-learn` NLP bridge (`python_nlp`), and Axum router (`routes`).
 
 pub mod auth;
 pub mod db;
+pub mod python_nlp;
 pub mod routes;
 pub mod security;
 
@@ -172,6 +174,14 @@ mod tests {
         assert!(!preview.contains("juan@aaaaa13.edu"));
         assert!(preview.contains("[REDACTED-ID]"));
         assert!(preview.contains("[REDACTED-EMAIL]"));
+        assert_eq!(
+            b_ok["sentiment"]["runtime_provenance"]["language_runtime"],
+            "Python"
+        );
+        assert_eq!(
+            b_ok["sentiment"]["runtime_provenance"]["calamancy_loaded"],
+            true
+        );
 
         // FT-02 Idempotent replay returns 200 with identical clearance_token
         let (st_rep, _, b_rep) = send_req(

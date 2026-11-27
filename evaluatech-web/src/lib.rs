@@ -109,7 +109,6 @@ struct AppState {
     user: Option<UserSession>,
     mobile_menu_open: bool,
     show_password: bool,
-    show_rubric_modal: bool,
     show_discard_modal: bool,
     show_release_all_modal: bool,
     banner_msg: Option<(String, bool)>,
@@ -127,6 +126,7 @@ struct AppState {
     show_straight_line_modal: bool,
     submitting: bool,
     // Faculty workspace
+    faculty_tab: String,
     faculty_sections: Option<Value>,
     selected_faculty_sec_id: i64,
     selected_faculty_report: Option<Value>,
@@ -160,7 +160,6 @@ impl AppState {
             user: None,
             mobile_menu_open: false,
             show_password: false,
-            show_rubric_modal: false,
             show_discard_modal: false,
             show_release_all_modal: false,
             banner_msg: None,
@@ -176,6 +175,7 @@ impl AppState {
             incomplete_indices: Vec::new(),
             show_straight_line_modal: false,
             submitting: false,
+            faculty_tab: "overview".to_string(),
             faculty_sections: None,
             selected_faculty_sec_id: 0,
             selected_faculty_report: None,
@@ -928,9 +928,6 @@ fn render_navbar(s: &AppState) -> String {
         "A+ Large Text"
     };
 
-    let ic_home = svg_nav_icon("home");
-    let ic_dash = svg_nav_icon("dashboard");
-    let ic_scale = svg_nav_icon("scale");
     let ic_text = svg_nav_icon("text");
     let ic_theme = svg_nav_icon("theme");
     let ic_out = svg_nav_icon("logout");
@@ -964,15 +961,9 @@ fn render_navbar(s: &AppState) -> String {
         ""
     };
 
-    let (brand_dest, center_links, right_controls) = if let Some(ref u) = s.user {
+    let (brand_dest, right_controls) = if let Some(ref u) = s.user {
         let dash_path = default_route_for_role(&u.role);
-        let on_dash = s.route.starts_with(dash_path) || s.route.starts_with("/evaluate");
-        let user_display = format!("{} · {}", esc(&u.name), role_display_title(&u.role));
-        let center = format!(
-            r#"<button type="button" class="nav-link-btn {act}" data-action="nav" data-path="{dash_path}">{ic_dash}Dashboard</button>
-               <button type="button" class="nav-link-btn" data-action="open-rubric">{ic_scale}Scale</button>"#,
-            act = if on_dash { "active" } else { "" },
-        );
+        let user_display = format!("{} \u{00B7} {}", esc(&u.name), role_display_title(&u.role));
         let right = format!(
             r#"{settings_gear_dropdown}
                <div class="nav-user-chip">
@@ -980,18 +971,13 @@ fn render_navbar(s: &AppState) -> String {
                    <button type="button" class="nav-signout-btn" data-action="logout">{ic_out}Sign Out</button>
                </div>"#
         );
-        (dash_path, center, right)
+        (dash_path, right)
     } else {
-        let center = format!(
-            r#"<button type="button" class="nav-link-btn {a_home}" data-action="nav" data-path="/">{ic_home}Home</button>
-               <button type="button" class="nav-link-btn" data-action="open-rubric">{ic_scale}Scale</button>"#,
-            a_home = if s.route == "/" { "active" } else { "" },
-        );
         let right = format!(
             r#"{settings_gear_dropdown}
                <button type="button" class="nav-signin-btn nav-signin-desktop-only" data-action="nav" data-path="/login">Sign In</button>"#
         );
-        ("/", center, right)
+        ("/", right)
     };
 
     format!(
@@ -1011,10 +997,9 @@ fn render_navbar(s: &AppState) -> String {
                 </a>
                 <div class="mobile-header-actions">
                     {mobile_signin_quick}
-                    <button type="button" class="mobile-menu-toggle" aria-expanded="{exp}" data-action="toggle-mobile-menu">{mobile_btn_label}</button>
+                    <button type="button" class="mobile-menu-toggle" style="min-height:44px;" aria-expanded="{exp}" data-action="toggle-mobile-menu">{mobile_btn_label}</button>
                 </div>
                 <div class="{collapse_cls}">
-                    <nav class="nav-center-links" aria-label="Portal Navigation">{center_links}</nav>
                     <div class="nav-right-controls">{right_controls}</div>
                 </div>
             </div>
@@ -1023,39 +1008,409 @@ fn render_navbar(s: &AppState) -> String {
     )
 }
 
+fn svg_sidebar_icon(kind: &str) -> &'static str {
+    match kind {
+        "overview" => {
+            r#"<span class="sidebar-btn-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>"#
+        }
+        "support" => {
+            r#"<span class="sidebar-btn-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span>"#
+        }
+        "users" => {
+            r#"<span class="sidebar-btn-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>"#
+        }
+        "comments" => {
+            r#"<span class="sidebar-btn-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>"#
+        }
+        "award" => {
+            r#"<span class="sidebar-btn-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></span>"#
+        }
+        "calendar" => {
+            r#"<span class="sidebar-btn-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>"#
+        }
+        "unlock" => {
+            r#"<span class="sidebar-btn-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg></span>"#
+        }
+        "upload" => {
+            r#"<span class="sidebar-btn-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>"#
+        }
+        "shield" => {
+            r#"<span class="sidebar-btn-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>"#
+        }
+        "layers" => {
+            r#"<span class="sidebar-btn-icon" aria-hidden="true"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>"#
+        }
+        _ => "",
+    }
+}
+
+fn render_staff_sidebar(s: &AppState) -> String {
+    let base = s.route.split('?').next().unwrap_or("/faculty");
+    let user_role = s
+        .user
+        .as_ref()
+        .map(|u| u.role.as_str())
+        .unwrap_or("faculty");
+    let officer_name = s
+        .user
+        .as_ref()
+        .map(|u| u.name.as_str())
+        .filter(|n| !n.is_empty())
+        .unwrap_or("Faculty Officer");
+    let monogram = user_initials(officer_name);
+
+    let (role_badge, unit_line) = match base {
+        "/admin" => (
+            "University Registrar",
+            "Office of the University Registrar".to_string(),
+        ),
+        "/dean" => (
+            "College Dean",
+            s.user
+                .as_ref()
+                .and_then(|u| u.college_name.clone())
+                .unwrap_or_else(|| "College of Computer Studies".to_string()),
+        ),
+        "/chair" => (
+            "Department Chair",
+            s.user
+                .as_ref()
+                .and_then(|u| u.department_name.clone())
+                .unwrap_or_else(|| "Department of Computer Science".to_string()),
+        ),
+        _ => (
+            "Faculty Instructor",
+            s.user
+                .as_ref()
+                .and_then(|u| u.department_name.clone())
+                .unwrap_or_else(|| "Assigned Academic Department".to_string()),
+        ),
+    };
+
+    let primary_section = match base {
+        "/admin" => {
+            let hold_count = s
+                .admin_sections
+                .as_ref()
+                .and_then(|v| v.get("sections"))
+                .and_then(Value::as_array)
+                .map(|arr| {
+                    arr.iter()
+                        .filter(|sec| {
+                            !sec.get("registrar_lock")
+                                .and_then(Value::as_bool)
+                                .unwrap_or(false)
+                        })
+                        .count()
+                })
+                .unwrap_or(0);
+            let hold_pill = if hold_count > 0 {
+                format!(r#"<span class="sidebar-count-pill warn">{hold_count}</span>"#)
+            } else {
+                String::new()
+            };
+            format!(
+                r#"<div class="sidebar-nav-section">
+                    <div class="sidebar-section-label">Registrar Console</div>
+                    <button type="button" class="sidebar-nav-btn {a1}" data-action="set-admin-tab" data-tab="schedule">
+                        <span class="sidebar-btn-main">{ic_cal}<span>Evaluation Schedule</span></span>
+                    </button>
+                    <button type="button" class="sidebar-nav-btn {a2}" data-action="set-admin-tab" data-tab="grades">
+                        <span class="sidebar-btn-main">{ic_unlk}<span>Post-Grade Release</span></span>
+                        {hold_pill}
+                    </button>
+                    <button type="button" class="sidebar-nav-btn {a3}" data-action="set-admin-tab" data-tab="roster">
+                        <span class="sidebar-btn-main">{ic_up}<span>Class Roster Import</span></span>
+                    </button>
+                    <button type="button" class="sidebar-nav-btn {a4}" data-action="set-admin-tab" data-tab="privacy">
+                        <span class="sidebar-btn-main">{ic_shd}<span>Privacy &amp; System Audit</span></span>
+                    </button>
+                </div>"#,
+                ic_cal = svg_sidebar_icon("calendar"),
+                ic_unlk = svg_sidebar_icon("unlock"),
+                ic_up = svg_sidebar_icon("upload"),
+                ic_shd = svg_sidebar_icon("shield"),
+                a1 = if s.admin_tab == "schedule" {
+                    "active"
+                } else {
+                    ""
+                },
+                a2 = if s.admin_tab == "grades" {
+                    "active"
+                } else {
+                    ""
+                },
+                a3 = if s.admin_tab == "roster" {
+                    "active"
+                } else {
+                    ""
+                },
+                a4 = if s.admin_tab == "privacy" {
+                    "active"
+                } else {
+                    ""
+                },
+            )
+        }
+        "/chair" | "/dean" => {
+            let sec_lbl = if base == "/chair" {
+                "Department Governance"
+            } else {
+                "College Governance"
+            };
+            let support_cnt = s
+                .dean_watchlist
+                .as_ref()
+                .and_then(|w| w.get("watchlist"))
+                .and_then(Value::as_array)
+                .map_or(0, Vec::len);
+            let sup_pill = if support_cnt > 0 {
+                format!(r#"<span class="sidebar-count-pill warn">{support_cnt}</span>"#)
+            } else {
+                String::new()
+            };
+            format!(
+                r#"<div class="sidebar-nav-section">
+                    <div class="sidebar-section-label">{sec_lbl}</div>
+                    <button type="button" class="sidebar-nav-btn {t1}" data-action="set-dean-tab" data-tab="summary">
+                        <span class="sidebar-btn-main">{ic_ov}<span>Overview &amp; Ratings</span></span>
+                    </button>
+                    <button type="button" class="sidebar-nav-btn {t2}" data-action="set-dean-tab" data-tab="support">
+                        <span class="sidebar-btn-main">{ic_sup}<span>Mentoring &amp; Support</span></span>
+                        {sup_pill}
+                    </button>
+                    <button type="button" class="sidebar-nav-btn {t3}" data-action="set-dean-tab" data-tab="participation">
+                        <span class="sidebar-btn-main">{ic_usr}<span>Class Participation</span></span>
+                    </button>
+                    <button type="button" class="sidebar-nav-btn {t4}" data-action="set-dean-tab" data-tab="comments">
+                        <span class="sidebar-btn-main">{ic_com}<span>Student Comments</span></span>
+                    </button>
+                    <button type="button" class="sidebar-nav-btn {t5}" data-action="set-dean-tab" data-tab="accreditation">
+                        <span class="sidebar-btn-main">{ic_awd}<span>Accreditation Dossier</span></span>
+                    </button>
+                </div>"#,
+                ic_ov = svg_sidebar_icon("overview"),
+                ic_sup = svg_sidebar_icon("support"),
+                ic_usr = svg_sidebar_icon("users"),
+                ic_com = svg_sidebar_icon("comments"),
+                ic_awd = svg_sidebar_icon("award"),
+                t1 = if s.dean_tab == "summary" {
+                    "active"
+                } else {
+                    ""
+                },
+                t2 = if s.dean_tab == "support" {
+                    "active"
+                } else {
+                    ""
+                },
+                t3 = if s.dean_tab == "participation" {
+                    "active"
+                } else {
+                    ""
+                },
+                t4 = if s.dean_tab == "comments" {
+                    "active"
+                } else {
+                    ""
+                },
+                t5 = if s.dean_tab == "accreditation" {
+                    "active"
+                } else {
+                    ""
+                },
+            )
+        }
+        _ => {
+            format!(
+                r#"<div class="sidebar-nav-section">
+                    <div class="sidebar-section-label">Faculty Workspace</div>
+                    <button type="button" class="sidebar-nav-btn {f1}" data-action="set-faculty-tab" data-tab="overview">
+                        <span class="sidebar-btn-main">{ic_ov}<span>Overview &amp; Release</span></span>
+                    </button>
+                    <button type="button" class="sidebar-nav-btn {f2}" data-action="set-faculty-tab" data-tab="areas">
+                        <span class="sidebar-btn-main">{ic_lay}<span>Evaluation Areas</span></span>
+                    </button>
+                    <button type="button" class="sidebar-nav-btn {f3}" data-action="set-faculty-tab" data-tab="comments">
+                        <span class="sidebar-btn-main">{ic_com}<span>Student Comments</span></span>
+                    </button>
+                </div>"#,
+                ic_ov = svg_sidebar_icon("overview"),
+                ic_lay = svg_sidebar_icon("layers"),
+                ic_com = svg_sidebar_icon("comments"),
+                f1 = if s.faculty_tab == "overview" {
+                    "active"
+                } else {
+                    ""
+                },
+                f2 = if s.faculty_tab == "areas" {
+                    "active"
+                } else {
+                    ""
+                },
+                f3 = if s.faculty_tab == "comments" {
+                    "active"
+                } else {
+                    ""
+                },
+            )
+        }
+    };
+
+    let portal_switcher = if user_role == "admin" {
+        format!(
+            r#"<div class="sidebar-nav-section">
+                <div class="sidebar-section-label">Administrative Portals</div>
+                <button type="button" class="sidebar-nav-btn {p_adm}" data-action="nav" data-path="/admin">
+                    <span class="sidebar-btn-main">{ic_shd}<span>Registrar Console</span></span>
+                </button>
+                <button type="button" class="sidebar-nav-btn {p_dean}" data-action="nav" data-path="/dean">
+                    <span class="sidebar-btn-main">{ic_ov}<span>College Dean View</span></span>
+                </button>
+                <button type="button" class="sidebar-nav-btn {p_chr}" data-action="nav" data-path="/chair">
+                    <span class="sidebar-btn-main">{ic_usr}<span>Dept. Chair View</span></span>
+                </button>
+                <button type="button" class="sidebar-nav-btn {p_fac}" data-action="nav" data-path="/faculty">
+                    <span class="sidebar-btn-main">{ic_lay}<span>Faculty View</span></span>
+                </button>
+            </div>"#,
+            ic_shd = svg_sidebar_icon("shield"),
+            ic_ov = svg_sidebar_icon("overview"),
+            ic_usr = svg_sidebar_icon("users"),
+            ic_lay = svg_sidebar_icon("layers"),
+            p_adm = if base == "/admin" { "active" } else { "" },
+            p_dean = if base == "/dean" { "active" } else { "" },
+            p_chr = if base == "/chair" { "active" } else { "" },
+            p_fac = if base == "/faculty" { "active" } else { "" },
+        )
+    } else if user_role == "dean" {
+        format!(
+            r#"<div class="sidebar-nav-section">
+                <div class="sidebar-section-label">Academic Scope</div>
+                <button type="button" class="sidebar-nav-btn {p_dean}" data-action="nav" data-path="/dean">
+                    <span class="sidebar-btn-main">{ic_ov}<span>College Summary</span></span>
+                </button>
+                <button type="button" class="sidebar-nav-btn {p_chr}" data-action="nav" data-path="/chair">
+                    <span class="sidebar-btn-main">{ic_usr}<span>Department View</span></span>
+                </button>
+            </div>"#,
+            ic_ov = svg_sidebar_icon("overview"),
+            ic_usr = svg_sidebar_icon("users"),
+            p_dean = if base == "/dean" { "active" } else { "" },
+            p_chr = if base == "/chair" { "active" } else { "" },
+        )
+    } else {
+        String::new()
+    };
+
+    let is_dark = s.theme == "dark";
+    let is_large = s.font_scale == "large";
+    let (font_txt, font_cls, font_pressed) = if is_large {
+        ("On", "sidebar-pref-pill on", "true")
+    } else {
+        ("Off", "sidebar-pref-pill", "false")
+    };
+    let (dark_txt, dark_cls) = if is_dark {
+        ("On", "sidebar-pref-pill on")
+    } else {
+        ("Off", "sidebar-pref-pill")
+    };
+    let sidebar_cls = if s.mobile_menu_open {
+        "staff-sidebar open no-print"
+    } else {
+        "staff-sidebar no-print"
+    };
+    let home_dest = default_route_for_role(user_role);
+
+    format!(
+        r#"<aside class="{sidebar_cls}" aria-label="Institutional Staff Sidebar Navigation">
+            <div class="sidebar-brand">
+                <a href="{home_dest}" class="brand-cluster" data-action="nav" data-path="{home_dest}">
+                    <span class="university-crest" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 3L3 7.5v5.5c0 5.2 3.8 8.9 9 10 5.2-1.1 9-4.8 9-10V7.5L12 3z"/>
+                            <path d="M8.5 11.5h7M8.5 15h4.5"/>
+                        </svg>
+                    </span>
+                    <span class="brand-titles">
+                        <span class="brand-subline">School AAAAA13</span>
+                        <span class="brand-title">Faculty Evaluation Portal</span>
+                    </span>
+                </a>
+            </div>
+            <div class="sidebar-officer-card">
+                <div class="sidebar-monogram" aria-hidden="true">{monogram}</div>
+                <div class="sidebar-officer-meta">
+                    <span class="sidebar-officer-role">{role_badge}</span>
+                    <span class="sidebar-officer-name" title="{o_name}">{o_name}</span>
+                    <span class="sidebar-officer-unit" title="{u_line}">{u_line}</span>
+                </div>
+            </div>
+            <nav aria-label="Portal Modules" style="display:flex;flex-direction:column;gap:16px;">
+                {primary_section}
+                {portal_switcher}
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-section-label">Display Preferences</div>
+                <button type="button" class="sidebar-pref-btn" aria-pressed="{font_pressed}" data-action="toggle-font-scale">
+                    <span>A+ Large Text</span>
+                    <span class="{font_cls}">{font_txt}</span>
+                </button>
+                <button type="button" class="sidebar-pref-btn" data-action="toggle-theme">
+                    <span>Dark View</span>
+                    <span class="{dark_cls}">{dark_txt}</span>
+                </button>
+                <button type="button" class="sidebar-signout-btn" data-action="logout">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    <span>Sign Out</span>
+                </button>
+            </div>
+        </aside>"#,
+        monogram = esc(&monogram),
+        o_name = esc(officer_name),
+        u_line = esc(&unit_line),
+    )
+}
+
+fn render_staff_shell(s: &AppState, workspace_html: String) -> String {
+    let mobile_lbl = if s.mobile_menu_open { "Close" } else { "Menu" };
+    let role_lbl = s
+        .user
+        .as_ref()
+        .map(|u| role_display_title(&u.role))
+        .unwrap_or("Faculty");
+    let home_dest = s
+        .user
+        .as_ref()
+        .map(|u| default_route_for_role(&u.role))
+        .unwrap_or("/faculty");
+    let sidebar = render_staff_sidebar(s);
+
+    format!(
+        r#"<div class="staff-mobile-topbar no-print" role="banner">
+            <a href="{home_dest}" class="brand-cluster" data-action="nav" data-path="{home_dest}">
+                <span class="university-crest" aria-hidden="true">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3L3 7.5v5.5c0 5.2 3.8 8.9 9 10 5.2-1.1 9-4.8 9-10V7.5L12 3z"/>
+                        <path d="M8.5 11.5h7M8.5 15h4.5"/>
+                    </svg>
+                </span>
+                <span class="brand-titles">
+                    <span class="brand-title">Faculty Evaluation &middot; {role_lbl}</span>
+                </span>
+            </a>
+            <button type="button" class="mobile-menu-toggle" style="min-height:44px;" aria-expanded="{exp}" data-action="toggle-mobile-menu">{mobile_lbl}</button>
+        </div>
+        <div class="staff-layout">
+            {sidebar}
+            <div class="staff-main">{workspace_html}</div>
+        </div>"#,
+        exp = s.mobile_menu_open,
+    )
+}
+
 fn render_global_modals(s: &AppState) -> String {
     let mut out = String::new();
-
-    if s.show_rubric_modal {
-        out.push_str(
-            r#"<div class="modal-backdrop no-print" role="dialog" aria-modal="true" aria-labelledby="rubric-title">
-                <div class="modal-dialog" style="padding:20px 24px;">
-                    <div class="flex-between-center" style="margin-bottom:8px;">
-                        <h2 id="rubric-title" style="margin:0;">1–5 Rating Scale</h2>
-                        <button type="button" class="btn btn-secondary btn-sm" data-action="close-modals">Close</button>
-                    </div>
-                    <p style="color:var(--ink-secondary);font-size:0.9rem;margin-bottom:10px;">Rate each of the 25 teaching statements using the five-point scale below:</p>
-                    <div class="table-wrap" style="margin-bottom:12px;">
-                        <table class="data-table borderless-zebra" aria-label="1 to 5 Rating Scale Descriptions">
-                            <tbody>
-                                <tr><td style="width:185px;"><strong>5 &mdash; Outstanding</strong></td><td>Consistently demonstrated at an exemplary collegiate standard.</td></tr>
-                                <tr><td><strong>4 &mdash; Very Satisfactory</strong></td><td>Frequently demonstrated with clear effectiveness and consistency.</td></tr>
-                                <tr><td><strong>3 &mdash; Satisfactory</strong></td><td>Meets expected course and teaching standards adequately.</td></tr>
-                                <tr><td><strong>2 &mdash; Fair</strong></td><td>Inconsistently demonstrated; would benefit from structured improvement.</td></tr>
-                                <tr><td><strong>1 &mdash; Needs Improvement</strong></td><td>Rarely demonstrated; requires prompt mentoring support.</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="callout-box callout-tip" style="padding:10px 14px;">
-                        <span class="callout-icon" aria-hidden="true">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.75c.6.54 1 1.33 1 2.15V18h6v-1.1c0-.82.4-1.61 1-2.15A7 7 0 0 0 12 2z"/></svg>
-                        </span>
-                        <div style="font-size:0.86rem;"><strong>Helpful tip:</strong> Focus any statement row and press keys <strong>1</strong> through <strong>5</strong> on your keyboard to rate quickly.</div>
-                    </div>
-                </div>
-            </div>"#,
-        );
-    }
 
     if s.show_release_all_modal {
         out.push_str(
@@ -1651,36 +2006,18 @@ fn render_evaluation_form(s: &AppState) -> String {
             r#"<div class="eval-sticky-bar no-print" role="region" aria-label="Evaluation Progress and Section Navigation">
                 <div class="eval-sticky-top">
                     <strong>Part 1 of 2 &middot; Rating Statements</strong>
-                    <div style="display:flex;align-items:center;gap:10px;">
-                        <span class="scale-tooltip-wrap desktop-only">
-                            <button type="button" class="scale-tooltip-badge" aria-label="1 to 5 Rating Scale Guide">? 1–5 Scale</button>
-                            <span class="scale-tooltip-popover" role="tooltip">
-                                <strong>5</strong> &mdash; Outstanding<br>
-                                <strong>4</strong> &mdash; Very Satisfactory<br>
-                                <strong>3</strong> &mdash; Satisfactory<br>
-                                <strong>2</strong> &mdash; Fair<br>
-                                <strong>1</strong> &mdash; Needs Improvement
-                            </span>
-                        </span>
-                        <span class="tabular-nums" style="font-weight:700;color:var(--brand-primary);">Answered: {answered} / 25</span>
-                    </div>
+                    <span class="tabular-nums" style="font-weight:700;color:var(--brand-primary);">Answered: {answered} / 25</span>
                 </div>
                 <div class="progress-track" style="margin-bottom:8px;" aria-hidden="true">
                     <div class="progress-fill" style="width:{pct_done:.1}%;"></div>
                 </div>
-                <details class="scale-disclosure">
-                    <summary>
-                        <span>Scale Guide (1 &ndash; 5)</span>
-                        <span aria-hidden="true">&#9662;</span>
-                    </summary>
-                    <div class="scale-legend-items">
-                        <span><strong>5</strong> Outstanding</span>
-                        <span><strong>4</strong> Very Satisfactory</span>
-                        <span><strong>3</strong> Satisfactory</span>
-                        <span><strong>2</strong> Fair</span>
-                        <span><strong>1</strong> Needs Improvement</span>
-                    </div>
-                </details>
+                <div class="scale-legend-items" style="margin-bottom:6px;padding-top:2px;border-top:0;">
+                    <span><strong>5</strong> Outstanding</span>
+                    <span><strong>4</strong> Very Satisfactory</span>
+                    <span><strong>3</strong> Satisfactory</span>
+                    <span><strong>2</strong> Fair</span>
+                    <span><strong>1</strong> Needs Improvement</span>
+                </div>
                 <div class="scroll-fade-wrap">
                     <nav class="section-jump-row" aria-label="Jump to Evaluation Section">
                         {jump_btns}
@@ -1829,7 +2166,7 @@ fn render_faculty_portal(s: &AppState) -> String {
             "No assigned class sections were found for 1st Semester, AY 2026–2027."
         };
         return format!(
-            r#"<main id="main-workspace" class="workspace-container">
+            r#"<main id="main-workspace" class="staff-workspace-container">
                 {banner}
                 <section class="doc-sheet">
                     <p class="institution-line">1st Semester, AY 2026–2027 &middot; Faculty Portal</p>
@@ -2052,6 +2389,59 @@ fn render_faculty_portal(s: &AppState) -> String {
             );
         }
 
+        let kpi_block = format!(
+            r#"<div class="kpi-grid-3" style="margin-bottom:24px;">
+                <div class="{overall_card_cls}">
+                    <div class="kpi-label">Overall Class Rating</div>
+                    <div class="kpi-value">{mean:.2} <span style="font-size:1.1rem;font-weight:600;color:var(--ink-muted);">/ 5.00</span></div>
+                    <div class="kpi-sub">{adj_badge}</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Student Responses</div>
+                    <div class="kpi-value">{count}</div>
+                    <div class="kpi-sub">Completed anonymous evaluations</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Positive Feedback Share</div>
+                    <div class="kpi-value">{pos:.1}%</div>
+                    <div class="kpi-sub">Neutral: {neu:.1}% &middot; Concerns: {neg:.1}%</div>
+                </div>
+            </div>"#
+        );
+
+        let areas_block = format!(
+            r#"<h3 style="margin-bottom:10px;">Performance Across the 5 Evaluation Areas</h3>
+            <div class="table-wrap">
+                <table class="data-table" aria-label="Ratings by Evaluation Area">
+                    <thead>
+                        <tr>
+                            <th style="width:45%;">Evaluation Area</th>
+                            <th style="width:27%;">Average Rating</th>
+                            <th style="width:28%;">Descriptive Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>{area_rows}</tbody>
+                </table>
+            </div>"#
+        );
+
+        let comments_block = format!(
+            r#"<h3 style="margin-bottom:4px;">Anonymous Student Comments</h3>
+            <p style="font-size:0.88rem;color:var(--ink-muted);margin-bottom:8px;">
+                Personal identifiers are automatically scrubbed prior to release.
+            </p>
+            {comments_html}"#
+        );
+
+        let inner_body = match s.faculty_tab.as_str() {
+            "areas" => areas_block,
+            "comments" => comments_block,
+            _ => format!(
+                r#"{kpi_block}
+                   {areas_block}"#
+            ),
+        };
+
         format!(
             r#"<section class="doc-sheet" aria-labelledby="official-report-heading">
                 <div class="flex-between" style="margin-bottom:16px;">
@@ -2064,44 +2454,7 @@ fn render_faculty_portal(s: &AppState) -> String {
                         <button type="button" class="btn btn-secondary btn-sm" data-action="print-cert">Print Report</button>
                     </div>
                 </div>
-
-                <div class="kpi-grid-3" style="margin-bottom:24px;">
-                    <div class="{overall_card_cls}">
-                        <div class="kpi-label">Overall Class Rating</div>
-                        <div class="kpi-value">{mean:.2} <span style="font-size:1.1rem;font-weight:600;color:var(--ink-muted);">/ 5.00</span></div>
-                        <div class="kpi-sub">{adj_badge}</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-label">Student Responses</div>
-                        <div class="kpi-value">{count}</div>
-                        <div class="kpi-sub">Completed anonymous evaluations</div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-label">Positive Feedback Share</div>
-                        <div class="kpi-value">{pos:.1}%</div>
-                        <div class="kpi-sub">Neutral: {neu:.1}% &middot; Concerns: {neg:.1}%</div>
-                    </div>
-                </div>
-
-                <h3 style="margin-bottom:10px;">Performance Across the 5 Evaluation Areas</h3>
-                <div class="table-wrap" style="margin-bottom:24px;">
-                    <table class="data-table" aria-label="Ratings by Evaluation Area">
-                        <thead>
-                            <tr>
-                                <th style="width:45%;">Evaluation Area</th>
-                                <th style="width:27%;">Average Rating</th>
-                                <th style="width:28%;">Descriptive Rating</th>
-                            </tr>
-                        </thead>
-                        <tbody>{area_rows}</tbody>
-                    </table>
-                </div>
-
-                <h3 style="margin-bottom:4px;">Anonymous Student Comments</h3>
-                <p style="font-size:0.88rem;color:var(--ink-muted);margin-bottom:8px;">
-                    Personal identifiers are automatically scrubbed prior to release.
-                </p>
-                {comments_html}
+                {inner_body}
             </section>"#,
             code = esc(active_code),
             scode = esc(active_scode),
@@ -2121,12 +2474,12 @@ fn render_faculty_portal(s: &AppState) -> String {
     };
 
     format!(
-        r#"<main id="main-workspace" class="workspace-container">
+        r#"<main id="main-workspace" class="staff-workspace-container">
             {banner}
             <section class="doc-sheet" aria-labelledby="fac-portal-title">
                 <div class="flex-between-center" style="gap:20px;">
                     <div style="flex:1 1 320px;">
-                        <p class="institution-line">1st Semester, AY 2026–2027 &middot; Faculty Portal</p>
+                        <p class="institution-line">1st Semester, AY 2026–2027 &middot; Faculty Workspace</p>
                         <h1 id="fac-portal-title" class="sheet-title" style="margin-bottom:4px;">My Class Evaluation Results</h1>
                         <p style="color:var(--ink-secondary);font-size:0.92rem;margin-bottom:0;">
                             Select an assigned class section to check grade release status or view your anonymous summary.
@@ -2598,6 +2951,21 @@ fn render_dean_or_chair(s: &AppState) -> String {
                 },
             )
         }
+        "accreditation" => {
+            if !dossier_html.is_empty() {
+                dossier_html.clone()
+            } else {
+                r#"<section class="doc-sheet" aria-labelledby="accred-prep-heading">
+                    <span class="step-kicker">AACCUP Level III Governance</span>
+                    <h2 id="accred-prep-heading" style="margin-bottom:6px;">Curriculum &amp; Instruction Accreditation Dossier</h2>
+                    <p style="color:var(--ink-secondary);max-width:66ch;margin-bottom:18px;">
+                        Compile an official, cryptographically sealed semester evaluation dossier summarizing faculty ratings, student participation, collegial support plans, and student anonymity verification for AACCUP Level III Area III review.
+                    </p>
+                    <button type="button" class="btn btn-primary" data-action="compile-dossier">Generate Accreditation Summary</button>
+                </section>"#
+                    .to_string()
+            }
+        }
         _ => {
             let summaries = ov["instructor_summaries"]
                 .as_array()
@@ -2716,8 +3084,14 @@ fn render_dean_or_chair(s: &AppState) -> String {
         }
     };
 
+    let top_dossier = if s.dean_tab != "accreditation" {
+        dossier_html
+    } else {
+        String::new()
+    };
+
     format!(
-        r#"<main id="main-workspace" class="workspace-container">
+        r#"<main id="main-workspace" class="staff-workspace-container">
             {banner}
             <section class="doc-sheet">
                 <div class="flex-between">
@@ -2731,40 +3105,10 @@ fn render_dean_or_chair(s: &AppState) -> String {
                     </div>
                 </div>
             </section>
-            {dossier_html}
-            <div class="portal-tabs no-print" role="tablist" aria-label="Academic Summary Views">
-                <button type="button" role="tab" aria-selected="{s1}" class="portal-tab-btn {t1}" data-action="set-dean-tab" data-tab="summary">Summary &amp; Faculty Ratings</button>
-                <button type="button" role="tab" aria-selected="{s2}" class="portal-tab-btn {t2}" data-action="set-dean-tab" data-tab="support">Instructors Needing Support</button>
-                <button type="button" role="tab" aria-selected="{s3}" class="portal-tab-btn {t3}" data-action="set-dean-tab" data-tab="participation">Class Participation</button>
-                <button type="button" role="tab" aria-selected="{s4}" class="portal-tab-btn {t4}" data-action="set-dean-tab" data-tab="comments">Student Comments</button>
-            </div>
+            {top_dossier}
             {tab_content}
         </main>"#,
         banner = render_banner(s),
-        s1 = s.dean_tab == "summary",
-        t1 = if s.dean_tab == "summary" {
-            "active"
-        } else {
-            ""
-        },
-        s2 = s.dean_tab == "support",
-        t2 = if s.dean_tab == "support" {
-            "active"
-        } else {
-            ""
-        },
-        s3 = s.dean_tab == "participation",
-        t3 = if s.dean_tab == "participation" {
-            "active"
-        } else {
-            ""
-        },
-        s4 = s.dean_tab == "comments",
-        t4 = if s.dean_tab == "comments" {
-            "active"
-        } else {
-            ""
-        },
     )
 }
 
@@ -3156,7 +3500,7 @@ fn render_admin_console(s: &AppState) -> String {
     };
 
     format!(
-        r#"<main id="main-workspace" class="workspace-container">
+        r#"<main id="main-workspace" class="staff-workspace-container">
             {banner}
             <section class="doc-sheet">
                 <p class="institution-line">1st Semester, AY 2026–2027 &middot; School AAAAA13</p>
@@ -3165,39 +3509,9 @@ fn render_admin_console(s: &AppState) -> String {
                     Manage semester evaluation dates, post-grade report release, class enrollment rosters, and institutional privacy safeguards.
                 </p>
             </section>
-            <div class="portal-tabs no-print" role="tablist" aria-label="Registrar Administration Sections">
-                <button type="button" role="tab" aria-selected="{s1}" class="portal-tab-btn {t1}" data-action="set-admin-tab" data-tab="schedule">Evaluation Schedule</button>
-                <button type="button" role="tab" aria-selected="{s2}" class="portal-tab-btn {t2}" data-action="set-admin-tab" data-tab="grades">Grade Release</button>
-                <button type="button" role="tab" aria-selected="{s3}" class="portal-tab-btn {t3}" data-action="set-admin-tab" data-tab="roster">Class Roster Import</button>
-                <button type="button" role="tab" aria-selected="{s4}" class="portal-tab-btn {t4}" data-action="set-admin-tab" data-tab="privacy">Privacy &amp; Security</button>
-            </div>
             {tab_body}
         </main>"#,
         banner = render_banner(s),
-        s1 = s.admin_tab == "schedule",
-        t1 = if s.admin_tab == "schedule" {
-            "active"
-        } else {
-            ""
-        },
-        s2 = s.admin_tab == "grades",
-        t2 = if s.admin_tab == "grades" {
-            "active"
-        } else {
-            ""
-        },
-        s3 = s.admin_tab == "roster",
-        t3 = if s.admin_tab == "roster" {
-            "active"
-        } else {
-            ""
-        },
-        s4 = s.admin_tab == "privacy",
-        t4 = if s.admin_tab == "privacy" {
-            "active"
-        } else {
-            ""
-        },
     )
 }
 
@@ -3211,9 +3525,9 @@ fn render() {
 
     let html = STATE.with(|c| {
         let s = c.borrow();
-        let nav = render_navbar(&s);
         let modals = render_global_modals(&s);
         let base = s.route.split('?').next().unwrap_or("/");
+        let is_staff_workspace = matches!(base, "/faculty" | "/chair" | "/dean" | "/admin");
         let view = match base {
             "/" => render_landing(&s),
             "/login" => render_login(&s),
@@ -3251,7 +3565,13 @@ fn render() {
             </main>"#
                 .to_string(),
         };
-        format!("{nav}{view}{modals}")
+        if is_staff_workspace {
+            let shell = render_staff_shell(&s, view);
+            format!("{shell}{modals}")
+        } else {
+            let nav = render_navbar(&s);
+            format!("{nav}{view}{modals}")
+        }
     });
 
     root.set_inner_html(&html);
@@ -3628,18 +3948,9 @@ fn handle_click(ev: Event) {
             apply_font_scale(next_scale);
             render();
         }
-        "open-rubric" => {
-            STATE.with(|c| {
-                let mut s = c.borrow_mut();
-                s.mobile_menu_open = false;
-                s.show_rubric_modal = true;
-            });
-            render();
-        }
         "close-modals" => {
             STATE.with(|c| {
                 let mut s = c.borrow_mut();
-                s.show_rubric_modal = false;
                 s.show_discard_modal = false;
                 s.show_release_all_modal = false;
             });
@@ -3936,10 +4247,26 @@ fn handle_click(ev: Event) {
                 trigger_csv_download("Class_Evaluation_Summary.csv", &csv);
             }
         }
+        "set-faculty-tab" => {
+            if let Some(t) = el.get_attribute("data-tab") {
+                STATE.with(|c| {
+                    let mut s = c.borrow_mut();
+                    s.faculty_tab = t;
+                    s.mobile_menu_open = false;
+                });
+                render();
+                scroll_top();
+            }
+        }
         "set-dean-tab" => {
             if let Some(t) = el.get_attribute("data-tab") {
-                STATE.with(|c| c.borrow_mut().dean_tab = t);
+                STATE.with(|c| {
+                    let mut s = c.borrow_mut();
+                    s.dean_tab = t;
+                    s.mobile_menu_open = false;
+                });
                 render();
+                scroll_top();
             }
         }
         "signoff-plan" => {
@@ -4073,8 +4400,13 @@ fn handle_click(ev: Event) {
         }
         "set-admin-tab" => {
             if let Some(t) = el.get_attribute("data-tab") {
-                STATE.with(|c| c.borrow_mut().admin_tab = t);
+                STATE.with(|c| {
+                    let mut s = c.borrow_mut();
+                    s.admin_tab = t;
+                    s.mobile_menu_open = false;
+                });
                 render();
+                scroll_top();
             }
         }
         "admin-toggle-lock" => {
@@ -4375,12 +4707,10 @@ fn handle_keydown(ev: Event) {
     if key == "Escape" {
         let closed = STATE.with(|c| {
             let mut s = c.borrow_mut();
-            let active = s.show_rubric_modal
-                || s.show_straight_line_modal
+            let active = s.show_straight_line_modal
                 || s.show_discard_modal
                 || s.show_release_all_modal
                 || s.mobile_menu_open;
-            s.show_rubric_modal = false;
             s.show_straight_line_modal = false;
             s.show_discard_modal = false;
             s.show_release_all_modal = false;
@@ -4550,7 +4880,6 @@ mod tests {
         ];
 
         let mut s = AppState::new();
-        s.show_rubric_modal = true;
         s.show_straight_line_modal = true;
         s.show_discard_modal = true;
         s.show_release_all_modal = true;
@@ -4658,12 +4987,33 @@ mod tests {
                 college_name: Some("College of Computing".to_string()),
                 must_change_password: false,
             });
-            rendered.push(render_navbar(&s));
+            let plain_hdr = render_navbar(&s);
+            assert!(
+                !plain_hdr.contains("Scale"),
+                "Global header must not show Scale"
+            );
+            rendered.push(plain_hdr);
+            if role != "student" {
+                s.route = default_route_for_role(role).to_string();
+                let staff_sb = render_staff_sidebar(&s);
+                assert!(
+                    !staff_sb.contains("Scale"),
+                    "Staff sidebar must not show Scale"
+                );
+                assert!(staff_sb.contains("staff-sidebar"));
+                rendered.push(staff_sb);
+            }
         }
 
         for r in ["/chair", "/dean"] {
             s.route = r.to_string();
-            for tab in ["summary", "support", "participation", "comments"] {
+            for tab in [
+                "summary",
+                "support",
+                "participation",
+                "comments",
+                "accreditation",
+            ] {
                 s.dean_tab = tab.to_string();
                 rendered.push(render_dean_or_chair(&s));
             }

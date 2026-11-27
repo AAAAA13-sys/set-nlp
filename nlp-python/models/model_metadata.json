@@ -1,0 +1,66 @@
+{
+  "training_date": "2026-11-27",
+  "runtime": "Python (calamanCy + spaCy + vaderSentiment + scikit-learn)",
+  "sklearn_version": "1.4.2",
+  "joblib_version": "1.4.2",
+  "total_samples": 10000,
+  "dev_samples": 7000,
+  "test_samples": 3000,
+  "sentiment_model": {
+    "algorithm": "Dual-Regime LogisticRegression + calamanCy TF-IDF (1,3) + char_wb (2,5) + VADER 13d Signals",
+    "vocab_size": 28841,
+    "real_comment_cv_accuracy": 0.8951,
+    "real_comment_cv_macro_f1": 0.875,
+    "real_comment_test": {
+      "count": 228,
+      "accuracy": 0.9123,
+      "macro_f1": 0.8967,
+      "negative_recall": 0.9213
+    },
+    "real_comment_per_language": {
+      "English": {
+        "count": 94,
+        "accuracy": 0.8936,
+        "macro_f1": 0.88,
+        "negative_recall": 0.8214
+      },
+      "Tagalog": {
+        "count": 54,
+        "accuracy": 0.9259,
+        "macro_f1": 0.9005,
+        "negative_recall": 0.9474
+      },
+      "Taglish": {
+        "count": 80,
+        "accuracy": 0.925,
+        "macro_f1": 0.9042,
+        "negative_recall": 0.9762
+      }
+    },
+    "overall_3000_test_accuracy": 0.971,
+    "overall_3000_test_macro_f1": 0.963,
+    "classes": [
+      "Negative",
+      "Neutral",
+      "Positive"
+    ]
+  },
+  "domain_model": {
+    "algorithm": "Dual-Regime LogisticRegression + calamanCy TF-IDF (1,3) + char_wb (2,5)",
+    "real_comment_test": {
+      "count": 228,
+      "accuracy": 0.8991,
+      "macro_f1": 0.6627
+    },
+    "overall_3000_test_accuracy": 0.9923,
+    "overall_3000_test_macro_f1": 0.9798,
+    "classes": [
+      "Assessment & Grading",
+      "Classroom Management",
+      "Pedagogical Delivery",
+      "Professional Conduct",
+      "Student Support & Mentorship",
+      "Unclassified / Needs Review"
+    ]
+  }
+}

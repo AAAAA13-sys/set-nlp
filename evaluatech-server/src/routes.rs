@@ -13,9 +13,7 @@ use axum::{
     routing::{get, post},
 };
 use evaluatech_nlp::{
-    MAX_BATCH_SIZE, PEDAGOGICAL_TAGS, analyze_comment_str, analyze_comment_value,
-    compute_likert_stats, generate_pedagogical_action_plan, get_engine_provenance, py_round,
-    sanitize_csv_cell, scrub_pii, summarize_comments,
+    MAX_BATCH_SIZE, PEDAGOGICAL_TAGS, compute_likert_stats, py_round, sanitize_csv_cell, scrub_pii,
 };
 use rusqlite::{Connection, OptionalExtension, params};
 use serde_json::{Value, json};
@@ -32,6 +30,10 @@ use crate::{
     db::{
         compute_comment_hash, hmac_hex, initialize_schema, issue_clearance_token,
         manila_timestamps, resolve_signing_secret, seed_demo_data_if_empty, unix_now,
+    },
+    python_nlp::{
+        analyze_batch, analyze_comment_str, generate_pedagogical_action_plan,
+        get_engine_provenance, summarize_comments,
     },
     security::{log_security_event, security_middleware},
 };
@@ -233,9 +235,9 @@ async fn api_health() -> Response {
         StatusCode::OK,
         json!({
             "status": "healthy",
-            "service": "School AAAAA13 EvaluaTech Pure-Rust Full-Stack Server",
+            "service": "School AAAAA13 EvaluaTech Server (Rust Systems + Python ML)",
             "institution": "SCHOOL AAAAA13",
-            "architecture": "Axum + SQLite + Pure-Rust WebAssembly + 10k ML",
+            "architecture": "Rust (Axum + SQLite + WebAssembly) + Python (calamanCy + VADER + scikit-learn)",
             "enforced_security_controls": 63,
             "zero_permits_policy": true,
             "nlp": get_engine_provenance(),
@@ -3069,12 +3071,13 @@ async fn api_nlp_analyze(
                 }),
             )
         } else {
-            let results: Vec<Value> = arr.iter().map(analyze_comment_value).collect();
-            let summary = summarize_comments(&results);
-            json_resp(
-                StatusCode::OK,
-                json!({ "results": results, "summary": summary }),
-            )
+            match analyze_batch(arr) {
+                Ok(batch_out) => json_resp(StatusCode::OK, batch_out),
+                Err(msg) => json_resp(
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    json!({ "code": "PYTHON_NLP_ERROR", "message": msg }),
+                ),
+            }
         }
     } else {
         let text = body

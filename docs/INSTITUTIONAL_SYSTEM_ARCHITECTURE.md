@@ -3,9 +3,9 @@
 **Platform:** EvaluaTech / EvaluaTech
 **Governance Standard:** AACCUP Level III (Area III: Curriculum and Instruction) & CHED CMO 46 Institutional Quality Assurance
 **Legal Framework:** Republic Act No. 10173 (Data Privacy Act of 2012)
-**Security Architecture:** 63-Control OWASP Defense-in-Depth & Dual-Token Cryptographic Decoupling
-**Language Intelligence:** `calamanCy` Filipino/Taglish Morphological Pipeline + VADER Sentiment Polarity ($[-1.0, +1.0]$)
-**Document Revision:** 3.0.0 (Authoritative Institutional Edition)
+**Security & Systems Layer:** Safe Rust (`evaluatech-server` + `evaluatech-web` WASM) enforcing 63 OWASP Controls & Dual-Token Cryptographic Decoupling
+**Language Intelligence & ML Layer:** Python 3.12 (`nlp-python/`: `calamanCy` + `spaCy` Tagalog/Taglish Pipeline + `vaderSentiment` + `scikit-learn` Dual-Regime Ensemble)
+**Document Revision:** 4.0.0 (Authoritative Institutional Edition)
 
 ---
 
@@ -19,9 +19,9 @@ The system replaces legacy, coercive paper evaluation methods with a privacy-pre
 **School AAAAA13 strictly operates under a Zero Permits Policy.** Examination permits are never issued, mandated, or gated behind student evaluations. Evaluation is a formative academic instrument for instructional excellence, not an administrative barrier to student examination rights.
 
 Instead, the platform implements **Institutional Evaluation Participation Tracking**:
-1. Identifies students who have completed or have pending evaluations in the active term.
+1. Identifies students who have completed or have pending evaluations in the active term directly on their Student Profile Dashboard.
 2. Reports progress by course section, department, and college without ever exposing or linking student identities to submitted ratings or written comments.
-3. Issues an official **Digital Evaluation Completion Certificate** verifying the student has fulfilled their institutional civic contribution.
+3. Tailors navigation by academic responsibility: a distraction-free single-column webpage for Students (`/queue`, `/evaluate/:id`), paired with a structured Institutional Sidebar Workspace for Faculty, Department Chairs, College Deans, and Registrar Officers (`/faculty`, `/chair`, `/dean`, `/admin`).
 
 ---
 

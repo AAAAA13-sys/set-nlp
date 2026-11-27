@@ -5,7 +5,7 @@
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
-use evaluatech_nlp::{analyze_comment_str, compute_likert_stats, scrub_pii};
+use evaluatech_nlp::{compute_likert_stats, scrub_pii};
 use hmac::{Hmac, Mac};
 use rusqlite::{Connection, params};
 use serde_json::json;
@@ -545,7 +545,18 @@ pub fn seed_demo_data_if_empty(conn: &Connection, signing_secret: &str) -> rusql
         params![now],
     )?;
 
-    type SeedEval<'a> = (i64, i64, i64, &'a str, [i32; 25], i64, &'a str);
+    type SeedEval<'a> = (
+        i64,
+        i64,
+        i64,
+        &'a str,
+        [i32; 25],
+        i64,
+        &'a str,
+        f64,
+        &'a str,
+        &'a str,
+    );
     let seed_evals: &[SeedEval<'_>] = &[
         // Student 10 (2024-10892): 3 of 6 completed
         (
@@ -558,6 +569,9 @@ pub fn seed_demo_data_if_empty(conn: &Connection, signing_secret: &str) -> rusql
             ],
             185,
             "Explains complex algorithms very clearly and provides great practical code examples.",
+            0.78,
+            "Positive",
+            "Pedagogical Delivery",
         ),
         (
             10,
@@ -569,6 +583,9 @@ pub fn seed_demo_data_if_empty(conn: &Connection, signing_secret: &str) -> rusql
             ],
             210,
             "Very organized lectures and helpful guidance on NLP lab exercises.",
+            0.69,
+            "Positive",
+            "Pedagogical Delivery",
         ),
         (
             10,
@@ -580,6 +597,9 @@ pub fn seed_demo_data_if_empty(conn: &Connection, signing_secret: &str) -> rusql
             ],
             160,
             "Respectful and supportive classroom atmosphere with clear writing rubrics.",
+            0.74,
+            "Positive",
+            "Professional Conduct",
         ),
         // Student 11 (2024-10955): 6 of 6 completed
         (
@@ -592,6 +612,9 @@ pub fn seed_demo_data_if_empty(conn: &Connection, signing_secret: &str) -> rusql
             ],
             195,
             "Excellent mastery of algorithmic complexity and fair problem set grading.",
+            0.76,
+            "Positive",
+            "Assessment & Grading",
         ),
         (
             11,
@@ -603,6 +626,9 @@ pub fn seed_demo_data_if_empty(conn: &Connection, signing_secret: &str) -> rusql
             ],
             178,
             "Great hands-on NLP laboratory sessions and clear project expectations.",
+            0.71,
+            "Positive",
+            "Pedagogical Delivery",
         ),
         (
             11,
@@ -614,6 +640,9 @@ pub fn seed_demo_data_if_empty(conn: &Connection, signing_secret: &str) -> rusql
             ],
             152,
             "Helpful feedback on technical documentation structure and oral defense.",
+            0.62,
+            "Positive",
+            "Assessment & Grading",
         ),
         (
             11,
@@ -625,6 +654,9 @@ pub fn seed_demo_data_if_empty(conn: &Connection, signing_secret: &str) -> rusql
             ],
             168,
             "Good coverage of discrete probability proofs, though pacing on combinatorics can improve.",
+            0.28,
+            "Positive",
+            "Pedagogical Delivery",
         ),
         (
             11,
@@ -636,6 +668,9 @@ pub fn seed_demo_data_if_empty(conn: &Connection, signing_secret: &str) -> rusql
             ],
             204,
             "Takes over a month to return sprint grading rubrics and arrives late to morning lectures.",
+            -0.58,
+            "Negative",
+            "Assessment & Grading",
         ),
         (
             11,
@@ -647,13 +682,15 @@ pub fn seed_demo_data_if_empty(conn: &Connection, signing_secret: &str) -> rusql
             ],
             172,
             "Clear physics laboratory demonstrations and fair problem-solving exams.",
+            0.66,
+            "Positive",
+            "Pedagogical Delivery",
         ),
     ];
 
-    for (stu_id, sec_id, fac_id, sub_key, ratings, dwell, comment) in seed_evals {
+    for (stu_id, sec_id, fac_id, sub_key, ratings, dwell, comment, pol, val, tag) in seed_evals {
         let stats = compute_likert_stats(ratings).expect("valid seed ratings");
         let clean = scrub_pii(comment);
-        let nlp = analyze_comment_str(&clean);
         let tok = issue_clearance_token(*stu_id, *sec_id, 1, sub_key, signing_secret);
         conn.execute(
             "INSERT INTO evaluation_clearances (student_id, course_section_id, academic_term_id, submission_key, status, clearance_token, cleared_at, created_at, updated_at)
@@ -673,9 +710,9 @@ pub fn seed_demo_data_if_empty(conn: &Connection, signing_secret: &str) -> rusql
                 dwell,
                 clean,
                 compute_comment_hash(&clean, *sec_id, 1, signing_secret),
-                nlp["polarity"].as_f64().unwrap_or(0.0),
-                nlp["valence"].as_str().unwrap_or("Neutral"),
-                nlp["pedagogical_tag"].as_str().unwrap_or("Pedagogical Delivery"),
+                pol,
+                val,
+                tag,
                 today,
             ],
         )?;

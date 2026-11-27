@@ -1,26 +1,27 @@
 # School AAAAA13 — EvaluaTech
 
-> **100% Pure-Rust + WebAssembly Automated Student Evaluation of Teachers (SET) Platform with Dual-Token Cryptographic Decoupling, 92.51% Multilingual Sentiment Analytics, Academic Document Sheet UI, and AACCUP Level III Governance.**
+> **Automated Student Evaluation of Teachers (SET) Platform Combining Memory-Safe Rust Systems (`evaluatech-server` + `evaluatech-web` WASM) with Python Multilingual NLP & Machine Learning (`calamanCy` + `vaderSentiment` + `scikit-learn`), Role-Tailored Navigation, and Dual-Token Cryptographic Decoupling.**
 
-[![Language: 100% Safe Rust](https://img.shields.io/badge/Rust-%23!%5Bforbid(unsafe__code)%5D-dea584.svg?style=flat-square)](Cargo.toml)
-[![Frontend: Rust WebAssembly](https://img.shields.io/badge/Frontend-Rust%20%2B%20WebAssembly-654ff0.svg?style=flat-square)](evaluatech-web/)
-[![Sentiment Accuracy (Real Comments): 92.51%](https://img.shields.io/badge/Sentiment%20(real%20comments)-92.51%25-blue.svg?style=flat-square)](docs/analysis/MODEL_COMPARISON_REPORT.md)
-[![Negative Recall: 94.38%](https://img.shields.io/badge/Negative%20Recall-94.38%25-indigo.svg?style=flat-square)](docs/analysis/MODEL_COMPARISON_REPORT.md)
-[![Inference Latency: ~15µs](https://img.shields.io/badge/ML%20Latency-~15%C2%B5s-brightgreen.svg?style=flat-square)](evaluatech-nlp/)
+[![Systems: 100% Safe Rust](https://img.shields.io/badge/Systems-Safe%20Rust%20(%23!%5Bforbid(unsafe__code)%5D)-dea584.svg?style=flat-square)](Cargo.toml)
+[![NLP & ML: Python calamanCy + scikit-learn](https://img.shields.io/badge/NLP%20%26%20ML-Python%20(calamanCy%20%2B%20VADER%20%2B%20scikit--learn)-3776ab.svg?style=flat-square)](nlp-python/)
+[![Frontend: WebAssembly](https://img.shields.io/badge/Frontend-Rust%20%2B%20WebAssembly-654ff0.svg?style=flat-square)](evaluatech-web/)
 [![Security: 63/63 OWASP Controls](https://img.shields.io/badge/OWASP%20Controls-63%2F63%20ENFORCED-blueviolet.svg?style=flat-square)](evaluatech-server/src/security.rs)
 [![Accessibility: WCAG 2.2 AAA](https://img.shields.io/badge/Accessibility-WCAG%202.2%20AAA-informational.svg?style=flat-square)](web-dist/styles.css)
 
 ---
 
-## 1. Overview & Architecture
+## 1. Overview & Polyglot Architecture
 
-**EvaluaTech** is an institutional faculty evaluation, cryptographic participation tracking, and multilingual natural language analytics platform built end-to-end in **100% safe Rust (`#![forbid(unsafe_code)]`)** and **WebAssembly (`wasm32-unknown-unknown`)** for **School AAAAA13**.
+**EvaluaTech** separates systems engineering from machine learning using the right language for each domain:
+- **Safe Rust (`evaluatech-server`, `evaluatech-web`, `evaluatech-nlp`)**: Memory-safe HTTP/SQLite persistence, cryptographic Dual-Token student anonymity, 63 OWASP controls, Likert $(\mu, \sigma^2)$ descriptive arithmetic, and WebAssembly UI rendering.
+- **Python (`nlp-python/`)**: Genuine **`calamanCy` + `spaCy`** Tagalog/Taglish morphological tokenization & lemmatization, **`vaderSentiment`** multilingual polarity scoring, and **`scikit-learn`** Dual-Regime Logistic Regression sentiment & 5-cluster pedagogical classification.
 
-| Crate | Target | Responsibility |
+| Component | Language / Target | Responsibility |
 | :--- | :--- | :--- |
-| [`evaluatech-nlp`](evaluatech-nlp/) | `rlib` + `evaluatech-nlp-server` (`x86_64` & `wasm32`) | Multilingual English / Tagalog / Taglish sentiment & topic engine combining `calamanCy`-inspired Tagalog morphology, VADER polarity ($P \in [-1.0, +1.0]$), the **Neuro-Symbolic Dual-Regime Ensemble** (`models/ml_weights.json`), 5 pedagogical clusters + `Unclassified / Needs Review` facility isolation, Likert $(\mu, \sigma^2)$ variance math, and automatic PII redaction. |
-| [`evaluatech-web`](evaluatech-web/) | `cdylib` (`wasm32-unknown-unknown`) | Pure-Rust WebAssembly SPA (`web-dist/pkg/evaluatech_web_bg.wasm`) delivering a focused, `topcit.or.kr`-inspired institutional UI across all five roles (`student`, `faculty`, `chair`, `dean`, `admin`) with an immediate post-login **User Profile Dashboard** (SVG progress ring + pending tasks), minimalist `52px` masthead with consolidated Settings gear dropdown (`A+ Large Text` & `Dark View`), inline scale tooltips, and zero-scroll `375×812` stacked mobile cards. |
-| [`evaluatech-server`](evaluatech-server/) | Single Native Binary (`evaluatech-server`) | Standalone **Axum + Tokio + SQLite WAL** full-stack web & REST server embedding `web-dist/` directly into a single executable and enforcing `EVT.*` HMAC-SHA256 Bearer auth, one-time temporary credentials (`TMP-*`), Dual-Token Cryptographic Decoupling, `FT-02` submission idempotency, Double-Blind faculty grade locks, scoped Chair/Dean containment, AACCUP Level III dossier sealing (`AAAAA13-AACCUP3-*`), and 63 OWASP controls. |
+| [`nlp-python`](nlp-python/) | Python 3.12 (`calamanCy`, `spaCy`, `vaderSentiment`, `scikit-learn`, `FastAPI`) | Multilingual English / Tagalog / Taglish sentiment & pedagogical cluster ML pipelines (`models/*.joblib`), `calamanCy` lemmatization, VADER valence, batch summarization, and FastAPI / warm JSON-RPC worker execution. |
+| [`evaluatech-web`](evaluatech-web/) | Rust `cdylib` (`wasm32-unknown-unknown`) | Role-tailored institutional SPA: **Plain distraction-free webpage** for Students (`/queue`, `/evaluate/:id`) with zero global scale clutter, paired with a structured **Institutional Left Sidebar** for Professors, Department Chairs, College Deans, and University Registrar Officers (`/faculty`, `/chair`, `/dean`, `/admin`). |
+| [`evaluatech-server`](evaluatech-server/) | Safe Rust Binary (`evaluatech-server`) | Standalone **Axum + Tokio + SQLite WAL** server bridging to `nlp-python` and enforcing `EVT.*` HMAC-SHA256 Bearer auth, one-time temporary credentials (`TMP-*`), Dual-Token Cryptographic Decoupling, `FT-02` idempotency, Double-Blind faculty grade locks, and AACCUP Level III dossier sealing (`AAAAA13-AACCUP3-*`). |
+| [`evaluatech-nlp`](evaluatech-nlp/) | Safe Rust `rlib` | Shared non-ML Likert 25-item descriptive statistics, CSV formula sanitization, and defense-in-depth PII scrubbing. |
 
 ---
 
